@@ -460,28 +460,53 @@
         };
       }
       
-      // Actualizar miniaturas laterales
+      // Actualizar miniaturas laterales (solo si hay más de 1 imagen)
       const thumbsContainer = document.querySelector('.side-thumbs-column');
       if (thumbsContainer) {
-        let thumbsHtml = '';
-        producto.imagenes.slice(0, 4).forEach((img, index) => {
-          thumbsHtml += `
-            <div class="side-thumb ${index === 0 ? 'active' : ''}" onclick="cambiarImagenPrincipal('${img}', this)">
-              <img src="${img}" alt="Vista ${index + 1}" onerror="this.src='https://placehold.co/200x200/png?text=${index + 1}'">
-            </div>
-          `;
-        });
-        thumbsContainer.innerHTML = thumbsHtml;
+        if (producto.imagenes.length > 1) {
+          let thumbsHtml = '';
+          producto.imagenes.slice(0, 4).forEach((img, index) => {
+            thumbsHtml += `
+              <div class="side-thumb ${index === 0 ? 'active' : ''}" onclick="cambiarImagenPrincipal('${img}', this)">
+                <img src="${img}" alt="Vista ${index + 1}" onerror="this.src='https://placehold.co/200x200/png?text=${index + 1}'">
+              </div>
+            `;
+          });
+          thumbsContainer.innerHTML = thumbsHtml;
+          thumbsContainer.style.display = 'flex';
+        } else {
+          // Solo 1 imagen: ocultar miniaturas
+          thumbsContainer.innerHTML = '';
+          thumbsContainer.style.display = 'none';
+        }
       }
       
-      // Actualizar indicadores del carrusel
+      // Actualizar indicadores del carrusel (solo si hay más de 1 imagen)
       const indicators = document.querySelector('.carousel-indicators');
       if (indicators) {
-        let indicatorsHtml = '';
-        producto.imagenes.slice(0, 4).forEach((img, index) => {
-          indicatorsHtml += `<span class="dot ${index === 0 ? 'active' : ''}" onclick="cambiarImagenPrincipal('${img}', null, ${index})"></span>`;
-        });
-        indicators.innerHTML = indicatorsHtml;
+        if (producto.imagenes.length > 1) {
+          let indicatorsHtml = '';
+          producto.imagenes.slice(0, 4).forEach((img, index) => {
+            indicatorsHtml += `<span class="dot ${index === 0 ? 'active' : ''}" onclick="cambiarImagenPrincipal('${img}', null, ${index})"></span>`;
+          });
+          indicators.innerHTML = indicatorsHtml;
+          indicators.style.display = 'flex';
+        } else {
+          // Solo 1 imagen: ocultar indicadores
+          indicators.innerHTML = '';
+          indicators.style.display = 'none';
+        }
+      }
+      
+      // Botones de navegación (ocultar si hay 1 sola imagen)
+      const prevBtn = document.querySelector('.prod-arrow.prev');
+      const nextBtn = document.querySelector('.prod-arrow.next');
+      if (producto.imagenes.length <= 1) {
+        if (prevBtn) prevBtn.style.display = 'none';
+        if (nextBtn) nextBtn.style.display = 'none';
+      } else {
+        if (prevBtn) prevBtn.style.display = 'flex';
+        if (nextBtn) nextBtn.style.display = 'flex';
       }
       
       // Reinicializar galería después de actualizar imágenes
@@ -528,28 +553,30 @@
     
     // Actualizar ficha técnica
     const specsBody = document.querySelector('.specs-body-scroll');
-    if (specsBody && producto.fichaTecnica) {
+    if (specsBody) {
       let specsHtml = '';
-      // Parsear la ficha técnica (asumiendo formato "Campo: Valor")
-      const lineas = producto.fichaTecnica.split('\n');
-      lineas.forEach(linea => {
-        const partes = linea.split(':');
-        if (partes.length >= 2) {
-          specsHtml += `
-            <div class="spec-row">
-              <span class="spec-label">${partes[0].trim()}</span>
-              <span class="spec-value">${partes.slice(1).join(':').trim()}</span>
-            </div>
-          `;
-        } else if (linea.trim()) {
-          specsHtml += `
-            <div class="spec-row">
-              <span class="spec-label">Información</span>
-              <span class="spec-value">${linea.trim()}</span>
-            </div>
-          `;
-        }
-      });
+      if (producto.fichaTecnica) {
+        // Parsear la ficha técnica (asumiendo formato "Campo: Valor")
+        const lineas = producto.fichaTecnica.split('\n');
+        lineas.forEach(linea => {
+          const partes = linea.split(':');
+          if (partes.length >= 2) {
+            specsHtml += `
+              <div class="spec-row">
+                <span class="spec-label">${partes[0].trim()}</span>
+                <span class="spec-value">${partes.slice(1).join(':').trim()}</span>
+              </div>
+            `;
+          } else if (linea.trim()) {
+            specsHtml += `
+              <div class="spec-row">
+                <span class="spec-label">Información</span>
+                <span class="spec-value">${linea.trim()}</span>
+              </div>
+            `;
+          }
+        });
+      }
       specsBody.innerHTML = specsHtml || '<p style="padding: 20px; text-align: center; color: #666;">No hay ficha técnica disponible</p>';
     }
     

@@ -71,7 +71,7 @@
     "linea": "Embragues",
     "codSC": "KITTOY400DR",
     "precio": 179400,
-    "descuento": 25,
+    "descuento": 0,
     "stock": 12,
     "fichaTecnica": "Diámetro Disco: 275 mm\nN° Estrías: 21\nDiámetro Núcleo: 145 mm\nAgujero Piloto: 29.5 mm",
     "referenciaCruzada": "TOYOTA: 31210-0K280\nEXEDY: CKT-508AA-Lb",
@@ -80,7 +80,7 @@
       "/uploads/productos/prod-1765419425972-599986316.png"
     ],
     "fechaCreacion": "2025-12-11T02:17:05.976Z",
-    "fechaModificacion": "2025-12-15T18:58:09.208Z"
+    "fechaModificacion": "2025-12-15T19:54:45.563Z"
   },
   {
     "id": "prod_1765419610363_qz6tbh6y5",
@@ -91,7 +91,7 @@
     "linea": "Embragues",
     "codSC": "KITTOY400AR",
     "precio": 125000,
-    "descuento": 10,
+    "descuento": 0,
     "stock": 12,
     "fichaTecnica": "N° Estrías: 21\nAlto: 120 mm\nDiámetro Disco: 275 mm\nDiámetro Núcleo: 165 mm\nAgujero Piloto: 29.5 mm\nPeso: 10 Kg",
     "referenciaCruzada": "",
@@ -100,7 +100,7 @@
       "/uploads/productos/prod-1765419610299-523187208.png"
     ],
     "fechaCreacion": "2025-12-11T02:20:10.363Z",
-    "fechaModificacion": "2025-12-15T19:01:26.323Z"
+    "fechaModificacion": "2025-12-15T19:57:49.398Z"
   },
   {
     "id": "prod_1765419610363_dkntx1xex",
@@ -111,7 +111,7 @@
     "linea": "Frenos",
     "codSC": "PAS528",
     "precio": 12900,
-    "descuento": 22,
+    "descuento": 0,
     "stock": 1,
     "fichaTecnica": "Formulación: ADVANCED\nAltura: 77 mm\nAncho: 134,5 mm\nEspesor: 17 mm",
     "referenciaCruzada": "FRASLE: PD/528\nTOYOTA: 044650K280\nTOYOTA: 04465-0K400\nTOYOTA: 04465-0K401\nTOYOTA: 04465-35290\nMITSUBISHI: 4605A481\nMITSUBISHI: 4605A472\nLEXUS: 04465-60320",
@@ -120,7 +120,7 @@
       "/uploads/productos/prod-1765419610316-776632336.jpg"
     ],
     "fechaCreacion": "2025-12-11T02:20:10.363Z",
-    "fechaModificacion": "2025-12-15T19:03:27.670Z"
+    "fechaModificacion": "2025-12-15T19:57:58.406Z"
   },
   {
     "id": "prod_1765419610363_q3528yidl",
@@ -131,7 +131,7 @@
     "linea": "Frenos",
     "codSC": "PT5280HT",
     "precio": 11800,
-    "descuento": 11,
+    "descuento": 0,
     "stock": 1,
     "fichaTecnica": "",
     "referenciaCruzada": "",
@@ -140,7 +140,7 @@
       "/uploads/productos/prod-1765419610324-992056578.png"
     ],
     "fechaCreacion": "2025-12-11T02:20:10.363Z",
-    "fechaModificacion": "2025-12-15T19:07:12.776Z"
+    "fechaModificacion": "2025-12-15T19:58:04.750Z"
   },
   {
     "id": "prod_1765419902232_3tq0iy1jp",
@@ -151,7 +151,7 @@
     "linea": "Frenos",
     "codSC": "DFTOY528F",
     "precio": 48000,
-    "descuento": 12,
+    "descuento": 0,
     "stock": 1,
     "fichaTecnica": "Diámetro exterior: 318,5 mm.\nPernos: 6 x 14,5 mm.\nDistancia entre pernos: 139,7 mm.\nEspesor: 28 mm.\nAltura: 67,4 mm.\nDiámetro interior: 108 mm.\nDiámetro corona: 183 mm.",
     "referenciaCruzada": "FRASLE: FLDI00004\nFREMAX: BD4113\nTOYOTA ORIGINAL: 435120K110\nTOYOTA ORIGINAL: 435120K150\nTOYOTA ORIGINAL: 4351204051\nTOYOTA ORIGINAL: 435120K140\nTOYOTA ORIGINAL: 4351235322\nTOYOTA ORIGINAL: 4351204052\nTOYOTA ORIGINAL: 435120K090\nTOYOTA ORIGINAL: 4351204050\nTOYOTA ORIGINAL: 4351235321\nTOYOTA ORIGINAL: 435120K100\nTOYOTA ORIGINAL: 4351235320\nTOYOTA ORIGINAL: 435120K230",
@@ -160,7 +160,7 @@
       "/uploads/productos/prod-1765419902212-795202632.png"
     ],
     "fechaCreacion": "2025-12-11T02:25:02.232Z",
-    "fechaModificacion": "2025-12-15T19:18:22.702Z"
+    "fechaModificacion": "2025-12-15T19:58:13.502Z"
   },
   {
     "id": "prod_1765420203665_ncymbdv41",
@@ -171,7 +171,7 @@
     "linea": "Frenos",
     "codSC": "FR5280HT",
     "precio": 21500,
-    "descuento": 3,
+    "descuento": 0,
     "stock": 1,
     "fichaTecnica": "",
     "referenciaCruzada": "",
@@ -182,7 +182,7 @@
       "/uploads/productos/prod-1765420203587-620853660.png"
     ],
     "fechaCreacion": "2025-12-11T02:30:03.665Z",
-    "fechaModificacion": "2025-12-15T19:41:02.580Z"
+    "fechaModificacion": "2025-12-15T19:58:21.694Z"
   },
   {
     "id": "prod_1765420389030_dc1gw6u2k",
@@ -193,7 +193,7 @@
     "linea": "Frenos",
     "codSC": "PAT327T",
     "precio": 13400,
-    "descuento": 33,
+    "descuento": 0,
     "stock": 1,
     "fichaTecnica": "Largo: 25 cm\nAncho: 20 cm\nAlto: 10 cm\n\nFreno Trasero",
     "referenciaCruzada": "FRASLE: TY/327-CPA",
@@ -204,7 +204,7 @@
       "/uploads/productos/prod-1765420388997-763930662.png"
     ],
     "fechaCreacion": "2025-12-11T02:33:09.030Z",
-    "fechaModificacion": "2025-12-15T19:29:43.308Z"
+    "fechaModificacion": "2025-12-15T19:58:28.078Z"
   },
   {
     "id": "prod_1765420773242_yg3nqny3z",
@@ -215,7 +215,7 @@
     "linea": "Frenos",
     "codSC": "TAM-327F",
     "precio": 31500,
-    "descuento": 33,
+    "descuento": 0,
     "stock": 1,
     "fichaTecnica": "Diámetro exterior: 345 mm.\nPernos: 8 x 16,5 mm.\nDistancia entre pernos: 170 mm.\nEspesor: 38 mm.\nAltura: 99,3 mm.\nDiámetro interior: 129 mm.\nDiámetro corona: 221,8 mm.",
     "referenciaCruzada": "FRASLE: FLDI00002\nFREMAX: BD4078",
@@ -224,7 +224,7 @@
       "/uploads/productos/prod-1765420773237-184101770.png"
     ],
     "fechaCreacion": "2025-12-11T02:39:33.242Z",
-    "fechaModificacion": "2025-12-15T19:41:52.109Z"
+    "fechaModificacion": "2025-12-15T19:58:35.206Z"
   },
   {
     "id": "prod_1765420956576_ixym4emub",

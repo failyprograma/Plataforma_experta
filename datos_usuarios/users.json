@@ -167,14 +167,27 @@
           "nombre": "Kit de embrague",
           "marca": "ALLIANCE",
           "imagen": "/uploads/productos/prod-1765419610299-523187208.png",
-          "precio": 112500,
+          "precio": 125000,
           "precioOriginal": 125000,
-          "descuento": 10,
+          "descuento": 0,
+          "cantidad": 1,
+          "stock": 12
+        },
+        {
+          "id": "prod_1765419425976_h672r0fna",
+          "sku": "KITTOY400DR",
+          "skuCliente": "",
+          "nombre": "Kit de embrague",
+          "marca": "EXEDY",
+          "imagen": "/uploads/productos/prod-1765419425972-599986316.png",
+          "precio": 179400,
+          "precioOriginal": 179400,
+          "descuento": 0,
           "cantidad": 1,
           "stock": 12
         }
       ],
-      "ultimaActualizacion": "2025-12-15T19:32:07.831Z"
+      "ultimaActualizacion": "2025-12-15T19:58:42.975Z"
     },
     "ordenesCompraEnviadas": 1,
     "cotizacionesEnviadas": 10

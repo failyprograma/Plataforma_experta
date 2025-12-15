@@ -1,1 +1,186 @@
-[]
+[
+  {
+    "id": "notif_1765828485564_7omfmwdzr",
+    "userId": "ecousuario",
+    "tipo": "descuento_eliminado",
+    "titulo": "Actualización de precio",
+    "mensaje": "Kit de embrague ha vuelto a su precio regular.",
+    "datos": {
+      "productoId": "prod_1765419425976_h672r0fna",
+      "productoNombre": "Kit de embrague",
+      "productoMarca": "EXEDY",
+      "repuesto": "Kit de embrague",
+      "marca": "EXEDY",
+      "codSC": "KITTOY400DR",
+      "precio": 179400,
+      "descuento": 0,
+      "precioFinal": 179400,
+      "precioAnterior": 134550,
+      "precioNuevo": 179400,
+      "imagen": "/uploads/productos/prod-1765419425972-599986316.png"
+    },
+    "leida": false,
+    "fecha": "2025-12-15T19:54:45.564Z"
+  },
+  {
+    "id": "notif_1765828667830_bjmr4ig8i",
+    "userId": "ecousuario",
+    "tipo": "descuento_eliminado",
+    "titulo": "Actualización de precio",
+    "mensaje": "Kit de embrague ha vuelto a su precio regular.",
+    "datos": {
+      "productoId": "prod_1765419610363_qz6tbh6y5",
+      "productoNombre": "Kit de embrague",
+      "productoMarca": "ALLIANCE",
+      "repuesto": "Kit de embrague",
+      "marca": "ALLIANCE",
+      "codSC": "KITTOY400AR",
+      "precio": 125000,
+      "descuento": 0,
+      "precioFinal": 125000,
+      "precioAnterior": 112500,
+      "precioNuevo": 125000,
+      "imagen": "/uploads/productos/prod-1765419610299-523187208.png"
+    },
+    "leida": false,
+    "fecha": "2025-12-15T19:57:47.830Z"
+  },
+  {
+    "id": "notif_1765828676431_0wu9vqp8e",
+    "userId": "ecousuario",
+    "tipo": "descuento_eliminado",
+    "titulo": "Actualización de precio",
+    "mensaje": "Pastillas de freno ha vuelto a su precio regular.",
+    "datos": {
+      "productoId": "prod_1765419610363_dkntx1xex",
+      "productoNombre": "Pastillas de freno",
+      "productoMarca": "FRASLE",
+      "repuesto": "Pastillas de freno",
+      "marca": "FRASLE",
+      "codSC": "PAS528",
+      "precio": 12900,
+      "descuento": 0,
+      "precioFinal": 12900,
+      "precioAnterior": 10062,
+      "precioNuevo": 12900,
+      "imagen": "/uploads/productos/prod-1765419610316-776632336.jpg"
+    },
+    "leida": false,
+    "fecha": "2025-12-15T19:57:56.431Z"
+  },
+  {
+    "id": "notif_1765828684751_099zmm1cv",
+    "userId": "ecousuario",
+    "tipo": "descuento_eliminado",
+    "titulo": "Actualización de precio",
+    "mensaje": "Pastillas de freno ha vuelto a su precio regular.",
+    "datos": {
+      "productoId": "prod_1765419610363_q3528yidl",
+      "productoNombre": "Pastillas de freno",
+      "productoMarca": "HTECH",
+      "repuesto": "Pastillas de freno",
+      "marca": "HTECH",
+      "codSC": "PT5280HT",
+      "precio": 11800,
+      "descuento": 0,
+      "precioFinal": 11800,
+      "precioAnterior": 10502,
+      "precioNuevo": 11800,
+      "imagen": "/uploads/productos/prod-1765419610324-992056578.png"
+    },
+    "leida": false,
+    "fecha": "2025-12-15T19:58:04.751Z"
+  },
+  {
+    "id": "notif_1765828692550_rbpdgp7ka",
+    "userId": "ecousuario",
+    "tipo": "descuento_eliminado",
+    "titulo": "Actualización de precio",
+    "mensaje": "Disco de freno ha vuelto a su precio regular.",
+    "datos": {
+      "productoId": "prod_1765419902232_3tq0iy1jp",
+      "productoNombre": "Disco de freno",
+      "productoMarca": "FRASLE",
+      "repuesto": "Disco de freno",
+      "marca": "FRASLE",
+      "codSC": "DFTOY528F",
+      "precio": 48000,
+      "descuento": 0,
+      "precioFinal": 48000,
+      "precioAnterior": 42240,
+      "precioNuevo": 48000,
+      "imagen": "/uploads/productos/prod-1765419902212-795202632.png"
+    },
+    "leida": false,
+    "fecha": "2025-12-15T19:58:12.550Z"
+  },
+  {
+    "id": "notif_1765828700551_wbteewgvk",
+    "userId": "ecousuario",
+    "tipo": "descuento_eliminado",
+    "titulo": "Actualización de precio",
+    "mensaje": "Disco de freno ha vuelto a su precio regular.",
+    "datos": {
+      "productoId": "prod_1765420203665_ncymbdv41",
+      "productoNombre": "Disco de freno",
+      "productoMarca": "FRASLE",
+      "repuesto": "Disco de freno",
+      "marca": "FRASLE",
+      "codSC": "FR5280HT",
+      "precio": 21500,
+      "descuento": 0,
+      "precioFinal": 21500,
+      "precioAnterior": 20855,
+      "precioNuevo": 21500,
+      "imagen": "/uploads/productos/prod-1765420203631-819973523.png"
+    },
+    "leida": false,
+    "fecha": "2025-12-15T19:58:20.551Z"
+  },
+  {
+    "id": "notif_1765828707102_6axfx11i2",
+    "userId": "ecousuario",
+    "tipo": "descuento_eliminado",
+    "titulo": "Actualización de precio",
+    "mensaje": "Patines ha vuelto a su precio regular.",
+    "datos": {
+      "productoId": "prod_1765420389030_dc1gw6u2k",
+      "productoNombre": "Patines",
+      "productoMarca": "FRASLE",
+      "repuesto": "Patines",
+      "marca": "FRASLE",
+      "codSC": "PAT327T",
+      "precio": 13400,
+      "descuento": 0,
+      "precioFinal": 13400,
+      "precioAnterior": 8978,
+      "precioNuevo": 13400,
+      "imagen": "/uploads/productos/prod-1765420389008-607421544.png"
+    },
+    "leida": true,
+    "fecha": "2025-12-15T19:58:27.102Z"
+  },
+  {
+    "id": "notif_1765828714399_y7wgjufmz",
+    "userId": "ecousuario",
+    "tipo": "descuento_eliminado",
+    "titulo": "Actualización de precio",
+    "mensaje": "Tambor de freno ha vuelto a su precio regular.",
+    "datos": {
+      "productoId": "prod_1765420773242_yg3nqny3z",
+      "productoNombre": "Tambor de freno",
+      "productoMarca": "FRASLE",
+      "repuesto": "Tambor de freno",
+      "marca": "FRASLE",
+      "codSC": "TAM-327F",
+      "precio": 31500,
+      "descuento": 0,
+      "precioFinal": 31500,
+      "precioAnterior": 21105,
+      "precioNuevo": 31500,
+      "imagen": "/uploads/productos/prod-1765420773237-184101770.png"
+    },
+    "leida": true,
+    "fecha": "2025-12-15T19:58:34.399Z"
+  }
+]
