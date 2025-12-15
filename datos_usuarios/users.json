@@ -124,15 +124,14 @@
     "email": "gonzavidalj@gmail.com",
     "createdAt": "2025-12-11T01:53:37.245Z",
     "vehiculoDetalle": {
-      "id": "veh_1765502675870_0_ajn45tje7",
-      "vehiculoId": "veh_1765502675870_0_ajn45tje7",
       "tipo": "camioneta",
       "marca": "Toyota",
-      "modelo": "Hilux 2.4",
+      "modelo": "Hilux 2.8",
       "motor": "",
       "patente": "Sin especificar",
-      "anio": "",
-      "conductor": "",
+      "anio": "Sin especificar",
+      "id": "veh_1765502675870_1_1frwkq8qc",
+      "vehiculoId": "veh_1765502675870_1_1frwkq8qc",
       "favorito": false,
       "logo": "../logosvehiculos/toyota.png",
       "imagen": "../vehiculosexpertos/pick up.png",
@@ -168,14 +167,14 @@
           "nombre": "Kit de embrague",
           "marca": "ALLIANCE",
           "imagen": "/uploads/productos/prod-1765419610299-523187208.png",
-          "precio": 125000,
+          "precio": 112500,
           "precioOriginal": 125000,
-          "descuento": 0,
+          "descuento": 10,
           "cantidad": 1,
           "stock": 12
         }
       ],
-      "ultimaActualizacion": "2025-12-15T17:22:43.856Z"
+      "ultimaActualizacion": "2025-12-15T19:32:07.831Z"
     },
     "ordenesCompraEnviadas": 1,
     "cotizacionesEnviadas": 10

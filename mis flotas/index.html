@@ -522,23 +522,35 @@
 <div class="notif-panel" id="notif-panel">
   <div class="notif-header">
     <h3>
-      <img src="../img/Alerta.svg" alt="Notificaciones" style="width: 20px; height: 20px; filter: brightness(0) invert(1);">
-      Notificaciones
+      Todas las notificaciones
+      <button class="notif-close" onclick="cerrarNotificaciones()">&times;</button>
     </h3>
-    <button class="notif-close" onclick="cerrarNotificaciones()">&times;</button>
+  </div>
+  
+  <div class="notif-tabs">
+    <div class="notif-tabs-left">
+      <button class="notif-tab active" data-filter="todas">Todas</button>
+      <button class="notif-tab" data-filter="sin-leer">Sin leer <span class="notif-tab-count"></span></button>
+    </div>
+    <button id="marcar-todas-vistas">Marcar como vistas</button>
   </div>
   
   <div class="notif-body">
-    <div class="notif-empty">
+    <!-- Lista de notificaciones (se llenará dinámicamente) -->
+    <div id="notif-list" style="display: none;"></div>
+    
+    <!-- Estado vacío -->
+    <div class="notif-empty" id="notif-empty">
       <div class="notif-empty-icon">
         <img src="../img/Alerta.svg" alt="Sin notificaciones">
       </div>
       <h4>No hay notificaciones</h4>
-      <p>Cuando tengas novedades sobre tus flotas, productos o pedidos, aparecerán aquí.</p>
+      <p>Cuando tengas novedades sobre productos, ofertas o actualizaciones, aparecerán aquí.</p>
     </div>
   </div>
 </div>
 
+<script src="../notificaciones.js"></script>
 <script>
 // Funciones del panel de notificaciones
 function toggleNotificaciones() {

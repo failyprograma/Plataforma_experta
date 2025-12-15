@@ -52,6 +52,9 @@ const UPLOADS_BANNERS_DIR = path.join(__dirname, "uploads", "banners");
 if (!fs.existsSync(UPLOADS_BANNERS_DIR)) fs.mkdirSync(UPLOADS_BANNERS_DIR, { recursive: true });
 const BANNERS_DB = path.join(DATA_DIR_USERS, "banners_ofertas.json");
 
+// 6. NOTIFICACIONES
+const NOTIFICACIONES_DB = path.join(DATA_DIR_USERS, "notificaciones.json");
+
 
 // ============================================================
 //  UTILIDADES
@@ -243,6 +246,123 @@ app.post("/api/actualizar-usuario", (req, res) => {
     res.json({ ok: true, msg: "Usuario actualizado" });
 });
 
+// ============================================================
+//  SECCIÓN: NOTIFICACIONES
+// ============================================================
+
+// 1. OBTENER NOTIFICACIONES DE UN USUARIO
+app.get("/api/notificaciones", (req, res) => {
+    try {
+        const { userId } = req.query;
+        
+        if (!userId) {
+            return res.status(400).json({ ok: false, msg: "Falta userId" });
+        }
+        
+        let notificaciones = readJSON(NOTIFICACIONES_DB);
+        
+        // Filtrar notificaciones: las del usuario específico o las globales (userId === null)
+        const notificacionesUsuario = notificaciones
+            .filter(n => n.userId === userId || n.userId === null)
+            .sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); // Más recientes primero
+        
+        res.json({ ok: true, notificaciones: notificacionesUsuario });
+    } catch (error) {
+        console.error("Error obteniendo notificaciones:", error);
+        res.status(500).json({ ok: false, msg: "Error interno" });
+    }
+});
+
+// 2. MARCAR NOTIFICACIÓN COMO LEÍDA
+app.post("/api/notificaciones/marcar-leida", (req, res) => {
+    try {
+        const { notifId, userId } = req.body;
+        
+        if (!notifId || !userId) {
+            return res.status(400).json({ ok: false, msg: "Faltan datos" });
+        }
+        
+        let notificaciones = readJSON(NOTIFICACIONES_DB);
+        const index = notificaciones.findIndex(n => n.id === notifId);
+        
+        if (index === -1) {
+            return res.status(404).json({ ok: false, msg: "Notificación no encontrada" });
+        }
+        
+        // Verificar que la notificación pertenece al usuario
+        if (notificaciones[index].userId !== userId && notificaciones[index].userId !== null) {
+            return res.status(403).json({ ok: false, msg: "No autorizado" });
+        }
+        
+        notificaciones[index].leida = true;
+        writeJSON(NOTIFICACIONES_DB, notificaciones);
+        
+        res.json({ ok: true, msg: "Notificación marcada como leída" });
+    } catch (error) {
+        console.error("Error marcando notificación:", error);
+        res.status(500).json({ ok: false, msg: "Error interno" });
+    }
+});
+
+// 3. MARCAR TODAS LAS NOTIFICACIONES COMO LEÍDAS
+app.post("/api/notificaciones/marcar-todas-leidas", (req, res) => {
+    try {
+        const { userId } = req.body;
+        
+        if (!userId) {
+            return res.status(400).json({ ok: false, msg: "Falta userId" });
+        }
+        
+        let notificaciones = readJSON(NOTIFICACIONES_DB);
+        
+        notificaciones = notificaciones.map(n => {
+            if (n.userId === userId || n.userId === null) {
+                n.leida = true;
+            }
+            return n;
+        });
+        
+        writeJSON(NOTIFICACIONES_DB, notificaciones);
+        
+        res.json({ ok: true, msg: "Todas las notificaciones marcadas como leídas" });
+    } catch (error) {
+        console.error("Error marcando todas las notificaciones:", error);
+        res.status(500).json({ ok: false, msg: "Error interno" });
+    }
+});
+
+// 4. ELIMINAR UNA NOTIFICACIÓN
+app.delete("/api/notificaciones/:notifId", (req, res) => {
+    try {
+        const { notifId } = req.params;
+        const { userId } = req.query;
+        
+        if (!notifId || !userId) {
+            return res.status(400).json({ ok: false, msg: "Faltan datos" });
+        }
+        
+        let notificaciones = readJSON(NOTIFICACIONES_DB);
+        const index = notificaciones.findIndex(n => n.id === notifId);
+        
+        if (index === -1) {
+            return res.status(404).json({ ok: false, msg: "Notificación no encontrada" });
+        }
+        
+        // Verificar que la notificación pertenece al usuario
+        if (notificaciones[index].userId !== userId && notificaciones[index].userId !== null) {
+            return res.status(403).json({ ok: false, msg: "No autorizado" });
+        }
+        
+        notificaciones.splice(index, 1);
+        writeJSON(NOTIFICACIONES_DB, notificaciones);
+        
+        res.json({ ok: true, msg: "Notificación eliminada" });
+    } catch (error) {
+        console.error("Error eliminando notificación:", error);
+        res.status(500).json({ ok: false, msg: "Error interno" });
+    }
+});
+
 // 6. ELIMINAR USUARIO Y TODOS SUS DATOS
 app.delete("/api/eliminar-usuario", (req, res) => {
     const { userId } = req.body;
@@ -420,6 +540,129 @@ let mailTransport = nodemailer.createTransport({
         tls: { rejectUnauthorized: false }
 });
 
+// ============================================================
+//  UTILIDADES DE NOTIFICACIONES
+// ============================================================
+
+/**
+ * Crea una notificación para un usuario específico o para todos los usuarios
+ * @param {string|null} userId - ID del usuario (null para enviar a todos)
+ * @param {string} tipo - Tipo de notificación: 'nuevo_producto', 'descuento_agregado', 'descuento_eliminado', 'banner_actualizado'
+ * @param {string} titulo - Título de la notificación
+ * @param {string} mensaje - Mensaje detallado
+ * @param {object} datos - Datos adicionales (producto, descuento, etc.)
+ */
+async function crearNotificacion(userId, tipo, titulo, mensaje, datos = {}) {
+    try {
+        let notificaciones = readJSON(NOTIFICACIONES_DB);
+        
+        const notif = {
+            id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            userId: userId, // null significa para todos
+            tipo: tipo,
+            titulo: titulo,
+            mensaje: mensaje,
+            datos: datos,
+            leida: false,
+            fecha: new Date().toISOString()
+        };
+        
+        notificaciones.push(notif);
+        writeJSON(NOTIFICACIONES_DB, notificaciones);
+        
+        // Enviar email si el usuario tiene correo registrado
+        if (userId) {
+            await enviarEmailNotificacion(userId, tipo, titulo, mensaje, datos);
+        } else {
+            // Enviar a todos los usuarios con correo
+            const users = readJSON(USERS_DB);
+            for (const user of users) {
+                if (user.email && user.email.trim() !== '') {
+                    await enviarEmailNotificacion(user.id, tipo, titulo, mensaje, datos);
+                }
+            }
+        }
+        
+        console.log(`✓ Notificación creada: ${tipo} - ${titulo}`);
+        return notif;
+    } catch (error) {
+        console.error('Error creando notificación:', error);
+        return null;
+    }
+}
+
+/**
+ * Envía un email de notificación al usuario
+ */
+async function enviarEmailNotificacion(userId, tipo, titulo, mensaje, datos) {
+    try {
+        const users = readJSON(USERS_DB);
+        const user = users.find(u => u.id === userId);
+        
+        if (!user || !user.email || user.email.trim() === '') {
+            return; // Usuario no tiene email registrado
+        }
+        
+        // Iconos y colores según tipo
+        const tiposConfig = {
+            'nuevo_producto': { icon: '', color: '#BF1823', label: 'Nuevo Producto' },
+            'descuento_agregado': { icon: '', color: '#BF1823', label: 'Nueva Oferta' },
+            'descuento_eliminado': { icon: '', color: '#BF1823', label: 'Actualización de Precio' },
+            'banner_actualizado': { icon: '', color: '#BF1823', label: 'Nuevas Ofertas' }
+        };
+        
+        const config = tiposConfig[tipo] || { icon: '', color: '#BF1823', label: 'Notificación' };
+        
+        const html = `
+        <div style="font-family:Poppins,Arial,sans-serif;max-width:520px;margin:0 auto;background:#ffffff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);overflow:hidden;">
+            <div style="background:#BF1823;color:#fff;padding:20px 24px;">
+                <h2 style="margin:0;font-size:20px;font-weight:600;">${config.label}</h2>
+                <p style="margin:8px 0 0 0;opacity:0.9;">StarClutch Plataforma Experta</p>
+            </div>
+            <div style="padding:24px;color:#333;">
+                <p style="margin:0 0 12px 0;font-size:15px;">Hola${user.empresa ? `, <strong>${user.empresa}</strong>` : ''}</p>
+                <h3 style="margin:0 0 12px 0;font-size:16px;color:#252425;font-weight:600;">${titulo}</h3>
+                <p style="margin:0 0 20px 0;font-size:14px;line-height:1.6;color:#666;">${mensaje}</p>
+                ${datos.productoNombre ? `
+                <div style="background:#f8f9fa;border:1px solid #e6e6e6;border-radius:8px;padding:16px;margin-bottom:16px;">
+                    <div style="font-size:12px;color:#666;margin-bottom:8px;">Producto:</div>
+                    <div style="font-weight:600;font-size:15px;color:#252425;margin-bottom:6px;">${datos.productoNombre}</div>
+                    ${datos.productoMarca ? `<div style="font-size:13px;color:#888;margin-bottom:8px;">Marca: ${datos.productoMarca}</div>` : ''}
+                    ${datos.codSC ? `<div style="font-size:13px;color:#888;margin-bottom:8px;">Código: ${datos.codSC}</div>` : ''}
+                    ${datos.precioAnterior && datos.precioNuevo ? `
+                    <div style="margin-top:12px;display:flex;align-items:center;gap:12px;">
+                        <span style="text-decoration:line-through;color:#999;font-size:14px;">$${datos.precioAnterior.toLocaleString('es-CL')}</span>
+                        <span style="font-size:22px;font-weight:700;color:#BF1823;">$${datos.precioNuevo.toLocaleString('es-CL')}</span>
+                        ${datos.descuento ? `<span style="background:#BF1823;color:white;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;">-${datos.descuento}%</span>` : ''}
+                    </div>
+                    ` : ''}
+                </div>
+                ` : ''}
+                <div style="margin-top:24px;">
+                    <a href="https://starclutch.com/mis%20flotas/" style="display:inline-block;background:#BF1823;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:600;font-size:14px;">Ver en la Plataforma</a>
+                </div>
+                <p style="margin:24px 0 0 0;font-size:12px;color:#666;line-height:1.5;">
+                    Esta notificación se envió porque estás suscrito a las actualizaciones de StarClutch. Puedes gestionar notificaciones desde tu perfil.
+                </p>
+            </div>
+            <div style="padding:16px 24px;background:#f5f5f5;color:#555;font-size:12px;text-align:center;">
+                © ${new Date().getFullYear()} STARCLUTCH S.p.A. - Todos los derechos reservados
+            </div>
+        </div>`;
+        
+        await mailTransport.sendMail({
+            from: `StarClutch Notificaciones <${MAIL_USER}>`,
+            to: user.email,
+            subject: `${config.icon} ${titulo} - StarClutch`,
+            html
+        });
+        
+        console.log(`✓ Email de notificación enviado a: ${user.email}`);
+    } catch (error) {
+        console.error('Error enviando email de notificación:', error);
+    }
+}
+
 app.post('/api/enviar-correo-pin', async (req, res) => {
         try {
                 const { email, pin, userName } = req.body;
@@ -585,7 +828,7 @@ app.post('/api/solicitar-producto', async (req, res) => {
 // ============================================================
 
 // 1. SUBIR PRODUCTOS (Guardar en JSON)
-app.post("/api/upload-productos", uploadProductos.any(), (req, res) => {
+app.post("/api/upload-productos", uploadProductos.any(), async (req, res) => {
     try {
         const { userId, productos } = req.body;
         
@@ -646,6 +889,23 @@ app.post("/api/upload-productos", uploadProductos.any(), (req, res) => {
         if (nuevosProductos.length > 0) {
             dbData = dbData.concat(nuevosProductos);
             writeJSON(PRODUCTOS_DB, dbData);
+            
+            // Crear notificaciones para todos los usuarios por cada producto nuevo
+            for (const producto of nuevosProductos) {
+                await crearNotificacion(
+                    null, // null = notificación para todos los usuarios
+                    'nuevo_producto',
+                    'Nuevo producto disponible',
+                    `Se ha agregado ${producto.repuesto} de la marca ${producto.marca} a nuestro catálogo.`,
+                    {
+                        productoId: producto.id,
+                        productoNombre: producto.repuesto,
+                        productoMarca: producto.marca,
+                        precioNuevo: producto.precio,
+                        descuento: producto.descuento
+                    }
+                );
+            }
         }
 
         // Responder con información de duplicados
@@ -684,7 +944,7 @@ app.get("/api/obtener-productos", (req, res) => {
 });
 
 // 3. EDITAR PRODUCTO
-app.post("/api/editar-producto", uploadProductos.any(), (req, res) => {
+app.post("/api/editar-producto", uploadProductos.any(), async (req, res) => {
     try {
         const { productoId, userId, datos } = req.body;
         
@@ -705,6 +965,13 @@ app.post("/api/editar-producto", uploadProductos.any(), (req, res) => {
         // Procesar nuevas imágenes
         const nuevasImagenes = files.map(f => `/uploads/productos/${f.filename}`);
         
+        // Detectar cambios en descuento
+        const productoAnterior = dbData[index];
+        const descuentoAnterior = productoAnterior.descuento || 0;
+        const descuentoNuevo = datosObj.descuento || 0;
+        const precioAnterior = productoAnterior.precio || 0;
+        const precioNuevo = datosObj.precio || 0;
+        
         // Actualizar producto
         dbData[index] = {
             ...dbData[index],
@@ -724,6 +991,84 @@ app.post("/api/editar-producto", uploadProductos.any(), (req, res) => {
         };
 
         writeJSON(PRODUCTOS_DB, dbData);
+        
+        // Crear notificaciones si hubo cambios en descuentos
+        if (descuentoAnterior !== descuentoNuevo) {
+            const imagenProducto = dbData[index].imagenes && dbData[index].imagenes.length > 0 
+                ? dbData[index].imagenes[0] 
+                : null;
+            
+            if (descuentoNuevo > 0 && descuentoAnterior === 0) {
+                // Se agregó un descuento
+                const precioConDescuento = Math.round(precioNuevo * (1 - descuentoNuevo / 100));
+                await crearNotificacion(
+                    userId, // Enviar solo al usuario del producto
+                    'descuento_agregado',
+                    '¡Nueva oferta disponible!',
+                    `${datosObj.repuesto} ahora tiene un ${descuentoNuevo}% de descuento.`,
+                    {
+                        productoId: productoId,
+                        productoNombre: datosObj.repuesto,
+                        productoMarca: datosObj.marca,
+                        repuesto: datosObj.repuesto,
+                        marca: datosObj.marca,
+                        codSC: datosObj.codSC,
+                        precio: precioNuevo,
+                        descuento: descuentoNuevo,
+                        precioFinal: precioConDescuento,
+                        precioAnterior: precioNuevo,
+                        precioNuevo: precioConDescuento,
+                        imagen: imagenProducto
+                    }
+                );
+            } else if (descuentoNuevo === 0 && descuentoAnterior > 0) {
+                // Se eliminó un descuento
+                await crearNotificacion(
+                    userId, // Enviar solo al usuario del producto
+                    'descuento_eliminado',
+                    'Actualización de precio',
+                    `${datosObj.repuesto} ha vuelto a su precio regular.`,
+                    {
+                        productoId: productoId,
+                        productoNombre: datosObj.repuesto,
+                        productoMarca: datosObj.marca,
+                        repuesto: datosObj.repuesto,
+                        marca: datosObj.marca,
+                        codSC: datosObj.codSC,
+                        precio: precioNuevo,
+                        descuento: 0,
+                        precioFinal: precioNuevo,
+                        precioAnterior: Math.round(precioAnterior * (1 - descuentoAnterior / 100)),
+                        precioNuevo: precioNuevo,
+                        imagen: imagenProducto
+                    }
+                );
+            } else if (descuentoNuevo !== descuentoAnterior) {
+                // Se modificó el descuento
+                const precioConDescuento = Math.round(precioNuevo * (1 - descuentoNuevo / 100));
+                await crearNotificacion(
+                    userId, // Enviar solo al usuario del producto
+                    'descuento_agregado',
+                    'Descuento actualizado',
+                    `El descuento de ${datosObj.repuesto} ahora es del ${descuentoNuevo}%.`,
+                    {
+                        productoId: productoId,
+                        productoNombre: datosObj.repuesto,
+                        productoMarca: datosObj.marca,
+                        repuesto: datosObj.repuesto,
+                        marca: datosObj.marca,
+                        codSC: datosObj.codSC,
+                        precio: precioNuevo,
+                        descuento: descuentoNuevo,
+                        precioFinal: precioConDescuento,
+                        precioAnterior: precioNuevo,
+                        precioNuevo: precioConDescuento,
+                        imagen: imagenProducto
+                    }
+                );
+            }
+        }
+        
         res.json({ ok: true, message: 'Producto actualizado' });
 
     } catch (error) {
@@ -2227,6 +2572,22 @@ app.post("/api/banners-ofertas", uploadBanners.any(), async (req, res) => {
         writeJSON(BANNERS_DB, bannersData);
         
         console.log(`✓ Banners guardados para usuario: ${userId}`);
+        
+        // Crear notificación para el usuario específico
+        const users = readJSON(USERS_DB);
+        const user = users.find(u => u.id === userId);
+        const nombreUsuario = user ? user.nombre : userId;
+        
+        await crearNotificacion(
+            userId, // Solo para este usuario
+            'banner_actualizado',
+            'Tus banners de ofertas han sido actualizados',
+            `Se han actualizado los banners de ofertas exclusivas en tu cuenta. Revisa las nuevas promociones disponibles para ti.`,
+            {
+                usuarioNombre: nombreUsuario
+            }
+        );
+        
         res.json({ ok: true, msg: "Banners guardados correctamente" });
         
     } catch (e) {

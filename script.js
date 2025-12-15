@@ -13365,10 +13365,11 @@ const CarritoGlobal = {
             mensajes.push(`❌ Oferta terminada: ${nombres}`);
         }
         
-        if (cambios.descuentosAgregados.length > 0) {
-            const nombres = cambios.descuentosAgregados.map(c => `${c.nombre} (-${c.descuentoNuevo}%)`).join(', ');
-            mensajes.push(`🎉 Nueva oferta: ${nombres}`);
-        }
+        // NO mostrar toast para descuentos agregados - ahora se maneja con el sistema de notificaciones
+        // if (cambios.descuentosAgregados.length > 0) {
+        //     const nombres = cambios.descuentosAgregados.map(c => `${c.nombre} (-${c.descuentoNuevo}%)`).join(', ');
+        //     mensajes.push(`🎉 Nueva oferta: ${nombres}`);
+        // }
         
         if (cambios.stockReducido.length > 0) {
             const nombres = cambios.stockReducido.map(c => c.nombre).join(', ');

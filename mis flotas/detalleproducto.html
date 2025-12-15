@@ -483,6 +483,11 @@
         });
         indicators.innerHTML = indicatorsHtml;
       }
+      
+      // Reinicializar galería después de actualizar imágenes
+      setTimeout(() => {
+        initGaleriaProducto();
+      }, 50);
     } else {
       // No hay imágenes - mostrar placeholder personalizado
       const mainImage = document.querySelector('.main-product-image');
@@ -907,6 +912,55 @@
     }
   }
   
+  // Inicializar carrusel de imágenes del producto
+  let currentImageIndex = 0;
+  let productImages = [];
+  
+  function initGaleriaProducto() {
+    // Obtener todas las imágenes del producto
+    const mainImage = document.querySelector('.main-product-image');
+    const thumbs = document.querySelectorAll('.side-thumb img');
+    
+    productImages = Array.from(thumbs).map(thumb => thumb.src);
+    
+    if (productImages.length === 0 && mainImage && mainImage.src) {
+      productImages = [mainImage.src];
+    }
+    
+    // Botones de navegación de la galería principal
+    const prevBtn = document.querySelector('.prod-arrow.prev');
+    const nextBtn = document.querySelector('.prod-arrow.next');
+    
+    if (prevBtn && nextBtn) {
+      prevBtn.onclick = () => navegarGaleriaProducto(-1);
+      nextBtn.onclick = () => navegarGaleriaProducto(1);
+      
+      // Mostrar/ocultar botones según cantidad de imágenes
+      if (productImages.length <= 1) {
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+      } else {
+        prevBtn.style.display = 'flex';
+        nextBtn.style.display = 'flex';
+      }
+    }
+  }
+  
+  function navegarGaleriaProducto(direccion) {
+    if (productImages.length <= 1) return;
+    
+    currentImageIndex += direccion;
+    
+    // Loop circular
+    if (currentImageIndex < 0) {
+      currentImageIndex = productImages.length - 1;
+    } else if (currentImageIndex >= productImages.length) {
+      currentImageIndex = 0;
+    }
+    
+    cambiarImagenPrincipal(productImages[currentImageIndex], null, currentImageIndex);
+  }
+  
   // La función agregarAlCarrito está en script.js (CarritoGlobal)
   
   function mostrarMensajeError() {
@@ -922,12 +976,20 @@
     }
   }
   
-  // Inicializar carrusel cuando el DOM esté listo
+  // Inicializar carruseles cuando el DOM esté listo
   document.addEventListener('DOMContentLoaded', () => {
     // ======================================================
     // INICIALIZAR CARRUSEL DINÁMICO DE OTROS PRODUCTOS
     // ======================================================
     initCarruselOtrosProductos();
+    
+    // ======================================================
+    // INICIALIZAR GALERÍA DE IMÁGENES DEL PRODUCTO
+    // ======================================================
+    // Esperar un momento para que se carguen las imágenes desde el producto
+    setTimeout(() => {
+      initGaleriaProducto();
+    }, 100);
   });
 
   // CARRUSEL DINÁMICO
@@ -1109,12 +1171,22 @@
       // Renderizar primera página del carrusel
       renderizarPaginaCarrusel(0);
       
-      // Configurar botones prev/next
+      // Configurar botones prev/next del carrusel de recomendados
       const prevBtn = document.querySelector('.seccion-recomendados-detalle .btn-nav-detalle.prev');
       const nextBtn = document.querySelector('.seccion-recomendados-detalle .btn-nav-detalle.next');
       
-      if (prevBtn) prevBtn.addEventListener('click', () => navegarCarrusel(-1));
-      if (nextBtn) nextBtn.addEventListener('click', () => navegarCarrusel(1));
+      if (prevBtn && nextBtn) {
+        // Remover listeners anteriores si existen
+        prevBtn.replaceWith(prevBtn.cloneNode(true));
+        nextBtn.replaceWith(nextBtn.cloneNode(true));
+        
+        // Obtener referencias nuevas después del reemplazo
+        const newPrevBtn = document.querySelector('.seccion-recomendados-detalle .btn-nav-detalle.prev');
+        const newNextBtn = document.querySelector('.seccion-recomendados-detalle .btn-nav-detalle.next');
+        
+        if (newPrevBtn) newPrevBtn.onclick = () => navegarCarrusel(-1);
+        if (newNextBtn) newNextBtn.onclick = () => navegarCarrusel(1);
+      }
       
     } catch (error) {
       console.error('Error inicializando carrusel:', error);
@@ -1307,21 +1379,30 @@
 <div class="notif-panel" id="notif-panel">
   <div class="notif-header">
     <h3>
-      <img src="../img/Alerta.svg" alt="Notificaciones" style="width: 20px; height: 20px; filter: brightness(0) invert(1);">
-      Notificaciones
+      Todas las notificaciones
+      <button class="notif-close" onclick="cerrarNotificaciones()">&times;</button>
     </h3>
-    <button class="notif-close" onclick="cerrarNotificaciones()">&times;</button>
+  </div>
+  
+  <div class="notif-tabs">
+    <div class="notif-tabs-left">
+      <button class="notif-tab active" data-filter="todas">Todas</button>
+      <button class="notif-tab" data-filter="sin-leer">Sin leer <span class="notif-tab-count"></span></button>
+    </div>
+    <button id="marcar-todas-vistas">Marcar como vistas</button>
   </div>
   <div class="notif-body">
-    <div class="notif-empty">
+    <div id="notif-list" style="display: none;"></div>
+    <div class="notif-empty" id="notif-empty">
       <div class="notif-empty-icon">
         <img src="../img/Alerta.svg" alt="Sin notificaciones">
       </div>
       <h4>No hay notificaciones</h4>
-      <p>Cuando tengas novedades sobre tus flotas, productos o pedidos, aparecerán aquí.</p>
+      <p>Cuando tengas novedades sobre productos, ofertas o actualizaciones, aparecerán aquí.</p>
     </div>
   </div>
 </div>
+<script src="../notificaciones.js"></script>
 <script>
 function toggleNotificaciones() {
   const panel = document.getElementById('notif-panel');

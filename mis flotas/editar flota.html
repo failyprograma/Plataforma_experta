@@ -729,13 +729,15 @@
     <button class="notif-close" onclick="cerrarNotificaciones()">&times;</button>
   </div>
   <div class="notif-body">
-    <div class="notif-empty">
+    <div id="notif-list" style="display: none;"></div>
+    <div class="notif-empty" id="notif-empty">
       <div class="notif-empty-icon"><img src="../img/Alerta.svg" alt="Sin notificaciones"></div>
       <h4>No hay notificaciones</h4>
-      <p>Cuando tengas novedades sobre tus flotas, productos o pedidos, aparecerán aquí.</p>
+      <p>Cuando tengas novedades sobre productos, ofertas o actualizaciones, aparecerán aquí.</p>
     </div>
   </div>
 </div>
+<script src="../notificaciones.js"></script>
 <script>
 function toggleNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); if (panel.classList.contains('open')) { cerrarNotificaciones(); } else { panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
 function cerrarNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
