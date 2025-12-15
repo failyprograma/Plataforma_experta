@@ -1,0 +1,80 @@
+ <!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - StarClutch</title>
+  <link rel="stylesheet" href="styles.css">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+
+
+<body>
+  <!-- Video de fondo -->
+  <video autoplay muted loop id="bg-video">
+    <source src="/IMG/fondo.mp4" type="video/mp4">
+    Tu navegador no soporta video de fondo.
+  </video>
+
+  <!-- Overlay negro -->
+  <div class="overlay"></div>
+
+  <!-- Contenedor central -->
+  <div class="login-wrapper">
+    <div class="main-card">
+
+      <!-- Columna izquierda -->
+      <div class="welcome-column">
+        <h2>Plataforma experta</h2>
+        <h3>Bienvenido/a</h3>
+        <p>
+          Aquí podrás acceder a herramientas avanzadas, catálogos especializados, soporte técnico y beneficios únicos pensados para optimizar la gestión de tu flota.
+        </p>
+        <p class="signup-text">
+  ¿Aún no tienes acceso?
+  <a href="#" class="signup-link">Solicita tu cuenta aquí.</a>
+</p>
+
+      </div>
+
+      <!-- Columna derecha -->
+      <div class="login-column">
+        <div class="login-card">
+          <h2>Iniciar Sesión</h2>
+
+          <form id="loginForm">
+
+            <div class="password-wrapper">
+              <input type="text" id="username" placeholder="Usuario" required>
+            </div>
+
+            <div class="password-wrapper">
+              <input type="password" id="password" placeholder="Contraseña" required>
+              <img id="togglePassword" src="IMG/Ocultar contraseña.svg" alt="toggle">
+            </div>
+
+            <!-- Checkbox en línea -->
+            <label class="remember">
+              <input type="checkbox" id="rememberMe">
+              <span>Recordar contraseña</span>
+            </label>
+
+            <button type="submit" class="btn-primary">Ingresar</button>
+
+            <!-- Olvidé mi contraseña abajo del botón -->
+            <a href="#" class="forgot">Olvidé mi contraseña</a>
+
+          </form>
+
+          <p id="error-msg" style="color:red; display:none;">Usuario o contraseña incorrectos</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

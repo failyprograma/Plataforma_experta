@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listado de repuestos | StarClutch</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Estilos para el modal de filtros lateral */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9998;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .overlay--visible {
+      opacity: 1;
+    }
+    
+    .filtros-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 400px;
+      max-width: 90%;
+      height: 100%;
+      background: white;
+      box-shadow: -2px 0 15px rgba(0, 0, 0, 0.2);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      z-index: 9999;
+    }
+    
+    .panel--open {
+      transform: translateX(0);
+    }
+    
+    .filtros-header-container {
+      border-bottom: 1px solid #e0e0e0;
+      padding: 20px 24px;
+      flex-shrink: 0;
+    }
+    
+    .filtros-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .filtros-header h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+    
+    .close-filtros {
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #666;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    
+    .close-filtros:hover {
+      background: #f5f5f5;
+      color: #BF1823;
+    }
+    
+    .filtros-main {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .filtros-tags {
+      padding: 16px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 1px solid #e0e0e0;
+      min-height: 56px;
+    }
+    
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #BF1823;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    
+    .tag button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0;
+      margin-left: 4px;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    
+    .tag button:hover {
+      opacity: 1;
+    }
+    
+    .filtros-content {
+      padding: 16px 24px;
+      flex: 1;
+    }
+    
+    .filtros-section {
+      margin-bottom: 20px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .section-toggle {
+      width: 100%;
+      background: #f8f9fa;
+      border: none;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 600;
+      color: #333;
+      transition: background 0.2s;
+    }
+    
+    .section-toggle:hover {
+      background: #e9ecef;
+    }
+    
+    .section-toggle .arrow {
+      transition: transform 0.3s;
+      font-size: 14px;
+    }
+    
+    .section-toggle[aria-expanded="false"] .arrow {
+      transform: rotate(-90deg);
+    }
+    
+    .section-content {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 1000px;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+    
+    .section-content.collapsed {
+      max-height: 0;
+      padding: 0 16px;
+    }
+    
+    .section-content.filtros-scroll {
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    
+    .section-content label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 6px 0;
+      font-size: 14px;
+      color: #333;
+    }
+    
+    .section-content label:hover {
+      color: #BF1823;
+    }
+    
+    .section-content input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #BF1823;
+    }
+    
+    .section-content select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    .filtros-footer-container {
+      padding: 20px 24px;
+      border-top: 1px solid #e0e0e0;
+      flex-shrink: 0;
+    }
+    
+    .aplicar-filtros {
+      width: 100%;
+      padding: 12px;
+      background: #BF1823;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .aplicar-filtros:hover {
+      background: #a01620;
+    }
+    
+    .limpiar-filtros:hover {
+      background: #e0e0e0 !important;
+    }
+
+    /* ============================================
+       MODAL SOLICITAR PRODUCTO
+    ============================================ */
+    .modal-solicitud-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-solicitud-overlay.visible {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-solicitud {
+      background: white;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-solicitud-overlay.visible .modal-solicitud {
+      transform: scale(1);
+    }
+
+    .modal-solicitud-header {
+      background: #575657;
+      color: white;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-solicitud-header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-solicitud-header h2 img {
+      width: 24px;
+      height: 24px;
+      filter: brightness(0) invert(1);
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+      line-height: 1;
+    }
+
+    .modal-close-btn:hover {
+      opacity: 1;
+    }
+
+    .modal-solicitud-body {
+      padding: 24px;
+      overflow-y: auto;
+      max-height: calc(90vh - 160px);
+    }
+
+    .modal-intro {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .form-solicitud .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-solicitud label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    .form-solicitud label .opcional {
+      font-weight: 400;
+      color: #888;
+      font-size: 12px;
+    }
+
+    .form-solicitud input,
+    .form-solicitud textarea,
+    .form-solicitud select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Poppins', sans-serif;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-sizing: border-box;
+    }
+
+    .form-solicitud input:focus,
+    .form-solicitud textarea:focus,
+    .form-solicitud select:focus {
+      outline: none;
+      border-color: #BF1823;
+      box-shadow: 0 0 0 3px rgba(191, 24, 35, 0.1);
+    }
+
+    .form-solicitud textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 400;
+      cursor: pointer;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #BF1823;
+    }
+
+    .modal-solicitud-footer {
+      padding: 16px 24px;
+      border-top: 1px solid #e0e0e0;
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .btn-cancelar-modal {
+      padding: 12px 24px;
+      background: #f5f5f5;
+      color: #333;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-cancelar-modal:hover {
+      background: #e0e0e0;
+    }
+
+    .btn-enviar-solicitud {
+      padding: 12px 24px;
+      background: #BF1823;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-enviar-solicitud:hover {
+      background: #a01620;
+    }
+
+    .btn-enviar-solicitud:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .btn-enviar-solicitud img {
+      width: 18px;
+      height: 18px;
+      filter: brightness(0) invert(1);
+    }
+
+    /* Estado de éxito */
+    .modal-success {
+      text-align: center;
+      padding: 40px 24px;
+    }
+
+    .modal-success .success-icon {
+      width: 64px;
+      height: 64px;
+      background: #28a745;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .modal-success .success-icon::after {
+      content: '✓';
+      color: white;
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .modal-success h3 {
+      color: #28a745;
+      font-size: 20px;
+      margin: 0 0 12px 0;
+    }
+
+    .modal-success p {
+      color: #555;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    @media (max-width: 600px) {
+      .modal-solicitud {
+        margin: 16px;
+        max-height: calc(100vh - 32px);
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-solicitud-footer {
+        flex-direction: column;
+      }
+
+      .btn-cancelar-modal,
+      .btn-enviar-solicitud {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="logo">
+    <img src="../img/Logo starclutch web.svg" alt="Logo Starclutch">
+  </div>
+
+  <div class="user-info">
+    <a href="../perfildeusuario/index.html">
+      <span class="nav-icon"><img src="../img/Usuario.svg" alt="Usuario"></span>
+      <span class="nav-text">Hola, <strong class="nav-username"></strong></span>
+    </a>
+  </div>
+
+  <div class="search-general">
+    <input type="text" placeholder="Búsqueda general" class="input-general">
+    <button class="btn-search-general">
+      <img src="../img/Buscar.svg" alt="Buscar">
+    </button>
+  </div>
+
+  <ul class="menu main-nav">
+    <li>
+      <a href="../mis flotas/index.html">
+        <span class="nav-icon"><img src="../img/Agregar flota.svg" alt="Ver mis flotas"></span>
+        <span class="nav-text">Mis flotas</span>
+      </a>
+    </li>
+    <li>
+      <a href="../lista de repuestos/index.html" class="active">
+        <span class="nav-icon"><img src="../img/Productos.svg" alt="Lista de repuestos"></span>
+        <span class="nav-text">Lista de repuestos</span>
+      </a>
+    </li>
+    <li>
+      <a href="../ofertas exclusivas/index.html">
+        <span class="nav-icon"><img src="../img/Descuento.svg" alt="Ofertas"></span>
+        <span class="nav-text">Ofertas exclusivas</span>
+      </a>
+    </li>
+    <li>
+      <a href="../estado de la cuenta/index.html">
+        <span class="nav-icon"><img src="../img/bill-01 1.svg" alt="Estado de cuenta"></span>
+        <span class="nav-text">Estado de cuenta</span>
+      </a>
+    </li>
+    <li>
+      <a href="../mis compras/index.html.html">
+        <span class="nav-icon"><img src="../img/miscompras.svg" alt="Mis compras"></span>
+        <span class="nav-text">Mis compras</span>
+      </a>
+    </li>
+  </ul>
+
+  <footer class="sidebar-footer">
+    <a href="https://starclutch.cl/repuestos" target="_blank" rel="noopener noreferrer" class="btn-text footer-link">
+      <span class="icon-left">
+        <img src="../img/Logo SC.svg" alt="Nosotros">
+      </span>
+      Nosotros
+    </a>
+    <p>Starclutch S.p.A<br>© Todos los derechos reservados 2025</p>
+  </footer>
+</nav>
+
+<main class="main-content">
+
+<div class="page-container">
+
+    <header class="main-header">
+      <div class="header-left">
+        <img src="../img/Productos.svg" alt="Icono Lista de repuestos" class="icono-header">
+        <h1>Listado de repuestos</h1>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-text">
+          <span class="icon-left"><img src="../img/info_471662-01 1.svg" alt="Ayuda"></span> Ayuda
+        </button>
+        <button class="btn-text" onclick="toggleCarrito()" style="position: relative;">
+          <span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/carrito.svg" alt="Carrito"><span class="cart-badge" id="cart-badge-count">0</span></span> Carrito
+        </button>
+        <button class="btn-text" id="btn-notificaciones" onclick="toggleNotificaciones()" style="position: relative;">
+          <span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/Alerta.svg" alt="Notificaciones"><span class="notif-badge" id="notif-badge-count">0</span></span> Notificaciones
+        </button>
+      </div>
+    </header>
+
+    <section class="listado-section">
+      
+      <div class="listado-header">
+        <div class="listado-acciones">
+          <button class="btn-primary listado-solicitar">
+            Solicitar nuevo producto <img src="../img/Signo más.svg" alt="Agregar" style="filter: brightness(0) invert(1);">
+          </button>
+        </div>
+        
+        <div class="listado-info">
+          <p id="paginacion-texto">Cargando inventario...</p>
+        </div>
+
+        <div class="listado-buscar" style="flex:1; margin: 0 12px;">
+          <div class="search-general">
+            <input type="text" id="input-buscador-tabla" class="input-general" placeholder="Buscar componentes...">
+            <span class="icon-search" style="position:absolute; right:12px; display:flex; align-items:center; height:100%;">
+              <img src="../img/Buscar.svg" alt="Buscar" style="width:16px; height:16px;">
+            </span>
+          </div>
+        </div>
+
+        <div class="listado-controles">
+          <button id="btn-filtrar-componentes" class="btn-text">
+            Filtrar <img src="../img/Filtros.svg" alt="Filtros">
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive" style="margin-top: 10px;">
+        <table class="sc-table" id="tabla-productos">
+          <thead>
+            <tr>
+              <th>Cód. StarClutch</th>
+              <th>Repuesto</th>
+              <th>Marca</th>
+              <th>Línea</th>
+              <th>Cód. Cliente</th>
+              <th>Precio</th>
+              <th style="text-align: center;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-productos">
+            </tbody>
+        </table>
+      </div>
+
+      <div class="listado-paginacion-controles">
+        <button class="page-btn prev" id="prevPage" aria-label="Página anterior">‹</button>
+        <span id="pageIndicator">Página 1</span>
+        <button class="page-btn next" id="nextPage" aria-label="Página siguiente">›</button>
+      </div>
+    </section>
+
+</div>
+
+</main> 
+
+<div id="modal-ver-fotos" class="sc-modal-overlay">
+  <div class="sc-modal-container" style="max-width: 800px;">
+      <div class="sc-modal-header">
+          <h3 id="titulo-foto-modal">Fotos del producto</h3>
+          <button class="btn-close-modal" onclick="cerrarModalFotos()" style="border:none; background:none; font-size:24px; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sc-modal-body" style="text-align: center; padding: 20px;">
+          <div id="contenedor-fotos-modal" style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Modal Solicitar Nuevo Producto -->
+<div class="modal-solicitud-overlay" id="modal-solicitud">
+  <div class="modal-solicitud">
+    <div class="modal-solicitud-header">
+      <h2>
+        <img src="../img/Signo más.svg" alt="Agregar">
+        Solicitar nuevo producto
+      </h2>
+      <button class="modal-close-btn" onclick="cerrarModalSolicitud()">&times;</button>
+    </div>
+    
+    <div class="modal-solicitud-body" id="modal-solicitud-body">
+      <div class="modal-intro">
+        ¡Cuéntanos qué necesitas! Completa los campos que puedas y nos encargaremos de buscarlo para ti.
+      </div>
+      
+      <form class="form-solicitud" id="form-solicitud" onsubmit="enviarSolicitudProducto(event)">
+        <div class="form-group">
+          <label for="producto-necesitado">¿Qué producto necesitas?</label>
+          <input type="text" id="producto-necesitado" name="producto" placeholder="Ej: Kit de embrague, Rodamiento, Volante bimasa..." required>
+        </div>
+
+        <div class="form-group">
+          <label for="aplicacion-vehiculo">¿Para qué vehículo o aplicación? <span class="opcional">(opcional)</span></label>
+          <input type="text" id="aplicacion-vehiculo" name="vehiculo" placeholder="Ej: Toyota Hilux 2019, Hyundai Accent 1.5...">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="marca-preferida">Marca preferida <span class="opcional">(opcional)</span></label>
+            <input type="text" id="marca-preferida" name="marca" placeholder="Ej: Sachs, Valeo, LuK...">
+          </div>
+          <div class="form-group">
+            <label for="cantidad-solicitada">Cantidad <span class="opcional">(opcional)</span></label>
+            <input type="number" id="cantidad-solicitada" name="cantidad" placeholder="1" min="1">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>¿Aceptas alternativas de otras marcas?</label>
+          <div class="checkbox-group">
+            <label>
+              <input type="checkbox" name="acepta-alternativas" id="acepta-alternativas" checked>
+              Sí, acepto alternativas equivalentes
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="comentarios-adicionales">Comentarios adicionales <span class="opcional">(opcional)</span></label>
+          <textarea id="comentarios-adicionales" name="comentarios" placeholder="Cualquier detalle extra que nos ayude a encontrar lo que necesitas..."></textarea>
+        </div>
+      </form>
+    </div>
+    
+    <div class="modal-solicitud-footer" id="modal-solicitud-footer">
+      <button type="button" class="btn-cancelar-modal" onclick="cerrarModalSolicitud()">Cancelar</button>
+      <button type="submit" form="form-solicitud" class="btn-enviar-solicitud" id="btn-enviar-solicitud">
+        Enviar solicitud
+        <img src="../img/Signo más.svg" alt="Enviar">
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="../script.js"></script>
+
+<script>
+    // Buscador que filtra en TODOS los productos cargados, no solo la página actual
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputBusqueda = document.getElementById('input-buscador-tabla');
+        if(inputBusqueda) {
+            // Debounce para evitar demasiadas actualizaciones
+            let debounceTimer;
+            
+            inputBusqueda.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    const term = e.target.value.toLowerCase().trim();
+                    const contadorInfo = document.getElementById('paginacion-texto');
+                    
+                    // Si no hay término, restaurar el cache original
+                    if (!term) {
+                        if (window.clienteProductosCacheOriginal) {
+                            clienteProductosCache = [...window.clienteProductosCacheOriginal];
+                            
+                            // Actualizar contador con el total original
+                            if (contadorInfo) {
+                                contadorInfo.innerHTML = `Total: <strong>${clienteProductosCache.length} componentes encontrados</strong>`;
+                            }
+                        }
+                        clientePaginaActual = 1;
+                        renderizarPaginaCliente();
+                        return;
+                    }
+                    
+                    // Filtrar sobre TODOS los productos originales
+                    if (window.clienteProductosCacheOriginal) {
+                        const productosFiltrados = window.clienteProductosCacheOriginal.filter(producto => {
+                            // Buscar en múltiples campos del producto
+                            const campos = [
+                                producto.repuesto || '',
+                                producto.codSC || producto.codStarClutch || producto.sku || '',
+                                producto.codCliente || '',
+                                producto.marca || '',
+                                producto.linea || '',
+                                producto.oem || '',
+                                producto.referenciaCruzada || ''
+                            ];
+                            
+                            const textoCompleto = campos.join(' ').toLowerCase();
+                            return textoCompleto.includes(term);
+                        });
+                        
+                        clienteProductosCache = productosFiltrados;
+                        clientePaginaActual = 1;
+                        renderizarPaginaCliente();
+                        
+                        // Actualizar contador
+                        if (contadorInfo) {
+                            contadorInfo.innerHTML = `<strong>${productosFiltrados.length}</strong> de <strong>${window.clienteProductosCacheOriginal.length}</strong> componentes encontrados`;
+                        }
+                    }
+                }, 300); // 300ms de debounce
+            });
+        }
+    });
+</script>
+<script src="../mobile-nav.js"></script>
+
+<script>
+// ============================================
+// MODAL SOLICITAR NUEVO PRODUCTO
+// ============================================
+
+// Función para abrir el modal
+function abrirModalSolicitud() {
+  const modal = document.getElementById('modal-solicitud');
+  modal.classList.add('visible');
+  document.body.style.overflow = 'hidden';
+  
+  // Restaurar estado del formulario
+  resetearFormularioSolicitud();
+}
+
+// Función para cerrar el modal
+function cerrarModalSolicitud() {
+  const modal = document.getElementById('modal-solicitud');
+  modal.classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+// Función para resetear el formulario
+function resetearFormularioSolicitud() {
+  const form = document.getElementById('form-solicitud');
+  const body = document.getElementById('modal-solicitud-body');
+  const footer = document.getElementById('modal-solicitud-footer');
+  
+  // Mostrar formulario original
+  body.innerHTML = `
+    <div class="modal-intro">
+      ¡Cuéntanos qué necesitas! Completa los campos que puedas y nos encargaremos de buscarlo para ti.
+    </div>
+    
+    <form class="form-solicitud" id="form-solicitud" onsubmit="enviarSolicitudProducto(event)">
+      <div class="form-group">
+        <label for="producto-necesitado">¿Qué producto necesitas?</label>
+        <input type="text" id="producto-necesitado" name="producto" placeholder="Ej: Kit de embrague, Rodamiento, Volante bimasa..." required>
+      </div>
+
+      <div class="form-group">
+        <label for="aplicacion-vehiculo">¿Para qué vehículo o aplicación? <span class="opcional">(opcional)</span></label>
+        <input type="text" id="aplicacion-vehiculo" name="vehiculo" placeholder="Ej: Toyota Hilux 2019, Hyundai Accent 1.5...">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="marca-preferida">Marca preferida <span class="opcional">(opcional)</span></label>
+          <input type="text" id="marca-preferida" name="marca" placeholder="Ej: Sachs, Valeo, LuK...">
+        </div>
+        <div class="form-group">
+          <label for="cantidad-solicitada">Cantidad <span class="opcional">(opcional)</span></label>
+          <input type="number" id="cantidad-solicitada" name="cantidad" placeholder="1" min="1">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>¿Aceptas alternativas de otras marcas?</label>
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" name="acepta-alternativas" id="acepta-alternativas" checked>
+            Sí, acepto alternativas equivalentes
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="comentarios-adicionales">Comentarios adicionales <span class="opcional">(opcional)</span></label>
+        <textarea id="comentarios-adicionales" name="comentarios" placeholder="Cualquier detalle extra que nos ayude a encontrar lo que necesitas..."></textarea>
+      </div>
+    </form>
+  `;
+  
+  footer.innerHTML = `
+    <button type="button" class="btn-cancelar-modal" onclick="cerrarModalSolicitud()">Cancelar</button>
+    <button type="submit" form="form-solicitud" class="btn-enviar-solicitud" id="btn-enviar-solicitud">
+      Enviar solicitud
+      <img src="../img/Signo más.svg" alt="Enviar">
+    </button>
+  `;
+  
+  footer.style.display = 'flex';
+}
+
+// Función para enviar la solicitud
+async function enviarSolicitudProducto(event) {
+  event.preventDefault();
+  
+  const btn = document.getElementById('btn-enviar-solicitud');
+  const originalText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = 'Enviando...';
+  
+  // Obtener datos del usuario logueado desde el servidor
+  let userData = {};
+  try {
+    const userSession = JSON.parse(localStorage.getItem('starclutch_user') || '{}');
+    
+    if (userSession && userSession.id) {
+      // Obtener datos completos desde el servidor
+      const userResponse = await fetch(`/api/obtener-usuario?userId=${userSession.id}`);
+      const userResult = await userResponse.json();
+      
+      if (userResult.ok && userResult.user) {
+        userData = userResult.user;
+      }
+    }
+  } catch (e) {
+    console.error('Error al obtener datos de usuario:', e);
+  }
+  
+  // Recopilar datos del formulario
+  const formData = {
+    producto: document.getElementById('producto-necesitado').value.trim(),
+    vehiculo: document.getElementById('aplicacion-vehiculo').value.trim() || 'No especificado',
+    marca: document.getElementById('marca-preferida').value.trim() || 'Sin preferencia',
+    cantidad: document.getElementById('cantidad-solicitada').value || '1',
+    aceptaAlternativas: document.getElementById('acepta-alternativas').checked ? 'Sí' : 'No',
+    comentarios: document.getElementById('comentarios-adicionales').value.trim() || 'Sin comentarios',
+    // Datos del usuario (desde el servidor)
+    idUsuario: userData.id || 'No identificado',
+    nombreUsuario: userData.nombre || 'Usuario no identificado',
+    emailUsuario: userData.email || 'No registrado',
+    telefonoUsuario: userData.telefono || 'No registrado'
+  };
+  
+  try {
+    const response = await fetch('/api/solicitar-producto', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      mostrarExitoSolicitud();
+    } else {
+      throw new Error(result.message || 'Error al enviar la solicitud');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Hubo un problema al enviar tu solicitud. Por favor intenta nuevamente.');
+    btn.disabled = false;
+    btn.innerHTML = originalText;
+  }
+}
+
+// Mostrar pantalla de éxito
+function mostrarExitoSolicitud() {
+  const body = document.getElementById('modal-solicitud-body');
+  const footer = document.getElementById('modal-solicitud-footer');
+  
+  body.innerHTML = `
+    <div class="modal-success">
+      <div class="success-icon"></div>
+      <h3>¡Solicitud enviada!</h3>
+      <p>Gracias por tu solicitud. Te contactaremos a la brevedad al correo registrado en tu cuenta o vía telefónica para darte información sobre el producto.</p>
+    </div>
+  `;
+  
+  footer.innerHTML = `
+    <button type="button" class="btn-enviar-solicitud" onclick="cerrarModalSolicitud()" style="margin: 0 auto;">
+      Entendido
+    </button>
+  `;
+}
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('modal-solicitud').addEventListener('click', (e) => {
+  if (e.target.classList.contains('modal-solicitud-overlay')) {
+    cerrarModalSolicitud();
+  }
+});
+
+// Cerrar modal con tecla Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const modal = document.getElementById('modal-solicitud');
+    if (modal.classList.contains('visible')) {
+      cerrarModalSolicitud();
+    }
+  }
+});
+
+// Vincular el botón de solicitar nuevo producto
+document.addEventListener('DOMContentLoaded', () => {
+  const btnSolicitar = document.querySelector('.listado-solicitar');
+  if (btnSolicitar) {
+    btnSolicitar.addEventListener('click', abrirModalSolicitud);
+  }
+});
+</script>
+
+<!-- Panel de Carrito -->
+<div class="cart-overlay" id="cart-overlay" onclick="cerrarCarrito()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-header">
+    <h3><img src="../img/carrito.svg" alt="" style="width:20px;height:20px;filter:brightness(0) invert(1);margin-right:8px;">Carrito</h3>
+    <button class="cart-close" onclick="cerrarCarrito()">&times;</button>
+  </div>
+  <div class="cart-body">
+    <div class="cart-empty" id="cart-empty">
+      <img src="../img/carrito.svg" alt="Carrito vacío" />
+      <p>Tu carrito está vacío</p>
+    </div>
+    <ul class="cart-list" id="cart-list"></ul>
+  </div>
+  <div class="cart-footer" id="cart-footer" style="display:none;">
+    <p class="cart-total"><strong>Total:</strong> $0 <span>IVA incluido</span></p>
+    <div class="cart-actions">
+      <button class="cart-btn-primary" onclick="generarOrdenCompraDesdeOtroHTML()">Generar OC</button>
+      <button class="cart-btn-secondary" onclick="cotizarDesdeOtroHTML()">Cotizar</button>
+    </div>
+    <a href="../mis flotas/carrito.html" class="cart-link">Ver resumen del carrito</a>
+  </div>
+</div>
+
+<!-- Panel de Notificaciones -->
+<div class="notif-overlay" id="notif-overlay" onclick="cerrarNotificaciones()"></div>
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">
+    <h3><img src="../img/Alerta.svg" alt="Notificaciones" style="width: 20px; height: 20px; filter: brightness(0) invert(1);"> Notificaciones</h3>
+    <button class="notif-close" onclick="cerrarNotificaciones()">&times;</button>
+  </div>
+  <div class="notif-body">
+    <div class="notif-empty">
+      <div class="notif-empty-icon"><img src="../img/Alerta.svg" alt="Sin notificaciones"></div>
+      <h4>No hay notificaciones</h4>
+      <p>Cuando tengas novedades sobre tus flotas, productos o pedidos, aparecerán aquí.</p>
+    </div>
+  </div>
+</div>
+<script>
+function toggleNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); if (panel.classList.contains('open')) { cerrarNotificaciones(); } else { panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
+function cerrarNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { const panel = document.getElementById('notif-panel'); if (panel && panel.classList.contains('open')) cerrarNotificaciones(); const cartPanel = document.getElementById('cart-panel'); if (cartPanel && cartPanel.classList.contains('open')) cerrarCarrito(); } });
+async function toggleCarrito() { const panel = document.getElementById('cart-panel'); const overlay = document.getElementById('cart-overlay'); if (panel.classList.contains('open')) { cerrarCarrito(); } else { if (typeof CarritoGlobal !== 'undefined') { await CarritoGlobal.sincronizar(); CarritoGlobal.iniciarPolling(); } panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
+function cerrarCarrito() { if (typeof CarritoGlobal !== 'undefined') CarritoGlobal.detenerPolling(); const panel = document.getElementById('cart-panel'); const overlay = document.getElementById('cart-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+</script>
+
+</body>
+</html>

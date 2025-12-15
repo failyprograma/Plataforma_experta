@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Starclutch - Mis Flotas</title>
+  <link rel="stylesheet" href="../styles.css">
+
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Estilos para el modal de filtros lateral */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9998;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .overlay--visible {
+      opacity: 1;
+    }
+    
+    .filtros-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 400px;
+      max-width: 90%;
+      height: 100%;
+      background: white;
+      box-shadow: -2px 0 15px rgba(0, 0, 0, 0.2);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      z-index: 9999;
+    }
+    
+    .panel--open {
+      transform: translateX(0);
+    }
+    
+    .filtros-header-container {
+      border-bottom: 1px solid #e0e0e0;
+      padding: 20px 24px;
+      flex-shrink: 0;
+    }
+    
+    .filtros-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .filtros-header h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+    
+    .close-filtros {
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #666;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    
+    .close-filtros:hover {
+      background: #f5f5f5;
+      color: #BF1823;
+    }
+    
+    .filtros-main {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .filtros-tags {
+      padding: 16px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 1px solid #e0e0e0;
+      min-height: 56px;
+    }
+    
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #BF1823;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    
+    .tag button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0;
+      margin-left: 4px;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    
+    .tag button:hover {
+      opacity: 1;
+    }
+    
+    .filtros-content {
+      padding: 16px 24px;
+      flex: 1;
+    }
+    
+    .filtros-section {
+      margin-bottom: 20px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .section-toggle {
+      width: 100%;
+      background: #f8f9fa;
+      border: none;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 600;
+      color: #333;
+      transition: background 0.2s;
+    }
+    
+    .section-toggle:hover {
+      background: #e9ecef;
+    }
+    
+    .section-toggle .arrow {
+      transition: transform 0.3s;
+      font-size: 14px;
+    }
+    
+    .section-toggle[aria-expanded="false"] .arrow {
+      transform: rotate(-90deg);
+    }
+    
+    .section-content {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 1000px;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+    
+    .section-content.collapsed {
+      max-height: 0;
+      padding: 0 16px;
+    }
+    
+    .section-content.filtros-scroll {
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    
+    .section-content label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 6px 0;
+      font-size: 14px;
+      color: #333;
+    }
+    
+    .section-content label:hover {
+      color: #BF1823;
+    }
+    
+    .section-content input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #BF1823;
+    }
+    
+    .section-content select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    .filtros-footer-container {
+      padding: 20px 24px;
+      border-top: 1px solid #e0e0e0;
+      flex-shrink: 0;
+    }
+    
+    .aplicar-filtros {
+      width: 100%;
+      padding: 12px;
+      background: #BF1823;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .aplicar-filtros:hover {
+      background: #a01620;
+    }
+    
+    .limpiar-filtros:hover {
+      background: #e0e0e0 !important;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAV LATERAL -->
+  <nav class="sidebar">
+    <div class="logo">
+      <img src="../img/Logo starclutch web.svg" alt="Logo Starclutch">
+    </div>
+
+    <div class="user-info">
+      <a href="../perfildeusuario/index.html">
+        <span class="nav-icon"><img src="../img/Usuario.svg" alt="Usuario"></span>
+        <span class="nav-text">Hola, <strong class="nav-username"></strong></span>
+      </a>
+    </div>
+
+   <div class="search-general">
+  <input type="text" placeholder="Búsqueda general" class="input-general">
+  <button class="btn-search-general">
+    <img src="../img/Buscar.svg" alt="Buscar">
+  </button>
+</div>
+
+
+
+
+    <ul class="menu main-nav">
+      <li>
+        <a href="../mis flotas/index.html">
+          <span class="nav-icon"><img src="../img/Agregar flota.svg" alt="Ver mi flotas"></span>
+          <span class="nav-text">Mis flotas</span>
+        </a>
+      </li>
+      <li>
+        <a href="../lista de repuestos/index.html">
+          <span class="nav-icon"><img src="../img/Productos.svg" alt="Lista de repuestos"></span>
+          <span class="nav-text">Lista de repuestos</span>
+        </a>
+      </li>
+      <li>
+        <a href="../ofertas exclusivas/index.html">
+          <span class="nav-icon"><img src="../img/Descuento.svg" alt="Ofertas"></span>
+          <span class="nav-text">Ofertas exclusivas</span>
+        </a>
+      </li>
+      <li>
+        <a href="../estado de la cuenta/index.html">
+          <span class="nav-icon"><img src="../img/bill-01 1.svg" alt="Ver mis repuestos"></span>
+          <span class="nav-text">Estado de cuenta</span>
+        </a>
+      </li>
+      <li>
+        <a href="../mis compras/index.html.html">
+          <span class="nav-icon"><img src="../img/miscompras.svg" alt="Ver mis compras"></span>
+          <span class="nav-text">Mis compras</span>
+        </a>
+      </li>
+    </ul>
+
+    <footer class="sidebar-footer">
+  <a href="https://starclutch.cl/repuestos" 
+     target="_blank" 
+     rel="noopener noreferrer"
+     class="btn-text footer-link">
+     <span class="icon-left"><img src="../img/Logo SC.svg" alt="Ver mis repuestos"></span> Nosotros
+  </a>
+  <p>Starclutch S.p.A<br>© Todos los derechos reservados 2025</p>
+</footer>
+
+
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-content">
+    <div class="page-container">
+
+      <!-- HEADER -->
+<header class="main-header">
+  <!-- Bloque IZQUIERDO -->
+  <div class="header-left">
+    <img src="../img/Agregar flota.svg" alt="Icono Mis Flotas" class="icono-header">
+    <h1>Mis flotas</h1>
+  </div>
+
+  <!-- Bloque DERECHO -->
+  <div class="header-actions">
+    <button class="btn-primary">
+      Mantenimiento de la flota <img src="../img/mantención.svg" alt="Mantenimiento" style="filter: brightness(0) invert(1);">
+    </button>
+
+    <button class="btn-text">
+      <span class="icon-left"><img src="../img/info_471662-01 1.svg" alt="Ayuda"></span> Ayuda
+    </button>
+
+    <button class="btn-text" onclick="toggleCarrito()" style="position: relative;">
+      <span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/carrito.svg" alt="Carrito"><span class="cart-badge" id="cart-badge-count">0</span></span> Carrito
+    </button>
+
+    <button class="btn-text" id="btn-notificaciones" onclick="toggleNotificaciones()" style="position: relative;">
+      <span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/Alerta.svg" alt="Notificaciones"><span class="notif-badge" id="notif-badge-count">0</span></span> Notificaciones
+    </button>
+  </div>
+</header>
+
+       <!-- FLEET: carrusel con 2 filas y 5 visibles por página -->
+    
+
+
+        <div class="section-header">
+          <h2>Todos los vehículos</h2>
+          <div class="section-actions">
+           <select id="select-flota">
+  <option value="">Seleccionar flota</option>
+</select>
+            <button class="btn-primary" id="btn-nueva-flota">
+  Nueva flota <img src="../img/Signo más.svg" alt="Nueva flota">
+</button>
+
+
+
+
+<!-- OVERLAY NUEVA FLOTA (VERSIÓN RENOMBRADA) -->
+<div id="overlay-nueva-flota" class="overlay-flota" aria-hidden="true">
+  <div class="modal-flota">
+    
+    <!-- HEADER -->
+    <div class="modal-flota-header">
+      <span class="modal-flota-title">Nueva flota</span>
+      <button id="btnCerrar" class="close-flota-btn">✕</button>
+    </div>
+
+    <!-- BODY -->
+    <div class="modal-flota-body">
+      <div class="section">
+        <h3>Carga manual (uno a uno)</h3>
+        <a href="nueva flota.html" class="btn-secondary">
+  Agregar vehículos
+</a>
+
+      </div>
+
+      <div class="section">
+        <h3>Carga masiva (subir excel)</h3>
+       <button class="btn-primary btn-white-svg">
+  Descargar plantilla
+  <img src="../img/descargarrr.svg" alt="descargar">
+</button>
+      </div>
+
+      <div class="section">
+        <div id="dropzone" class="dropzone">
+          <img src="../img/Subir plantilla.svg" alt="Subir plantilla">
+          <p>Arrastrar o subir el archivo</p>
+        </div>
+        <p id="fileName" class="nf-file-name"></p>
+        <input id="fileInput" type="file" hidden>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+           <a id="btn-editar-flota" class="btn-secondary">
+  Editar flota 
+  <img src="../img/Editar flota.svg" alt="Editar flota">
+</a>
+
+            
+            
+  <!-- 🔍 Buscador de patente -->
+<!-- Buscador patente -->
+<div class="search-patente">
+  <input type="text" placeholder="Buscar patente" class="input-patente">
+  <button class="btn-search-patente">
+    <img src="../img/Buscar.svg" alt="Buscar">
+  </button>
+  
+</div>
+
+
+
+<button id="btn-filtrar-vehiculos" class="btn-text">
+  Filtrar <img src="../img/Filtros.svg" alt="Filtros">
+</button>
+
+
+          </div>
+        </div>
+
+
+        
+     <section class="main-carousel">
+  <div class="carousel" data-rows="2" data-cols="5">
+    <button class="carousel-btn prev" aria-label="Anterior">‹</button>
+    <div class="carousel-viewport">
+      <div class="carousel-track">
+       
+      </div>
+    </div>
+    <button class="carousel-btn next" aria-label="Siguiente">›</button>
+    <ul class="carousel-indicators"></ul>
+  </div>
+</section>
+
+<section class="favorites-section">
+  <div class="section-header"><h2>Vehículos favoritos</h2></div>
+  <div class="carousel" data-rows="1" data-cols="4">
+    <button class="carousel-btn prev" aria-label="Anterior favorito">‹</button>
+    <div class="carousel-viewport">
+     <div class="carousel-track" id="track-favoritos-global">
+       
+      </div>
+    </div>
+    <button class="carousel-btn next" aria-label="Siguiente favorito">›</button>
+    <ul class="carousel-indicators"></ul>
+  </div>
+</section>
+
+<div id="flota-modal-index" class="flota-modal" style="display: none; z-index: 99999;">
+  <div class="flota-modal-content">
+    <div class="flota-modal-header">
+      <span>Nombra tu flota importada</span>
+      <span id="flota-close-index" class="flota-close-btn" style="cursor:pointer;">&times;</span>
+    </div>
+    <div class="flota-modal-body">
+      <p class="flota-modal-text" style="text-align: center; margin-bottom: 16px; font-size: 14px; color: #333;">
+        Ingresa un nombre para identificar la flota que acabas de subir.
+      </p>
+      <input type="text" id="input-nombre-flota-index" placeholder="Ej: Flota Zona Sur" class="flota-input-text" />
+      <button id="btn-confirmar-importacion" class="btn-primary" style="margin-top:15px;">Guardar Flota</button>
+    </div>
+  </div>
+</div>
+
+  
+  </main>
+  
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+<script src="../script.js"></script>
+<script src="../mobile-nav.js"></script>
+
+<!-- Panel de Carrito -->
+<div class="cart-overlay" id="cart-overlay" onclick="cerrarCarrito()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-header">
+    <h3><img src="../img/carrito.svg" alt="" style="width:20px;height:20px;filter:brightness(0) invert(1);margin-right:8px;">Carrito</h3>
+    <button class="cart-close" onclick="cerrarCarrito()">&times;</button>
+  </div>
+  <div class="cart-body">
+    <div class="cart-empty" id="cart-empty">
+      <img src="../img/carrito.svg" alt="Carrito vacío" />
+      <p>Tu carrito está vacío</p>
+    </div>
+    <ul class="cart-list" id="cart-list"></ul>
+  </div>
+  <div class="cart-footer" id="cart-footer" style="display:none;">
+    <p class="cart-total"><strong>Total:</strong> $0 <span>IVA incluido</span></p>
+    <div class="cart-actions">
+      <button class="cart-btn-primary" onclick="generarOrdenCompraDesdeOtroHTML()">Generar OC</button>
+      <button class="cart-btn-secondary" onclick="cotizarDesdeOtroHTML()">Cotizar</button>
+    </div>
+    <a href="carrito.html" class="cart-link">Ver resumen del carrito</a>
+  </div>
+</div>
+
+<!-- Panel de Notificaciones -->
+<div class="notif-overlay" id="notif-overlay" onclick="cerrarNotificaciones()"></div>
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">
+    <h3>
+      <img src="../img/Alerta.svg" alt="Notificaciones" style="width: 20px; height: 20px; filter: brightness(0) invert(1);">
+      Notificaciones
+    </h3>
+    <button class="notif-close" onclick="cerrarNotificaciones()">&times;</button>
+  </div>
+  
+  <div class="notif-body">
+    <div class="notif-empty">
+      <div class="notif-empty-icon">
+        <img src="../img/Alerta.svg" alt="Sin notificaciones">
+      </div>
+      <h4>No hay notificaciones</h4>
+      <p>Cuando tengas novedades sobre tus flotas, productos o pedidos, aparecerán aquí.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// Funciones del panel de notificaciones
+function toggleNotificaciones() {
+  const panel = document.getElementById('notif-panel');
+  const overlay = document.getElementById('notif-overlay');
+  
+  if (panel.classList.contains('open')) {
+    cerrarNotificaciones();
+  } else {
+    panel.classList.add('open');
+    overlay.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function cerrarNotificaciones() {
+  const panel = document.getElementById('notif-panel');
+  const overlay = document.getElementById('notif-overlay');
+  
+  panel.classList.remove('open');
+  overlay.classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+// Cerrar con tecla Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const panel = document.getElementById('notif-panel');
+    if (panel && panel.classList.contains('open')) {
+      cerrarNotificaciones();
+    }
+    const cartPanel = document.getElementById('cart-panel');
+    if (cartPanel && cartPanel.classList.contains('open')) {
+      cerrarCarrito();
+    }
+  }
+});
+
+// Funciones del panel de carrito
+async function toggleCarrito() {
+  const panel = document.getElementById('cart-panel');
+  const overlay = document.getElementById('cart-overlay');
+  
+  if (panel.classList.contains('open')) {
+    cerrarCarrito();
+  } else {
+    // Sincronizar con servidor y actualizar UI del carrito antes de mostrar
+    if (typeof CarritoGlobal !== 'undefined') {
+      await CarritoGlobal.sincronizar();
+      CarritoGlobal.iniciarPolling(); // Iniciar actualización en tiempo real
+    }
+    panel.classList.add('open');
+    overlay.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function cerrarCarrito() {
+  const panel = document.getElementById('cart-panel');
+  const overlay = document.getElementById('cart-overlay');
+  
+  // Detener polling al cerrar
+  if (typeof CarritoGlobal !== 'undefined') {
+    CarritoGlobal.detenerPolling();
+  }
+  
+  panel.classList.remove('open');
+  overlay.classList.remove('visible');
+  document.body.style.overflow = '';
+}
+</script>
+
+</body>
+</html>
+
+

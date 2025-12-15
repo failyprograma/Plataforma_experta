@@ -1,0 +1,2204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrador Star | StarClutch</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    @keyframes slideInRight {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes slideOutRight {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+    
+    /* Estilos para drag & drop de fotos */
+    .foto-draggable {
+      cursor: move !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .foto-draggable:hover {
+      transform: scale(1.05);
+    }
+    
+    .foto-dragging {
+      opacity: 0.5;
+      transform: scale(0.95);
+    }
+    
+    .foto-drag-over {
+      transform: scale(1.1);
+      box-shadow: 0 0 10px rgba(191, 24, 35, 0.5);
+    }
+    
+    .foto-position-badge {
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      background: linear-gradient(135deg, #BF1823, #d32f2f);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: bold;
+      border: 2px solid white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      z-index: 10;
+    }
+    
+    .foto-position-badge.primera {
+      background: linear-gradient(135deg, #4CAF50, #66BB6A);
+      animation: pulse-first 2s infinite;
+    }
+    
+    @keyframes pulse-first {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* ============================================
+       ESTILOS PARA SECCIÓN DE BANNERS OFERTAS
+    ============================================ */
+    .banner-upload-section {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .banner-section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin: 0 0 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .banner-section-title .icon-title {
+      width: 22px;
+      height: 22px;
+      filter: invert(12%) sepia(98%) saturate(5765%) hue-rotate(353deg) brightness(82%) contrast(96%);
+    }
+
+    .banner-section-desc {
+      font-size: 14px;
+      color: #666;
+      margin: 0 0 20px 0;
+    }
+
+    .banner-upload-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .banner-upload-box {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .banner-upload-box h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #444;
+      margin: 0 0 12px 0;
+    }
+
+    .drop-zone-banner {
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      padding: 30px 20px;
+      text-align: center;
+      background: #fafafa;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .drop-zone-banner:hover {
+      border-color: #BF1823;
+      background: #fff5f5;
+    }
+
+    .drop-zone-banner.drag-over {
+      border-color: #BF1823;
+      background: #ffe8ea;
+      transform: scale(1.02);
+    }
+
+    .drop-zone-content {
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .drop-icon {
+      display: block;
+      margin: 0 auto 8px auto;
+      width: 36px;
+      height: 36px;
+    }
+
+    .drop-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .drop-text {
+      font-size: 14px;
+      color: #333;
+      margin: 0 0 4px 0;
+    }
+
+    .drop-subtext {
+      font-size: 12px;
+      color: #888;
+      margin: 0;
+    }
+
+    .size-hint {
+      font-size: 12px;
+      color: #666;
+      margin: 12px 0 16px 0;
+      padding: 8px 12px;
+      background: #fff3cd;
+      border-radius: 6px;
+      border-left: 3px solid #ffc107;
+    }
+
+    .preview-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      min-height: 20px;
+    }
+
+    .preview-item {
+      position: relative;
+      width: 100px;
+      height: 70px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid #e0e0e0;
+      cursor: grab;
+      transition: all 0.2s ease;
+      background: #f5f5f5;
+    }
+
+    .preview-item:hover {
+      border-color: #BF1823;
+      transform: scale(1.05);
+    }
+
+    .preview-item.dragging {
+      opacity: 0.5;
+      transform: scale(0.95);
+    }
+
+    .preview-item.drag-over {
+      border-color: #4CAF50;
+      transform: scale(1.08);
+    }
+
+    .preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-item .preview-order {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      background: linear-gradient(135deg, #BF1823, #d32f2f);
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .preview-item .preview-order.first {
+      background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    }
+
+    .preview-item .btn-delete-preview {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      border: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .preview-item:hover .btn-delete-preview {
+      opacity: 1;
+    }
+
+    .preview-item .btn-delete-preview:hover {
+      background: #BF1823;
+    }
+
+    .banner-actions-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .btn-guardar-banners {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      font-size: 15px;
+    }
+
+    .banner-save-status {
+      font-size: 14px;
+      color: #4CAF50;
+      font-weight: 500;
+    }
+
+    @media (max-width: 900px) {
+      .banner-upload-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Estilos para el modal de filtros lateral */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9998;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .overlay--visible {
+      opacity: 1;
+    }
+    
+    .filtros-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 400px;
+      max-width: 90%;
+      height: 100%;
+      background: white;
+      box-shadow: -2px 0 15px rgba(0, 0, 0, 0.2);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      z-index: 9999;
+    }
+    
+    .panel--open {
+      transform: translateX(0);
+    }
+    
+    .filtros-header-container {
+      border-bottom: 1px solid #e0e0e0;
+      padding: 20px 24px;
+      flex-shrink: 0;
+    }
+    
+    .filtros-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .filtros-header h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+    
+    .close-filtros {
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #666;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    
+    .close-filtros:hover {
+      background: #f5f5f5;
+      color: #BF1823;
+    }
+    
+    .filtros-main {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .filtros-tags {
+      padding: 16px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 1px solid #e0e0e0;
+      min-height: 56px;
+    }
+    
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #BF1823;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    
+    .tag button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0;
+      margin-left: 4px;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    
+    .tag button:hover {
+      opacity: 1;
+    }
+    
+    .filtros-content {
+      padding: 16px 24px;
+      flex: 1;
+    }
+    
+    .filtros-section {
+      margin-bottom: 20px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .section-toggle {
+      width: 100%;
+      background: #f8f9fa;
+      border: none;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 600;
+      color: #333;
+      transition: background 0.2s;
+    }
+    
+    .section-toggle:hover {
+      background: #e9ecef;
+    }
+    
+    .section-toggle .arrow {
+      transition: transform 0.3s;
+      font-size: 14px;
+    }
+    
+    .section-toggle[aria-expanded="false"] .arrow {
+      transform: rotate(-90deg);
+    }
+    
+    .section-content {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 1000px;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+    
+    .section-content.collapsed {
+      max-height: 0;
+      padding: 0 16px;
+    }
+    
+    .section-content.filtros-scroll {
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    
+    .section-content label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 6px 0;
+      font-size: 14px;
+      color: #333;
+    }
+    
+    .section-content label:hover {
+      color: #BF1823;
+    }
+    
+    .section-content input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #BF1823;
+    }
+    
+    .section-content select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    .filtros-footer-container {
+      padding: 20px 24px;
+      border-top: 1px solid #e0e0e0;
+      flex-shrink: 0;
+    }
+    
+    .aplicar-filtros {
+      width: 100%;
+      padding: 12px;
+      background: #BF1823;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .aplicar-filtros:hover {
+      background: #a01620;
+    }
+    
+    .limpiar-filtros:hover {
+      background: #e0e0e0 !important;
+    }
+  </style>
+</head>
+<body class="admin-body">
+
+  <nav class="sc-navbar">
+    <div class="navbar-container">
+      <div class="nav-brand">
+        <img src="../img/Logo SC.svg" alt="Logo StarClutch">
+        <span class="divider">|</span>
+        <h1>Administrador Star</h1>
+      </div>
+      <ul class="nav-menu-horizontal">
+        <li><a href="#flotas" class="active">Mis flotas</a></li>
+        <li><a href="#repuestos">Lista de repuestos</a></li>
+        <li><a href="#ofertas">Ofertas exclusivas</a></li>
+        <li><a href="#cuenta">Estado de cuenta</a></li>
+        <li><a href="#compras">Mis compras</a></li>
+      </ul>
+     <div class="nav-user">
+        <button class="btn-text">
+          <span class="icon-right"><img src="../img/Usuario.svg" alt="Usuario"></span>
+          Hola, <strong>Admin</strong>
+        </button>
+        
+        <button class="btn-text btn-logout" onclick="cerrarSesion()">
+            Cerrar sesión <img src="../img/Cerrar sesión.svg" alt="Salir" style="margin-left:5px;">
+        </button>
+      </div>
+  </nav>
+
+  <main class="admin-container">
+
+<section class="client-bar-section">
+    <!-- BLOQUE 1: Gestionando a + Crear usuario -->
+    <div style="display: flex; align-items: center; gap: 20px; flex-shrink: 0;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <label for="client-select" style="white-space: nowrap;">Gestionando a:</label>
+            <div class="sc-select-wrapper">
+              <select id="client-select" class="sc-input-select">
+                <option value="" disabled selected>Cargando clientes...</option>
+              </select>
+            </div>
+        </div>
+        
+        <button class="btn-primary" onclick="abrirModalCrearUsuario()" style="white-space: nowrap; flex-shrink: 0;">
+            <span style="font-size: 18px; margin-right: 5px;">+</span> Crear nuevo usuario
+        </button>
+    </div>
+    
+    <!-- BLOQUE 2: Botones 2x2 (derecha) -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-shrink: 0;">
+        <button class="btn-secondary" onclick="abrirModalAgregarModeloVehiculo()" style="white-space: nowrap; font-size: 13px; padding: 6px 12px;">
+            <span style="font-size: 14px; margin-right: 4px;">+</span> Agregar modelo vehículo
+        </button>
+        <button class="btn-secondary" onclick="abrirModalVerMarcasModelos()" style="white-space: nowrap; font-size: 13px; padding: 6px 12px;">
+            <img src="../img/Ocultar contraseña.svg" alt="Ver" style="width: 14px; height: 14px; margin-right: 4px; filter: invert(22%) sepia(97%) saturate(3042%) hue-rotate(345deg) brightness(85%) contrast(95%);"> Ver marcas/modelos
+        </button>
+        <button class="btn-secondary" onclick="abrirModalAgregarMarcaProducto()" style="white-space: nowrap; font-size: 13px; padding: 6px 12px;">
+            <span style="font-size: 14px; margin-right: 4px;">+</span> Agregar marca producto
+        </button>
+        <button class="btn-secondary" onclick="abrirModalVerMarcasProductos()" style="white-space: nowrap; font-size: 13px; padding: 6px 12px;">
+            <img src="../img/Ocultar contraseña.svg" alt="Ver" style="width: 14px; height: 14px; margin-right: 4px; filter: invert(22%) sepia(97%) saturate(3042%) hue-rotate(345deg) brightness(85%) contrast(95%);"> Ver marcas productos
+        </button>
+        <button class="btn-secondary" onclick="abrirModalCrucesVehiculos()" style="white-space: nowrap; font-size: 13px; padding: 6px 12px;">
+            <span style="font-size: 14px; margin-right: 4px;">+</span> Cruces de vehículos
+        </button>
+        <button class="btn-secondary" onclick="abrirModalVerCrucesSistema()" style="white-space: nowrap; font-size: 13px; padding: 6px 12px;">
+            <img src="../img/Ocultar contraseña.svg" alt="Ver" style="width: 14px; height: 14px; margin-right: 4px; filter: invert(22%) sepia(97%) saturate(3042%) hue-rotate(345deg) brightness(85%) contrast(95%);"> Ver cruces en el sistema
+        </button>
+    </div>
+</section>
+    <section class="admin-section">
+      <h2 class="section-title">Información del Cliente</h2>
+      <div class="user-info-card">
+        
+        <div class="info-item">
+          <span class="info-label">Nombre Empresa</span>
+          <div class="info-value-row" id="info-nombre">
+            <strong id="info-nombre-text">-</strong>
+            <button class="btn-icon-edit" onclick="editarCampoCliente('nombre')"><img src="../img/Editar flota.svg" alt="Editar"></button>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Usuario (ID de acceso)</span>
+          <div class="info-value-row" id="info-id">
+            <strong id="info-id-text">-</strong>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Correo electrónico</span>
+          <div class="info-value-row" id="info-email">
+            <strong id="info-email-text">-</strong>
+            <button class="btn-icon-edit" onclick="editarCampoCliente('email')"><img src="../img/Editar flota.svg" alt="Editar"></button>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Contraseña</span>
+          <div class="info-value-row" id="info-password">
+            <strong id="info-password-text">-</strong>
+            <button class="btn-icon-edit" onclick="editarCampoCliente('password')"><img src="../img/Editar flota.svg" alt="Editar"></button>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Dirección de envío</span>
+          <div class="info-value-row" id="info-direccion">
+            <strong id="info-direccion-text">-</strong>
+            <button class="btn-icon-edit" onclick="editarCampoCliente('direccion')"><img src="../img/Editar flota.svg" alt="Editar"></button>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Contacto telefónico</span>
+          <div class="info-value-row" id="info-telefono">
+            <strong id="info-telefono-text">-</strong>
+            <button class="btn-icon-edit" onclick="editarCampoCliente('telefono')"><img src="../img/Editar flota.svg" alt="Editar"></button>
+          </div>
+        </div>
+
+      </div>
+      
+      <div style="margin-top: 20px; text-align: right;">
+        <button class="btn-primary" onclick="eliminarCuentaCliente()" style="background: #BF1823; border-color: #BF1823; display: inline-flex; align-items: center; gap: 8px;">
+          <img src="../img/Deleteblanco.svg" alt="Eliminar" style="width: 16px; height: 16px;"> Eliminar cuenta
+        </button>
+      </div>
+    </section>
+
+  <section id="flotas" class="admin-section">
+  <div class="section-header-row">
+    <h2 class="section-title">Mis Flotas</h2>
+    <div style="display: flex; gap: 12px;">
+      <button class="btn-primary" onclick="adminAbrirModalNuevaFlota()">
+        <span style="font-size: 18px; margin-right: 5px;">+</span> Nueva flota cliente
+      </button>
+      <button class="btn-secondary" onclick="adminAbrirModalAgregarVehiculo()" id="btn-agregar-vehiculo-flota" style="display: none;">
+        <span style="font-size: 18px; margin-right: 5px;">+</span> Agregar vehículo a la flota
+      </button>
+    </div>
+  </div>
+  
+  <div class="admin-toolbar">
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <div class="sc-select-wrapper" style="width: 280px;">
+        <select id="admin-flota-select" class="sc-input-select">
+          <option value="" disabled selected>Primero seleccione un cliente arriba</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="adminEliminarFlota()" style="display: flex; align-items: center; gap: 8px;">
+        <img src="../img/Deleteblanco.svg" alt="Eliminar" style="width: 18px; height: 18px;">
+        Eliminar flota
+      </button>
+    </div>
+    
+    <div class="admin-actions" style="display: flex; gap: 12px; align-items: center;">
+      <div class="search-repuesto">
+        <input type="text" placeholder="Buscar vehículo..." class="input-repuesto" id="admin-buscador-flotas">
+        <button class="btn-search-repuesto"><img src="../img/Buscar.svg" alt="Buscar"></button>
+      </div>
+      <span class="results-text" id="admin-contador-flotas" style="margin: 0 12px;">0 vehículos</span>
+      <button class="btn-text" id="btn-filtrar-admin-flotas">
+        Filtrar <img src="../img/Filtros.svg" alt="Filtros">
+      </button>
+    </div>
+  </div>
+
+  <div class="table-responsive" style="margin-top: 20px;">
+    <table class="sc-table" id="tabla-flotas-admin">
+      <thead>
+        <tr>
+          <th>Tipo de vehículo</th>
+          <th>Marca</th>
+          <th>Modelo</th>
+          <th>Año</th>
+          <th>Motor (opcional)</th>
+          <th>Patente</th>
+          <th style="text-align: center;">Conductor</th>
+          <th style="text-align: center;">Favoritos</th>
+          <th style="text-align: center;">Editar</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-flotas-admin">
+        <tr>
+            <td colspan="9" style="text-align:center; padding:40px; color:#999;">
+                Seleccione una flota para ver el listado de vehículos.
+            </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <button class="page-btn arrow">&lt;</button>
+    <button class="page-btn active">1</button>
+    <button class="page-btn arrow">&gt;</button>
+  </div>
+</section>
+
+   <section id="repuestos" class="admin-section">
+      <div class="section-header-row">
+        <h2 class="section-title">Lista de Repuestos del Cliente</h2>
+        <button class="btn-primary" onclick="adminAbrirModalSubirProductos()">Subir productos al cliente</button>
+      </div>
+
+      <div class="toolbar-products">
+        <div class="toolbar-left">
+            <div class="search-repuesto">
+                <input type="text" placeholder="Buscar por código o repuesto..." class="input-repuesto" id="admin-buscador-repuestos">
+                <button class="btn-search-repuesto"><img src="../img/Buscar.svg" alt="Buscar"></button>
+            </div>
+            <span class="results-text" id="admin-contador-repuestos">Cargando datos...</span>
+        </div>
+        <div class="toolbar-right">
+            <button class="btn-text" id="btn-filtrar-admin-repuestos">
+                Filtrar <img src="../img/Filtros.svg" alt="Filtros">
+            </button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="sc-table">
+          <thead>
+            <tr>
+              <th>Cod. Cliente</th>
+              <th>Repuesto</th>
+              <th>Marca</th>
+              <th>Línea</th>
+              <th>Cód. StarClutch</th>
+              <th style="text-align: center;">Recomendar</th>
+              <th>Precio</th>
+              <th>Descuento</th>
+              <th>Stock</th>
+              <th style="text-align: center;">Fotos</th>
+              <th style="text-align: center; width: 100px;">Ficha Técnica</th>
+              <th style="text-align: center;">Editar</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-repuestos-admin">
+             <tr>
+                <td colspan="12" style="text-align:center; padding:30px; color:#999;">
+                    Seleccione un cliente para ver sus repuestos.
+                </td>
+             </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <button class="page-btn arrow">&lt;</button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn arrow">&gt;</button>
+      </div>
+    </section>
+
+    <section id="ofertas" class="admin-section">
+      <h2 class="section-title">Ofertas Exclusivas</h2>
+      
+      <!-- BANNER PRINCIPAL -->
+      <div class="banner-upload-section">
+        <h3 class="banner-section-title"><img src="../img/Descuento.svg" alt="" class="icon-title"> Banner Carrusel Principal</h3>
+        <p class="banner-section-desc">El banner principal se muestra grande y con rotación automática. Sube imágenes de alta calidad.</p>
+        
+        <div class="banner-upload-grid">
+          <!-- Desktop Principal -->
+          <div class="banner-upload-box">
+            <h4>💻 Versión Escritorio</h4>
+            <div class="drop-zone-banner" id="drop-principal-desktop" data-type="principal-desktop">
+              <input type="file" id="input-principal-desktop" accept="image/*" multiple hidden>
+              <div class="drop-zone-content">
+                <span class="drop-icon"><img src="../img/Subir plantilla.svg" alt="Subir"></span>
+                <p class="drop-text"><strong>Arrastra imágenes aquí</strong></p>
+                <p class="drop-subtext">o haz click para seleccionar</p>
+              </div>
+            </div>
+            <p class="size-hint">Tamaño recomendado: <strong>1200 x 400 px</strong> (3:1 horizontal)</p>
+            <div class="preview-container" id="preview-principal-desktop"></div>
+          </div>
+          
+          <!-- Móvil Principal -->
+          <div class="banner-upload-box">
+            <h4>📱 Versión Móvil</h4>
+            <div class="drop-zone-banner" id="drop-principal-mobile" data-type="principal-mobile">
+              <input type="file" id="input-principal-mobile" accept="image/*" multiple hidden>
+              <div class="drop-zone-content">
+                <span class="drop-icon"><img src="../img/Subir plantilla.svg" alt="Subir"></span>
+                <p class="drop-text"><strong>Arrastra imágenes aquí</strong></p>
+                <p class="drop-subtext">o haz click para seleccionar</p>
+              </div>
+            </div>
+            <p class="size-hint">Tamaño recomendado: <strong>400 x 400 px</strong> (1:1 cuadrado)</p>
+            <div class="preview-container" id="preview-principal-mobile"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- BANNER SECUNDARIO -->
+      <div class="banner-upload-section">
+        <h3 class="banner-section-title"><img src="../img/Descuento.svg" alt="" class="icon-title"> Banner Carrusel Secundario</h3>
+        <p class="banner-section-desc">El carrusel secundario muestra 2 imágenes por página. Ideal para ofertas específicas por flota.</p>
+        
+        <div class="banner-upload-grid">
+          <!-- Desktop Secundario -->
+          <div class="banner-upload-box">
+            <h4>💻 Versión Escritorio</h4>
+            <div class="drop-zone-banner" id="drop-secundario-desktop" data-type="secundario-desktop">
+              <input type="file" id="input-secundario-desktop" accept="image/*" multiple hidden>
+              <div class="drop-zone-content">
+                <span class="drop-icon"><img src="../img/Subir plantilla.svg" alt="Subir"></span>
+                <p class="drop-text"><strong>Arrastra imágenes aquí</strong></p>
+                <p class="drop-subtext">o haz click para seleccionar</p>
+              </div>
+            </div>
+            <p class="size-hint">Tamaño recomendado: <strong>580 x 320 px</strong> (16:9 aprox)</p>
+            <div class="preview-container" id="preview-secundario-desktop"></div>
+          </div>
+          
+          <!-- Móvil Secundario -->
+          <div class="banner-upload-box">
+            <h4>📱 Versión Móvil</h4>
+            <div class="drop-zone-banner" id="drop-secundario-mobile" data-type="secundario-mobile">
+              <input type="file" id="input-secundario-mobile" accept="image/*" multiple hidden>
+              <div class="drop-zone-content">
+                <span class="drop-icon"><img src="../img/Subir plantilla.svg" alt="Subir"></span>
+                <p class="drop-text"><strong>Arrastra imágenes aquí</strong></p>
+                <p class="drop-subtext">o haz click para seleccionar</p>
+              </div>
+            </div>
+            <p class="size-hint">Tamaño recomendado: <strong>350 x 280 px</strong> (5:4 casi cuadrado)</p>
+            <div class="preview-container" id="preview-secundario-mobile"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Botón guardar banners -->
+      <div class="banner-actions-row">
+        <button class="btn-primary btn-guardar-banners" onclick="guardarBannersOfertas()">
+          Guardar banners
+        </button>
+        <span class="banner-save-status" id="banner-save-status"></span>
+      </div>
+    </section>
+
+    <section id="cuenta" class="admin-section">
+      <div class="section-header-row">
+        <h2 class="section-title">Estado de la Cuenta</h2>
+        <div class="admin-actions">
+          <button class="btn-primary">Subir factura</button>
+          <button class="btn-secondary">Subir factura pendiente</button>
+        </div>
+      </div>
+
+      <div class="account-dashboard">
+        
+        <div class="invoices-container">
+          <div class="dashboard-box-header">
+              <h3>Facturas del cliente</h3>
+              <div class="date-filters">
+                  <div class="date-group">
+                      <label>Desde:</label>
+                      <input type="date" class="sc-input-date">
+                  </div>
+                  <div class="date-group">
+                      <label>Hasta:</label>
+                      <input type="date" class="sc-input-date">
+                  </div>
+              </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="sc-table">
+              <thead>
+                <tr>
+                  <th>N° Factura</th>
+                  <th>Fecha</th>
+                  <th>Monto</th>
+                  <th>Estado</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#FAC-00123</td>
+                  <td>12/10/2024</td>
+                  <td>$1.500.000</td>
+                  <td><span class="status-badge paid">Pagado</span></td>
+                  <td><button class="btn-text">Ver</button></td>
+                </tr>
+                <tr>
+                  <td>#FAC-00124</td>
+                  <td>25/10/2024</td>
+                  <td>$890.000</td>
+                  <td><span class="status-badge pending">Pendiente</span></td>
+                  <td><button class="btn-text">Ver</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <div class="dashboard-box-header">
+              <h3>Total Invertido</h3>
+              <div class="date-filters vertical-mobile">
+                  <div class="date-group">
+                      <label>Desde:</label>
+                      <input type="date" class="sc-input-date small">
+                  </div>
+                  <div class="date-group">
+                      <label>Hasta:</label>
+                      <input type="date" class="sc-input-date small">
+                  </div>
+              </div>
+          </div>
+
+          <div class="bar-chart">
+            <div class="chart-col"><div class="bar" style="height: 40%;"></div><span class="label">JUN</span></div>
+            <div class="chart-col"><div class="bar" style="height: 60%;"></div><span class="label">JUL</span></div>
+            <div class="chart-col"><div class="bar" style="height: 30%;"></div><span class="label">AGO</span></div>
+            <div class="chart-col"><div class="bar" style="height: 80%;"></div><span class="label">SEP</span></div>
+            <div class="chart-col"><div class="bar" style="height: 50%;"></div><span class="label">OCT</span></div>
+            <div class="chart-col"><div class="bar highlight" style="height: 90%;"></div><span class="label">NOV</span></div>
+          </div>
+          <div class="chart-total">Total periodo: <strong>$35.400.000</strong></div>
+        </div>
+      </div>
+
+      <div class="top-lists-grid">
+        <div class="top-list-box">
+          <h3>Top 20 Repuestos (Mayor rotación)</h3>
+          <ul class="ranking-list">
+            <li><span>1. Kit Embrague Scania</span> <strong>150 u.</strong></li>
+            <li><span>2. Filtro Aceite Volvo</span> <strong>120 u.</strong></li>
+            <li class="more">Ver lista completa...</li>
+          </ul>
+        </div>
+        <div class="top-list-box">
+          <h3>Top 10 Vehículos (Mayor recambio)</h3>
+          <ul class="ranking-list">
+            <li><span>1. Scania R500</span> <strong>$5.2M</strong></li>
+            <li><span>2. Volvo FH16</span> <strong>$4.8M</strong></li>
+            <li class="more">Ver lista completa...</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="compras" class="admin-section">
+      <h2 class="section-title">Historial de Compras</h2>
+      <div class="table-responsive">
+        <table class="sc-table">
+          <thead>
+            <tr>
+              <th>ID Pedido</th>
+              <th>Fecha</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Estado Despacho</th> <th>Documentos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#ORD-9988</td>
+              <td>10/11/2024</td>
+              <td>5 productos</td>
+              <td>$1.200.000</td>
+              <td>
+                <button class="btn-secondary btn-radius-16">Ver Despacho</button>
+              </td>
+              <td>
+                <button class="btn-text">Descargar Factura</button>
+              </td>
+            </tr>
+            <tr>
+              <td>#ORD-9987</td>
+              <td>01/11/2024</td>
+              <td>2 productos</td>
+              <td>$450.000</td>
+              <td>
+                <button class="btn-secondary btn-radius-16">Ver Despacho</button>
+              </td>
+              <td>
+                <button class="btn-text">Descargar Factura</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+
+<div id="modal-subir-productos" class="sc-modal-overlay">
+    <div class="sc-modal-container" style="max-width: 1100px;"> 
+      
+      <div class="sc-modal-header">
+        <h3>Subir productos al cliente</h3>
+        <button class="btn-close-modal" id="btn-close-modal">&times;</button>
+      </div>
+
+      <div class="sc-modal-body">
+        
+        <div class="table-responsive">
+          <table class="sc-table upload-table" id="tabla-productos-upload">
+            <thead>
+              <tr>
+                <th>Cod. Cliente (Opc)</th>
+                <th>Repuesto (Escribir)</th>
+                <th>Marca (Escribir)</th>
+                <th>Línea (Auto)</th>
+                <th>Cód. StarClutch *</th>
+                <th>Precio ($)</th>
+                <th>Descuento (%)</th>
+                <th>Stock</th>
+                <th style="width: 220px;">Imágenes</th>
+                <th style="width: 100px; text-align: center;">Ficha Técnica</th>
+                <th style="width: 50px;"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="fila-producto">
+                <td><input type="text" class="sc-input-small input-cod-cli" placeholder="Opcional"></td>
+                
+                <td>
+                  <input list="lista-repuestos" class="sc-input-small input-repuesto" placeholder="Escribe..." oninput="detectarLinea(this)">
+                </td>
+
+                <td>
+                  <input list="lista-marcas" class="sc-input-small input-marca" placeholder="Marca...">
+                </td>
+
+                <td><input type="text" class="sc-input-small input-linea" readonly placeholder="Auto"></td>
+                
+                <td><input type="text" class="sc-input-small input-cod-sc" placeholder="Requerido"></td>
+                
+                <td><input type="text" class="sc-input-small input-precio" placeholder="0" min="0" oninput="formatearPrecioInput(this)"></td>
+                
+                <td><input type="number" class="sc-input-small input-descuento" placeholder="0" step="0.01" min="0" max="100"></td>
+                
+                <td><input type="number" class="sc-input-small input-stock" placeholder="0" min="0" step="1"></td>
+                
+                <td>
+                    <div class="upload-wrapper">
+                        <label class="btn-mini-upload">
+                            <input type="file" multiple class="input-fotos-hidden" accept="image/*" onchange="manejarSubidaFotos(this)">
+                            <span>+ Subir fotos</span>
+                        </label>
+                        <div class="file-list-container"></div>
+                    </div>
+                </td>
+
+                <td style="text-align:center;">
+                    <button class="btn-ficha-tecnica" onclick="abrirModalFichaTecnicaFila(this)" style="padding: 6px 10px; font-size: 12px; background: #BF1823; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        <img src="../img/fichatecnica.svg" alt="Ficha Técnica" style="width: 14px; height: 14px; filter: brightness(0) invert(1);">
+                        Agregar
+                    </button>
+                </td>
+
+                <td style="text-align:center;">
+                    <button class="btn-icon-only delete-row" onclick="eliminarFila(this)">&times;</button>
+                </td>
+              </tr>
+              </tbody>
+          </table>
+        </div>
+
+        <div class="modal-actions-row">
+            <button class="btn-text" onclick="agregarFila()">
+                <span style="font-size:18px; margin-right:5px;">+</span> Agregar otro producto
+            </button>
+        </div>
+
+        <datalist id="lista-repuestos">
+            <option value="Kit de embrague">
+            <option value="Kit de embrague + Volante">
+            <option value="Volantes">
+            <option value="Discos de embrague">
+            <option value="Rodamiento">
+            <option value="Prensa">
+            <option value="Servo">
+            <option value="Componente AMT.V">
+            <option value="Caliper y kit">
+            <option value="Pastillas de freno">
+            <option value="Disco de freno">
+            <option value="Tambor de freno">
+            <option value="Patines">
+            <option value="Balatas">
+            <option value="Pulmón de freno">
+            <option value="Mazas">
+            <option value="Freno motor">
+            <option value="Chicharras">
+            <option value="Pulmón de suspensión">
+            <option value="Pulmón de levante">
+            <option value="Fuelle">
+            <option value="Filtro de aceite">
+            <option value="Filtro de aire">
+            <option value="Filtro de cabina">
+            <option value="Filtro de combustible">
+            <option value="Filtro separador">
+            <option value="Filtro hidráulico">
+            <option value="Válvula">
+            <option value="Secador">
+            <option value="Compresor">
+            <option value="Correa">
+            <option value="Barra de dirección">
+            <option value="Barra estabilizadora">
+            <option value="Barra tensora">
+            <option value="Barras en V">
+            <option value="Terminales de dirección">
+            <option value="Soporte">
+        </datalist>
+
+        <datalist id="lista-marcas">
+            <option value="ACE"><option value="AIRTECH"><option value="AKROL">
+            <option value="ALLIANCE"><option value="AUTIMPEX"><option value="CASTERTECH">
+            <option value="CRB"><option value="EATON"><option value="EXEDY">
+            <option value="FAG"><option value="FERSA"><option value="FLEETGUARD">
+            <option value="FLYTECH"><option value="FRASLE"><option value="HTECH">
+            <option value="JOST"><option value="KNORR BREMSE"><option value="LEMFORDER">
+            <option value="LUK"><option value="MASTER"><option value="MERITOR">
+            <option value="SAB"><option value="SACHS"><option value="SUSPENSYS">
+            <option value="VALEO"><option value="WABCO">
+        </datalist>
+
+      </div>
+
+      <div class="sc-modal-footer">
+        <button class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
+        <button class="btn-primary" onclick="cargarProductosAlCliente()">Cargar productos</button>
+      </div>
+
+    </div>
+  </div>
+  
+  <div id="modal-preview-img" class="sc-modal-overlay" style="z-index: 2000;">
+    <div class="preview-container">
+      <button class="btn-close-preview" onclick="cerrarPreview()">&times;</button>
+      <img id="img-preview-src" src="" alt="Vista previa">
+      <p id="img-preview-name" style="color: white; text-align: center; margin-top: 10px;"></p>
+    </div>
+  </div>
+
+ <div id="modal-admin-crear-flota" class="sc-modal-overlay">
+  <div class="sc-modal-container" style="max-width: 900px; width: 95%;">
+    <div class="sc-modal-header">
+      <h3>Crear Nueva Flota para el Cliente</h3>
+      <button class="btn-close-modal" onclick="adminCerrarModalNuevaFlota()">&times;</button>
+    </div>
+    <div class="sc-modal-body" style="padding: 24px;">
+      <div class="form-group" style="margin-bottom: 24px;">
+        <label style="display: block; margin-bottom: 8px; font-weight: 500;">Nombre de la Flota</label>
+        <input type="text" id="admin-input-nombre-flota" class="sc-input" placeholder="Ej: Flota Zona Sur" style="padding: 10px;">
+      </div>
+
+      <div id="admin-lista-nuevos-vehiculos" style="max-height: 400px; overflow-y: auto; padding-right:5px; margin-bottom: 24px;">
+        </div>
+
+      <div class="modal-actions-row" style="margin-top: 16px;">
+         <button class="btn-secondary btn-dashed" onclick="adminAgregarFilaVehiculo()" style="padding: 12px 20px;">
+           + Agregar otro vehículo
+         </button>
+      </div>
+    </div>
+    <div class="sc-modal-footer" style="padding: 16px 24px;">
+      <div style="margin-right:auto; font-size:14px; color:#666;">
+         Total: <span id="admin-total-nuevos">0</span> vehículos
+      </div>
+      <button class="btn-secondary" onclick="adminCerrarModalNuevaFlota()">Cancelar</button>
+      <button class="btn-primary" onclick="adminGuardarNuevaFlota()">Guardar Flota</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AGREGAR VEHÍCULOS A FLOTA EXISTENTE -->
+<div id="modal-admin-agregar-vehiculo" class="sc-modal-overlay">
+  <div class="sc-modal-container" style="max-width: 900px; width: 95%;">
+    <div class="sc-modal-header">
+      <h3>Agregar vehículos a la flota "<span id="admin-nombre-flota-actual"></span>"</h3>
+      <button class="btn-close-modal" onclick="adminCerrarModalAgregarVehiculo()">&times;</button>
+    </div>
+    <div class="sc-modal-body" style="padding: 24px;">
+      <div id="admin-lista-agregar-vehiculos" style="max-height: 400px; overflow-y: auto; padding-right:5px; margin-bottom: 24px;">
+      </div>
+
+      <div class="modal-actions-row" style="margin-top: 16px;">
+         <button class="btn-secondary btn-dashed" onclick="adminAgregarFilaVehiculoAgregar()" style="padding: 12px 20px;">
+           + Agregar otro vehículo
+         </button>
+      </div>
+    </div>
+    <div class="sc-modal-footer" style="padding: 16px 24px;">
+      <div style="margin-right:auto; font-size:14px; color:#666;">
+         Total a agregar: <span id="admin-total-agregar">0</span> vehículos
+      </div>
+      <button class="btn-secondary" onclick="adminCerrarModalAgregarVehiculo()">Cancelar</button>
+      <button class="btn-primary" onclick="adminGuardarVehiculosAgregados()">Agregar vehículos</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDICIÓN VEHÍCULO ADMIN (MODERNA) -->
+<div id="overlay-editar-vehiculo-admin" class="overlay-editar-unique" aria-hidden="true">
+  <div class="modal-editar-unique">
+
+    <!-- HEADER -->
+    <div class="modal-editar-header-unique">
+      <span class="modal-editar-title-unique">Editar vehículo (Admin)</span>
+      <button id="cerrar-editar-vehiculo-admin" class="modal-editar-close-unique">&times;</button>
+    </div>
+
+    <!-- BODY -->
+    <div class="modal-editar-body-unique">
+
+      <!-- LEFT: IMAGEN + BOTONES -->
+      <div class="modal-left-col-unique">
+
+        <!-- FAVORITOS ARRIBA DE LA IMAGEN -->
+        <div class="modal-fav-container">
+          <button type="button" id="btn-favorito-modal-admin" class="btn-favorito-modal" style="display: flex; align-items: center; gap: 8px; margin-top: 10px; background: none; border: none; cursor: pointer; color: #575657;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            <span id="txt-favorito-modal-admin" style="font-weight: 500;">Agregar a favoritos</span>
+          </button>
+        </div>
+
+        <!-- IMAGEN VEHÍCULO CON INPUT DENTRO -->
+        <div class="modal-vehiculo-img-unique" style="position: relative;">
+          <img src="../img/americano.png" class="modal-vehiculo-foto-unique" id="admin-img-vehiculo" alt="Vehículo">
+          <img src="../logosvehiculos/agrale.png" alt="Marca" class="modal-logo-marca" id="admin-logo-marca">
+
+          <!-- INPUT ASIGNAR CONDUCTOR centrado abajo -->
+          <div class="input-conductor-container">
+            <input type="text" placeholder="Asignar conductor" class="input-asignar-conductor" id="admin-input-conductor">
+          </div>
+        </div>
+
+        <!-- BOTÓN ELIMINAR VEHÍCULO -->
+        <button class="btn-secondary btn-delete-vehiculo-unique" id="btn-admin-eliminar-vehiculo">
+          <img src="../img/Delete.svg" alt="Eliminar"> Eliminar vehículo
+        </button>
+
+      </div>
+
+      <!-- RIGHT: FORMULARIO -->
+      <div class="modal-right-col-unique">
+        <input type="hidden" id="admin-edit-index-vehiculo">
+        <div class="modal-form-block-unique">
+          <div class="modal-form-row-unique">
+            <label>Tipo de vehículo</label>
+            <select class="tipo-vehiculo" id="admin-edit-tipo">
+              <option value="">Seleccionar tipo</option>
+            </select>
+          </div>
+          <div class="modal-form-row-unique">
+            <label>Marca</label>
+            <select class="marca" id="admin-edit-marca" disabled>
+              <option value="">Seleccionar marca</option>
+            </select>
+          </div>
+          <div class="modal-form-row-unique">
+            <label>Modelo</label>
+            <select class="modelo" id="admin-edit-modelo" disabled>
+              <option value="">Seleccionar modelo</option>
+            </select>
+          </div>
+          <div class="modal-form-row-unique">
+            <label>Año</label>
+            <input type="number" class="anio" id="admin-edit-anio" placeholder="Digitar año" onwheel="this.blur()">
+          </div>
+          <div class="modal-form-row-unique">
+            <label>Motor (opcional)</label>
+            <input type="text" class="motor" id="admin-edit-motor" placeholder="Digitar motor">
+          </div>
+          <div class="modal-form-row-unique">
+            <label>Patente</label>
+            <input type="text" class="patente" id="admin-edit-patente" placeholder="Digitar patente">
+          </div>
+        </div>
+
+        <div class="modal-actions-unique">
+          <button class="btn-secondary modal-cancelar-unique" id="btn-admin-cancelar">Cancelar</button>
+          <button class="btn-primary modal-guardar-unique" id="btn-admin-guardar">Guardar cambios</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="modal-editar-producto" class="sc-modal-overlay">
+  <div class="sc-modal-container" style="max-width: 900px;">
+    <div class="sc-modal-header">
+      <h3>Editar Producto</h3>
+      <button class="btn-close-modal" onclick="cerrarModalEditarProducto()">&times;</button>
+    </div>
+    
+    <div class="sc-modal-body" style="padding: 24px; overflow-y: auto; max-height: 80vh;">
+      <input type="hidden" id="edit-producto-id">
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+        <div class="form-group">
+          <label>Código Cliente (Opcional)</label>
+          <input type="text" id="edit-cod-cliente" class="sc-input">
+        </div>
+        <div class="form-group">
+          <label>Código StarClutch *</label>
+          <input type="text" id="edit-cod-sc" class="sc-input">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label>Repuesto *</label>
+        <select id="edit-repuesto" class="sc-input" onchange="detectarLineaEdit(this)">
+          <option value="">Seleccionar repuesto...</option>
+          <option value="Kit de embrague">Kit de embrague</option>
+          <option value="Kit de embrague + Volante">Kit de embrague + Volante</option>
+          <option value="Volantes">Volantes</option>
+          <option value="Discos de embrague">Discos de embrague</option>
+          <option value="Rodamiento">Rodamiento</option>
+          <option value="Prensa">Prensa</option>
+          <option value="Servo">Servo</option>
+          <option value="Componente AMT.V">Componente AMT.V</option>
+          <option value="Caliper y kit">Caliper y kit</option>
+          <option value="Pastillas de freno">Pastillas de freno</option>
+          <option value="Disco de freno">Disco de freno</option>
+          <option value="Tambor de freno">Tambor de freno</option>
+          <option value="Patines">Patines</option>
+          <option value="Balatas">Balatas</option>
+          <option value="Pulmón de freno">Pulmón de freno</option>
+          <option value="Mazas">Mazas</option>
+          <option value="Freno motor">Freno motor</option>
+          <option value="Chicharras">Chicharras</option>
+          <option value="Pulmón de suspensión">Pulmón de suspensión</option>
+          <option value="Pulmón de levante">Pulmón de levante</option>
+          <option value="Fuelle">Fuelle</option>
+          <option value="Filtro de aceite">Filtro de aceite</option>
+          <option value="Filtro de aire">Filtro de aire</option>
+          <option value="Filtro de cabina">Filtro de cabina</option>
+          <option value="Filtro de combustible">Filtro de combustible</option>
+          <option value="Filtro separador">Filtro separador</option>
+          <option value="Filtro hidráulico">Filtro hidráulico</option>
+          <option value="Válvula">Válvula</option>
+          <option value="Secador">Secador</option>
+          <option value="Compresor">Compresor</option>
+          <option value="Correa">Correa</option>
+          <option value="Barra de dirección">Barra de dirección</option>
+          <option value="Barra estabilizadora">Barra estabilizadora</option>
+          <option value="Barra tensora">Barra tensora</option>
+          <option value="Barras en V">Barras en V</option>
+          <option value="Terminales de dirección">Terminales de dirección</option>
+          <option value="Soporte">Soporte</option>
+        </select>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+        <div class="form-group">
+          <label>Marca</label>
+          <input list="lista-marcas" id="edit-marca" class="sc-input">
+        </div>
+        <div class="form-group">
+          <label>Línea (Auto)</label>
+          <input type="text" id="edit-linea" class="sc-input" readonly>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+        <div class="form-group">
+          <label>Precio ($)</label>
+          <input type="text" id="edit-precio" class="sc-input" min="0" oninput="formatearPrecioInput(this)">
+        </div>
+        <div class="form-group">
+          <label>Descuento (%)</label>
+          <input type="number" id="edit-descuento" class="sc-input" step="0.01" min="0" max="100">
+        </div>
+        <div class="form-group">
+          <label>Stock</label>
+          <input type="number" id="edit-stock" class="sc-input" min="0" step="1">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label>Imágenes del Producto</label>
+        <div class="upload-wrapper">
+          <label class="btn-mini-upload" style="cursor:pointer; display:flex; align-items:center; justify-content:center; padding:8px 16px; background:#333; color:#fff; border-radius:4px;">
+            <input type="file" multiple id="edit-input-fotos" accept="image/*" onchange="manejarFotosEdicion(this)" style="display:none;">
+            <span>+ Agregar más fotos</span>
+          </label>
+          <div id="edit-fotos-container" style="display:flex; flex-wrap:wrap; gap:12px; margin-top:12px; padding:8px;"></div>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="abrirModalFichaTecnicaEdicion()" style="margin-top: 16px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <img src="../img/fichatecnica.svg" alt="Ficha Técnica" style="width: 18px; height: 18px; filter: brightness(0) invert(1);">
+        Editar Ficha Técnica
+      </button>
+    </div>
+
+    <div class="sc-modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+      <button class="btn-danger" onclick="eliminarProducto()" style="background: #BF1823; color: white; border: none; padding: 10px 20px; border-radius: 16px; cursor: pointer; font-weight: 600; transition: background 0.2s; display: inline-flex; align-items: center; gap: 8px;" onmouseover="this.style.background='#b71c1c'" onmouseout="this.style.background='#d32f2f'">
+        <img src="../img/Deleteblanco.svg" alt="Eliminar" style="width: 16px; height: 16px;"> Eliminar Producto
+      </button>
+      <div style="display: flex; gap: 12px;">
+        <button class="btn-secondary" onclick="cerrarModalEditarProducto()">Cancelar</button>
+        <button class="btn-primary" onclick="guardarEdicionProducto()">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div id="modal-ficha-tecnica" class="sc-modal-overlay">
+    <div class="sc-modal-container" style="max-width: 700px;">
+      <div class="sc-modal-header">
+        <h3>Agregar Ficha Técnica</h3>
+        <button class="btn-close-modal" onclick="cerrarModalFichaTecnica()">&times;</button>
+      </div>
+      
+      <div class="sc-modal-body">
+        <div class="form-group">
+          <label>Ficha Técnica</label>
+          <textarea id="ficha-tecnica-input" class="sc-input" placeholder="Ej: Diámetro: 225 mm&#10;Número de estrías: 24&#10;Peso: 42.5 kg" style="min-height: 150px; font-family: monospace;"></textarea>
+          <small style="color: #999; display: block; margin-top: 8px;">💡 Lo que escribas antes del &quot;:&quot; aparecerá en <strong>negrita</strong></small>
+        </div>
+
+        <div class="form-group">
+          <label>Referencia Cruzada</label>
+          <textarea id="referencia-cruzada-input" class="sc-input" placeholder="Ej: OEM-123456&#10;Referencia Alternativa 2" style="min-height: 100px; font-family: monospace;"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>OEM (Código Original)</label>
+          <textarea id="oem-input" class="sc-input" placeholder="Ej: 1234567890&#10;OEM Alternativo" style="min-height: 100px; font-family: monospace;"></textarea>
+        </div>
+      </div>
+
+      <div class="sc-modal-footer">
+        <button class="btn-secondary" onclick="cerrarModalFichaTecnica()">Cancelar</button>
+        <button class="btn-primary" onclick="guardarFichaTecnica()">Guardar Ficha Técnica</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-ficha-tecnica-edicion" class="sc-modal-overlay">
+    <div class="sc-modal-container" style="max-width: 700px;">
+      <div class="sc-modal-header">
+        <h3>Editar Ficha Técnica</h3>
+        <button class="btn-close-modal" onclick="cerrarModalFichaTecnicaEdicion()">&times;</button>
+      </div>
+      
+      <div class="sc-modal-body">
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label>Ficha Técnica</label>
+          <textarea id="ficha-tecnica-edit-input" class="sc-input" style="min-height: 150px; font-family: monospace;" placeholder="Ej: Diámetro: 225 mm&#10;Número de estrías: 24&#10;Peso: 42.5 kg"></textarea>
+          <small style="color: #999; display: block; margin-top: 8px;">💡 Lo que escribas antes del &quot;:&quot; aparecerá en <strong>negrita</strong></small>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label>Referencia Cruzada</label>
+          <textarea id="referencia-cruzada-edit-input" class="sc-input" style="min-height: 100px; font-family: monospace;" placeholder="Ej: OEM-123456&#10;Referencia Alternativa 2"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>OEM (Código Original)</label>
+          <textarea id="oem-edit-input" class="sc-input" style="min-height: 100px; font-family: monospace;" placeholder="Ej: 1234567890&#10;OEM Alternativo"></textarea>
+        </div>
+      </div>
+
+      <div class="sc-modal-footer">
+        <button class="btn-secondary" id="btn-cerrar-ficha" onclick="cerrarModalFichaTecnicaEdicion()">Cerrar</button>
+        <button class="btn-primary" id="btn-guardar-ficha" onclick="guardarFichaTecnicaEdicion()">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Crear Usuario -->
+  <div id="modal-crear-usuario" class="sc-modal-overlay">
+    <div class="sc-modal-container" style="max-width: 600px;">
+      <div class="sc-modal-header">
+        <h3>Crear Nueva Cuenta de Cliente</h3>
+        <button class="btn-close-modal" onclick="cerrarModalCrearUsuario()">&times;</button>
+      </div>
+      
+      <div class="sc-modal-body" style="padding: 24px;">
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>Nombre Empresa / Cliente</label>
+          <input type="text" id="new-user-name" class="sc-input" placeholder="Ej: Transportes Vidal SpA">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>Correo Electrónico</label>
+          <input type="email" id="new-user-email" class="sc-input" placeholder="contacto@empresa.cl">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>Usuario (ID de acceso)</label>
+          <input type="text" id="new-user-id" class="sc-input" placeholder="Ej: gonzalo">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>Contraseña</label>
+          <input type="text" id="new-user-pass" class="sc-input" placeholder="Asignar contraseña">
+        </div>
+      </div>
+
+      <div class="sc-modal-footer">
+        <button class="btn-secondary" onclick="cerrarModalCrearUsuario()">Cancelar</button>
+        <button class="btn-primary" onclick="crearNuevoUsuario()">
+          <span style="font-size: 18px; margin-right: 5px;">+</span> Crear Usuario
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Agregar Modelo de Vehículo -->
+  <div id="modal-agregar-modelo-vehiculo" class="sc-modal-overlay">
+    <div class="sc-modal-container" style="max-width: 550px;">
+      <div class="sc-modal-header">
+        <h3>Agregar Modelo de Vehículo</h3>
+        <button class="btn-close-modal" onclick="cerrarModalAgregarModeloVehiculo()">×</button>
+      </div>
+
+      <div class="sc-modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label>Tipo de Vehículo</label>
+          <div class="sc-select-wrapper">
+            <select id="new-modelo-vehiculo-tipo" class="sc-input-select" onchange="cargarMarcasParaNuevoModelo()">
+              <option value="" disabled selected>Selecciona un tipo</option>
+              <option value="camion">Camión</option>
+              <option value="bus">Bus / Van</option>
+              <option value="camioneta">Camioneta</option>
+              <option value="3/4">3/4</option>
+              <option value="rampla">Rampla</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label>Marca</label>
+          <div class="sc-select-wrapper">
+            <select id="new-modelo-vehiculo-marca" class="sc-input-select">
+              <option value="" disabled selected>Selecciona una marca</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+            <input type="checkbox" id="checkbox-marca-nueva" onchange="toggleMarcaNueva()" style="cursor: pointer; width: 18px; height: 18px;">
+            <span style="font-weight: 500;">Agregar marca nueva</span>
+          </label>
+        </div>
+
+        <div id="bloque-marca-nueva" style="display: none; opacity: 0; max-height: 0; overflow: hidden; transition: opacity 0.3s ease, max-height 0.3s ease; background: #f8f9fa; padding: 0 16px; border-radius: 8px; border-left: 3px solid var(--color-red); margin-bottom: 24px;">
+          <div style="padding: 16px 0;">
+            <div class="form-group" style="margin-bottom: 20px;">
+              <label style="color: var(--color-red); font-weight: 600;">Nombre de la Nueva Marca</label>
+              <input type="text" id="new-modelo-marca-nueva-nombre" class="sc-input" placeholder="Ej: Volvo, Scania, Mercedes" style="border-color: #ddd;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label style="color: var(--color-red); font-weight: 600;">Logo de la Nueva Marca</label>
+              <input type="file" id="new-modelo-marca-nueva-logo" class="sc-input" accept="image/*" style="cursor: pointer; border-color: #ddd;" onchange="previsualizarYPedirNombreArchivo('marca-nueva-logo')">
+              <small style="color: #666;">Sube el logo de la marca (PNG, JPG, SVG) - Se guardará en logosvehiculos/</small>
+              <div style="margin-top: 10px; display: flex; align-items: center; gap: 10px;">
+                <div id="preview-marca-nueva-logo" style="width: 100px; height: 100px; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; border-radius: 8px; overflow: hidden; background: white; flex-shrink: 0;">
+                  <span style="color: #999;">Sin imagen</span>
+                </div>
+                <div id="nombre-archivo-marca-nueva-logo" style="flex: 1; color: #666; font-size: 13px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label>Nombre del Modelo</label>
+          <input type="text" id="new-modelo-vehiculo-nombre" class="sc-input" placeholder="Ej: FH, FM, P">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>Imagen del Modelo</label>
+          <input type="file" id="new-modelo-vehiculo-imagen" class="sc-input" accept="image/*" style="cursor: pointer;" onchange="previsualizarYPedirNombreArchivo('modelo-vehiculo-imagen')">
+          <small style="color: #666;">Sube una imagen del modelo (PNG, JPG) - Se guardará en vehiculosexpertos/</small>
+          <div style="margin-top: 10px; display: flex; align-items: center; gap: 10px;">
+            <div id="preview-modelo-vehiculo-imagen" style="width: 100px; height: 100px; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+              <span style="color: #999;">Sin imagen</span>
+            </div>
+            <div id="nombre-archivo-modelo-vehiculo-imagen" style="flex: 1; color: #666; font-size: 13px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sc-modal-footer">
+        <button class="btn-secondary" onclick="cerrarModalAgregarModeloVehiculo()">Cancelar</button>
+        <button class="btn-primary" onclick="guardarModeloVehiculo()">
+          <span style="font-size: 18px; margin-right: 5px;">+</span> Agregar Modelo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Agregar Marca de Producto -->
+  <div id="modal-agregar-marca-producto" class="sc-modal-overlay">
+    <div class="sc-modal-container" style="max-width: 500px;">
+      <div class="sc-modal-header">
+        <h3>Agregar Marca de Producto</h3>
+        <button class="btn-close-modal" onclick="cerrarModalAgregarMarcaProducto()">×</button>
+      </div>
+
+      <div class="sc-modal-body">
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>Nombre de la Marca</label>
+          <input type="text" id="new-marca-producto-nombre" class="sc-input" placeholder="Ej: Repuestos XYZ, Auto Parts">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>Logo de la Marca</label>
+          <input type="file" id="new-marca-producto-logo" class="sc-input" accept="image/*" style="cursor: pointer;">
+          <small style="color: #666;">Sube una imagen del logo (PNG, JPG, SVG)</small>
+          <div id="preview-marca-producto-logo" style="margin-top: 10px; width: 100px; height: 100px; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; border-radius: 4px; overflow: hidden;">
+            <span style="color: #999;">Sin imagen</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sc-modal-footer">
+        <button class="btn-secondary" onclick="cerrarModalAgregarMarcaProducto()">Cancelar</button>
+        <button class="btn-primary" onclick="guardarMarcaProducto()">
+          <span style="font-size: 18px; margin-right: 5px;">+</span> Agregar Marca
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL VER MARCAS Y MODELOS -->
+  <div id="modal-ver-marcas-modelos" class="sc-modal-overlay">
+    <div class="sc-modal-container" style="max-width: 800px; max-height: 80vh;">
+      <div class="sc-modal-header">
+        <h3>📋 Marcas y Modelos de Vehículos</h3>
+        <button class="btn-close-modal" onclick="cerrarModalVerMarcasModelos()">×</button>
+      </div>
+      <div class="sc-modal-body" style="max-height: 60vh; overflow-y: auto;">
+        <div id="contenedor-marcas-modelos-visualizacion">
+          <p style="text-align: center; color: #666;">Cargando...</p>
+        </div>
+      </div>
+      <div class="sc-modal-footer">
+        <button class="btn-secondary" onclick="cerrarModalVerMarcasModelos()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL VER MARCAS DE PRODUCTOS -->
+  <div id="modal-ver-marcas-productos" class="sc-modal-overlay">
+    <div class="sc-modal-container" style="max-width: 700px; max-height: 80vh;">
+      <div class="sc-modal-header">
+        <h3>📋 Marcas de Productos</h3>
+        <button class="btn-close-modal" onclick="cerrarModalVerMarcasProductos()">×</button>
+      </div>
+      <div class="sc-modal-body" style="max-height: 60vh; overflow-y: auto;">
+        <div id="contenedor-marcas-productos-visualizacion">
+          <p style="text-align: center; color: #666;">Cargando...</p>
+        </div>
+      </div>
+      <div class="sc-modal-footer">
+        <button class="btn-secondary" onclick="cerrarModalVerMarcasProductos()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL EDITAR MARCA PRODUCTO -->
+  <!-- ============================================================ -->
+  <div id="modal-editar-marca-producto" class="sc-modal-overlay">
+    <div class="sc-modal-container" style="max-width: 600px;">
+      <div class="sc-modal-header">
+        <h3>✏️ Editar Marca de Producto</h3>
+        <button class="btn-close-modal" onclick="cerrarModalEditarMarcaProducto()">×</button>
+      </div>
+      <div class="sc-modal-body">
+        <input type="hidden" id="edit-marca-nombre-actual">
+        <input type="hidden" id="edit-marca-index">
+        
+        <div class="sc-form-group">
+          <label>Nombre de la marca</label>
+          <input type="text" id="edit-marca-nombre" class="sc-input" placeholder="Ej: EXEDY">
+        </div>
+
+        <div class="sc-form-group">
+          <label>Logo actual</label>
+          <div style="background: #f8f9fa; padding: 16px; border-radius: 8px; text-align: center; margin-bottom: 12px;">
+            <img id="edit-marca-logo-preview" src="" alt="Logo actual" style="max-width: 150px; max-height: 100px; object-fit: contain;">
+          </div>
+        </div>
+
+        <div class="sc-form-group">
+          <label>Cambiar logo (opcional)</label>
+          <input type="file" id="edit-marca-nuevo-logo" class="sc-input" accept="image/png,image/jpeg,image/jpg,image/svg+xml" style="padding: 8px;">
+          <p style="font-size: 12px; color: #666; margin-top: 6px;">Formatos: PNG, JPG, SVG</p>
+          
+          <div id="edit-marca-nuevo-preview" style="display: none; background: #f8f9fa; padding: 16px; border-radius: 8px; text-align: center; margin-top: 12px; border: 2px dashed #4caf50;">
+            <p style="font-size: 13px; color: #4caf50; font-weight: 600; margin-bottom: 8px;">✓ Nueva imagen seleccionada</p>
+            <img id="edit-marca-nuevo-logo-img" src="" alt="Nuevo logo" style="max-width: 150px; max-height: 100px; object-fit: contain;">
+          </div>
+        </div>
+      </div>
+      <div class="sc-modal-footer">
+        <button class="btn-secondary" onclick="cerrarModalEditarMarcaProducto()">Cancelar</button>
+        <button class="btn-primary" onclick="guardarEdicionMarcaProducto()">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL CRUCES DE VEHÍCULOS -->
+  <!-- ============================================================ -->
+  <div id="modal-cruces-vehiculos" class="sc-modal-overlay">
+    <div class="sc-modal-container" style="max-width: 700px;">
+      <div class="sc-modal-header">
+        <h3>🔗 Cruces de Vehículos - Productos</h3>
+        <button class="btn-close-modal" onclick="cerrarModalCrucesVehiculos()">×</button>
+      </div>
+      <div class="sc-modal-body">
+        <div style="margin-bottom: 20px;">
+          <p style="color: #666; font-size: 14px; margin-bottom: 12px;">
+            Sube un archivo Excel (.xlsx) con la siguiente estructura:
+          </p>
+          <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; font-size: 13px; margin-bottom: 16px;">
+            <strong>Columnas requeridas:</strong> marca, modelo, embragues, frenos, suspensión, filtros y diferenciales, sistema de aire, sistema de dirección<br>
+            <strong>Columna opcional:</strong> motor<br><br>
+            <strong>Formato de productos:</strong> SKU123 (marca_producto)
+          </div>
+        </div>
+
+        <!-- Zona de arrastrar archivo -->
+        <div id="drop-zone-cruces" style="border: 2px dashed #ccc; border-radius: 8px; padding: 40px; text-align: center; background: #fafafa; cursor: pointer; transition: all 0.3s;" 
+             onclick="document.getElementById('input-file-cruces').click()">
+          <input type="file" id="input-file-cruces" accept=".xlsx" style="display: none;" onchange="handleFileSelect(event)">
+          <div id="drop-zone-content">
+            <img src="../img/Productos.svg" alt="Upload" style="width: 60px; height: 60px; opacity: 0.4; margin-bottom: 12px;">
+            <p style="font-size: 16px; color: #333; margin: 0 0 8px 0;"><strong>Arrastra tu archivo Excel aquí</strong></p>
+            <p style="font-size: 14px; color: #666; margin: 0;">o haz click para seleccionar</p>
+          </div>
+        </div>
+
+        <!-- Archivo seleccionado -->
+        <div id="selected-file-info" style="display: none; margin-top: 16px; padding: 12px; background: #e8f5e9; border-radius: 6px; border-left: 3px solid #4caf50;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 24px;">📄</span>
+            <div style="flex: 1;">
+              <strong id="file-name" style="color: #333; display: block;"></strong>
+              <span id="file-size" style="font-size: 13px; color: #666;"></span>
+            </div>
+            <button onclick="clearFileSelection()" style="background: none; border: none; color: #BF1823; cursor: pointer; font-size: 20px; padding: 4px;">×</button>
+          </div>
+        </div>
+
+        <!-- Resultados del procesamiento -->
+        <div id="proceso-resultado" style="display: none; margin-top: 16px;"></div>
+      </div>
+      <div class="sc-modal-footer">
+        <button class="btn-secondary" onclick="cerrarModalCrucesVehiculos()">Cancelar</button>
+        <button id="btn-procesar-cruces" class="btn-primary" onclick="procesarArchivoCruces()" disabled>
+          Procesar y guardar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL VER CRUCES EN EL SISTEMA -->
+  <!-- ============================================================ -->
+  <div id="modal-ver-cruces-sistema" class="sc-modal-overlay">
+    <div class="sc-modal-container" style="max-width: 1200px; max-height: 90vh;">
+      <div class="sc-modal-header">
+        <h3>🔗 Cruces en el Sistema</h3>
+        <button class="btn-close-modal" onclick="cerrarModalVerCrucesSistema()">×</button>
+      </div>
+      <div class="sc-modal-body" style="max-height: calc(90vh - 180px); overflow-y: auto;">
+        <div style="margin-bottom: 16px; display: flex; gap: 12px; align-items: center;">
+          <div class="search-repuesto" style="flex: 1;">
+            <input type="text" id="buscar-cruce" placeholder="Buscar por marca o modelo..." class="input-repuesto" oninput="filtrarCruces()">
+            <button class="btn-search-repuesto" onclick="filtrarCruces()">
+              <img src="../img/Buscar.svg" alt="Buscar">
+            </button>
+          </div>
+          <span id="contador-cruces" style="color: #666; font-size: 14px; white-space: nowrap;"></span>
+        </div>
+
+        <div id="lista-cruces-sistema" style="display: grid; gap: 16px;">
+          <!-- Los cruces se cargarán aquí dinámicamente -->
+        </div>
+
+        <div id="sin-cruces-mensaje" style="display: none; text-align: center; padding: 60px 20px; color: #999;">
+          <img src="../img/Productos.svg" alt="Sin cruces" style="width: 80px; height: 80px; opacity: 0.3; margin-bottom: 16px;">
+          <p style="font-size: 16px;">No hay cruces registrados en el sistema</p>
+        </div>
+      </div>
+      <div class="sc-modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <button class="btn-primary" onclick="limpiarTodosCruces()" style="background: #BF1823; display: flex; align-items: center; gap: 8px;">
+          <img src="../img/Deleteblanco.svg" alt="Limpiar" style="width: 16px; height: 16px;"> Limpiar todos los cruces
+        </button>
+        <button class="btn-secondary" onclick="cerrarModalVerCrucesSistema()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL EDITAR CRUCE -->
+  <!-- ============================================================ -->
+  <div id="modal-editar-cruce" class="sc-modal-overlay">
+    <div class="sc-modal-container" style="max-width: 800px; max-height: 90vh;">
+      <div class="sc-modal-header">
+        <h3><img src="../img/Editar flota.svg" alt="Editar" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"> Editar Cruce de Vehículo</h3>
+        <button class="btn-close-modal" onclick="cerrarModalEditarCruce()">×</button>
+      </div>
+      <div class="sc-modal-body" style="max-height: calc(90vh - 220px); overflow-y: auto;">
+        <input type="hidden" id="edit-cruce-index">
+        
+        <div class="sc-form-group">
+          <label>Marca del vehículo</label>
+          <input type="text" id="edit-cruce-marca" class="sc-input" placeholder="Ej: Toyota">
+        </div>
+
+        <div class="sc-form-group">
+          <label>Modelo del vehículo</label>
+          <input type="text" id="edit-cruce-modelo" class="sc-input" placeholder="Ej: Hilux 2.4">
+        </div>
+
+        <h4 style="margin: 24px 0 12px 0; color: #333;">Categorías de productos</h4>
+        
+        <div id="edit-cruce-categorias-container">
+          <!-- Las categorías se cargarán aquí -->
+        </div>
+
+        <button class="btn-secondary" onclick="agregarCategoriaCruce()" style="margin-top: 12px; width: 100%;">
+          <span style="font-size: 16px; margin-right: 4px;">+</span> Agregar categoría
+        </button>
+      </div>
+      <div class="sc-modal-footer">
+        <button class="btn-secondary" onclick="cerrarModalEditarCruce()">Cancelar</button>
+        <button class="btn-primary" onclick="guardarEdicionCruce()">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../script.js"></script>
+  
+  <!-- ============================================================ -->
+  <!-- SCRIPT BANNERS OFERTAS EXCLUSIVAS -->
+  <!-- ============================================================ -->
+  <script>
+  // Estado global de banners
+  const bannersData = {
+    'principal-desktop': [],
+    'principal-mobile': [],
+    'secundario-desktop': [],
+    'secundario-mobile': []
+  };
+
+  // Inicializar drag & drop para banners al cargar
+  document.addEventListener('DOMContentLoaded', () => {
+    initBannerDropZones();
+    // Cargar banners del cliente seleccionado si hay uno
+    const clientSelect = document.getElementById('client-select');
+    if (clientSelect && clientSelect.value) {
+      cargarBannersCliente(clientSelect.value);
+    }
+  });
+
+  // Escuchar cambios en el cliente seleccionado
+  document.getElementById('client-select')?.addEventListener('change', function() {
+    if (this.value) {
+      cargarBannersCliente(this.value);
+    }
+  });
+
+  function initBannerDropZones() {
+    const types = ['principal-desktop', 'principal-mobile', 'secundario-desktop', 'secundario-mobile'];
+    
+    types.forEach(type => {
+      const dropZone = document.getElementById(`drop-${type}`);
+      const input = document.getElementById(`input-${type}`);
+      
+      if (!dropZone || !input) return;
+      
+      // Click para abrir selector
+      dropZone.addEventListener('click', () => input.click());
+      
+      // Eventos drag
+      dropZone.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+      });
+      
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+      });
+      
+      dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+      });
+      
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        const files = e.dataTransfer.files;
+        handleBannerFiles(files, type);
+      });
+      
+      // Input change
+      input.addEventListener('change', (e) => {
+        handleBannerFiles(e.target.files, type);
+        input.value = ''; // Reset para permitir subir el mismo archivo
+      });
+    });
+  }
+
+  function handleBannerFiles(files, type) {
+    Array.from(files).forEach(file => {
+      if (!file.type.startsWith('image/')) {
+        alert('Solo se permiten imágenes');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        bannersData[type].push({
+          id: `banner_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+          data: e.target.result,
+          name: file.name,
+          file: file
+        });
+        renderBannerPreview(type);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function renderBannerPreview(type) {
+    const container = document.getElementById(`preview-${type}`);
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    bannersData[type].forEach((banner, index) => {
+      const item = document.createElement('div');
+      item.className = 'preview-item';
+      item.draggable = true;
+      item.dataset.index = index;
+      item.dataset.type = type;
+      
+      item.innerHTML = `
+        <img src="${banner.data}" alt="${banner.name}">
+        <span class="preview-order ${index === 0 ? 'first' : ''}">${index + 1}</span>
+        <button class="btn-delete-preview" onclick="deleteBannerPreview('${type}', ${index})">×</button>
+      `;
+      
+      // Drag events para reordenar
+      item.addEventListener('dragstart', handlePreviewDragStart);
+      item.addEventListener('dragend', handlePreviewDragEnd);
+      item.addEventListener('dragover', handlePreviewDragOver);
+      item.addEventListener('drop', handlePreviewDrop);
+      
+      container.appendChild(item);
+    });
+  }
+
+  let draggedPreviewItem = null;
+
+  function handlePreviewDragStart(e) {
+    draggedPreviewItem = this;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  }
+
+  function handlePreviewDragEnd(e) {
+    this.classList.remove('dragging');
+    document.querySelectorAll('.preview-item').forEach(item => {
+      item.classList.remove('drag-over');
+    });
+  }
+
+  function handlePreviewDragOver(e) {
+    e.preventDefault();
+    if (this !== draggedPreviewItem && this.dataset.type === draggedPreviewItem.dataset.type) {
+      this.classList.add('drag-over');
+    }
+  }
+
+  function handlePreviewDrop(e) {
+    e.preventDefault();
+    this.classList.remove('drag-over');
+    
+    if (this === draggedPreviewItem) return;
+    if (this.dataset.type !== draggedPreviewItem.dataset.type) return;
+    
+    const type = this.dataset.type;
+    const fromIndex = parseInt(draggedPreviewItem.dataset.index);
+    const toIndex = parseInt(this.dataset.index);
+    
+    // Reordenar array
+    const item = bannersData[type].splice(fromIndex, 1)[0];
+    bannersData[type].splice(toIndex, 0, item);
+    
+    renderBannerPreview(type);
+  }
+
+  function deleteBannerPreview(type, index) {
+    bannersData[type].splice(index, 1);
+    renderBannerPreview(type);
+  }
+
+  async function guardarBannersOfertas() {
+    const clientSelect = document.getElementById('client-select');
+    const userId = clientSelect?.value;
+    
+    if (!userId) {
+      alert('Selecciona un cliente primero');
+      return;
+    }
+    
+    const statusEl = document.getElementById('banner-save-status');
+    statusEl.textContent = 'Guardando...';
+    statusEl.style.color = '#666';
+    
+    try {
+      // Preparar FormData con las imágenes
+      const formData = new FormData();
+      formData.append('userId', userId);
+      
+      // Agregar cada tipo de banner
+      const types = ['principal-desktop', 'principal-mobile', 'secundario-desktop', 'secundario-mobile'];
+      
+      for (const type of types) {
+        const banners = bannersData[type];
+        formData.append(`count_${type}`, banners.length);
+        
+        for (let i = 0; i < banners.length; i++) {
+          if (banners[i].file) {
+            // Nueva imagen (archivo)
+            formData.append(`${type}_${i}`, banners[i].file);
+          } else if (banners[i].url) {
+            // Imagen existente (URL del servidor)
+            formData.append(`${type}_url_${i}`, banners[i].url);
+          }
+        }
+      }
+      
+      const response = await fetch('/api/banners-ofertas', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const result = await response.json();
+      
+      if (result.ok) {
+        statusEl.textContent = '✓ Banners guardados correctamente';
+        statusEl.style.color = '#4CAF50';
+        // Recargar para sincronizar con servidor
+        await cargarBannersCliente(userId);
+        setTimeout(() => { statusEl.textContent = ''; }, 3000);
+      } else {
+        throw new Error(result.msg || 'Error al guardar');
+      }
+    } catch (error) {
+      console.error('Error guardando banners:', error);
+      statusEl.textContent = '✗ Error al guardar';
+      statusEl.style.color = '#BF1823';
+    }
+  }
+
+  async function cargarBannersCliente(userId) {
+    if (!userId) return;
+    
+    console.log('Cargando banners para cliente:', userId);
+    
+    try {
+      const response = await fetch(`/api/banners-ofertas?userId=${encodeURIComponent(userId)}`);
+      const result = await response.json();
+      
+      console.log('Banners recibidos:', result);
+      
+      if (result.ok && result.banners) {
+        const types = ['principal-desktop', 'principal-mobile', 'secundario-desktop', 'secundario-mobile'];
+        
+        types.forEach(type => {
+          bannersData[type] = [];
+          const serverBanners = result.banners[type] || [];
+          
+          serverBanners.forEach((url, index) => {
+            bannersData[type].push({
+              id: `existing_${type}_${index}`,
+              data: url, // URL para mostrar en preview
+              url: url,  // URL para enviar al servidor
+              name: `Banner ${index + 1}`,
+              isExisting: true
+            });
+          });
+          
+          renderBannerPreview(type);
+        });
+      } else {
+        // Limpiar si no hay banners
+        const types = ['principal-desktop', 'principal-mobile', 'secundario-desktop', 'secundario-mobile'];
+        types.forEach(type => {
+          bannersData[type] = [];
+          renderBannerPreview(type);
+        });
+      }
+    } catch (error) {
+      console.error('Error cargando banners:', error);
+    }
+  }
+
+  // Escuchar cambios en el select de clientes
+  document.addEventListener('DOMContentLoaded', () => {
+    const clientSelect = document.getElementById('client-select');
+    if (clientSelect) {
+      clientSelect.addEventListener('change', function() {
+        if (this.value) {
+          cargarBannersCliente(this.value);
+        }
+      });
+      
+      // Si ya hay un cliente seleccionado, cargar sus banners
+      if (clientSelect.value) {
+        cargarBannersCliente(clientSelect.value);
+      }
+    }
+  });
+
+  // También interceptar la función original si existe
+  const originalCargarInfoCliente = window.cargarInfoCliente;
+  if (typeof originalCargarInfoCliente === 'function') {
+    window.cargarInfoCliente = function(userId) {
+      originalCargarInfoCliente(userId);
+      cargarBannersCliente(userId);
+    };
+  }
+  </script>
+</body>
+</html>
