@@ -204,11 +204,11 @@ class NotificacionesManager {
         let linkHTML = '';
         
         if (notif.tipo === 'mantenimiento_7dias') {
-            // Botón para ver productos en categorías
-            linkHTML = `<a href="#" class="notif-link" onclick="verProductosMantenimiento('${notif.datos.mantenimientoId}'); return false;">Ver productos</a>`;
+            // Botón para ver productos en categorías (desde datos de la notificación)
+            linkHTML = `<a href="#" class="notif-link" onclick="verProductosMantenimientoDesdeNotif('${notif.id}'); return false;">Ver productos</a>`;
         } else if (notif.tipo === 'mantenimiento_hoy') {
-            // Botón para agregar productos al carrito
-            linkHTML = `<a href="#" class="notif-link" onclick="agregarProductosMantenimientoAlCarrito('${notif.datos.mantenimientoId}'); return false;">Agregar productos al carrito</a>`;
+            // Botón para agregar productos al carrito (desde datos de la notificación)
+            linkHTML = `<a href="#" class="notif-link" onclick="agregarProductosMantenimientoDesdeNotif('${notif.id}'); return false;">Agregar productos al carrito</a>`;
         } else if (notif.datos && notif.datos.productoId) {
             // Notificación de producto normal
             const productoUrl = `../mis flotas/detalleproducto.html?id=${notif.datos.productoId}`;
@@ -580,5 +580,99 @@ async function agregarProductosMantenimientoAlCarrito(mantenimientoId) {
     // Opcional: abrir el carrito
     if (typeof toggleCarrito === 'function') {
         toggleCarrito();
+    }
+}
+
+/**
+ * Ver productos desde la notificación (usa notif.datos)
+ */
+function verProductosMantenimientoDesdeNotif(notifId) {
+    try {
+        const notif = (window.notificacionesManager && Array.isArray(window.notificacionesManager.notificaciones))
+            ? window.notificacionesManager.notificaciones.find(n => n.id === notifId)
+            : null;
+
+        if (!notif || !notif.datos) {
+            alert('No se encontraron datos del mantenimiento en la notificación');
+            return;
+        }
+
+        const productos = notif.datos.productos || [];
+        const vehiculos = notif.datos.vehiculos || [];
+
+        if (!productos.length) {
+            alert('Este mantenimiento no tiene productos asociados');
+            return;
+        }
+
+        // Guardar SKUs para que categorias.html renderice esas tarjetas
+        const skus = productos.map(p => p.sku || p.codSC).filter(Boolean);
+        sessionStorage.setItem('mantenimiento_skus', JSON.stringify(skus));
+
+        // Guardar vehículo (usar el primero si existe)
+        if (vehiculos.length > 0) {
+            const vtxt = vehiculos[0];
+            // Intentar parseo simple de "Marca Modelo (Patente)"
+            const match = vtxt.match(/^([^\(]+?)(?:\s*\(([^\)]+)\))?$/);
+            const base = (match && match[1]) ? match[1].trim() : vtxt;
+            const partes = base.split(/\s+/);
+            const marca = partes.shift() || '';
+            const modelo = partes.join(' ') || '';
+            sessionStorage.setItem('vehiculo-seleccionado', JSON.stringify({ marca, modelo, patente: (match && match[2]) ? match[2] : null }));
+        }
+
+        // Cerrar panel de notificaciones si aplica
+        if (typeof cerrarNotificaciones === 'function') cerrarNotificaciones();
+
+        // Redirigir a categorías con un marcador de mantenimiento
+        window.location.href = `../mis flotas/categorias.html?categoria=Embragues&mantenimiento=1`;
+    } catch (e) {
+        console.error('Error navegando a categorías desde notificación:', e);
+        alert('Ocurrió un error al abrir los productos del mantenimiento');
+    }
+}
+
+/**
+ * Agregar productos del mantenimiento al carrito desde la notificación
+ */
+async function agregarProductosMantenimientoDesdeNotif(notifId) {
+    try {
+        const notif = (window.notificacionesManager && Array.isArray(window.notificacionesManager.notificaciones))
+            ? window.notificacionesManager.notificaciones.find(n => n.id === notifId)
+            : null;
+
+        if (!notif || !notif.datos) {
+            alert('No se encontraron datos del mantenimiento en la notificación');
+            return;
+        }
+
+        const productos = notif.datos.productos || [];
+        if (!productos.length) {
+            alert('Este mantenimiento no tiene productos asociados');
+            return;
+        }
+
+        // Agregar cada producto por SKU usando CarritoGlobal
+        let agregados = 0;
+        for (const p of productos) {
+            const sku = p.sku || p.codSC;
+            if (!sku) continue;
+            try {
+                const ok = await (typeof CarritoGlobal !== 'undefined' ? CarritoGlobal.agregar(sku, 1) : false);
+                if (ok) agregados++;
+            } catch (e) {
+                console.error('Error agregando SKU al carrito:', sku, e);
+            }
+        }
+
+        // Cerrar panel de notificaciones si aplica
+        if (typeof cerrarNotificaciones === 'function') cerrarNotificaciones();
+
+        // Feedback y navegación al carrito
+        alert(`✓ Se agregaron ${agregados} producto(s) del mantenimiento al carrito`);
+        window.location.href = '../mis flotas/carrito.html';
+    } catch (e) {
+        console.error('Error agregando productos del mantenimiento al carrito:', e);
+        alert('Ocurrió un error al agregar los productos al carrito');
     }
 }

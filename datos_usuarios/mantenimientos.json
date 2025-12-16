@@ -1,0 +1,302 @@
+[
+  {
+    "id": "mant_1765911981070_1",
+    "groupId": "mant_1765911981070",
+    "userId": "ecousuario",
+    "vehiculo": {
+      "tipo": "camioneta",
+      "marca": "Chevrolet",
+      "modelo": "Colorado",
+      "motor": "",
+      "patente": "Sin especificar",
+      "anio": "Sin especificar",
+      "id": "veh_1765502675870_4_3olg50y2q",
+      "vehiculoId": "veh_1765502675870_4_3olg50y2q",
+      "favorito": false
+    },
+    "fecha": "2025-12-26",
+    "productos": [
+      {
+        "id": "prod_1765422437810_c54mgjmrh",
+        "userId": "ecousuario",
+        "codCliente": "",
+        "repuesto": "Kit de embrague",
+        "marca": "LUK",
+        "linea": "Embragues",
+        "codSC": "KITCHE280LR",
+        "precio": 284900,
+        "descuento": 0,
+        "stock": 1,
+        "fichaTecnica": "Diámetro [mm]: 300 \nC/ACTUADOR",
+        "referenciaCruzada": "CHEVROLET: 24580378\nCHEVROLET: 24581617\nHOLDEN: 94711965\nLUK: 6303106330A1",
+        "oem": "",
+        "imagenes": [
+          "/uploads/productos/prod-1765422437779-389922479.png"
+        ],
+        "fechaCreacion": "2025-12-11T03:07:17.810Z",
+        "fechaModificacion": "2025-12-11T19:11:30.743Z"
+      },
+      {
+        "id": "prod_1765422437810_wcnag1z1c",
+        "userId": "ecousuario",
+        "codCliente": "",
+        "repuesto": "Volantes",
+        "marca": "LUK",
+        "linea": "Embragues",
+        "codSC": "IVCHE280N",
+        "precio": 424900,
+        "descuento": 0,
+        "stock": 1,
+        "fichaTecnica": "",
+        "referenciaCruzada": "",
+        "oem": "",
+        "imagenes": [],
+        "fechaCreacion": "2025-12-11T03:07:17.810Z",
+        "fechaModificacion": "2025-12-11T19:14:53.148Z"
+      }
+    ],
+    "sistemas": [
+      "embragues"
+    ],
+    "status": "cancelado",
+    "createdAt": "2025-12-16T19:06:21.070Z",
+    "motivoCancelacion": ""
+  },
+  {
+    "id": "mant_1765912474510_0",
+    "groupId": "mant_1765912474510",
+    "userId": "ecousuario",
+    "vehiculo": {
+      "tipo": "camioneta",
+      "marca": "Toyota",
+      "modelo": "Hilux 2.8",
+      "motor": "",
+      "patente": "Sin especificar",
+      "anio": "Sin especificar",
+      "id": "veh_1765502675870_1_1frwkq8qc",
+      "vehiculoId": "veh_1765502675870_1_1frwkq8qc",
+      "favorito": false
+    },
+    "fecha": "2025-12-25",
+    "productos": [
+      {
+        "id": "prod_1765419425976_h672r0fna",
+        "userId": "ecousuario",
+        "codCliente": "",
+        "repuesto": "Kit de embrague",
+        "marca": "EXEDY",
+        "linea": "Embragues",
+        "codSC": "KITTOY400DR",
+        "precio": 179400,
+        "descuento": 0,
+        "stock": 12,
+        "fichaTecnica": "Diámetro Disco: 275 mm\nN° Estrías: 21\nDiámetro Núcleo: 145 mm\nAgujero Piloto: 29.5 mm",
+        "referenciaCruzada": "TOYOTA: 31210-0K280\nEXEDY: CKT-508AA-Lb",
+        "oem": "Disco: 31250-0K280 \nPrensa: 31210-0K280 \nRodamiento: 31230-71050",
+        "imagenes": [
+          "/uploads/productos/prod-1765419425972-599986316.png"
+        ],
+        "fechaCreacion": "2025-12-11T02:17:05.976Z",
+        "fechaModificacion": "2025-12-15T19:54:45.563Z"
+      },
+      {
+        "id": "prod_1765419610363_qz6tbh6y5",
+        "userId": "ecousuario",
+        "codCliente": "",
+        "repuesto": "Kit de embrague",
+        "marca": "ALLIANCE",
+        "linea": "Embragues",
+        "codSC": "KITTOY400AR",
+        "precio": 125000,
+        "descuento": 0,
+        "stock": 12,
+        "fichaTecnica": "N° Estrías: 21\nAlto: 120 mm\nDiámetro Disco: 275 mm\nDiámetro Núcleo: 165 mm\nAgujero Piloto: 29.5 mm\nPeso: 10 Kg",
+        "referenciaCruzada": "",
+        "oem": "DISCO: 31250-0K280\nPRENSA: 31210-0K280\nRODAMIENTO: 31230-71050",
+        "imagenes": [
+          "/uploads/productos/prod-1765419610299-523187208.png"
+        ],
+        "fechaCreacion": "2025-12-11T02:20:10.363Z",
+        "fechaModificacion": "2025-12-15T19:57:49.398Z"
+      }
+    ],
+    "sistemas": [
+      "embragues"
+    ],
+    "status": "programado",
+    "createdAt": "2025-12-16T19:14:34.510Z",
+    "notificado7dias": false,
+    "notificadoDia": false
+  },
+  {
+    "id": "mant_1765912474510_1",
+    "groupId": "mant_1765912474510",
+    "userId": "ecousuario",
+    "vehiculo": {
+      "tipo": "camioneta",
+      "marca": "Mitsubishi",
+      "modelo": "L-200 2.4",
+      "motor": "",
+      "patente": "Sin especificar",
+      "anio": "Sin especificar",
+      "id": "veh_1765502675870_2_v4uswqx95",
+      "vehiculoId": "veh_1765502675870_2_v4uswqx95",
+      "favorito": false
+    },
+    "fecha": "2025-12-17",
+    "productos": [
+      {
+        "id": "prod_1765421675357_oqs2zndkl",
+        "userId": "ecousuario",
+        "codCliente": "",
+        "repuesto": "Pastillas de freno",
+        "marca": "FRASLE",
+        "linea": "Frenos",
+        "codSC": "PAS771A",
+        "precio": 12900,
+        "descuento": 0,
+        "stock": 1,
+        "fichaTecnica": "Posición: Delantera\nFormulación: Advanced\nAltura [mm]: 51\nAncho [mm]: 155,4\nEspesor [mm]: 16",
+        "referenciaCruzada": "MITSUBISHI: 4605A284\nMITSUBISHI: 4605A198\nMITSUBISHI: 4605B233\nMITSUBISHI: MZ690356\nMITSUBISHI:4605A930\nMITSUBISHI: MZ690587\nMITSUBISHI:TS200052\nMITSUBISHI: 4605B290\nFIAT: 6000609714\nFIAT: 0006000609714\nFIAT: 6000609715\nFIAT: 0006000609715\nJURID: 24529\nJURID: 24530\nJURID: 572574",
+        "oem": "FRASLE: PD/771",
+        "imagenes": [
+          "/uploads/productos/prod-1765421675301-57416835.png"
+        ],
+        "fechaCreacion": "2025-12-11T02:54:35.357Z",
+        "fechaModificacion": "2025-12-11T18:55:47.560Z"
+      },
+      {
+        "id": "prod_1765421675357_wi2fxpnkq",
+        "userId": "ecousuario",
+        "codCliente": "",
+        "repuesto": "Pastillas de freno",
+        "marca": "HTECH",
+        "linea": "Frenos",
+        "codSC": "PT7710HT",
+        "precio": 10800,
+        "descuento": 0,
+        "stock": 1,
+        "fichaTecnica": "Posición: Delantera\nFormulación: Advanced\nAltura [mm]: 51\nAncho [mm]: 155,4\nEspesor [mm]: 16",
+        "referenciaCruzada": "MITSUBISHI: 4605A284\nMITSUBISHI: 4605A198\nMITSUBISHI: 4605B233\nMITSUBISHI: MZ690356\nMITSUBISHI:4605A930\nMITSUBISHI: MZ690587\nMITSUBISHI:TS200052\nMITSUBISHI: 4605B290\nFIAT: 6000609714\nFIAT: 0006000609714\nFIAT: 6000609715\nFIAT: 0006000609715\nJURID: 24529\nJURID: 24530\nJURID: 572574",
+        "oem": "FRASLE: PD/771",
+        "imagenes": [
+          "/uploads/productos/prod-1765421675309-508549841.png"
+        ],
+        "fechaCreacion": "2025-12-11T02:54:35.357Z",
+        "fechaModificacion": "2025-12-11T18:56:49.292Z"
+      },
+      {
+        "id": "prod_1765421675357_deywl71g4",
+        "userId": "ecousuario",
+        "codCliente": "",
+        "repuesto": "Disco de freno",
+        "marca": "FRASLE",
+        "linea": "Frenos",
+        "codSC": "DFMIT771F",
+        "precio": 42900,
+        "descuento": 0,
+        "stock": 1,
+        "fichaTecnica": "Diámetro exterior: 294 mm.\nPernos: 6 x 12,5 mm.\nDistancia entre pernos: 139,7 mm.\nEspesor: 28 mm.\nAltura: 46,5 mm.\nDiámetro interior: 94 mm.\nDiámetro corona: 184 mm.\n2 Discos de Freno",
+        "referenciaCruzada": "FIAT: K6000609712\nMITSUBISHI ORIGINAL: 4615A200\nMITSUBISHI ORIGINAL: MN102276\nMITSUBISHI ORIGINAL: 4615A201\nMITSUBISHI ORIGINAL: 4615A147\nFRASLE: FLDI00024\nFREMAX: BD7019",
+        "oem": "",
+        "imagenes": [
+          "/uploads/productos/prod-1765421675328-788321647.png"
+        ],
+        "fechaCreacion": "2025-12-11T02:54:35.357Z",
+        "fechaModificacion": "2025-12-11T18:58:13.203Z"
+      },
+      {
+        "id": "prod_1765421675357_4ox91g0ki",
+        "userId": "ecousuario",
+        "codCliente": "",
+        "repuesto": "Disco de freno",
+        "marca": "HTECH",
+        "linea": "Frenos",
+        "codSC": "FR7710HT",
+        "precio": 18500,
+        "descuento": 0,
+        "stock": 1,
+        "fichaTecnica": "",
+        "referenciaCruzada": "",
+        "oem": "",
+        "imagenes": [
+          "/uploads/productos/prod-1765421675330-345237860.png",
+          "/uploads/productos/prod-1765421675334-558058515.png",
+          "/uploads/productos/prod-1765421675346-904931210.png"
+        ],
+        "fechaCreacion": "2025-12-11T02:54:35.357Z",
+        "fechaModificacion": "2025-12-11T19:01:46.571Z"
+      },
+      {
+        "id": "prod_1765422068691_e222fkh02",
+        "userId": "ecousuario",
+        "codCliente": "",
+        "repuesto": "Patines",
+        "marca": "FRASLE",
+        "linea": "Frenos",
+        "codSC": "PAT377T",
+        "precio": 12900,
+        "descuento": 0,
+        "stock": 1,
+        "fichaTecnica": "ADVANCED\nAncho [mm]: 50\nDiámetro interior de tambor de freno [mm]: 295",
+        "referenciaCruzada": "Chevrolet: 94726878\nIsuzu: 8979478020\nMitsubishi: 4600A106\nMitsubishi: 4600A122\nCobreq: 2700-CP\nJurid: HQJ-543\nMazzicar bpsa: 0095280\nNakata nkf: 3040\nRoc: 24721\nSinter Freios: SP043\nISUZU: 5878322570\nISUZU: 5876150620\nISUZU: 8976627560\nISUZU: 89800180360\nMAZDA: 1K0249240\nMAZDA: 1K0649240",
+        "oem": "",
+        "imagenes": [
+          "/uploads/productos/prod-1765422068638-639490469.jpg",
+          "/uploads/productos/prod-1765422068641-916669775.jpg"
+        ],
+        "fechaCreacion": "2025-12-11T03:01:08.691Z",
+        "fechaModificacion": "2025-12-11T19:02:57.052Z"
+      },
+      {
+        "id": "prod_1765422068691_fmjeu2awo",
+        "userId": "ecousuario",
+        "codCliente": "",
+        "repuesto": "Tambor de freno",
+        "marca": "FRASLE",
+        "linea": "Frenos",
+        "codSC": "TAM-377F",
+        "precio": 36400,
+        "descuento": 0,
+        "stock": 1,
+        "fichaTecnica": "ADVANCED\nDiámetro exterior del tambor de freno [mm]: 343\nDiámetro interior de tambor de freno [mm]: 295\nAltura interior de tambor de freno [mm]: 73\nCantidad de taladros: 06\nCorona de agujeros - Ø [mm]: 139,7\nAltura total de tambor de freno [mm]: 91\nDistancia máx. de desenroscado de tambor de freno [mm]: 297",
+        "referenciaCruzada": "MITSUBISHI: 4615A127\nMITSUBISHI: MN102439\nMITSUBISHI: 6000609724\nTEXTAR: 98100035301\nFIAT: 6000609724",
+        "oem": "FRASLE: FLDR00228",
+        "imagenes": [
+          "/uploads/productos/prod-1765422068645-764615123.png"
+        ],
+        "fechaCreacion": "2025-12-11T03:01:08.691Z",
+        "fechaModificacion": "2025-12-11T19:03:57.282Z"
+      },
+      {
+        "id": "prod_1765422068691_rdoccobr8",
+        "userId": "ecousuario",
+        "codCliente": "",
+        "repuesto": "Tambor de freno",
+        "marca": "HTECH",
+        "linea": "Frenos",
+        "codSC": "TF3770HT",
+        "precio": 30800,
+        "descuento": 0,
+        "stock": 1,
+        "fichaTecnica": "",
+        "referenciaCruzada": "",
+        "oem": "",
+        "imagenes": [
+          "/uploads/productos/prod-1765422068646-703813030.png",
+          "/uploads/productos/prod-1765422068658-929778051.png",
+          "/uploads/productos/prod-1765422068669-695888508.png"
+        ],
+        "fechaCreacion": "2025-12-11T03:01:08.691Z",
+        "fechaModificacion": "2025-12-11T03:02:03.585Z"
+      }
+    ],
+    "sistemas": [
+      "frenos"
+    ],
+    "status": "programado",
+    "createdAt": "2025-12-16T19:14:34.510Z",
+    "notificado7dias": false,
+    "notificadoDia": false
+  }
+]

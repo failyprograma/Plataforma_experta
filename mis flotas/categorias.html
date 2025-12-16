@@ -173,6 +173,7 @@
   document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
     const categoryName = urlParams.get('categoria');
+    const esMantenimiento = urlParams.get('mantenimiento') === '1';
     
     console.log('🔍 DEBUG - Iniciando carga de categoría:', categoryName);
     
@@ -216,6 +217,39 @@
         headerH1.textContent = decodedCategory;
       }
       
+      // Si viene desde mantenimiento, priorizar lista de SKUs guardada
+      const mantenimientoSkusStr = sessionStorage.getItem('mantenimiento_skus');
+
+      if (esMantenimiento && mantenimientoSkusStr) {
+        try {
+          const skus = JSON.parse(mantenimientoSkusStr);
+          showLoader('Cargando productos de mantenimiento...');
+
+          // Cargar base de productos única
+          const productosResponse = await fetch('../datosproductos/productos_db.json');
+          const productosData = await productosResponse.json();
+
+          // Filtrar por SKUs guardados
+          const normalizar = (t) => (t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[-_\s]/g,'').trim();
+          const skusNorm = skus.map(s => normalizar(s));
+          const productosEncontrados = productosData.filter(p => skusNorm.includes(normalizar(p.codSC)));
+
+          // Actualizar header
+          const headerH1 = document.querySelector('.header-left h1');
+          if (headerH1) headerH1.textContent = 'Productos de mantenimiento';
+
+          // Renderizar y limpiar marcador
+          renderizarProductosCruzados(productosEncontrados, {}, 'Mantenimiento');
+          actualizarPaginacion();
+          hideLoader();
+          sessionStorage.removeItem('mantenimiento_skus');
+          return; // No seguir con flujo de cruce estándar
+        } catch (e) {
+          console.error('Error mostrando productos de mantenimiento en categorías:', e);
+          hideLoader();
+        }
+      }
+
       if (vehiculoStr) {
         try {
           const vehiculo = JSON.parse(vehiculoStr);

@@ -1,5 +1,5 @@
-// ===================================================================
-// SERVER.JS — Backend Completo (Usuarios + Flotas + Productos)
+﻿// ===================================================================
+// SERVER.JS â€” Backend Completo (Usuarios + Flotas + Productos)
 // ===================================================================
 
 const express = require("express");
@@ -16,7 +16,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Carpetas públicas
+// Carpetas pÃºblicas
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/vehiculosexpertos', express.static(path.join(__dirname, 'vehiculosexpertos')));
 app.use('/logosvehiculos', express.static(path.join(__dirname, 'logosvehiculos')));
@@ -24,7 +24,7 @@ app.use('/marcasproductos', express.static(path.join(__dirname, 'marcasproductos
 app.use(express.static(path.join(__dirname)));
 
 // ============================================================
-//  CONFIGURACIÓN DE DIRECTORIOS Y ARCHIVOS
+//  CONFIGURACIÃ“N DE DIRECTORIOS Y ARCHIVOS
 // ============================================================
 
 // 1. FLOTAS
@@ -43,7 +43,7 @@ const DATA_DIR_USERS = path.join(__dirname, "datos_usuarios");
 if (!fs.existsSync(DATA_DIR_USERS)) fs.mkdirSync(DATA_DIR_USERS, { recursive: true });
 const USERS_DB = path.join(DATA_DIR_USERS, "users.json");
 
-// 4. IMÁGENES
+// 4. IMÃGENES
 const UPLOADS_PRODUCTOS_DIR = path.join(__dirname, "uploads", "productos");
 if (!fs.existsSync(UPLOADS_PRODUCTOS_DIR)) fs.mkdirSync(UPLOADS_PRODUCTOS_DIR, { recursive: true });
 
@@ -54,6 +54,8 @@ const BANNERS_DB = path.join(DATA_DIR_USERS, "banners_ofertas.json");
 
 // 6. NOTIFICACIONES
 const NOTIFICACIONES_DB = path.join(DATA_DIR_USERS, "notificaciones.json");
+// Mantenimientos programados
+const MANTENIMIENTOS_DB = path.join(DATA_DIR_USERS, "mantenimientos.json");
 
 
 // ============================================================
@@ -95,7 +97,7 @@ const writeFlotasIndex = (list) => writeJSON(FLOTA_INDEX, list);
 
 
 // ============================================================
-//  CONFIGURACIÓN MULTER
+//  CONFIGURACIÃ“N MULTER
 // ============================================================
 
 const storageFlotas = multer.diskStorage({
@@ -130,13 +132,13 @@ const uploadCruces = multer({ storage: multer.memoryStorage() });
 
 
 // ============================================================
-//  SECCIÓN A: USUARIOS (LOGIN SEGURO)
+//  SECCIÃ“N A: USUARIOS (LOGIN SEGURO)
 // ============================================================
 
 // 1. Obtener usuarios (para el select del Admin)
 app.get("/api/users", (req, res) => {
     const users = readJSON(USERS_DB);
-    // Devolvemos solo info pública, sin contraseñas
+    // Devolvemos solo info pÃºblica, sin contraseÃ±as
     const safeUsers = users.map(u => ({ 
         id: u.id, 
         nombre: u.nombre, 
@@ -145,11 +147,11 @@ app.get("/api/users", (req, res) => {
     res.json(safeUsers);
 });
 
-// 2. LOGIN REAL (Aquí es donde ocurre la magia segura)
+// 2. LOGIN REAL (AquÃ­ es donde ocurre la magia segura)
 app.post("/api/login", (req, res) => {
     const { user, pass } = req.body;
     
-    // A. VERIFICACIÓN ADMIN (Hardcoded Seguro en Backend)
+    // A. VERIFICACIÃ“N ADMIN (Hardcoded Seguro en Backend)
     // Esto es seguro porque el usuario nunca ve este archivo.
     if (user === 'admin' && pass === 'Barinas9580*+') {
         return res.json({ 
@@ -159,7 +161,7 @@ app.post("/api/login", (req, res) => {
         });
     }
 
-    // B. VERIFICACIÓN CLIENTES (Desde users.json)
+    // B. VERIFICACIÃ“N CLIENTES (Desde users.json)
     const users = readJSON(USERS_DB);
     const found = users.find(u => u.id === user && u.pass === pass);
 
@@ -174,7 +176,7 @@ app.post("/api/login", (req, res) => {
     }
 
     // C. CREDENCIALES INCORRECTAS
-    res.status(401).json({ ok: false, msg: "Usuario o contraseña incorrectos" });
+    res.status(401).json({ ok: false, msg: "Usuario o contraseÃ±a incorrectos" });
 });
 
 // 3. REGISTRO (Crear nuevos clientes en JSON)
@@ -203,7 +205,7 @@ app.post("/api/register", (req, res) => {
     res.json({ ok: true, msg: "Usuario creado" });
 });
 
-// 4. OBTENER INFORMACIÓN DE UN USUARIO
+// 4. OBTENER INFORMACIÃ“N DE UN USUARIO
 app.get("/api/obtener-usuario", (req, res) => {
     const userId = req.query.userId;
     if (!userId) {
@@ -235,7 +237,7 @@ app.post("/api/actualizar-usuario", (req, res) => {
         return res.status(404).json({ ok: false, msg: "Usuario no encontrado" });
     }
 
-    // Actualizar el campo específico
+    // Actualizar el campo especÃ­fico
     if (campo === 'password' || campo === 'pass') {
         users[userIndex].pass = valor;
     } else {
@@ -247,7 +249,7 @@ app.post("/api/actualizar-usuario", (req, res) => {
 });
 
 // ============================================================
-//  SECCIÓN: NOTIFICACIONES
+//  SECCIÃ“N: NOTIFICACIONES
 // ============================================================
 
 // 1. OBTENER NOTIFICACIONES DE UN USUARIO
@@ -261,10 +263,10 @@ app.get("/api/notificaciones", (req, res) => {
         
         let notificaciones = readJSON(NOTIFICACIONES_DB);
         
-        // Filtrar notificaciones: las del usuario específico o las globales (userId === null)
+        // Filtrar notificaciones: las del usuario especÃ­fico o las globales (userId === null)
         const notificacionesUsuario = notificaciones
             .filter(n => n.userId === userId || n.userId === null)
-            .sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); // Más recientes primero
+            .sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); // MÃ¡s recientes primero
         
         res.json({ ok: true, notificaciones: notificacionesUsuario });
     } catch (error) {
@@ -273,7 +275,7 @@ app.get("/api/notificaciones", (req, res) => {
     }
 });
 
-// 2. MARCAR NOTIFICACIÓN COMO LEÍDA
+// 2. MARCAR NOTIFICACIÃ“N COMO LEÃDA
 app.post("/api/notificaciones/marcar-leida", (req, res) => {
     try {
         const { notifId, userId } = req.body;
@@ -286,10 +288,10 @@ app.post("/api/notificaciones/marcar-leida", (req, res) => {
         const index = notificaciones.findIndex(n => n.id === notifId);
         
         if (index === -1) {
-            return res.status(404).json({ ok: false, msg: "Notificación no encontrada" });
+            return res.status(404).json({ ok: false, msg: "NotificaciÃ³n no encontrada" });
         }
         
-        // Verificar que la notificación pertenece al usuario
+        // Verificar que la notificaciÃ³n pertenece al usuario
         if (notificaciones[index].userId !== userId && notificaciones[index].userId !== null) {
             return res.status(403).json({ ok: false, msg: "No autorizado" });
         }
@@ -297,14 +299,14 @@ app.post("/api/notificaciones/marcar-leida", (req, res) => {
         notificaciones[index].leida = true;
         writeJSON(NOTIFICACIONES_DB, notificaciones);
         
-        res.json({ ok: true, msg: "Notificación marcada como leída" });
+        res.json({ ok: true, msg: "NotificaciÃ³n marcada como leÃ­da" });
     } catch (error) {
-        console.error("Error marcando notificación:", error);
+        console.error("Error marcando notificaciÃ³n:", error);
         res.status(500).json({ ok: false, msg: "Error interno" });
     }
 });
 
-// 3. MARCAR TODAS LAS NOTIFICACIONES COMO LEÍDAS
+// 3. MARCAR TODAS LAS NOTIFICACIONES COMO LEÃDAS
 app.post("/api/notificaciones/marcar-todas-leidas", (req, res) => {
     try {
         const { userId } = req.body;
@@ -324,14 +326,14 @@ app.post("/api/notificaciones/marcar-todas-leidas", (req, res) => {
         
         writeJSON(NOTIFICACIONES_DB, notificaciones);
         
-        res.json({ ok: true, msg: "Todas las notificaciones marcadas como leídas" });
+        res.json({ ok: true, msg: "Todas las notificaciones marcadas como leÃ­das" });
     } catch (error) {
         console.error("Error marcando todas las notificaciones:", error);
         res.status(500).json({ ok: false, msg: "Error interno" });
     }
 });
 
-// 4. ELIMINAR UNA NOTIFICACIÓN
+// 4. ELIMINAR UNA NOTIFICACIÃ“N
 app.delete("/api/notificaciones/:notifId", (req, res) => {
     try {
         const { notifId } = req.params;
@@ -345,10 +347,10 @@ app.delete("/api/notificaciones/:notifId", (req, res) => {
         const index = notificaciones.findIndex(n => n.id === notifId);
         
         if (index === -1) {
-            return res.status(404).json({ ok: false, msg: "Notificación no encontrada" });
+            return res.status(404).json({ ok: false, msg: "NotificaciÃ³n no encontrada" });
         }
         
-        // Verificar que la notificación pertenece al usuario
+        // Verificar que la notificaciÃ³n pertenece al usuario
         if (notificaciones[index].userId !== userId && notificaciones[index].userId !== null) {
             return res.status(403).json({ ok: false, msg: "No autorizado" });
         }
@@ -356,9 +358,9 @@ app.delete("/api/notificaciones/:notifId", (req, res) => {
         notificaciones.splice(index, 1);
         writeJSON(NOTIFICACIONES_DB, notificaciones);
         
-        res.json({ ok: true, msg: "Notificación eliminada" });
+        res.json({ ok: true, msg: "NotificaciÃ³n eliminada" });
     } catch (error) {
-        console.error("Error eliminando notificación:", error);
+        console.error("Error eliminando notificaciÃ³n:", error);
         res.status(500).json({ ok: false, msg: "Error interno" });
     }
 });
@@ -466,7 +468,7 @@ app.post('/api/sync-favoritos-flota', (req, res) => {
         const flotas = readJSON(FLOTA_INDEX);
         let actualizado = false;
         
-        // Buscar el vehículo en todas las flotas del usuario
+        // Buscar el vehÃ­culo en todas las flotas del usuario
         flotas.forEach(flota => {
             if (flota.userId === userId && Array.isArray(flota.vehiculos)) {
                 flota.vehiculos.forEach(v => {
@@ -482,7 +484,7 @@ app.post('/api/sync-favoritos-flota', (req, res) => {
             writeJSON(FLOTA_INDEX, flotas);
             return res.json({ ok: true, msg: 'Favorito sincronizado con flota' });
         } else {
-            return res.json({ ok: false, msg: 'Vehículo no encontrado en flotas' });
+            return res.json({ ok: false, msg: 'VehÃ­culo no encontrado en flotas' });
         }
     } catch (e) {
         console.error('Error sincronizando favorito:', e);
@@ -514,7 +516,7 @@ app.post('/api/vehiculoDetalle', (req, res) => {
 });
 
 // ============================================================
-// ID GENERATOR (helper endpoint para generar IDs únicos)
+// ID GENERATOR (helper endpoint para generar IDs Ãºnicos)
 // ============================================================
 app.get('/api/generate-id', (req, res) => {
     const type = req.query.type || 'generic';
@@ -523,7 +525,7 @@ app.get('/api/generate-id', (req, res) => {
 });
 
 // ============================================================
-//  EMAIL: Confirmación de PIN (Gmail SMTP)
+//  EMAIL: ConfirmaciÃ³n de PIN (Gmail SMTP)
 // ============================================================
 const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
 const SMTP_PORT = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587; // STARTTLS
@@ -545,10 +547,10 @@ let mailTransport = nodemailer.createTransport({
 // ============================================================
 
 /**
- * Crea una notificación para un usuario específico o para todos los usuarios
+ * Crea una notificaciÃ³n para un usuario especÃ­fico o para todos los usuarios
  * @param {string|null} userId - ID del usuario (null para enviar a todos)
- * @param {string} tipo - Tipo de notificación: 'nuevo_producto', 'descuento_agregado', 'descuento_eliminado', 'banner_actualizado'
- * @param {string} titulo - Título de la notificación
+ * @param {string} tipo - Tipo de notificaciÃ³n: 'nuevo_producto', 'descuento_agregado', 'descuento_eliminado', 'banner_actualizado'
+ * @param {string} titulo - TÃ­tulo de la notificaciÃ³n
  * @param {string} mensaje - Mensaje detallado
  * @param {object} datos - Datos adicionales (producto, descuento, etc.)
  */
@@ -583,16 +585,16 @@ async function crearNotificacion(userId, tipo, titulo, mensaje, datos = {}) {
             }
         }
         
-        console.log(`✓ Notificación creada: ${tipo} - ${titulo}`);
+        console.log(`âœ“ NotificaciÃ³n creada: ${tipo} - ${titulo}`);
         return notif;
     } catch (error) {
-        console.error('Error creando notificación:', error);
+        console.error('Error creando notificaciÃ³n:', error);
         return null;
     }
 }
 
 /**
- * Envía un email de notificación al usuario
+ * EnvÃ­a un email de notificaciÃ³n al usuario
  */
 async function enviarEmailNotificacion(userId, tipo, titulo, mensaje, datos) {
     try {
@@ -603,15 +605,18 @@ async function enviarEmailNotificacion(userId, tipo, titulo, mensaje, datos) {
             return; // Usuario no tiene email registrado
         }
         
-        // Iconos y colores según tipo
+        // Iconos y colores segÃºn tipo
         const tiposConfig = {
             'nuevo_producto': { icon: '', color: '#BF1823', label: 'Nuevo Producto' },
             'descuento_agregado': { icon: '', color: '#BF1823', label: 'Nueva Oferta' },
-            'descuento_eliminado': { icon: '', color: '#BF1823', label: 'Actualización de Precio' },
-            'banner_actualizado': { icon: '', color: '#BF1823', label: 'Nuevas Ofertas' }
+            'descuento_eliminado': { icon: '', color: '#BF1823', label: 'ActualizaciÃ³n de Precio' },
+            'banner_actualizado': { icon: '', color: '#BF1823', label: 'Nuevas Ofertas' },
+            'mantenimiento_programado': { icon: '🔧', color: '#BF1823', label: 'Mantenimiento Programado' },
+            'mantenimiento_proximo': { icon: '⚠️', color: '#FF9800', label: 'Recordatorio de Mantenimiento' },
+            'mantenimiento_hoy': { icon: '🔔', color: '#BF1823', label: 'Mantenimiento Hoy' }
         };
         
-        const config = tiposConfig[tipo] || { icon: '', color: '#BF1823', label: 'Notificación' };
+        const config = tiposConfig[tipo] || { icon: '', color: '#BF1823', label: 'NotificaciÃ³n' };
         
         const html = `
         <div style="font-family:Poppins,Arial,sans-serif;max-width:520px;margin:0 auto;background:#ffffff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);overflow:hidden;">
@@ -628,7 +633,7 @@ async function enviarEmailNotificacion(userId, tipo, titulo, mensaje, datos) {
                     <div style="font-size:12px;color:#666;margin-bottom:8px;">Producto:</div>
                     <div style="font-weight:600;font-size:15px;color:#252425;margin-bottom:6px;">${datos.productoNombre}</div>
                     ${datos.productoMarca ? `<div style="font-size:13px;color:#888;margin-bottom:8px;">Marca: ${datos.productoMarca}</div>` : ''}
-                    ${datos.codSC ? `<div style="font-size:13px;color:#888;margin-bottom:8px;">Código: ${datos.codSC}</div>` : ''}
+                    ${datos.codSC ? `<div style="font-size:13px;color:#888;margin-bottom:8px;">CÃ³digo: ${datos.codSC}</div>` : ''}
                     ${datos.precioAnterior && datos.precioNuevo ? `
                     <div style="margin-top:12px;display:flex;align-items:center;gap:12px;">
                         <span style="text-decoration:line-through;color:#999;font-size:14px;">$${datos.precioAnterior.toLocaleString('es-CL')}</span>
@@ -642,11 +647,11 @@ async function enviarEmailNotificacion(userId, tipo, titulo, mensaje, datos) {
                     <a href="https://starclutch.com/mis%20flotas/" style="display:inline-block;background:#BF1823;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:600;font-size:14px;">Ver en la Plataforma</a>
                 </div>
                 <p style="margin:24px 0 0 0;font-size:12px;color:#666;line-height:1.5;">
-                    Esta notificación se envió porque estás suscrito a las actualizaciones de StarClutch. Puedes gestionar notificaciones desde tu perfil.
+                    Esta notificaciÃ³n se enviÃ³ porque estÃ¡s suscrito a las actualizaciones de StarClutch. Puedes gestionar notificaciones desde tu perfil.
                 </p>
             </div>
             <div style="padding:16px 24px;background:#f5f5f5;color:#555;font-size:12px;text-align:center;">
-                © ${new Date().getFullYear()} STARCLUTCH S.p.A. - Todos los derechos reservados
+                Â© ${new Date().getFullYear()} STARCLUTCH S.p.A. - Todos los derechos reservados
             </div>
         </div>`;
         
@@ -657,9 +662,9 @@ async function enviarEmailNotificacion(userId, tipo, titulo, mensaje, datos) {
             html
         });
         
-        console.log(`✓ Email de notificación enviado a: ${user.email}`);
+        console.log(`âœ“ Email de notificaciÃ³n enviado a: ${user.email}`);
     } catch (error) {
-        console.error('Error enviando email de notificación:', error);
+        console.error('Error enviando email de notificaciÃ³n:', error);
     }
 }
 
@@ -668,29 +673,29 @@ app.post('/api/enviar-correo-pin', async (req, res) => {
                 const { email, pin, userName } = req.body;
                 if (!email || !pin) return res.status(400).json({ ok: false, msg: 'Faltan email o pin' });
 
-                const subject = 'Confirmación de PIN — Starclutch';
+                const subject = 'ConfirmaciÃ³n de PIN â€” Starclutch';
                 const html = `
                 <div style="font-family:Poppins,Arial,sans-serif;max-width:520px;margin:0 auto;background:#ffffff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);overflow:hidden;">
                     <div style="background:#BF1823;color:#fff;padding:20px 24px;">
-                        <h2 style="margin:0;font-size:20px;font-weight:600;">Confirmación de PIN</h2>
+                        <h2 style="margin:0;font-size:20px;font-weight:600;">ConfirmaciÃ³n de PIN</h2>
                         <p style="margin:8px 0 0 0;opacity:0.9;">Starclutch Plataforma Experta</p>
                     </div>
                     <div style="padding:24px;color:#333;">
                         <div style="background:#fff3cd;border:1px solid #ffeeba;color:#856404;border-radius:8px;padding:12px 14px;font-size:13px;margin-bottom:14px;">
                             <strong>Asunto:</strong> ${subject}
                         </div>
-                        <p style="margin:0 0 12px 0;font-size:15px;">Hola${userName ? `, <strong>${userName}</strong>` : ''} 👋</p>
-                        <p style="margin:0 0 16px 0;font-size:14px;line-height:1.6;">Este es tu PIN de seguridad. Úsalo para autorizar acciones sensibles dentro de la plataforma (eliminar flotas, enviar órdenes, modificar datos). Cuídalo y no lo compartas.</p>
+                        <p style="margin:0 0 12px 0;font-size:15px;">Hola${userName ? `, <strong>${userName}</strong>` : ''} ðŸ‘‹</p>
+                        <p style="margin:0 0 16px 0;font-size:14px;line-height:1.6;">Este es tu PIN de seguridad. Ãšsalo para autorizar acciones sensibles dentro de la plataforma (eliminar flotas, enviar Ã³rdenes, modificar datos). CuÃ­dalo y no lo compartas.</p>
                         <div style="background:#f8f9fa;border:1px solid #e6e6e6;border-radius:8px;padding:18px;text-align:center;">
                             <div style="font-size:13px;color:#666;margin-bottom:8px;">Tu PIN</div>
                             <div style="font-size:28px;letter-spacing:10px;font-weight:700;color:#BF1823;">${String(pin).padStart(4,'0')}</div>
                         </div>
                         <ul style="margin:18px 0;padding-left:18px;font-size:13px;color:#666;">
                             <li>Puedes cambiar tu PIN desde tu perfil.</li>
-                            <li>Si tú no solicitaste esto, responde a este correo.</li>
+                            <li>Si tÃº no solicitaste esto, responde a este correo.</li>
                         </ul>
                     </div>
-                    <div style="padding:16px 24px;background:#f5f5f5;color:#555;font-size:12px;">© ${new Date().getFullYear()} Starclutch.</div>
+                    <div style="padding:16px 24px;background:#f5f5f5;color:#555;font-size:12px;">Â© ${new Date().getFullYear()} Starclutch.</div>
                 </div>`;
 
                 const info = await mailTransport.sendMail({
@@ -708,7 +713,7 @@ app.post('/api/enviar-correo-pin', async (req, res) => {
 
 
 // ============================================================
-//  ENDPOINT: SOLICITAR NUEVO PRODUCTO (envía correo al equipo)
+//  ENDPOINT: SOLICITAR NUEVO PRODUCTO (envÃ­a correo al equipo)
 // ============================================================
 app.post('/api/solicitar-producto', async (req, res) => {
         try {
@@ -726,7 +731,7 @@ app.post('/api/solicitar-producto', async (req, res) => {
                 } = req.body;
 
                 if (!producto) {
-                        return res.status(400).json({ success: false, message: 'Debes indicar qué producto necesitas' });
+                        return res.status(400).json({ success: false, message: 'Debes indicar quÃ© producto necesitas' });
                 }
 
                 const fechaSolicitud = new Date().toLocaleString('es-CL', {
@@ -737,7 +742,7 @@ app.post('/api/solicitar-producto', async (req, res) => {
                 const html = `
                 <div style="max-width:520px;margin:0 auto;font-family:'Poppins',Arial,sans-serif;background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.12);">
                         <div style="background:#BF1823;padding:24px 28px;text-align:left;">
-                                <h1 style="margin:0;color:#fff;font-size:18px;font-weight:600;">📦 Nueva Solicitud de Producto</h1>
+                                <h1 style="margin:0;color:#fff;font-size:18px;font-weight:600;">ðŸ“¦ Nueva Solicitud de Producto</h1>
                         </div>
                         <div style="padding:24px 28px;">
                                 <p style="margin:0 0 20px 0;font-size:14px;line-height:1.6;color:#333;">
@@ -753,7 +758,7 @@ app.post('/api/solicitar-producto', async (req, res) => {
                                 <!-- Detalles de la solicitud -->
                                 <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
                                         <tr>
-                                                <td style="padding:10px 0;border-bottom:1px solid #eee;font-size:13px;color:#666;width:40%;">Vehículo / Aplicación</td>
+                                                <td style="padding:10px 0;border-bottom:1px solid #eee;font-size:13px;color:#666;width:40%;">VehÃ­culo / AplicaciÃ³n</td>
                                                 <td style="padding:10px 0;border-bottom:1px solid #eee;font-size:13px;color:#333;font-weight:500;">${vehiculo}</td>
                                         </tr>
                                         <tr>
@@ -795,7 +800,7 @@ app.post('/api/solicitar-producto', async (req, res) => {
                                                         <td style="padding:6px 0;font-size:13px;color:#333;font-weight:500;">${emailUsuario}</td>
                                                 </tr>
                                                 <tr>
-                                                        <td style="padding:6px 0;font-size:13px;color:#666;">Teléfono:</td>
+                                                        <td style="padding:6px 0;font-size:13px;color:#666;">TelÃ©fono:</td>
                                                         <td style="padding:6px 0;font-size:13px;color:#333;font-weight:500;">${telefonoUsuario}</td>
                                                 </tr>
                                         </table>
@@ -809,7 +814,7 @@ app.post('/api/solicitar-producto', async (req, res) => {
                 const info = await mailTransport.sendMail({
                         from: `Plataforma Experta <${MAIL_USER}>`,
                         to: 'scplataformaexperta@gmail.com',
-                        subject: `📦 Solicitud de Producto: ${producto} - ${nombreUsuario}`,
+                        subject: `ðŸ“¦ Solicitud de Producto: ${producto} - ${nombreUsuario}`,
                         html
                 });
 
@@ -824,7 +829,7 @@ app.post('/api/solicitar-producto', async (req, res) => {
 
 
 // ============================================================
-//  SECCIÓN B: PRODUCTOS (SUBIDA Y CONSULTA)
+//  SECCIÃ“N B: PRODUCTOS (SUBIDA Y CONSULTA)
 // ============================================================
 
 // 1. SUBIR PRODUCTOS (Guardar en JSON)
@@ -857,7 +862,7 @@ app.post("/api/upload-productos", uploadProductos.any(), async (req, res) => {
                 duplicados.push({
                     codSC: prod.codSC,
                     precio: prod.precio,
-                    mensaje: `Ya existe un producto con código ${prod.codSC} y precio $${prod.precio}`
+                    mensaje: `Ya existe un producto con cÃ³digo ${prod.codSC} y precio $${prod.precio}`
                 });
             } else {
                 // Asignar fotos
@@ -893,10 +898,10 @@ app.post("/api/upload-productos", uploadProductos.any(), async (req, res) => {
             // Crear notificaciones para todos los usuarios por cada producto nuevo
             for (const producto of nuevosProductos) {
                 await crearNotificacion(
-                    null, // null = notificación para todos los usuarios
+                    null, // null = notificaciÃ³n para todos los usuarios
                     'nuevo_producto',
                     'Nuevo producto disponible',
-                    `Se ha agregado ${producto.repuesto} de la marca ${producto.marca} a nuestro catálogo.`,
+                    `Se ha agregado ${producto.repuesto} de la marca ${producto.marca} a nuestro catÃ¡logo.`,
                     {
                         productoId: producto.id,
                         productoNombre: producto.repuesto,
@@ -908,7 +913,7 @@ app.post("/api/upload-productos", uploadProductos.any(), async (req, res) => {
             }
         }
 
-        // Responder con información de duplicados
+        // Responder con informaciÃ³n de duplicados
         if (duplicados.length > 0) {
             res.json({ 
                 ok: true, 
@@ -962,7 +967,7 @@ app.post("/api/editar-producto", uploadProductos.any(), async (req, res) => {
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
 
-        // Procesar nuevas imágenes
+        // Procesar nuevas imÃ¡genes
         const nuevasImagenes = files.map(f => `/uploads/productos/${f.filename}`);
         
         // Detectar cambios en descuento
@@ -999,12 +1004,12 @@ app.post("/api/editar-producto", uploadProductos.any(), async (req, res) => {
                 : null;
             
             if (descuentoNuevo > 0 && descuentoAnterior === 0) {
-                // Se agregó un descuento
+                // Se agregÃ³ un descuento
                 const precioConDescuento = Math.round(precioNuevo * (1 - descuentoNuevo / 100));
                 await crearNotificacion(
                     userId, // Enviar solo al usuario del producto
                     'descuento_agregado',
-                    '¡Nueva oferta disponible!',
+                    'Â¡Nueva oferta disponible!',
                     `${datosObj.repuesto} ahora tiene un ${descuentoNuevo}% de descuento.`,
                     {
                         productoId: productoId,
@@ -1022,11 +1027,11 @@ app.post("/api/editar-producto", uploadProductos.any(), async (req, res) => {
                     }
                 );
             } else if (descuentoNuevo === 0 && descuentoAnterior > 0) {
-                // Se eliminó un descuento
+                // Se eliminÃ³ un descuento
                 await crearNotificacion(
                     userId, // Enviar solo al usuario del producto
                     'descuento_eliminado',
-                    'Actualización de precio',
+                    'ActualizaciÃ³n de precio',
                     `${datosObj.repuesto} ha vuelto a su precio regular.`,
                     {
                         productoId: productoId,
@@ -1044,7 +1049,7 @@ app.post("/api/editar-producto", uploadProductos.any(), async (req, res) => {
                     }
                 );
             } else if (descuentoNuevo !== descuentoAnterior) {
-                // Se modificó el descuento
+                // Se modificÃ³ el descuento
                 const precioConDescuento = Math.round(precioNuevo * (1 - descuentoNuevo / 100));
                 await crearNotificacion(
                     userId, // Enviar solo al usuario del producto
@@ -1093,18 +1098,18 @@ app.post("/api/eliminar-producto", (req, res) => {
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
 
-        // Obtener las imágenes del producto antes de eliminarlo
+        // Obtener las imÃ¡genes del producto antes de eliminarlo
         const producto = dbData[index];
         const imagenesAEliminar = producto.imagenes || [];
         
-        // Eliminar archivos físicos de imagen
+        // Eliminar archivos fÃ­sicos de imagen
         imagenesAEliminar.forEach(imagenPath => {
             try {
                 // imagenPath viene como "/uploads/productos/nombre.jpg"
                 const rutaCompleta = path.join(__dirname, imagenPath);
                 if (fs.existsSync(rutaCompleta)) {
                     fs.unlinkSync(rutaCompleta);
-                    console.log(`✓ Imagen eliminada: ${imagenPath}`);
+                    console.log(`âœ“ Imagen eliminada: ${imagenPath}`);
                 }
             } catch (err) {
                 console.error(`Error al eliminar imagen ${imagenPath}:`, err);
@@ -1123,11 +1128,11 @@ app.post("/api/eliminar-producto", (req, res) => {
     }
 });
 
-// (Ruta duplicada 'repuestos' eliminada para evitar confusión, usamos 'obtener-productos')
+// (Ruta duplicada 'repuestos' eliminada para evitar confusiÃ³n, usamos 'obtener-productos')
 
 
 // ============================================================
-//  SECCIÓN C: FLOTAS
+//  SECCIÃ“N C: FLOTAS
 // ============================================================
 
 app.post("/api/upload-flota", uploadFlota.single("file"), (req, res) => {
@@ -1147,12 +1152,12 @@ app.post("/api/upload-flota", uploadFlota.single("file"), (req, res) => {
             const data = XLSX.utils.sheet_to_json(wb.Sheets[sheet], { defval: "" });
             vehicles = data.map(r => ({
                 id: `veh_${Date.now()}_${Math.random()}`,
-                tipo: r.tipo || r["Tipo de vehículo"] || "",
+                tipo: r.tipo || r["Tipo de vehÃ­culo"] || "",
                 marca: r.marca || "",
                 modelo: r.modelo || "",
                 motor: r.motor || "",
                 patente: r.patente || "",
-                anio: r.anio || r["Año"] || ""
+                anio: r.anio || r["AÃ±o"] || ""
             }));
             fs.unlinkSync(path.join(DATA_DIR_FLOTAS, req.file.filename));
         } else if (req.body.vehiculos) {
@@ -1203,7 +1208,7 @@ app.get("/api/flota/:id", (req, res) => {
     res.json({ ok: true, ...found }); 
 });
 
-// Endpoint que devuelve el usuario logueado según la cookie `star_user`
+// Endpoint que devuelve el usuario logueado segÃºn la cookie `star_user`
 app.get('/api/me', (req, res) => {
     try {
         const cookies = req.headers.cookie || '';
@@ -1223,7 +1228,7 @@ app.get('/api/me', (req, res) => {
 app.put("/api/flota/:id", (req, res) => {
     const id = req.params.id;
     const { vehiculos } = req.body;
-    if (!Array.isArray(vehiculos)) return res.status(400).json({ ok: false, msg: "Formato inválido" });
+    if (!Array.isArray(vehiculos)) return res.status(400).json({ ok: false, msg: "Formato invÃ¡lido" });
 
     const flotas = readFlotasIndex();
     const idx = flotas.findIndex(f => f.id === id);
@@ -1307,7 +1312,7 @@ app.post('/api/recomendados/:userId', (req, res) => {
     return res.json({ ok: true, msg: 'Recomendaciones guardadas' });
 });
 
-// Toggle single SKU en recomendaciones (añadir/remover)
+// Toggle single SKU en recomendaciones (aÃ±adir/remover)
 app.post('/api/recomendados/toggle', (req, res) => {
     const { userId, sku, enable } = req.body;
     if (!userId || !sku || typeof enable === 'undefined') return res.status(400).json({ ok: false, msg: 'Faltan datos' });
@@ -1357,10 +1362,10 @@ app.get('/api/tracking', (req, res) => {
 
 
 // ============================================================
-//  ENDPOINTS PARA AGREGAR MODELO DE VEHÍCULO Y MARCA DE PRODUCTO
+//  ENDPOINTS PARA AGREGAR MODELO DE VEHÃCULO Y MARCA DE PRODUCTO
 // ============================================================
 
-// Configuración de multer para subidas de archivos
+// ConfiguraciÃ³n de multer para subidas de archivos
 const uploadModeloVehiculo = multer({ 
     dest: path.join(__dirname, 'logosvehiculos'),
     limits: { fileSize: 10 * 1024 * 1024 } // 10MB
@@ -1371,7 +1376,7 @@ const uploadMarcaProducto = multer({
     limits: { fileSize: 5 * 1024 * 1024 } // 5MB
 });
 
-// 1. AGREGAR MODELO DE VEHÍCULO
+// 1. AGREGAR MODELO DE VEHÃCULO
 app.post("/api/agregar-modelo-vehiculo", uploadModeloVehiculo.fields([
     { name: 'imagen', maxCount: 1 },
     { name: 'marcaNuevaLogo', maxCount: 1 }
@@ -1411,10 +1416,10 @@ app.post("/api/agregar-modelo-vehiculo", uploadModeloVehiculo.fields([
             marcaLogoPath = `/logosvehiculos/${marcaLogoFileName}`;
         }
 
-        // ✅ ACTUALIZAR CASCADA_VEHICULOS.JSON
+        // âœ… ACTUALIZAR CASCADA_VEHICULOS.JSON
         let cascadaDB = readJSON(CASCADA_DB_FILE);
         
-        // Si es marca nueva, agregarla a TODOS los tipos de vehículos
+        // Si es marca nueva, agregarla a TODOS los tipos de vehÃ­culos
         if (esMarcaNueva === 'true') {
             Object.keys(cascadaDB).forEach(tipoKey => {
                 if (!cascadaDB[tipoKey].marcas) cascadaDB[tipoKey].marcas = {};
@@ -1424,7 +1429,7 @@ app.post("/api/agregar-modelo-vehiculo", uploadModeloVehiculo.fields([
             });
         }
         
-        // Agregar modelo a la marca del tipo específico
+        // Agregar modelo a la marca del tipo especÃ­fico
         if (cascadaDB[tipo] && cascadaDB[tipo].marcas && cascadaDB[tipo].marcas[marca]) {
             if (!cascadaDB[tipo].marcas[marca].includes(nombre)) {
                 cascadaDB[tipo].marcas[marca].push(nombre);
@@ -1449,7 +1454,7 @@ app.post("/api/agregar-modelo-vehiculo", uploadModeloVehiculo.fields([
             marcaLogoPath: marcaLogoPath
         });
     } catch (e) {
-        console.error("Error al agregar modelo de vehículo:", e);
+        console.error("Error al agregar modelo de vehÃ­culo:", e);
         res.status(500).json({ ok: false, msg: "Error al procesar" });
     }
 });
@@ -1491,13 +1496,13 @@ app.post("/api/agregar-marca-producto", uploadMarcaProducto.single('logo'), (req
     }
 });
 
-// 3. OBTENER CASCADA DE VEHÍCULOS (tipos -> marcas -> modelos)
+// 3. OBTENER CASCADA DE VEHÃCULOS (tipos -> marcas -> modelos)
 app.get("/api/cascada-vehiculos", (req, res) => {
     try {
         const cascadaDB = readJSON(CASCADA_DB_FILE);
         res.json(cascadaDB);
     } catch (e) {
-        console.error("Error al obtener cascada de vehículos:", e);
+        console.error("Error al obtener cascada de vehÃ­culos:", e);
         res.status(500).json({ error: "Error al cargar datos" });
     }
 });
@@ -1515,11 +1520,11 @@ app.get("/api/marcas-productos", (req, res) => {
         // Leer archivos de la carpeta
         const archivos = fs.readdirSync(marcasProductosDir);
         
-        // Filtrar solo imágenes y extraer nombres de marca
+        // Filtrar solo imÃ¡genes y extraer nombres de marca
         const marcas = archivos
             .filter(file => /\.(png|jpg|jpeg|webp|svg)$/i.test(file))
             .map(file => {
-                // Quitar la extensión para obtener el nombre de la marca
+                // Quitar la extensiÃ³n para obtener el nombre de la marca
                 const nombreMarca = file.replace(/\.(png|jpg|jpeg|webp|svg)$/i, '');
                 return {
                     nombre: nombreMarca,
@@ -1535,13 +1540,13 @@ app.get("/api/marcas-productos", (req, res) => {
     }
 });
 
-// 5. EDITAR MARCA DE VEHÍCULO
+// 5. EDITAR MARCA DE VEHÃCULO
 app.post("/api/editar-marca-vehiculo", (req, res) => {
     try {
         const { tipo, marcaActual, nuevoNombre } = req.body;
         
         if (!tipo || !marcaActual || !nuevoNombre) {
-            return res.status(400).json({ ok: false, msg: "Faltan parámetros" });
+            return res.status(400).json({ ok: false, msg: "Faltan parÃ¡metros" });
         }
 
         let cascadaDB = readJSON(CASCADA_DB_FILE);
@@ -1563,13 +1568,13 @@ app.post("/api/editar-marca-vehiculo", (req, res) => {
     }
 });
 
-// 6. ELIMINAR MARCA DE VEHÍCULO
+// 6. ELIMINAR MARCA DE VEHÃCULO
 app.post("/api/eliminar-marca-vehiculo", (req, res) => {
     try {
         const { tipo, marca } = req.body;
         
         if (!tipo || !marca) {
-            return res.status(400).json({ ok: false, msg: "Faltan parámetros" });
+            return res.status(400).json({ ok: false, msg: "Faltan parÃ¡metros" });
         }
 
         let cascadaDB = readJSON(CASCADA_DB_FILE);
@@ -1589,13 +1594,13 @@ app.post("/api/eliminar-marca-vehiculo", (req, res) => {
     }
 });
 
-// 7. EDITAR MODELO DE VEHÍCULO
+// 7. EDITAR MODELO DE VEHÃCULO
 app.post("/api/editar-modelo-vehiculo", (req, res) => {
     try {
         const { tipo, marca, modeloActual, nuevoNombre } = req.body;
         
         if (!tipo || !marca || !modeloActual || !nuevoNombre) {
-            return res.status(400).json({ ok: false, msg: "Faltan parámetros" });
+            return res.status(400).json({ ok: false, msg: "Faltan parÃ¡metros" });
         }
 
         let cascadaDB = readJSON(CASCADA_DB_FILE);
@@ -1622,13 +1627,13 @@ app.post("/api/editar-modelo-vehiculo", (req, res) => {
     }
 });
 
-// 8. ELIMINAR MODELO DE VEHÍCULO
+// 8. ELIMINAR MODELO DE VEHÃCULO
 app.post("/api/eliminar-modelo-vehiculo", (req, res) => {
     try {
         const { tipo, marca, modelo } = req.body;
         
         if (!tipo || !marca || !modelo) {
-            return res.status(400).json({ ok: false, msg: "Faltan parámetros" });
+            return res.status(400).json({ ok: false, msg: "Faltan parÃ¡metros" });
         }
 
         let cascadaDB = readJSON(CASCADA_DB_FILE);
@@ -1654,7 +1659,7 @@ app.post("/api/editar-marca-producto", uploadMarcaProducto.single('logo'), (req,
         const { nombreActual, nuevoNombre } = req.body;
         
         if (!nombreActual || !nuevoNombre) {
-            return res.status(400).json({ ok: false, msg: "Faltan parámetros" });
+            return res.status(400).json({ ok: false, msg: "Faltan parÃ¡metros" });
         }
 
         const marcasProductosDir = path.join(__dirname, 'marcasproductos');
@@ -1680,7 +1685,7 @@ app.post("/api/editar-marca-producto", uploadMarcaProducto.single('logo'), (req,
                 fs.unlinkSync(rutaActual);
             }
             
-            // Determinar extensión del nuevo archivo
+            // Determinar extensiÃ³n del nuevo archivo
             const nuevoExt = path.extname(req.file.originalname);
             const rutaNueva = path.join(marcasProductosDir, `${nuevoNombre}${nuevoExt}`);
             
@@ -1740,16 +1745,16 @@ app.post("/api/eliminar-marca-producto", (req, res) => {
 });
 
 // ============================================================
-//  SISTEMA DE CRUCES VEHÍCULOS - PRODUCTOS
+//  SISTEMA DE CRUCES VEHÃCULOS - PRODUCTOS
 // ============================================================
 
 const CRUCES_FILE = path.join(DATA_DIR_PRODUCTOS, "cruces_vehiculos.json");
 
 // ============================================================
-//  SISTEMA INTELIGENTE DE NORMALIZACIÓN DE MARCAS/MODELOS
+//  SISTEMA INTELIGENTE DE NORMALIZACIÃ“N DE MARCAS/MODELOS
 // ============================================================
 
-// Función auxiliar para normalizar nombres (fuzzy matching)
+// FunciÃ³n auxiliar para normalizar nombres (fuzzy matching)
 function normalizarTexto(texto) {
     if (!texto) return "";
     return String(texto)
@@ -1760,8 +1765,8 @@ function normalizarTexto(texto) {
         .trim();
 }
 
-// Diccionario de marcas canónicas (forma estándar → variantes conocidas)
-// La clave es la forma normalizada, el valor es la forma canónica legible
+// Diccionario de marcas canÃ³nicas (forma estÃ¡ndar â†’ variantes conocidas)
+// La clave es la forma normalizada, el valor es la forma canÃ³nica legible
 const MARCAS_CANONICAS = {
     // Great Wall y variantes
     'greatwall': 'Great Wall',
@@ -1801,7 +1806,7 @@ const MARCAS_CANONICAS = {
     'peugeot': 'Peugeot',
     'renault': 'Renault',
     'fiat': 'Fiat',
-    'citroen': 'Citroën',
+    'citroen': 'CitroÃ«n',
     'chery': 'Chery',
     'jac': 'JAC',
     'byd': 'BYD',
@@ -1826,46 +1831,46 @@ const MARCAS_CANONICAS = {
     'daf': 'DAF',
 };
 
-// Función para obtener la marca canónica (forma estándar)
+// FunciÃ³n para obtener la marca canÃ³nica (forma estÃ¡ndar)
 function obtenerMarcaCanonica(marca) {
     if (!marca) return '';
     const marcaNorm = normalizarTexto(marca);
     
-    // Buscar en el diccionario de marcas canónicas
+    // Buscar en el diccionario de marcas canÃ³nicas
     if (MARCAS_CANONICAS[marcaNorm]) {
         return MARCAS_CANONICAS[marcaNorm];
     }
     
-    // Si no está en el diccionario, formatear de forma legible
+    // Si no estÃ¡ en el diccionario, formatear de forma legible
     // Capitalizar primera letra de cada palabra
     return String(marca)
         .trim()
         .replace(/[_-]/g, ' ')  // Reemplazar guiones por espacios
-        .replace(/\s+/g, ' ')   // Normalizar espacios múltiples
+        .replace(/\s+/g, ' ')   // Normalizar espacios mÃºltiples
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
         .join(' ');
 }
 
-// Función para normalizar modelo (mantener números y formato legible)
+// FunciÃ³n para normalizar modelo (mantener nÃºmeros y formato legible)
 function normalizarModelo(modelo) {
     if (!modelo) return '';
     return String(modelo)
         .trim()
         .replace(/[_]/g, ' ')   // Reemplazar guiones bajos por espacios
-        .replace(/\s+/g, ' ');  // Normalizar espacios múltiples
+        .replace(/\s+/g, ' ');  // Normalizar espacios mÃºltiples
 }
 
-// Función para agregar nuevas marcas al diccionario en runtime
+// FunciÃ³n para agregar nuevas marcas al diccionario en runtime
 function registrarMarcaCanonica(variante, formaCanonica) {
     const varianteNorm = normalizarTexto(variante);
     if (varianteNorm && formaCanonica) {
         MARCAS_CANONICAS[varianteNorm] = formaCanonica;
-        console.log(`📚 Nueva marca registrada: "${variante}" → "${formaCanonica}"`);
+        console.log(`ðŸ“š Nueva marca registrada: "${variante}" â†’ "${formaCanonica}"`);
     }
 }
 
-// Función para normalizar un cruce completo antes de guardarlo
+// FunciÃ³n para normalizar un cruce completo antes de guardarlo
 function normalizarCruce(cruce) {
     return {
         ...cruce,
@@ -1901,7 +1906,7 @@ function guardarCruces(data) {
 // Endpoint: Procesar Excel de cruces subido por el usuario
 app.post("/api/procesar-cruces", uploadCruces.single('excel'), (req, res) => {
     if (!req.file) {
-        return res.status(400).json({ ok: false, msg: "No se recibió ningún archivo" });
+        return res.status(400).json({ ok: false, msg: "No se recibiÃ³ ningÃºn archivo" });
     }
     
     try {
@@ -1946,11 +1951,11 @@ app.post("/api/procesar-cruces", uploadCruces.single('excel'), (req, res) => {
         const tieneMotor = headersNorm.includes('motor');
         console.log('Tiene columna motor:', tieneMotor);
         
-        // Cargar productos para validación de SKUs
+        // Cargar productos para validaciÃ³n de SKUs
         const productos = readJSON(PRODUCTOS_DB);
         const skusValidos = new Set(productos.map(p => normalizarTexto(p.codSC || p.sku || '')).filter(s => s));
-        console.log(`SKUs válidos en base de datos: ${skusValidos.size}`);
-        // Debug: mostrar primeros 10 SKUs válidos para referencia
+        console.log(`SKUs vÃ¡lidos en base de datos: ${skusValidos.size}`);
+        // Debug: mostrar primeros 10 SKUs vÃ¡lidos para referencia
         const primerosSkus = Array.from(skusValidos).slice(0, 10);
         console.log('Primeros SKUs en DB (normalizados):', primerosSkus);
         
@@ -1961,9 +1966,9 @@ app.post("/api/procesar-cruces", uploadCruces.single('excel'), (req, res) => {
         const skusNoEncontrados = [];
         let marcaActual = ""; // Para manejar celdas combinadas
         let modelosAcumulados = []; // Array de modelos dentro de la misma marca
-        let productosAcumulados = {}; // Acumular todos los productos por categoría
+        let productosAcumulados = {}; // Acumular todos los productos por categorÃ­a
         
-        // Iterar desde la fila 1 (después de headers)
+        // Iterar desde la fila 1 (despuÃ©s de headers)
         for (let row = range.s.r + 1; row <= range.e.r; row++) {
             // Leer valores de cada celda
             const rowData = {};
@@ -1971,9 +1976,9 @@ app.post("/api/procesar-cruces", uploadCruces.single('excel'), (req, res) => {
                 const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
                 const cell = sheet[cellAddress];
                 const headerNorm = normalizarTexto(headers[col - range.s.c]);
-                // Limpiar el valor: remover saltos de línea, espacios extra, etc.
+                // Limpiar el valor: remover saltos de lÃ­nea, espacios extra, etc.
                 let valor = cell ? String(cell.v).trim() : '';
-                // Normalizar espacios múltiples a uno solo
+                // Normalizar espacios mÃºltiples a uno solo
                 valor = valor.replace(/\s+/g, ' ');
                 rowData[headerNorm] = valor;
             }
@@ -1984,11 +1989,11 @@ app.post("/api/procesar-cruces", uploadCruces.single('excel'), (req, res) => {
             
             // Detectar cambio de MARCA
             if (marca && marca !== marcaActual) {
-                // Si cambia la marca, crear vehículos separados para cada modelo acumulado
+                // Si cambia la marca, crear vehÃ­culos separados para cada modelo acumulado
                 if (marcaActual && modelosAcumulados.length > 0 && Object.keys(productosAcumulados).length > 0) {
-                    // Crear un vehículo por cada modelo con TODOS los productos
+                    // Crear un vehÃ­culo por cada modelo con TODOS los productos
                     modelosAcumulados.forEach(modeloIndividual => {
-                        // Aplicar normalización inteligente de marca y modelo
+                        // Aplicar normalizaciÃ³n inteligente de marca y modelo
                         const vehiculo = normalizarCruce({
                             marca: marcaActual,
                             modelo: modeloIndividual,
@@ -1999,7 +2004,7 @@ app.post("/api/procesar-cruces", uploadCruces.single('excel'), (req, res) => {
                         const resumenCategorias = Object.entries(vehiculo.categorias)
                             .map(([cat, prods]) => `${cat}: ${prods.length} productos`)
                             .join(', ');
-                        console.log(`✓ Vehículo creado: ${vehiculo.marca} ${vehiculo.modelo} - ${resumenCategorias}`);
+                        console.log(`âœ“ VehÃ­culo creado: ${vehiculo.marca} ${vehiculo.modelo} - ${resumenCategorias}`);
                     });
                 }
                 
@@ -2008,12 +2013,12 @@ app.post("/api/procesar-cruces", uploadCruces.single('excel'), (req, res) => {
                 modelosAcumulados = [];
                 productosAcumulados = {};
                 
-                console.log(`\n🏷️ Nueva marca: ${marca} → Canónica: ${obtenerMarcaCanonica(marca)}`);
+                console.log(`\nðŸ·ï¸ Nueva marca: ${marca} â†’ CanÃ³nica: ${obtenerMarcaCanonica(marca)}`);
                 
                 // Si hay modelo en esta fila, agregarlo
                 if (modelo) {
                     modelosAcumulados.push(modelo);
-                    console.log(`  📋 Modelo encontrado: ${modelo}`);
+                    console.log(`  ðŸ“‹ Modelo encontrado: ${modelo}`);
                 }
             } else {
                 // Misma marca (celda combinada)
@@ -2022,7 +2027,7 @@ app.post("/api/procesar-cruces", uploadCruces.single('excel'), (req, res) => {
                 // Si hay un nuevo modelo en esta fila, acumularlo
                 if (modelo && !modelosAcumulados.includes(modelo)) {
                     modelosAcumulados.push(modelo);
-                    console.log(`  📋 Modelo adicional: ${modelo}`);
+                    console.log(`  ðŸ“‹ Modelo adicional: ${modelo}`);
                 }
             }
             
@@ -2031,7 +2036,7 @@ app.post("/api/procesar-cruces", uploadCruces.single('excel'), (req, res) => {
                 continue;
             }
             
-            // Procesar categorías de esta fila y acumularlas en productosAcumulados
+            // Procesar categorÃ­as de esta fila y acumularlas en productosAcumulados
             const categoriasMap = {
                 'embragues': 'embragues',
                 'frenos': 'frenos',
@@ -2061,35 +2066,35 @@ app.post("/api/procesar-cruces", uploadCruces.single('excel'), (req, res) => {
                 // Validar que el SKU existe en productos_db
                 const skuNorm = normalizarTexto(sku);
                 if (skusValidos.has(skuNorm)) {
-                    // Inicializar array de categoría si no existe
+                    // Inicializar array de categorÃ­a si no existe
                     if (!productosAcumulados[categoriaNombre]) {
                         productosAcumulados[categoriaNombre] = [];
                     }
                     
-                    // Verificar si el SKU ya está en esta categoría (evitar duplicados)
+                    // Verificar si el SKU ya estÃ¡ en esta categorÃ­a (evitar duplicados)
                     const skusEnCategoria = productosAcumulados[categoriaNombre].map(p => normalizarTexto(p.sku));
                     if (!skusEnCategoria.includes(skuNorm)) {
                         productosAcumulados[categoriaNombre].push({
                             sku: sku,
                             marca: marca_prod
                         });
-                        console.log(`  ➕ Fila ${row + 1}: ${categoriaNombre}: ${sku} (${marca_prod || 'sin marca'})`);
+                        console.log(`  âž• Fila ${row + 1}: ${categoriaNombre}: ${sku} (${marca_prod || 'sin marca'})`);
                         skusValidosCount++;
                     } else {
-                        console.log(`  ⚠️ Fila ${row + 1}: SKU duplicado ignorado - ${categoriaNombre}: ${sku}`);
+                        console.log(`  âš ï¸ Fila ${row + 1}: SKU duplicado ignorado - ${categoriaNombre}: ${sku}`);
                     }
                 } else {
                     skusInvalidosCount++;
                     skusNoEncontrados.push(`${sku} (${marca} - ${categoriaNombre})`);
-                    console.log(`  ❌ Fila ${row + 1}: SKU no encontrado - ${categoriaNombre}: ${sku} [normalizado: "${skuNorm}"]`);
+                    console.log(`  âŒ Fila ${row + 1}: SKU no encontrado - ${categoriaNombre}: ${sku} [normalizado: "${skuNorm}"]`);
                 }
             }
         }
         
-        // Procesar la última marca acumulada
+        // Procesar la Ãºltima marca acumulada
         if (marcaActual && modelosAcumulados.length > 0 && Object.keys(productosAcumulados).length > 0) {
             modelosAcumulados.forEach(modeloIndividual => {
-                // Aplicar normalización inteligente de marca y modelo
+                // Aplicar normalizaciÃ³n inteligente de marca y modelo
                 const vehiculo = normalizarCruce({
                     marca: marcaActual,
                     modelo: modeloIndividual,
@@ -2100,12 +2105,12 @@ app.post("/api/procesar-cruces", uploadCruces.single('excel'), (req, res) => {
                 const resumenCategorias = Object.entries(vehiculo.categorias)
                     .map(([cat, prods]) => `${cat}: ${prods.length} productos`)
                     .join(', ');
-                console.log(`✓ Vehículo creado: ${vehiculo.marca} ${vehiculo.modelo} - ${resumenCategorias}`);
+                console.log(`âœ“ VehÃ­culo creado: ${vehiculo.marca} ${vehiculo.modelo} - ${resumenCategorias}`);
             });
         }
         
-        console.log(`\nResultado: ${data.length} vehículos procesados`);
-        console.log(`SKUs válidos: ${skusValidosCount}, SKUs no encontrados: ${skusInvalidosCount}`);
+        console.log(`\nResultado: ${data.length} vehÃ­culos procesados`);
+        console.log(`SKUs vÃ¡lidos: ${skusValidosCount}, SKUs no encontrados: ${skusInvalidosCount}`);
         if (skusNoEncontrados.length > 0) {
             console.log('SKUs no encontrados:', skusNoEncontrados.slice(0, 10)); // Mostrar solo los primeros 10
         }
@@ -2113,7 +2118,7 @@ app.post("/api/procesar-cruces", uploadCruces.single('excel'), (req, res) => {
         if (data.length === 0) {
             return res.status(400).json({ 
                 ok: false, 
-                msg: "No se encontraron vehículos válidos o ningún SKU coincide con los productos registrados",
+                msg: "No se encontraron vehÃ­culos vÃ¡lidos o ningÃºn SKU coincide con los productos registrados",
                 debug: {
                     headers: headers,
                     filas: range.e.r - range.s.r,
@@ -2126,7 +2131,7 @@ app.post("/api/procesar-cruces", uploadCruces.single('excel'), (req, res) => {
         // Cargar cruces actuales
         const crucesData = leerCruces();
         
-        // MERGE INTELIGENTE: No duplicar vehículos, combinar categorías
+        // MERGE INTELIGENTE: No duplicar vehÃ­culos, combinar categorÃ­as
         const crucesExistentes = crucesData.cruces || [];
         const crucesMap = new Map();
         
@@ -2141,14 +2146,14 @@ app.post("/api/procesar-cruces", uploadCruces.single('excel'), (req, res) => {
             const key = `${normalizarTexto(nuevoCruce.marca)}_${normalizarTexto(nuevoCruce.modelo)}`;
             
             if (crucesMap.has(key)) {
-                // Ya existe: mergear categorías y productos
+                // Ya existe: mergear categorÃ­as y productos
                 const cruceExistente = crucesMap.get(key);
                 
                 Object.entries(nuevoCruce.categorias).forEach(([catNombre, catDataNueva]) => {
                     if (!cruceExistente.categorias) cruceExistente.categorias = {};
                     
                     if (cruceExistente.categorias[catNombre]) {
-                        // Categoría existe: agregar productos sin duplicar
+                        // CategorÃ­a existe: agregar productos sin duplicar
                         const productosExistentes = Array.isArray(cruceExistente.categorias[catNombre]) 
                             ? cruceExistente.categorias[catNombre] 
                             : [cruceExistente.categorias[catNombre]]; // Convertir formato antiguo
@@ -2165,12 +2170,12 @@ app.post("/api/procesar-cruces", uploadCruces.single('excel'), (req, res) => {
                         
                         cruceExistente.categorias[catNombre] = productosExistentes;
                     } else {
-                        // Categoría nueva: agregar tal cual
+                        // CategorÃ­a nueva: agregar tal cual
                         cruceExistente.categorias[catNombre] = catDataNueva;
                     }
                 });
                 
-                console.log(`↻ Mergeado: ${nuevoCruce.marca} ${nuevoCruce.modelo} (${Object.keys(nuevoCruce.categorias).length} categorías)`);
+                console.log(`â†» Mergeado: ${nuevoCruce.marca} ${nuevoCruce.modelo} (${Object.keys(nuevoCruce.categorias).length} categorÃ­as)`);
             } else {
                 // No existe: agregar como nuevo
                 crucesMap.set(key, nuevoCruce);
@@ -2212,7 +2217,7 @@ app.post("/api/procesar-cruces", uploadCruces.single('excel'), (req, res) => {
 
 // Endpoint: Limpiar todos los cruces
 app.post("/api/limpiar-cruces", (req, res) => {
-    console.log("📞 Recibida solicitud para limpiar cruces");
+    console.log("ðŸ“ž Recibida solicitud para limpiar cruces");
     try {
         const crucesLimpios = {
             metadata: {
@@ -2225,17 +2230,17 @@ app.post("/api/limpiar-cruces", (req, res) => {
         };
         
         if (guardarCruces(crucesLimpios)) {
-            console.log("✓ Cruces eliminados correctamente");
+            console.log("âœ“ Cruces eliminados correctamente");
             res.json({ 
                 ok: true, 
                 msg: "Todos los cruces han sido eliminados. Puedes subir un nuevo archivo Excel." 
             });
         } else {
-            console.error("✗ Error al guardar archivo de cruces");
+            console.error("âœ— Error al guardar archivo de cruces");
             res.status(500).json({ ok: false, msg: "Error al limpiar cruces" });
         }
     } catch (e) {
-        console.error("✗ Error limpiando cruces:", e);
+        console.error("âœ— Error limpiando cruces:", e);
         res.status(500).json({ ok: false, msg: "Error al limpiar cruces: " + e.message });
     }
 });
@@ -2246,7 +2251,7 @@ app.post("/api/procesar-cruces/:cliente", (req, res) => {
     const excelPath = path.join(DATA_DIR_PRODUCTOS, `flota_${cliente}.xlsx`);
     
     if (!fs.existsSync(excelPath)) {
-        return res.status(404).json({ ok: false, msg: `No se encontró el archivo flota_${cliente}.xlsx` });
+        return res.status(404).json({ ok: false, msg: `No se encontrÃ³ el archivo flota_${cliente}.xlsx` });
     }
     
     try {
@@ -2280,7 +2285,7 @@ app.post("/api/procesar-cruces/:cliente", (req, res) => {
                     categorias: {}
                 };
                 
-                // Procesar cada categoría (columnas 2 en adelante)
+                // Procesar cada categorÃ­a (columnas 2 en adelante)
                 const categorias = [
                     { col: 2, nombre: "embragues" },
                     { col: 3, nombre: "frenos" },
@@ -2312,7 +2317,7 @@ app.post("/api/procesar-cruces/:cliente", (req, res) => {
                     }
                 });
                 
-                // Solo agregar si tiene al menos una categoría con datos
+                // Solo agregar si tiene al menos una categorÃ­a con datos
                 if (Object.keys(vehiculo.categorias).length > 0) {
                     data.push(vehiculo);
                 }
@@ -2345,7 +2350,7 @@ app.post("/api/procesar-cruces/:cliente", (req, res) => {
         if (guardarCruces(crucesData)) {
             res.json({ 
                 ok: true, 
-                msg: `${data.length} vehículos procesados para ${cliente}`,
+                msg: `${data.length} vehÃ­culos procesados para ${cliente}`,
                 vehiculos: data.length
             });
         } else {
@@ -2358,15 +2363,15 @@ app.post("/api/procesar-cruces/:cliente", (req, res) => {
     }
 });
 
-// Endpoint: Obtener productos para un vehículo y categoría (con soporte para motor)
+// Endpoint: Obtener productos para un vehÃ­culo y categorÃ­a (con soporte para motor)
 app.get("/api/cruces/:marca/:modelo/:categoria", (req, res) => {
     const { marca, modelo, categoria } = req.params;
-    const motor = req.query.motor; // Parámetro opcional en query string
+    const motor = req.query.motor; // ParÃ¡metro opcional en query string
     
     try {
         const crucesData = leerCruces();
         
-        // Normalizar búsqueda
+        // Normalizar bÃºsqueda
         const marcaNorm = normalizarTexto(marca);
         const modeloNorm = normalizarTexto(modelo);
         const motorNorm = motor ? normalizarTexto(motor) : null;
@@ -2375,7 +2380,7 @@ app.get("/api/cruces/:marca/:modelo/:categoria", (req, res) => {
         let cruce = null;
         
         if (motorNorm) {
-            // Buscar con motor específico
+            // Buscar con motor especÃ­fico
             cruce = crucesData.cruces.find(c => {
                 const cMarcaNorm = normalizarTexto(c.marca);
                 const cModeloNorm = normalizarTexto(c.modelo);
@@ -2384,7 +2389,7 @@ app.get("/api/cruces/:marca/:modelo/:categoria", (req, res) => {
             });
         }
         
-        // Si no se encontró con motor o no se especificó motor, buscar sin motor
+        // Si no se encontrÃ³ con motor o no se especificÃ³ motor, buscar sin motor
         if (!cruce) {
             cruce = crucesData.cruces.find(c => {
                 const cMarcaNorm = normalizarTexto(c.marca);
@@ -2458,19 +2463,19 @@ app.get("/api/cruces-cliente/:cliente", (req, res) => {
     }
 });
 
-// Endpoint: Actualizar un cruce individual (edición desde admin)
+// Endpoint: Actualizar un cruce individual (ediciÃ³n desde admin)
 app.post("/api/actualizar-cruce", (req, res) => {
     const { index, cruce } = req.body;
     
     if (typeof index !== 'number' || !cruce) {
-        return res.status(400).json({ ok: false, msg: "Datos inválidos" });
+        return res.status(400).json({ ok: false, msg: "Datos invÃ¡lidos" });
     }
     
     try {
         const crucesData = leerCruces();
         
         if (index < 0 || index >= crucesData.cruces.length) {
-            return res.status(400).json({ ok: false, msg: "Índice de cruce inválido" });
+            return res.status(400).json({ ok: false, msg: "Ãndice de cruce invÃ¡lido" });
         }
         
         // Actualizar el cruce
@@ -2483,7 +2488,7 @@ app.post("/api/actualizar-cruce", (req, res) => {
         
         // Guardar
         if (guardarCruces(crucesData)) {
-            console.log(`✓ Cruce actualizado: ${cruce.marca} ${cruce.modelo}`);
+            console.log(`âœ“ Cruce actualizado: ${cruce.marca} ${cruce.modelo}`);
             res.json({ 
                 ok: true, 
                 msg: `Cruce "${cruce.marca} ${cruce.modelo}" actualizado correctamente`
@@ -2500,7 +2505,7 @@ app.post("/api/actualizar-cruce", (req, res) => {
 
 
 // ============================================================
-//  SECCIÓN: BANNERS DE OFERTAS EXCLUSIVAS
+//  SECCIÃ“N: BANNERS DE OFERTAS EXCLUSIVAS
 // ============================================================
 
 // Obtener banners de un usuario
@@ -2571,9 +2576,9 @@ app.post("/api/banners-ofertas", uploadBanners.any(), async (req, res) => {
         bannersData[userId] = userBanners;
         writeJSON(BANNERS_DB, bannersData);
         
-        console.log(`✓ Banners guardados para usuario: ${userId}`);
+        console.log(`âœ“ Banners guardados para usuario: ${userId}`);
         
-        // Crear notificación para el usuario específico
+        // Crear notificaciÃ³n para el usuario especÃ­fico
         const users = readJSON(USERS_DB);
         const user = users.find(u => u.id === userId);
         const nombreUsuario = user ? user.nombre : userId;
@@ -2839,7 +2844,7 @@ app.put("/api/carrito/:userId/cantidad", (req, res) => {
             const stockActual = producto ? (producto.stock || 0) : carrito.items[itemIndex].stock;
             
             if (cantidad > stockActual) {
-                return res.status(400).json({ ok: false, msg: `Stock máximo: ${stockActual}` });
+                return res.status(400).json({ ok: false, msg: `Stock mÃ¡ximo: ${stockActual}` });
             }
             
             carrito.items[itemIndex].cantidad = cantidad;
@@ -2919,7 +2924,7 @@ app.delete("/api/carrito/:userId", (req, res) => {
 //  ENVIAR ORDEN DE COMPRA POR EMAIL
 // ============================================================
 
-// Obtener siguiente número de OC para un usuario
+// Obtener siguiente nÃºmero de OC para un usuario
 app.get("/api/usuarios/:userId/siguiente-oc", (req, res) => {
   const userId = decodeURIComponent(req.params.userId);
   
@@ -2936,7 +2941,7 @@ app.get("/api/usuarios/:userId/siguiente-oc", (req, res) => {
     
     res.json({ numeroOC });
   } catch (error) {
-    console.error("Error obteniendo número de OC:", error);
+    console.error("Error obteniendo nÃºmero de OC:", error);
     res.json({ numeroOC: 1 });
   }
 });
@@ -2954,7 +2959,7 @@ app.get("/api/obtener-numero-cotizacion/:userId", async (req, res) => {
     
     res.json({ numeroCot });
   } catch (error) {
-    console.error("Error obteniendo número de cotización:", error);
+    console.error("Error obteniendo nÃºmero de cotizaciÃ³n:", error);
     res.json({ numeroCot: 1 });
   }
 });
@@ -2964,7 +2969,7 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
         const { usuario, items, numeroCot, fecha, subtotal, iva, total, pdfBlob } = req.body;
         
         if (!usuario || !items || items.length === 0) {
-            return res.status(400).json({ ok: false, msg: "Datos de cotización incompletos" });
+            return res.status(400).json({ ok: false, msg: "Datos de cotizaciÃ³n incompletos" });
         }
         
         // Incrementar contador de cotizaciones del usuario
@@ -2984,7 +2989,7 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
         let detallesHTML = '<table style="width:100%; border-collapse:collapse; margin:20px 0;">';
         detallesHTML += '<thead style="background-color:#f0f0f0; border-bottom:2px solid #333;">';
         detallesHTML += '<tr><th style="padding:8px; text-align:left;">SKU</th>';
-        detallesHTML += '<th style="padding:8px; text-align:left;">Descripción</th>';
+        detallesHTML += '<th style="padding:8px; text-align:left;">DescripciÃ³n</th>';
         detallesHTML += '<th style="padding:8px; text-align:center;">Cantidad</th>';
         detallesHTML += '<th style="padding:8px; text-align:right;">Precio Unit.</th>';
         detallesHTML += '<th style="padding:8px; text-align:right;">Total</th></tr></thead>';
@@ -3008,7 +3013,7 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
         
         detallesHTML += '</tbody></table>';
         
-        // Calcular validez (15 días)
+        // Calcular validez (15 dÃ­as)
         const validezDias = 15;
         const fechaValidez = new Date();
         fechaValidez.setDate(fechaValidez.getDate() + validezDias);
@@ -3017,8 +3022,8 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
         const emailHTML = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <h2 style="color: #252425; margin: 0;">Nueva Cotización Generada</h2>
-                <p style="color: #575657; margin: 10px 0 0 0;">Nº ${numeroCot} - ${fecha}</p>
+                <h2 style="color: #252425; margin: 0;">Nueva CotizaciÃ³n Generada</h2>
+                <p style="color: #575657; margin: 10px 0 0 0;">NÂº ${numeroCot} - ${fecha}</p>
             </div>
             
             <div style="margin-bottom: 20px;">
@@ -3026,7 +3031,7 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
                 <p><strong>Empresa:</strong> ${usuario.empresa || usuario.nombre || 'N/A'}</p>
                 <p><strong>Contacto:</strong> ${usuario.nombre || 'N/A'}</p>
                 <p><strong>Email:</strong> ${usuario.email || 'N/A'}</p>
-                <p><strong>Teléfono:</strong> ${usuario.telefono || 'N/A'}</p>
+                <p><strong>TelÃ©fono:</strong> ${usuario.telefono || 'N/A'}</p>
             </div>
             
             <div style="margin-bottom: 20px;">
@@ -3042,19 +3047,19 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
             
             <div style="background-color: #fff3cd; padding: 12px; border-radius: 8px; border-left: 4px solid #BF1823; margin-bottom: 20px;">
                 <p style="margin: 0; color: #252425; font-size: 12px;">
-                    <strong>Validez:</strong> Esta cotización tiene una validez de ${validezDias} días desde su emisión (hasta el ${fechaValidez.toLocaleDateString('es-CL')}).
+                    <strong>Validez:</strong> Esta cotizaciÃ³n tiene una validez de ${validezDias} dÃ­as desde su emisiÃ³n (hasta el ${fechaValidez.toLocaleDateString('es-CL')}).
                 </p>
             </div>
             
             <div style="background-color: #e8f4f8; padding: 12px; border-radius: 8px; border-left: 4px solid #BF1823;">
                 <p style="margin: 0; color: #252425; font-size: 12px;">
-                    <strong>Nota:</strong> Esta cotización fue generada automáticamente desde la plataforma StarClutch. 
-                    Los precios están sujetos a disponibilidad de stock.
+                    <strong>Nota:</strong> Esta cotizaciÃ³n fue generada automÃ¡ticamente desde la plataforma StarClutch. 
+                    Los precios estÃ¡n sujetos a disponibilidad de stock.
                 </p>
             </div>
             
             <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; color: #575657; font-size: 11px;">
-                <p>© 2025 STARCLUTCH S.p.A. - Todos los derechos reservados</p>
+                <p>Â© 2025 STARCLUTCH S.p.A. - Todos los derechos reservados</p>
             </div>
         </div>
         `;
@@ -3070,7 +3075,7 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
         const mailOptions = {
             from: MAIL_USER,
             to: 'scplataformaexperta@gmail.com',
-            subject: `Nueva Cotización - ${numeroCot}`,
+            subject: `Nueva CotizaciÃ³n - ${numeroCot}`,
             html: emailHTML,
             attachments: pdfBuffer ? [
                 {
@@ -3090,15 +3095,15 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
                 console.error('Error enviando email:', error);
                 return res.status(500).json({ 
                     ok: false, 
-                    msg: 'Error al enviar la cotización por email',
+                    msg: 'Error al enviar la cotizaciÃ³n por email',
                     error: error.message
                 });
             }
             
-            console.log('Email de cotización enviado:', info.response);
+            console.log('Email de cotizaciÃ³n enviado:', info.response);
             res.json({ 
                 ok: true, 
-                msg: 'Cotización enviada correctamente',
+                msg: 'CotizaciÃ³n enviada correctamente',
                 numeroCot,
                 fecha
             });
@@ -3106,7 +3111,7 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
         
     } catch (e) {
         console.error('Error en /api/enviar-cotizacion:', e);
-        res.status(500).json({ ok: false, msg: 'Error procesando la cotización', error: e.message });
+        res.status(500).json({ ok: false, msg: 'Error procesando la cotizaciÃ³n', error: e.message });
     }
 });
 
@@ -3123,7 +3128,7 @@ app.get("/api/obtener-numero-oc/:userId", async (req, res) => {
     
     res.json({ numeroOC });
   } catch (error) {
-    console.error("Error obteniendo número de OC:", error);
+    console.error("Error obteniendo nÃºmero de OC:", error);
     res.json({ numeroOC: 1 });
   }
 });
@@ -3153,7 +3158,7 @@ app.post("/api/enviar-oc", async (req, res) => {
         let detallesHTML = '<table style="width:100%; border-collapse:collapse; margin:20px 0;">';
         detallesHTML += '<thead style="background-color:#f0f0f0; border-bottom:2px solid #333;">';
         detallesHTML += '<tr><th style="padding:8px; text-align:left;">SKU</th>';
-        detallesHTML += '<th style="padding:8px; text-align:left;">Descripción</th>';
+        detallesHTML += '<th style="padding:8px; text-align:left;">DescripciÃ³n</th>';
         detallesHTML += '<th style="padding:8px; text-align:center;">Cantidad</th>';
         detallesHTML += '<th style="padding:8px; text-align:right;">Precio Unit.</th>';
         detallesHTML += '<th style="padding:8px; text-align:right;">Total</th></tr></thead>';
@@ -3182,7 +3187,7 @@ app.post("/api/enviar-oc", async (req, res) => {
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
                 <h2 style="color: #252425; margin: 0;">Nueva Orden de Compra Recibida</h2>
-                <p style="color: #575657; margin: 10px 0 0 0;">Nº ${numeroOC} - ${fecha}</p>
+                <p style="color: #575657; margin: 10px 0 0 0;">NÂº ${numeroOC} - ${fecha}</p>
             </div>
             
             <div style="margin-bottom: 20px;">
@@ -3190,7 +3195,7 @@ app.post("/api/enviar-oc", async (req, res) => {
                 <p><strong>Empresa:</strong> ${usuario.empresa || usuario.nombre || 'N/A'}</p>
                 <p><strong>Contacto:</strong> ${usuario.nombre || 'N/A'}</p>
                 <p><strong>Email:</strong> ${usuario.email || 'N/A'}</p>
-                <p><strong>Teléfono:</strong> ${usuario.telefono || 'N/A'}</p>
+                <p><strong>TelÃ©fono:</strong> ${usuario.telefono || 'N/A'}</p>
             </div>
             
             <div style="margin-bottom: 20px;">
@@ -3206,13 +3211,13 @@ app.post("/api/enviar-oc", async (req, res) => {
             
             <div style="background-color: #e8f4f8; padding: 12px; border-radius: 8px; border-left: 4px solid #BF1823;">
                 <p style="margin: 0; color: #252425; font-size: 12px;">
-                    <strong>Nota:</strong> Esta orden fue generada automáticamente desde la plataforma StarClutch. 
-                    Requiere confirmación por parte del proveedor.
+                    <strong>Nota:</strong> Esta orden fue generada automÃ¡ticamente desde la plataforma StarClutch. 
+                    Requiere confirmaciÃ³n por parte del proveedor.
                 </p>
             </div>
             
             <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; color: #575657; font-size: 11px;">
-                <p>© 2025 STARCLUTCH S.p.A. - Todos los derechos reservados</p>
+                <p>Â© 2025 STARCLUTCH S.p.A. - Todos los derechos reservados</p>
             </div>
         </div>
         `;
@@ -3269,6 +3274,160 @@ app.post("/api/enviar-oc", async (req, res) => {
 });
 
 // ============================================================
+//  PROGRAMAR MANTENIMIENTOS (AGRUPADO) â€“ ENVÃO INMEDIATO CORREOS/NOTIFS
+// ============================================================
+//  MANTENIMIENTOS (Basic Implementation)
+// ============================================================
+
+// Schedule maintenance
+app.post('/api/mantenimientos/programar', async (req, res) => {
+    try {
+        const { usuarioId, mantenimientos } = req.body || {};
+        if (!usuarioId || !Array.isArray(mantenimientos) || mantenimientos.length === 0) {
+            return res.status(400).json({ ok: false, msg: 'Faltan datos' });
+        }
+        const groupId = `mant_${Date.now()}`;
+        let items = readJSON(MANTENIMIENTOS_DB);
+        
+        // Calcular estadísticas para la notificación
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+        let mantenimientosProximos = 0;
+        let vehiculosTexto = [];
+        
+        mantenimientos.forEach((m, idx) => {
+            items.push({
+                id: `${groupId}_${idx}`,
+                groupId,
+                userId: usuarioId,
+                vehiculo: m.vehiculo || {},
+                fecha: m.fecha || null,
+                productos: m.productos || [],
+                sistemas: m.sistemas || [],
+                status: 'programado',
+                createdAt: new Date().toISOString(),
+                notificado7dias: false,
+                notificadoDia: false
+            });
+            
+            // Contar los que están próximos (7 días o menos)
+            if (m.fecha) {
+                const fechaMantenimiento = new Date(m.fecha + 'T00:00:00');
+                const diffDias = Math.ceil((fechaMantenimiento - hoy) / (1000 * 60 * 60 * 24));
+                if (diffDias >= 0 && diffDias <= 7) {
+                    mantenimientosProximos++;
+                }
+            }
+            
+            // Agregar vehículo al texto
+            const vehiculo = m.vehiculo || {};
+            vehiculosTexto.push(`${vehiculo.marca || ''} ${vehiculo.modelo || ''} ${vehiculo.patente ? `(${vehiculo.patente})` : ''}`.trim());
+        });
+        
+        writeJSON(MANTENIMIENTOS_DB, items);
+        
+        // Enviar notificación de confirmación
+        const titulo = `Mantenimiento${mantenimientos.length > 1 ? 's' : ''} Programado${mantenimientos.length > 1 ? 's' : ''}`;
+        let mensaje = `Se ${mantenimientos.length > 1 ? 'programaron' : 'programó'} ${mantenimientos.length} mantenimiento${mantenimientos.length > 1 ? 's' : ''} para tu${mantenimientos.length > 1 ? 's' : ''} vehículo${mantenimientos.length > 1 ? 's' : ''}.\n\n`;
+        
+        if (vehiculosTexto.length > 0) {
+            mensaje += `Vehículo${vehiculosTexto.length > 1 ? 's' : ''}: ${vehiculosTexto.join(', ')}\n\n`;
+        }
+        
+        if (mantenimientosProximos > 0) {
+            mensaje += `⚠️ ${mantenimientosProximos} mantenimiento${mantenimientosProximos > 1 ? 's' : ''} programado${mantenimientosProximos > 1 ? 's' : ''} en los próximos 7 días.`;
+        } else {
+            mensaje += `Recibirás recordatorios antes de cada fecha programada.`;
+        }
+        
+        await crearNotificacion(usuarioId, 'mantenimiento_programado', titulo, mensaje, {
+            groupId,
+            cantidadVehiculos: mantenimientos.length,
+            vehiculos: vehiculosTexto
+        });
+        
+        return res.json({ ok: true, groupId, count: mantenimientos.length });
+    } catch (err) {
+        console.error('Error programando mantenimientos:', err);
+        return res.status(500).json({ ok: false, msg: 'Error' });
+    }
+});
+
+// Get maintenances
+app.get('/api/mantenimientos', (req, res) => {
+    console.log('DEBUG: GET /api/mantenimientos called');
+    try {
+        console.log('DEBUG: Extracting userId');
+        const userId = req.query.userId;
+        console.log('DEBUG: userId =', userId);
+        if (!userId) {
+            console.log('DEBUG: No userId, returning 400');
+            return res.status(400).json({ ok: false, msg: 'Falta userId' });
+        }
+        console.log('DEBUG: Reading JSON from', MANTENIMIENTOS_DB);
+        const allItems = readJSON(MANTENIMIENTOS_DB);
+        console.log('DEBUG: Read', allItems.length, 'items');
+        const items = allItems.filter(i => i.userId === userId);
+        console.log('DEBUG: Filtered to', items.length, 'items');
+        console.log('DEBUG: Sending response');
+        return res.json({ ok: true, items });
+    } catch (e) {
+        console.error('Error listando:', e);
+        return res.status(500).json({ ok: false, msg: 'Error' });
+    }
+});
+
+// Edit maintenance
+app.put('/api/mantenimientos/:id', (req, res) => {
+    try {
+        const { productos, sistemas, fecha } = req.body || {};
+        let items = readJSON(MANTENIMIENTOS_DB);
+        const idx = items.findIndex(i => i.id === req.params.id);
+        if (idx === -1) return res.status(404).json({ ok: false, msg: 'No encontrado' });
+        if (productos) items[idx].productos = productos;
+        if (sistemas) items[idx].sistemas = sistemas;
+        if (fecha) items[idx].fecha = fecha;
+        writeJSON(MANTENIMIENTOS_DB, items);
+        return res.json({ ok: true, item: items[idx] });
+    } catch (e) {
+        console.error('Error editando:', e);
+        return res.status(500).json({ ok: false, msg: 'Error' });
+    }
+});
+
+// Cancel maintenance
+app.post('/api/mantenimientos/:id/cancel', (req, res) => {
+    try {
+        const motivo = req.body?.motivo || '';
+        let items = readJSON(MANTENIMIENTOS_DB);
+        const idx = items.findIndex(i => i.id === req.params.id);
+        if (idx === -1) return res.status(404).json({ ok: false, msg: 'No encontrado' });
+        items[idx].status = 'cancelado';
+        items[idx].motivoCancelacion = motivo;
+        writeJSON(MANTENIMIENTOS_DB, items);
+        return res.json({ ok: true, item: items[idx] });
+    } catch (e) {
+        console.error('Error cancelando:', e);
+        return res.status(500).json({ ok: false, msg: 'Error' });
+    }
+});
+
+// Delete maintenance
+app.delete('/api/mantenimientos/:id', (req, res) => {
+    try {
+        let items = readJSON(MANTENIMIENTOS_DB);
+        const idx = items.findIndex(i => i.id === req.params.id);
+        if (idx === -1) return res.status(404).json({ ok: false, msg: 'No encontrado' });
+        items.splice(idx, 1);
+        writeJSON(MANTENIMIENTOS_DB, items);
+        return res.json({ ok: true, msg: 'Eliminado correctamente' });
+    } catch (e) {
+        console.error('Error eliminando:', e);
+        return res.status(500).json({ ok: false, msg: 'Error' });
+    }
+});
+
+// ============================================================
 //  SERVIR FRONTEND
 // ============================================================
 
@@ -3276,10 +3435,118 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "mis flotas", "index.html"));
 });
 
+// ============================================================
+//  SISTEMA DE NOTIFICACIONES AUTOMÁTICAS DE MANTENIMIENTO
+// ============================================================
+
+/**
+ * Verifica mantenimientos programados y envía notificaciones automáticas
+ */
+async function verificarMantenimientosProximos() {
+    try {
+        const items = readJSON(MANTENIMIENTOS_DB);
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+        
+        for (const mantenimiento of items) {
+            // Solo procesar mantenimientos programados con fecha
+            if (mantenimiento.status !== 'programado' || !mantenimiento.fecha) {
+                continue;
+            }
+            
+            const fechaMantenimiento = new Date(mantenimiento.fecha + 'T00:00:00');
+            const diffDias = Math.ceil((fechaMantenimiento - hoy) / (1000 * 60 * 60 * 24));
+            
+            const vehiculo = mantenimiento.vehiculo || {};
+            const vehiculoTexto = `${vehiculo.marca || ''} ${vehiculo.modelo || ''} ${vehiculo.patente ? `(${vehiculo.patente})` : ''}`.trim();
+            
+            // Notificación 7 días antes
+            if (diffDias === 7 && !mantenimiento.notificado7dias) {
+                const titulo = '⚠️ Mantenimiento Próximo';
+                const mensaje = `Tu mantenimiento programado está a 7 días.\n\nVehículo: ${vehiculoTexto}\nFecha: ${new Date(fechaMantenimiento).toLocaleDateString('es-CL')}\n\nRevisa los productos y sistemas programados para estar preparado.`;
+                
+                await crearNotificacion(
+                    mantenimiento.userId,
+                    'mantenimiento_proximo',
+                    titulo,
+                    mensaje,
+                    {
+                        mantenimientoId: mantenimiento.id,
+                        vehiculo: vehiculoTexto,
+                        fecha: mantenimiento.fecha,
+                        diasRestantes: 7
+                    }
+                );
+                
+                // Marcar como notificado
+                const allItems = readJSON(MANTENIMIENTOS_DB);
+                const idx = allItems.findIndex(i => i.id === mantenimiento.id);
+                if (idx !== -1) {
+                    allItems[idx].notificado7dias = true;
+                    writeJSON(MANTENIMIENTOS_DB, allItems);
+                }
+                
+                console.log(`✓ Notificación 7 días enviada para mantenimiento ${mantenimiento.id}`);
+            }
+            
+            // Notificación el día del mantenimiento
+            if (diffDias === 0 && !mantenimiento.notificadoDia) {
+                const productosTexto = mantenimiento.productos?.map(p => `• ${p.nombre || p.sku}`).join('\n') || 'No especificados';
+                const sistemasTexto = mantenimiento.sistemas?.join(', ') || 'No especificados';
+                
+                const titulo = '🔔 Mantenimiento Hoy';
+                const mensaje = `Hoy tienes programado un mantenimiento.\n\nVehículo: ${vehiculoTexto}\nSistemas: ${sistemasTexto}\n\nProductos:\n${productosTexto}`;
+                
+                await crearNotificacion(
+                    mantenimiento.userId,
+                    'mantenimiento_hoy',
+                    titulo,
+                    mensaje,
+                    {
+                        mantenimientoId: mantenimiento.id,
+                        vehiculo: vehiculoTexto,
+                        fecha: mantenimiento.fecha,
+                        productos: mantenimiento.productos,
+                        sistemas: mantenimiento.sistemas
+                    }
+                );
+                
+                // Marcar como notificado
+                const allItems = readJSON(MANTENIMIENTOS_DB);
+                const idx = allItems.findIndex(i => i.id === mantenimiento.id);
+                if (idx !== -1) {
+                    allItems[idx].notificadoDia = true;
+                    writeJSON(MANTENIMIENTOS_DB, allItems);
+                }
+                
+                console.log(`✓ Notificación del día enviada para mantenimiento ${mantenimiento.id}`);
+            }
+        }
+    } catch (error) {
+        console.error('Error verificando mantenimientos próximos:', error);
+    }
+}
+
+// Ejecutar verificación cada hora
+setInterval(verificarMantenimientosProximos, 60 * 60 * 1000);
+
+// Ejecutar una vez al inicio del servidor
+setTimeout(verificarMantenimientosProximos, 5000);
+
 const PORT = process.env.PORT || 3000;
+
+// Error handlers
+process.on('uncaughtException', (error) => {
+    console.error('UNCAUGHT EXCEPTION:', error);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('UNHANDLED REJECTION:', reason);
+});
+
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
-    console.log('✓ Endpoint /api/limpiar-cruces registrado');
-    console.log('✓ Endpoint /api/banners-ofertas registrado');
-    console.log('✓ Endpoints /api/carrito registrados');
+    console.log('âœ“ Endpoint /api/limpiar-cruces registrado');
+    console.log('âœ“ Endpoint /api/banners-ofertas registrado');
+    console.log('âœ“ Endpoints /api/carrito registrados');
 });

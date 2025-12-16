@@ -823,6 +823,7 @@ function verMantenimientos() {
   // Aquí puedes agregar la lógica para ver mantenimientos
   console.log('Ver mantenimientos');
   cerrarModalMantenimiento();
+  abrirModalMisMantenimientos();
 }
 
 function agendarMantenimiento() {
@@ -1600,7 +1601,7 @@ async function guardarMantenimiento() {
   const errores = [];
   
   window.vehiculosParaMantenimiento.forEach((vehiculo, index) => {
-    const vehiculoKey = vehiculo.patente || vehiculo.modelo;
+    const vehiculoKey = `vehiculo_${index}`;
     const datos = datosMantenimientoPorVehiculo[vehiculoKey];
     
     if (!datos) {
@@ -1625,8 +1626,8 @@ async function guardarMantenimiento() {
   }
   
   // Crear mantenimientos programados
-  const mantenimientos = window.vehiculosParaMantenimiento.map(vehiculo => {
-    const vehiculoKey = vehiculo.patente || vehiculo.modelo;
+  const mantenimientos = window.vehiculosParaMantenimiento.map((vehiculo, index) => {
+    const vehiculoKey = `vehiculo_${index}`;
     const datos = datosMantenimientoPorVehiculo[vehiculoKey];
     
     return {
@@ -1644,16 +1645,17 @@ async function guardarMantenimiento() {
     };
   });
   
-  // Guardar en localStorage
-  const usuarioId = localStorage.getItem('usuarioID');
-  const keyMantenimientos = `mantenimientos_${usuarioId}`;
-  const mantenimientosExistentes = JSON.parse(localStorage.getItem(keyMantenimientos) || '[]');
-  
-  mantenimientosExistentes.push(...mantenimientos);
-  localStorage.setItem(keyMantenimientos, JSON.stringify(mantenimientosExistentes));
-  
-  // Programar notificaciones
-  await programarNotificacionesMantenimiento(mantenimientos);
+  // Enviar al backend para correos y notificaciones agrupadas
+  try {
+    const usuarioId = localStorage.getItem('usuarioID');
+    await fetch('/api/mantenimientos/programar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usuarioId, mantenimientos })
+    });
+  } catch (e) {
+    console.error('Error enviando programación al servidor:', e);
+  }
   
   // Mostrar confirmación
   const vehiculosTexto = mantenimientos.map(m => `${m.vehiculo.marca} ${m.vehiculo.modelo}`).join(', ');
@@ -1838,6 +1840,335 @@ setInterval(verificarNotificacionesProgramadas, 60 * 60 * 1000);
 document.addEventListener('DOMContentLoaded', function() {
   verificarNotificacionesProgramadas();
 });
+</script>
+
+<!-- Modal: Mis Mantenimientos -->
+<div id="modal-mis-mantenimientos" class="flota-modal" style="display: none;" onclick="if(event.target.id === 'modal-mis-mantenimientos') cerrarModalMisMantenimientos()">
+  <div class="flota-modal-content" style="width: 95%; max-width: 1400px; max-height: 90vh; display: flex; flex-direction: column;">
+    <div class="flota-modal-header">
+      <span class="modal-flota-title">Mis Mantenimientos</span>
+      <span class="close-flota-btn" onclick="cerrarModalMisMantenimientos()" style="cursor:pointer;">&times;</span>
+    </div>
+    <div class="flota-modal-body" style="padding: 24px; flex: 1; overflow: hidden; display: flex; flex-direction: column;">
+      <p style="color:#666;margin:0 0 16px 0;font-size:14px;">Revisa y gestiona tus mantenimientos programados, pasados y cancelados.</p>
+
+      <div class="tabs" style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+        <button class="btn-primary" id="tab-proximos" onclick="cambiarTabMantenimientos('proximos')" style="position:relative;padding-right:32px;">
+          Próximos
+          <span id="count-proximos" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.3);border-radius:12px;padding:2px 8px;font-size:12px;font-weight:700;">0</span>
+        </button>
+        <button class="btn-secondary" id="tab-pasados" onclick="cambiarTabMantenimientos('pasados')" style="position:relative;padding-right:32px;">
+          Pasados
+          <span id="count-pasados" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.1);border-radius:12px;padding:2px 8px;font-size:12px;font-weight:600;">0</span>
+        </button>
+        <button class="btn-secondary" id="tab-cancelados" onclick="cambiarTabMantenimientos('cancelados')" style="position:relative;padding-right:32px;">
+          Cancelados
+          <span id="count-cancelados" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.1);border-radius:12px;padding:2px 8px;font-size:12px;font-weight:600;">0</span>
+        </button>
+      </div>
+
+      <div id="lista-mantenimientos" style="flex:1;overflow-y:auto;overflow-x:auto;padding-right:8px;"></div>
+    </div>
+    <div class="flota-modal-footer" style="display:flex;justify-content:flex-end;gap:8px;padding: 12px 24px;border-top:1px solid #eee;flex-shrink:0;">
+      <button class="btn-secondary" onclick="cerrarModalMisMantenimientos()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let estadoTabMantenimientos = 'proximos';
+function abrirModalMisMantenimientos() {
+  const modal = document.getElementById('modal-mis-mantenimientos');
+  if (!modal) return; modal.style.display = 'flex';
+  cargarMisMantenimientos();
+}
+function cerrarModalMisMantenimientos() {
+  const modal = document.getElementById('modal-mis-mantenimientos');
+  if (!modal) return; modal.style.display = 'none';
+}
+function cambiarTabMantenimientos(tab) {
+  estadoTabMantenimientos = tab;
+  // Resetear todos a secundario
+  document.getElementById('tab-proximos').className = 'btn-secondary';
+  document.getElementById('tab-pasados').className = 'btn-secondary';
+  document.getElementById('tab-cancelados').className = 'btn-secondary';
+  // Activar el seleccionado como primario
+  if (tab === 'proximos') document.getElementById('tab-proximos').className = 'btn-primary';
+  if (tab === 'pasados') document.getElementById('tab-pasados').className = 'btn-primary';
+  if (tab === 'cancelados') document.getElementById('tab-cancelados').className = 'btn-primary';
+  
+  // Actualizar estilos de los badges
+  const badges = document.querySelectorAll('.tabs span');
+  badges.forEach(badge => {
+    const isActive = badge.parentElement.className === 'btn-primary';
+    badge.style.background = isActive ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.1)';
+  });
+  
+  cargarMisMantenimientos();
+}
+
+async function cargarMisMantenimientos() {
+  try {
+    const userStr = localStorage.getItem('starclutch_user');
+    if (!userStr) return; const user = JSON.parse(userStr);
+    const res = await fetch(`/api/mantenimientos?userId=${encodeURIComponent(user.id)}`);
+    const data = await res.json();
+    if (!data.ok) throw new Error('Error listando mantenimientos');
+
+    const items = data.items || [];
+    // Clasificar por estado y fecha
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const proximos = items.filter(i => i.status==='programado' && new Date(i.fecha) >= hoy);
+    const pasados = items.filter(i => i.status==='programado' && new Date(i.fecha) < hoy);
+    const cancelados = items.filter(i => i.status==='cancelado');
+
+    // Actualizar contadores
+    document.getElementById('count-proximos').textContent = proximos.length;
+    document.getElementById('count-pasados').textContent = pasados.length;
+    document.getElementById('count-cancelados').textContent = cancelados.length;
+
+    const cont = document.getElementById('lista-mantenimientos');
+    if (!cont) return;
+    let lista = [];
+    if (estadoTabMantenimientos==='proximos') lista = proximos;
+    else if (estadoTabMantenimientos==='pasados') lista = pasados;
+    else lista = cancelados;
+
+    if (lista.length===0) {
+      cont.style.display = 'flex';
+      cont.innerHTML = '<div style="padding:60px 20px;text-align:center;color:#999;width:100%;"><div style="font-size:48px;margin-bottom:16px;">📋</div><div style="font-size:16px;font-weight:500;margin-bottom:8px;">No hay mantenimientos aquí</div><div style="font-size:14px;color:#aaa;">Los mantenimientos ' + (estadoTabMantenimientos==='proximos'?'programados':'de esta categoría') + ' aparecerán en esta sección.</div></div>';
+      return;
+    }
+
+    cont.style.display = 'block';
+    cont.innerHTML = `
+      <table style="width:100%;border-collapse:separate;border-spacing:0;font-size:14px;">
+        <thead>
+          <tr style="background:linear-gradient(135deg,#f8f9fa,#ffffff);border-bottom:2px solid #dee2e6;">
+            <th style="padding:14px 16px;text-align:left;font-weight:600;color:#495057;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #dee2e6;">Vehículo</th>
+            <th style="padding:14px 16px;text-align:left;font-weight:600;color:#495057;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #dee2e6;white-space:nowrap;">Fecha</th>
+            <th style="padding:14px 16px;text-align:left;font-weight:600;color:#495057;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #dee2e6;">Sistemas</th>
+            <th style="padding:14px 16px;text-align:left;font-weight:600;color:#495057;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #dee2e6;">Productos</th>
+            <th style="padding:14px 16px;text-align:center;font-weight:600;color:#495057;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #dee2e6;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${lista.map((item, index) => renderFilaMantenimiento(item, index)).join('')}
+        </tbody>
+      </table>
+    `;
+  } catch (e) {
+    console.error('Error cargando mis mantenimientos', e);
+  }
+}
+
+function renderFilaMantenimiento(i, index) {
+  const vehiculo = `${i.vehiculo?.marca||''} ${i.vehiculo?.modelo||''}`.trim();
+  const patente = i.vehiculo?.patente || 'Sin especificar';
+  
+  const productosHTML = (i.productos||[]).map(p => {
+    const nombre = p.nombre || p.repuesto || '';
+    const marca = p.marca ? ` (${p.marca})` : '';
+    const codigo = p.codSC || p.sku || '';
+    return `<div style="margin-bottom:4px;"><strong>${nombre}</strong>${marca}${codigo ? `<br><span style="color:#999;font-size:12px;">${codigo}</span>` : ''}</div>`;
+  }).join('');
+  
+  const sistemasHTML = (i.sistemas||[]).map(s => 
+    `<span style="display:inline-block;background:linear-gradient(135deg,#f8f9fa,#e9ecef);border:1px solid #dee2e6;border-radius:4px;padding:3px 8px;margin:2px;font-size:11px;font-weight:500;color:#495057;">${s}</span>`
+  ).join('');
+  
+  const fecha = new Date(i.fecha);
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  const diffDias = Math.ceil((fecha - hoy) / (1000 * 60 * 60 * 24));
+  
+  let fechaEstilo = 'background:#f5f5f5;color:#666;';
+  let fechaTexto = fecha.toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' });
+  let fechaIcono = '📅';
+  
+  if (i.status === 'programado') {
+    if (diffDias === 0) {
+      fechaEstilo = 'background:#BF1823;color:white;';
+      fechaTexto = 'Hoy';
+      fechaIcono = '🔔';
+    } else if (diffDias > 0 && diffDias <= 7) {
+      fechaEstilo = 'background:#FF9800;color:white;';
+      fechaTexto = `En ${diffDias} día${diffDias>1?'s':''}`;
+      fechaIcono = '⚠️';
+    } else if (diffDias > 7) {
+      fechaEstilo = 'background:#4CAF50;color:white;';
+      fechaIcono = '✓';
+    }
+  }
+  
+  const puedeEditar = i.status==='programado' && new Date(i.fecha) >= hoy;
+  const puedeCancelar = i.status==='programado' && new Date(i.fecha) >= hoy;
+  const puedeEliminar = i.status==='cancelado';
+  
+  const rowBg = index % 2 === 0 ? '#ffffff' : '#f8f9fa';
+  const borderColor = i.status==='cancelado' ? '#ffcdd2' : '#e9ecef';
+  
+  return `
+    <tr style="background:${rowBg};border-bottom:1px solid ${borderColor};transition:background 0.2s;" onmouseover="this.style.background='#f0f7ff'" onmouseout="this.style.background='${rowBg}'">
+      <td style="padding:16px;border-bottom:1px solid ${borderColor};vertical-align:top;">
+        <div style="font-weight:600;color:#252425;margin-bottom:4px;font-size:15px;">${vehiculo}</div>
+        <div style="color:#666;font-size:13px;">${patente}</div>
+        ${i.status==='cancelado' ? `<div style="margin-top:6px;"><span style="background:#d32f2f;color:white;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;text-transform:uppercase;">Cancelado</span></div>${i.motivoCancelacion ? `<div style="margin-top:8px;padding:8px;background:#ffebee;border-left:3px solid #d32f2f;border-radius:4px;"><div style="font-size:11px;text-transform:uppercase;color:#c62828;font-weight:600;margin-bottom:4px;">Motivo:</div><div style="font-size:13px;color:#666;line-height:1.4;">${i.motivoCancelacion}</div></div>` : ''}` : ''}
+      </td>
+      <td style="padding:16px;border-bottom:1px solid ${borderColor};vertical-align:top;white-space:nowrap;">
+        <div style="${fechaEstilo}padding:8px 12px;border-radius:6px;display:inline-block;font-weight:600;font-size:13px;white-space:nowrap;">
+          ${fechaIcono} ${fechaTexto}
+        </div>
+        <div style="color:#666;font-size:12px;margin-top:6px;">${fecha.toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+      </td>
+      <td style="padding:16px;border-bottom:1px solid ${borderColor};vertical-align:top;">
+        ${sistemasHTML || '<span style="color:#999;font-size:13px;">Sin especificar</span>'}
+      </td>
+      <td style="padding:16px;border-bottom:1px solid ${borderColor};vertical-align:top;max-width:400px;">
+        ${productosHTML || '<span style="color:#999;font-size:13px;">Sin productos</span>'}
+      </td>
+      <td style="padding:16px;border-bottom:1px solid ${borderColor};vertical-align:middle;text-align:center;">
+        <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;">
+          ${puedeEditar ? `<button class="btn-primary" onclick="abrirEditarMantenimiento('${i.id}')" style="font-size:12px;padding:6px 12px;white-space:nowrap;">✏️ Editar</button>` : ''}
+          ${puedeCancelar ? `<button class="btn-secondary" onclick="cancelarMantenimiento('${i.id}')" style="font-size:12px;padding:6px 12px;white-space:nowrap;">Cancelar</button>` : ''}
+          ${puedeEliminar ? `<button onclick="eliminarMantenimiento('${i.id}')" style="background:transparent;border:1px solid #e0e0e0;border-radius:6px;cursor:pointer;padding:6px 10px;transition:all 0.2s;" onmouseover="this.style.background='#ffebee';this.style.borderColor='#ef5350';" onmouseout="this.style.background='transparent';this.style.borderColor='#e0e0e0';"><img src="../img/Delete.svg" alt="Eliminar" style="width:16px;height:16px;vertical-align:middle;"></button>` : ''}
+        </div>
+      </td>
+    </tr>
+  `;
+}
+
+function renderCardMantenimiento(i) {
+  const vehiculo = `${i.vehiculo?.marca||''} ${i.vehiculo?.modelo||''}`.trim();
+  const patente = i.vehiculo?.patente || 'Sin especificar';
+  const productosHTML = (i.productos||[]).map(p => {
+    const nombre = p.nombre || p.repuesto || '';
+    const marca = p.marca ? ` (${p.marca})` : '';
+    const codigo = p.codSC || p.sku || '';
+    return `<div style="display:flex;align-items:start;gap:8px;margin-bottom:6px;">
+      <div style="width:4px;height:4px;background:#BF1823;border-radius:50%;margin-top:8px;flex-shrink:0;"></div>
+      <div style="flex:1;font-size:13px;line-height:1.5;">
+        <span style="color:#252425;font-weight:500;">${nombre}</span>
+        ${marca ? `<span style="color:#888;">${marca}</span>` : ''}
+        ${codigo ? `<div style="color:#999;font-size:12px;margin-top:2px;">${codigo}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+  
+  const sistemasHTML = (i.sistemas||[]).map(s => 
+    `<span style="display:inline-block;background:linear-gradient(135deg,#f8f9fa,#e9ecef);border:1px solid #dee2e6;border-radius:6px;padding:4px 12px;margin:3px 3px 3px 0;font-size:12px;font-weight:500;color:#495057;">${s}</span>`
+  ).join('');
+  
+  const fecha = new Date(i.fecha);
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  const diffDias = Math.ceil((fecha - hoy) / (1000 * 60 * 60 * 24));
+  
+  let fechaEstilo = '';
+  let fechaTexto = fecha.toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' });
+  
+  if (i.status === 'programado') {
+    if (diffDias === 0) {
+      fechaEstilo = 'background:#BF1823;color:white;';
+      fechaTexto = '🔔 Hoy - ' + fechaTexto;
+    } else if (diffDias > 0 && diffDias <= 7) {
+      fechaEstilo = 'background:#FF9800;color:white;';
+      fechaTexto = `⚠️ En ${diffDias} día${diffDias>1?'s':''} - ${fechaTexto}`;
+    } else if (diffDias > 7) {
+      fechaEstilo = 'background:#4CAF50;color:white;';
+    }
+  }
+  
+  const puedeEditar = i.status==='programado' && new Date(i.fecha) >= hoy;
+  const puedeCancelar = i.status==='programado' && new Date(i.fecha) >= hoy;
+  const puedeEliminar = i.status==='cancelado';
+  
+  return `
+    <div style="background:white;border:1px solid ${i.status==='cancelado'?'#ffcdd2':'#e0e0e0'};border-radius:12px;padding:0;overflow:visible;box-shadow:0 2px 8px rgba(0,0,0,0.06);transition:all 0.2s;height:auto;min-height:fit-content;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.12)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'">
+      
+      <!-- Header de la tarjeta -->
+      <div style="background:${i.status==='cancelado'?'#ffebee':'linear-gradient(135deg,#f8f9fa,#ffffff)'};padding:14px 16px;border-bottom:1px solid ${i.status==='cancelado'?'#ffcdd2':'#eee'};">
+        <div style="display:flex;justify-content:space-between;align-items:start;gap:12px;">
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:16px;font-weight:600;color:#252425;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${vehiculo}</div>
+            <div style="font-size:13px;color:#666;font-weight:500;">${patente}</div>
+          </div>
+          ${i.status==='cancelado' ? '<div style="background:#d32f2f;color:white;padding:4px 12px;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase;">Cancelado</div>' : ''}
+        </div>
+      </div>
+      
+      <!-- Fecha -->
+      <div style="padding:12px 16px;${fechaEstilo}${!fechaEstilo?'background:#f5f5f5;color:#666;':''};font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;">
+        ${!fechaEstilo?'📅':''}
+        ${fechaTexto}
+      </div>
+      
+      <!-- Contenido -->
+      <div style="padding:16px;">
+        ${sistemasHTML ? `
+        <div style="margin-bottom:14px;">
+          <div style="font-size:11px;text-transform:uppercase;font-weight:600;color:#888;letter-spacing:0.5px;margin-bottom:8px;">Sistemas</div>
+          <div style="line-height:1.4;">${sistemasHTML}</div>
+        </div>` : ''}
+        
+        ${productosHTML ? `
+        <div>
+          <div style="font-size:11px;text-transform:uppercase;font-weight:600;color:#888;letter-spacing:0.5px;margin-bottom:8px;">Productos</div>
+          <div>${productosHTML}</div>
+        </div>` : ''}
+        
+        ${!productosHTML && !sistemasHTML ? '<div style="color:#999;font-size:13px;text-align:center;padding:20px;">Sin detalles especificados</div>' : ''}
+      </div>
+      
+      <!-- Footer con botones -->
+      ${puedeEditar || puedeCancelar || puedeEliminar ? `
+      <div style="padding:12px 16px;border-top:1px solid #eee;background:#fafafa;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
+        ${puedeEditar ? `<button class="btn-primary" onclick="abrirEditarMantenimiento('${i.id}')" style="font-size:13px;padding:8px 16px;">✏️ Editar</button>` : ''}
+        ${puedeCancelar ? `<button class="btn-secondary" onclick="cancelarMantenimiento('${i.id}')" style="font-size:13px;padding:8px 16px;">Cancelar</button>` : ''}
+        ${puedeEliminar ? `<button onclick="eliminarMantenimiento('${i.id}')" style="background:transparent;border:1px solid #e0e0e0;border-radius:8px;cursor:pointer;padding:8px 12px;transition:all 0.2s;" onmouseover="this.style.background='#ffebee';this.style.borderColor='#ef5350';" onmouseout="this.style.background='transparent';this.style.borderColor='#e0e0e0';"><img src="../img/Delete.svg" alt="Eliminar" style="width:18px;height:18px;vertical-align:middle;"></button>` : ''}
+      </div>` : ''}
+    </div>
+  `;
+}
+
+function abrirEditarMantenimiento(id) {
+  const nuevoFecha = prompt('Nueva fecha (YYYY-MM-DD):');
+  if (!nuevoFecha) return;
+  // Opcional: agregar/quitar SKUs con coma
+  const skusTexto = prompt('SKUs nuevos (coma) - deja vacío para mantener');
+  let productos = undefined;
+  if (skusTexto && skusTexto.trim().length>0) {
+    const skus = skusTexto.split(',').map(s=>s.trim()).filter(Boolean);
+    productos = skus.map(s => ({ sku:s }));
+  }
+  fetch(`/api/mantenimientos/${encodeURIComponent(id)}`, {
+    method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ fecha: nuevoFecha, productos })
+  }).then(r=>r.json()).then(d=>{
+    if (d.ok) { alert('Mantenimiento actualizado'); cargarMisMantenimientos(); }
+    else { alert('Error actualizando mantenimiento'); }
+  }).catch(e=>console.error('Error editando', e));
+}
+
+function cancelarMantenimiento(id) {
+  const motivo = prompt('Motivo de cancelación (opcional):') || '';
+  fetch(`/api/mantenimientos/${encodeURIComponent(id)}/cancel`, {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ motivo })
+  }).then(r=>r.json()).then(d=>{
+    if (d.ok) { alert('Mantenimiento cancelado'); cargarMisMantenimientos(); }
+    else { alert('Error cancelando mantenimiento'); }
+  }).catch(e=>console.error('Error cancelando', e));
+}
+
+function eliminarMantenimiento(id) {
+  if (!confirm('¿Estás seguro de eliminar permanentemente este mantenimiento cancelado?')) return;
+  fetch(`/api/mantenimientos/${encodeURIComponent(id)}`, {
+    method:'DELETE'
+  }).then(r=>r.json()).then(d=>{
+    if (d.ok) { alert('Mantenimiento eliminado'); cargarMisMantenimientos(); }
+    else { alert('Error eliminando mantenimiento'); }
+  }).catch(e=>console.error('Error eliminando', e));
+}
 </script>
 
 </body>
