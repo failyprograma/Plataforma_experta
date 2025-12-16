@@ -267,28 +267,6 @@
         ],
         "fechaCreacion": "2025-12-11T03:01:08.691Z",
         "fechaModificacion": "2025-12-11T19:03:57.282Z"
-      },
-      {
-        "id": "prod_1765422068691_rdoccobr8",
-        "userId": "ecousuario",
-        "codCliente": "",
-        "repuesto": "Tambor de freno",
-        "marca": "HTECH",
-        "linea": "Frenos",
-        "codSC": "TF3770HT",
-        "precio": 30800,
-        "descuento": 0,
-        "stock": 1,
-        "fichaTecnica": "",
-        "referenciaCruzada": "",
-        "oem": "",
-        "imagenes": [
-          "/uploads/productos/prod-1765422068646-703813030.png",
-          "/uploads/productos/prod-1765422068658-929778051.png",
-          "/uploads/productos/prod-1765422068669-695888508.png"
-        ],
-        "fechaCreacion": "2025-12-11T03:01:08.691Z",
-        "fechaModificacion": "2025-12-11T03:02:03.585Z"
       }
     ],
     "sistemas": [

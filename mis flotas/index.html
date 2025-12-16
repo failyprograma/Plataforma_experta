@@ -1875,8 +1875,91 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 </div>
 
+<!-- Modal de Edición de Mantenimiento -->
+<div id="modal-editar-mantenimiento" class="flota-modal" style="display: none;" onclick="if(event.target.id === 'modal-editar-mantenimiento') cerrarModalEditarMantenimiento()">
+  <div class="flota-modal-content" style="width: 95%; max-width: 700px; max-height: 90vh; display: flex; flex-direction: column;">
+    <div class="flota-modal-header">
+      <span class="modal-flota-title">Editar Mantenimiento</span>
+      <span class="close-flota-btn" onclick="cerrarModalEditarMantenimiento()" style="cursor:pointer;">&times;</span>
+    </div>
+    <div class="flota-modal-body" style="padding: 24px; flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
+      
+      <!-- Información del vehículo -->
+      <div id="info-vehiculo-edit" style="background:#f8f9fa;padding:16px;border-radius:12px;margin-bottom:24px;border-left:4px solid #BF1823;">
+        <div style="font-weight:600;color:#252425;font-size:15px;margin-bottom:4px;" id="vehiculo-edit-nombre"></div>
+        <div style="color:#666;font-size:13px;" id="vehiculo-edit-patente"></div>
+      </div>
+
+      <!-- Selector de Fecha -->
+      <div style="margin-bottom:24px;">
+        <label style="display:block;font-weight:600;color:#252425;margin-bottom:8px;font-size:14px;">📅 Fecha de Mantenimiento</label>
+        <input type="date" id="fecha-edit-input" style="width:100%;padding:12px;border:1px solid #dee2e6;border-radius:8px;font-size:14px;font-family:inherit;" />
+        <div style="font-size:12px;color:#666;margin-top:6px;">Selecciona la fecha para el mantenimiento</div>
+      </div>
+
+      <!-- Sistemas -->
+      <div style="margin-bottom:24px;">
+        <label style="display:block;font-weight:600;color:#252425;margin-bottom:12px;font-size:14px;">⚙️ Sistemas</label>
+        <div id="sistemas-edit-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;"></div>
+      </div>
+
+      <!-- Productos -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <label style="font-weight:600;color:#252425;font-size:14px;">📦 Productos</label>
+          <button onclick="abrirAgregarProductos()" style="background:#BF1823;color:white;border:none;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">+ Agregar</button>
+        </div>
+        <div id="productos-edit-container" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
+    </div>
+    <div class="flota-modal-footer" style="display:flex;justify-content:flex-end;gap:8px;padding: 12px 24px;border-top:1px solid #eee;flex-shrink:0;">
+      <button class="btn-secondary" onclick="cerrarModalEditarMantenimiento()">Cancelar</button>
+      <button class="btn-primary" onclick="guardarCambiosMantenimiento()">💾 Guardar Cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Agregar Productos -->
+<div id="modal-agregar-productos" class="flota-modal" style="display: none;" onclick="if(event.target.id === 'modal-agregar-productos') cerrarAgregarProductos()">
+  <div class="flota-modal-content" style="width: 95%; max-width: 600px; max-height: 85vh; display: flex; flex-direction: column;">
+    <div class="flota-modal-header">
+      <span class="modal-flota-title">Agregar Productos</span>
+      <span class="close-flota-btn" onclick="cerrarAgregarProductos()" style="cursor:pointer;">&times;</span>
+    </div>
+    <div class="flota-modal-body" style="padding: 24px; flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
+      <p style="color:#666;margin:0 0 16px 0;font-size:14px;">Selecciona los productos disponibles para este vehículo</p>
+      <div id="productos-disponibles-container" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+    <div class="flota-modal-footer" style="display:flex;justify-content:flex-end;gap:8px;padding: 12px 24px;border-top:1px solid #eee;flex-shrink:0;">
+      <button class="btn-secondary" onclick="cerrarAgregarProductos()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Agregar Sistemas -->
+<div id="modal-agregar-sistemas" class="flota-modal" style="display: none;" onclick="if(event.target.id === 'modal-agregar-sistemas') cerrarAgregarSistemas()">
+  <div class="flota-modal-content" style="width: 95%; max-width: 600px; max-height: 85vh; display: flex; flex-direction: column;">
+    <div class="flota-modal-header">
+      <span class="modal-flota-title">Agregar Sistema</span>
+      <span class="close-flota-btn" onclick="cerrarAgregarSistemas()" style="cursor:pointer;">&times;</span>
+    </div>
+    <div class="flota-modal-body" style="padding: 24px; flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
+      <p style="color:#666;margin:0 0 16px 0;font-size:14px;">Selecciona un sistema disponible para este vehículo</p>
+      <div id="sistemas-disponibles-container" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+    <div class="flota-modal-footer" style="display:flex;justify-content:flex-end;gap:8px;padding: 12px 24px;border-top:1px solid #eee;flex-shrink:0;">
+      <button class="btn-secondary" onclick="cerrarAgregarSistemas()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 let estadoTabMantenimientos = 'proximos';
+let mantenimientoEnEdicion = null;
+let productosEnEdicion = [];
+let sistemasEnEdicion = [];
+
 function abrirModalMisMantenimientos() {
   const modal = document.getElementById('modal-mis-mantenimientos');
   if (!modal) return; modal.style.display = 'flex';
@@ -2133,21 +2216,321 @@ function renderCardMantenimiento(i) {
 }
 
 function abrirEditarMantenimiento(id) {
-  const nuevoFecha = prompt('Nueva fecha (YYYY-MM-DD):');
-  if (!nuevoFecha) return;
-  // Opcional: agregar/quitar SKUs con coma
-  const skusTexto = prompt('SKUs nuevos (coma) - deja vacío para mantener');
-  let productos = undefined;
-  if (skusTexto && skusTexto.trim().length>0) {
-    const skus = skusTexto.split(',').map(s=>s.trim()).filter(Boolean);
-    productos = skus.map(s => ({ sku:s }));
+  const userStr = localStorage.getItem('starclutch_user');
+  if (!userStr) return;
+  const user = JSON.parse(userStr);
+  
+  fetch(`/api/mantenimientos?userId=${encodeURIComponent(user.id)}`)
+    .then(r => r.json())
+    .then(data => {
+      const mantenimiento = data.items?.find(i => i.id === id);
+      if (!mantenimiento) {
+        alert('Mantenimiento no encontrado');
+        return;
+      }
+      
+      mantenimientoEnEdicion = mantenimiento;
+      productosEnEdicion = JSON.parse(JSON.stringify(mantenimiento.productos || []));
+      sistemasEnEdicion = JSON.parse(JSON.stringify(mantenimiento.sistemas || []));
+      
+      // Llenar información del vehículo
+      const vehiculo = mantenimiento.vehiculo || {};
+      document.getElementById('vehiculo-edit-nombre').textContent = `${vehiculo.marca || ''} ${vehiculo.modelo || ''}`.trim();
+      document.getElementById('vehiculo-edit-patente').textContent = vehiculo.patente || 'Sin especificar';
+      
+      // Llenar fecha
+      document.getElementById('fecha-edit-input').value = mantenimiento.fecha || '';
+      document.getElementById('fecha-edit-input').setAttribute('min', new Date().toISOString().split('T')[0]);
+      
+      // Cargar sistemas disponibles
+      cargarSistemasDisponiblesEdit(vehiculo);
+      
+      // Mostrar productos actuales
+      renderProductosEnEdicion();
+      
+      // Abrir modal
+      document.getElementById('modal-editar-mantenimiento').style.display = 'flex';
+    })
+    .catch(e => console.error('Error cargando mantenimiento:', e));
+}
+
+function cargarSistemasDisponiblesEdit(vehiculo) {
+  fetch('../datosproductos/cruces_vehiculos.json')
+    .then(r => r.json())
+    .then(data => {
+      const marcaNorm = normalizarTexto(vehiculo.marca || '');
+      const modeloNorm = normalizarTexto(vehiculo.modelo || '');
+      
+      const cruce = data.cruces.find(c => 
+        normalizarTexto(c.marca) === marcaNorm && normalizarTexto(c.modelo) === modeloNorm
+      );
+      
+      // Guardar referencia completa al cruce del vehículo
+      window.cruceVehiculoActual = cruce || {};
+      
+      // Renderizar solo los sistemas seleccionados
+      renderSistemasEnEdicion();
+    })
+    .catch(e => console.error('Error cargando sistemas:', e));
+}
+
+function renderSistemasEnEdicion() {
+  const container = document.getElementById('sistemas-edit-container');
+  
+  let html = '';
+  
+  // Mostrar sistemas seleccionados
+  if (sistemasEnEdicion && sistemasEnEdicion.length > 0) {
+    html += sistemasEnEdicion.map((sistema, idx) => `
+      <div style="background:linear-gradient(135deg,#f8f9fa,#ffffff);border:1px solid #BF1823;border-radius:8px;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;transition:all 0.2s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(191,24,35,0.2)'" onmouseout="this.style.boxShadow='none'">
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:600;color:#252425;font-size:14px;">⚙️ ${sistema}</div>
+        </div>
+        <button onclick="eliminarSistemaEdit(${idx})" style="background:transparent;border:1px solid #e0e0e0;border-radius:6px;padding:6px 10px;cursor:pointer;transition:all 0.2s;color:#d32f2f;flex-shrink:0;" onmouseover="this.style.background='#ffebee';this.style.borderColor='#ef5350';" onmouseout="this.style.background='transparent';this.style.borderColor='#e0e0e0';font-weight:600;">✕</button>
+      </div>
+    `).join('');
   }
-  fetch(`/api/mantenimientos/${encodeURIComponent(id)}`, {
-    method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ fecha: nuevoFecha, productos })
-  }).then(r=>r.json()).then(d=>{
-    if (d.ok) { alert('Mantenimiento actualizado'); cargarMisMantenimientos(); }
-    else { alert('Error actualizando mantenimiento'); }
-  }).catch(e=>console.error('Error editando', e));
+  
+  // Botón + para agregar sistemas disponibles
+  const sistemasDisponibles = Object.keys(window.cruceVehiculoActual?.categorias || {});
+  const sistemasNoAgreagados = sistemasDisponibles.filter(s => !sistemasEnEdicion?.includes(s));
+  
+  if (sistemasNoAgreagados.length > 0) {
+    html += `
+      <button onclick="abrirAgregarSistemas()" style="background:transparent;border:2px dashed #BF1823;border-radius:8px;padding:12px;cursor:pointer;color:#BF1823;font-weight:600;font-size:14px;transition:all 0.2s;" onmouseover="this.style.background='#fff5f5';" onmouseout="this.style.background='transparent';">+ Agregar sistema</button>
+    `;
+  } else if (!sistemasEnEdicion || sistemasEnEdicion.length === 0) {
+    html = '<div style="padding:16px;text-align:center;color:#999;background:#f8f9fa;border-radius:6px;border:1px dashed #dee2e6;font-size:13px;grid-column:1/-1;">No hay sistemas disponibles</div>';
+  }
+  
+  container.innerHTML = html;
+}
+
+function eliminarSistemaEdit(idx) {
+  const sistemaAEliminar = sistemasEnEdicion[idx];
+  const skusDelSistema = window.cruceVehiculoActual?.categorias?.[sistemaAEliminar] || [];
+  const skusDelSistemaSet = new Set(skusDelSistema.map(s => s.sku));
+  
+  // Buscar productos relacionados al sistema por SKU
+  const productosRelacionados = productosEnEdicion.filter(p => 
+    skusDelSistemaSet.has(p.codSC || p.sku)
+  );
+  
+  // Calcular cuántos productos quedarían después de eliminar
+  const productosRestantes = productosEnEdicion.filter(p => !skusDelSistemaSet.has(p.codSC || p.sku));
+  
+  let mensaje = `🗑️ Eliminar sistema: "${sistemaAEliminar}"?`;
+  
+  if (productosRelacionados.length > 0) {
+    mensaje += `\n\n📦 Se eliminarán ${productosRelacionados.length} producto${productosRelacionados.length > 1 ? 's' : ''}:\n`;
+    mensaje += productosRelacionados.map(p => `  • ${p.nombre || p.repuesto}`).join('\n');
+  }
+  
+  // Si no hay productos restantes, avisar que se eliminará todo
+  if (productosRestantes.length === 0) {
+    mensaje += `\n\n⚠️ ATENCIÓN: Al eliminar este sistema, no habrá productos en el mantenimiento.\n\n`;
+    mensaje += `❌ Se eliminará COMPLETAMENTE el mantenimiento de este vehículo\n`;
+    mensaje += `   porque no tendrá ningún producto asociado.\n\n`;
+    mensaje += `¿Continuar?`;
+  }
+  
+  if (confirm(mensaje)) {
+    // Eliminar el sistema
+    sistemasEnEdicion.splice(idx, 1);
+    
+    // Eliminar productos relacionados
+    if (productosRelacionados.length > 0) {
+      productosEnEdicion = productosEnEdicion.filter(p => !productosRelacionados.includes(p));
+      renderProductosEnEdicion();
+    }
+    
+    renderSistemasEnEdicion();
+  }
+}
+
+function renderProductosEnEdicion() {
+  const container = document.getElementById('productos-edit-container');
+  
+  if (!productosEnEdicion || productosEnEdicion.length === 0) {
+    container.innerHTML = '<div style="padding:16px;text-align:center;color:#999;background:#f8f9fa;border-radius:6px;border:1px dashed #dee2e6;font-size:13px;">No hay productos agregados</div>';
+    return;
+  }
+  
+  container.innerHTML = productosEnEdicion.map((p, idx) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f8f9fa;border-radius:8px;border:1px solid #dee2e6;">
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:600;color:#252425;font-size:14px;">${p.nombre || p.repuesto || 'Sin nombre'}</div>
+        <div style="font-size:12px;color:#666;margin-top:2px;">${p.marca ? `${p.marca} - ` : ''}${p.codSC || p.sku || ''}</div>
+      </div>
+      <button onclick="quitarProductoEdit(${idx})" style="background:transparent;border:1px solid #e0e0e0;border-radius:6px;padding:6px 10px;cursor:pointer;transition:all 0.2s;color:#d32f2f;" onmouseover="this.style.background='#ffebee';this.style.borderColor='#ef5350';" onmouseout="this.style.background='transparent';this.style.borderColor='#e0e0e0';">✕</button>
+    </div>
+  `).join('');
+}
+
+function quitarProductoEdit(idx) {
+  productosEnEdicion.splice(idx, 1);
+  renderProductosEnEdicion();
+}
+
+function abrirAgregarProductos() {
+  const vehiculo = mantenimientoEnEdicion.vehiculo || {};
+  
+  fetch('../datosproductos/cruces_vehiculos.json')
+    .then(r => r.json())
+    .then(data => {
+      const marcaNorm = normalizarTexto(vehiculo.marca || '');
+      const modeloNorm = normalizarTexto(vehiculo.modelo || '');
+      
+      const cruce = data.cruces.find(c => 
+        normalizarTexto(c.marca) === marcaNorm && normalizarTexto(c.modelo) === modeloNorm
+      );
+      
+      if (!cruce || !cruce.productos) {
+        alert('No hay productos disponibles para este vehículo');
+        return;
+      }
+      
+      const container = document.getElementById('productos-disponibles-container');
+      container.innerHTML = cruce.productos.map(p => {
+        const isSelected = productosEnEdicion.some(ep => (ep.codSC || ep.sku) === (p.codSC || p.sku));
+        return `
+          <label style="display:flex;align-items:start;gap:12px;padding:12px;background:${isSelected ? '#f0f7ff' : '#f8f9fa'};border-radius:8px;border:1px solid ${isSelected ? '#BF1823' : '#dee2e6'};cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='#f0f7ff'" onmouseout="this.style.background='${isSelected ? '#f0f7ff' : '#f8f9fa'}'">
+            <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="actualizarProductosSeleccionados(this, ${JSON.stringify(p).replace(/"/g, '&quot;')})" style="width:18px;height:18px;margin-top:2px;cursor:pointer;accent-color:#BF1823;" />
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:600;color:#252425;font-size:14px;">${p.nombre || p.repuesto}</div>
+              <div style="font-size:12px;color:#666;margin-top:4px;">${p.marca || ''}${p.marca && (p.codSC || p.sku) ? ' - ' : ''}${p.codSC || p.sku || ''}</div>
+            </div>
+          </label>
+        `;
+      }).join('');
+      
+      document.getElementById('modal-agregar-productos').style.display = 'flex';
+    })
+    .catch(e => console.error('Error cargando productos:', e));
+}
+
+function actualizarProductosSeleccionados(checkbox, producto) {
+  if (checkbox.checked) {
+    if (!productosEnEdicion.some(p => (p.codSC || p.sku) === (producto.codSC || producto.sku))) {
+      productosEnEdicion.push(producto);
+    }
+  } else {
+    productosEnEdicion = productosEnEdicion.filter(p => (p.codSC || p.sku) !== (producto.codSC || producto.sku));
+  }
+  renderProductosEnEdicion();
+}
+
+function cerrarAgregarProductos() {
+  document.getElementById('modal-agregar-productos').style.display = 'none';
+}
+
+function abrirAgregarSistemas() {
+  const sistemasDisponibles = Object.keys(window.cruceVehiculoActual?.categorias || {});
+  const sistemasNoAgregados = sistemasDisponibles.filter(s => !sistemasEnEdicion?.includes(s));
+  
+  const container = document.getElementById('sistemas-disponibles-container');
+  container.innerHTML = sistemasNoAgregados.map(sistema => {
+    // Obtener los SKUs del sistema
+    const skusDelSistema = window.cruceVehiculoActual?.categorias?.[sistema] || [];
+    
+    return `
+      <button onclick="agregarSistemaEdit('${sistema}')" style="background:#f8f9fa;border:1px solid #dee2e6;border-radius:8px;padding:12px;cursor:pointer;transition:all 0.2s;text-align:left;font-weight:600;color:#252425;font-size:14px;" onmouseover="this.style.background='#f0f7ff';this.style.borderColor='#BF1823';" onmouseout="this.style.background='#f8f9fa';this.style.borderColor='#dee2e6';">
+        ⚙️ ${sistema} <span style="display:block;font-size:12px;font-weight:400;color:#666;margin-top:4px;">${skusDelSistema.length} producto${skusDelSistema.length > 1 ? 's' : ''}</span>
+      </button>
+    `;
+  }).join('');
+  
+  document.getElementById('modal-agregar-sistemas').style.display = 'flex';
+}
+
+function cerrarAgregarSistemas() {
+  document.getElementById('modal-agregar-sistemas').style.display = 'none';
+}
+
+function agregarSistemaEdit(nombreSistema) {
+  // Agregar el sistema a sistemasEnEdicion
+  if (!sistemasEnEdicion.includes(nombreSistema)) {
+    sistemasEnEdicion.push(nombreSistema);
+  }
+  
+  // Obtener los SKUs del sistema
+  const skusDelSistema = window.cruceVehiculoActual?.categorias?.[nombreSistema] || [];
+  const skusSet = new Set(skusDelSistema.map(s => s.sku));
+  
+  // Cargar la base de datos de productos
+  fetch('../datosproductos/productos_db.json')
+    .then(r => r.json())
+    .then(productosDb => {
+      // Encontrar todos los productos que coincidan con los SKUs del sistema
+      const productosDelSistema = productosDb.filter(p => skusSet.has(p.codSC || p.sku));
+      
+      // Agregar los productos que no estén ya en productosEnEdicion
+      productosDelSistema.forEach(p => {
+        if (!productosEnEdicion.some(ep => (ep.codSC || ep.sku) === (p.codSC || p.sku))) {
+          productosEnEdicion.push(p);
+        }
+      });
+      
+      // Actualizar las vistas
+      renderSistemasEnEdicion();
+      renderProductosEnEdicion();
+      
+      // Cerrar la modal
+      cerrarAgregarSistemas();
+    })
+    .catch(e => {
+      console.error('Error cargando productos:', e);
+      // Aun así, mostrar el sistema agregado aunque no se encuentren los productos
+      renderSistemasEnEdicion();
+      renderProductosEnEdicion();
+      cerrarAgregarSistemas();
+    });
+}
+
+function guardarCambiosMantenimiento() {
+  if (!mantenimientoEnEdicion) return;
+  
+  const nuevaFecha = document.getElementById('fecha-edit-input').value;
+  if (!nuevaFecha) {
+    alert('Por favor selecciona una fecha');
+    return;
+  }
+  
+  if (productosEnEdicion.length === 0) {
+    alert('Debes agregar al menos un producto');
+    return;
+  }
+  
+  fetch(`/api/mantenimientos/${encodeURIComponent(mantenimientoEnEdicion.id)}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      fecha: nuevaFecha,
+      productos: productosEnEdicion,
+      sistemas: sistemasEnEdicion
+    })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.ok) {
+      alert('✓ Mantenimiento actualizado correctamente');
+      cerrarModalEditarMantenimiento();
+      cargarMisMantenimientos();
+    } else {
+      alert('Error actualizando mantenimiento');
+    }
+  })
+  .catch(e => {
+    console.error('Error:', e);
+    alert('Error al guardar los cambios');
+  });
+}
+
+function cerrarModalEditarMantenimiento() {
+  document.getElementById('modal-editar-mantenimiento').style.display = 'none';
+  mantenimientoEnEdicion = null;
+  productosEnEdicion = [];
+  sistemasEnEdicion = [];
 }
 
 function cancelarMantenimiento(id) {

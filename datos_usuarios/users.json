@@ -146,35 +146,8 @@
     ],
     "telefono": "953919607",
     "carrito": {
-      "items": [
-        {
-          "id": "prod_1765422068691_b8sv60vmb",
-          "sku": "PAS2379",
-          "skuCliente": "",
-          "nombre": "Pastillas de freno",
-          "marca": "FRASLE",
-          "imagen": "/uploads/productos/prod-1765422068683-796678334.png",
-          "precio": 13400,
-          "precioOriginal": 13400,
-          "descuento": 0,
-          "cantidad": 1,
-          "stock": 1
-        },
-        {
-          "id": "prod_1765422068691_rsztv4fak",
-          "sku": "KITCIT160LR",
-          "skuCliente": "",
-          "nombre": "Kit de embrague",
-          "marca": "LUK",
-          "imagen": "/uploads/productos/prod-1765422068681-226017403.png",
-          "precio": 70900,
-          "precioOriginal": 70900,
-          "descuento": 0,
-          "cantidad": 1,
-          "stock": 1
-        }
-      ],
-      "ultimaActualizacion": "2025-12-16T18:54:27.671Z"
+      "items": [],
+      "ultimaActualizacion": "2025-12-16T19:44:57.882Z"
     },
     "ordenesCompraEnviadas": 1,
     "cotizacionesEnviadas": 11
