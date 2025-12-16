@@ -178,6 +178,33 @@
         </div>
 
     </div>
+
+        <!-- Modal Programar Mantención -->
+        <div id="pm-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99998;"></div>
+        <div id="pm-modal" style="display:none; position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.2); width:92%; max-width:520px; z-index:99999;">
+            <div style="padding:16px 20px; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between;">
+                <h3 style="margin:0; font-size:18px; color:#333;">Programar mantención</h3>
+                <button onclick="window.cerrarModalMantencion()" aria-label="Cerrar" style="background:none; border:none; font-size:24px; cursor:pointer; color:#666">×</button>
+            </div>
+            <div style="padding:20px; display:flex; flex-direction:column; gap:14px;">
+                <div>
+                    <label for="pm-fecha" style="display:block; font-weight:600; color:#444; margin-bottom:6px;">Seleccionar fecha</label>
+                    <input type="date" id="pm-fecha" style="width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:8px; font-size:14px;" />
+                </div>
+                <label style="display:flex; align-items:center; gap:10px; font-size:14px; color:#555;">
+                    <input type="checkbox" id="pm-recurrencia" style="width:18px; height:18px; accent-color:#BF1823;" />
+                    Repetir mantenimiento cada día del mes seleccionado
+                </label>
+                <div style="margin-top:6px; font-size:12px; color:#777;">
+                    Al activar, te recordaremos cada mes en el mismo día; si un mes no tiene ese día (p. ej., 31), programaremos el último día del mes.
+                </div>
+            </div>
+            <div style="padding:16px 20px; border-top:1px solid #eee; display:flex; gap:10px; justify-content:flex-end;">
+                <button onclick="window.cerrarModalMantencion()" class="btn-secondary" style="padding:10px 16px; border:1px solid #ddd; background:#fff; border-radius:8px; cursor:pointer;">Cancelar</button>
+                <button onclick="window.programarMantencionDesdeProducto()" class="btn-primary" style="padding:10px 16px; background:#BF1823; color:#fff; border:none; border-radius:8px; cursor:pointer;">Programar</button>
+            </div>
+        </div>
+        <!-- /Modal Programar Mantención -->
 </div>
 
 <section class="seccion-recomendados-detalle">
@@ -944,6 +971,105 @@
 </div>
 
 <script src="../notificaciones.js"></script>
+<script>
+// Modal mantención - funciones públicas
+window.abrirModalMantencion = function() {
+    const overlay = document.getElementById('pm-overlay');
+    const modal = document.getElementById('pm-modal');
+    const inputFecha = document.getElementById('pm-fecha');
+    if (inputFecha && !inputFecha.value) {
+        const hoy = new Date();
+        const yyyy = hoy.getFullYear();
+        const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+        const dd = String(hoy.getDate()).padStart(2, '0');
+        inputFecha.value = `${yyyy}-${mm}-${dd}`;
+    }
+    if (overlay) overlay.style.display = 'block';
+    if (modal) modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+};
+
+window.cerrarModalMantencion = function() {
+    const overlay = document.getElementById('pm-overlay');
+    const modal = document.getElementById('pm-modal');
+    if (overlay) overlay.style.display = 'none';
+    if (modal) modal.style.display = 'none';
+    document.body.style.overflow = '';
+};
+
+function obtenerUsuarioId() {
+    const sesion = JSON.parse(localStorage.getItem('starclutch_user') || 'null');
+    const uid = sesion && sesion.id ? sesion.id : localStorage.getItem('usuarioID');
+    if (sesion && sesion.id) localStorage.setItem('usuarioID', sesion.id);
+    return uid;
+}
+
+function ultimoDiaDelMes(year, monthIndex) {
+    return new Date(year, monthIndex + 1, 0).getDate();
+}
+
+window.programarMantencionDesdeProducto = function() {
+    const usuarioId = obtenerUsuarioId();
+    if (!usuarioId) {
+        alert('Debes iniciar sesión para programar mantenciones.');
+        return;
+    }
+
+    const fechaStr = document.getElementById('pm-fecha').value;
+    const esRecurrente = document.getElementById('pm-recurrencia').checked;
+    if (!fechaStr) {
+        alert('Selecciona una fecha válida.');
+        return;
+    }
+
+    const vehiculo = (window.detalleVehiculoActual) ? {
+        marca: window.detalleVehiculoActual.marca || window.detalleVehiculoActual.fabricante || 'Vehículo',
+        modelo: window.detalleVehiculoActual.modelo || '',
+        anio: window.detalleVehiculoActual.anio || null,
+        patente: window.detalleVehiculoActual.patente || null,
+        motor: window.detalleVehiculoActual.motor || null,
+        tipo: window.detalleVehiculoActual.tipo || 'camioneta'
+    } : null;
+
+    if (!vehiculo) {
+        alert('No se pudo obtener el vehículo actual.');
+        return;
+    }
+
+    const mant = {
+        id: `mant_${Date.now()}_${Math.random().toString(36).slice(2,10)}`,
+        vehiculo,
+        fecha: fechaStr,
+        productos: [],
+        sistemas: [],
+        creado: new Date().toISOString(),
+        recurrente: null
+    };
+
+    if (esRecurrente) {
+        const [y,m,d] = fechaStr.split('-').map(Number);
+        mant.recurrente = {
+            tipo: 'mensual',
+            dia: d,
+            activo: true,
+            proxima: fechaStr
+        };
+    }
+
+    const keyMants = `mantenimientos_${usuarioId}`;
+    const existentes = JSON.parse(localStorage.getItem(keyMants) || '[]');
+    existentes.push(mant);
+    localStorage.setItem(keyMants, JSON.stringify(existentes));
+
+    // Intentar programar notificaciones locales/siguientes ocurrencias
+    if (window.programadorMantenimientos && typeof window.programadorMantenimientos.recalcular === 'function') {
+        window.programadorMantenimientos.recalcular();
+    }
+
+    alert(`✓ Mantención programada para ${vehiculo.marca} ${vehiculo.modelo}${esRecurrente ? ' (repetición mensual activa)' : ''}`);
+    window.cerrarModalMantencion();
+};
+</script>
 <script>
 function toggleNotificaciones() {
   const panel = document.getElementById('notif-panel');

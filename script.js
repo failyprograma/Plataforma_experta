@@ -6517,11 +6517,17 @@ async function cargarDetalleVehiculo() {
     if (elImagen && data.imagen) elImagen.src = data.imagen;
     if (elLogo && data.logoUrl) elLogo.src = data.logoUrl;
 
-    // 5. Configurar Botón Mantención (Opcional: podrías guardar el ID para usarlo luego)
+    // Exponer datos del vehículo para otras interacciones (ej: modal de mantención)
+    window.detalleVehiculoActual = data;
+
+    // 5. Configurar Botón Mantención para abrir modal si existe
     if (btnMantencion) {
         btnMantencion.onclick = () => {
-            alert(`Programar mantención para: ${data.patente}`);
-            // Aquí podrías redirigir a otra página si fuera necesario
+            if (typeof window.abrirModalMantencion === 'function') {
+                window.abrirModalMantencion();
+            } else {
+                alert(`Programar mantención para: ${data.patente}`);
+            }
         };
     }
 }

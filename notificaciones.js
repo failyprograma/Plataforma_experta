@@ -193,16 +193,26 @@ class NotificacionesManager {
         // Ícono según tipo de notificación (usando imágenes del sistema)
         let icono = '<img src="../img/Alerta.svg" alt="Notificación" style="width: 48px; height: 48px; opacity: 0.7;">';
         
-        if (notif.datos && notif.datos.imagen) {
+        // Icono especial para notificaciones de mantenimiento
+        if (notif.tipo === 'mantenimiento_7dias' || notif.tipo === 'mantenimiento_hoy') {
+            icono = '<img src="../img/mantención.svg" alt="Mantenimiento" style="width: 48px; height: 48px; opacity: 0.7; filter: brightness(0.4);">';
+        } else if (notif.datos && notif.datos.imagen) {
             icono = `<img src="${notif.datos.imagen}" alt="${notif.datos.productoNombre || 'Producto'}" style="width: 48px; height: 48px; object-fit: contain;">`;
         }
         
-        // Construir URL del producto si existe
-        let productoUrl = '#';
-        let onclickAttr = 'onclick="return false;"';
-        if (notif.datos && notif.datos.productoId) {
-            productoUrl = `../mis flotas/detalleproducto.html?id=${notif.datos.productoId}`;
-            onclickAttr = '';
+        // Construir URL y botón de acción según el tipo
+        let linkHTML = '';
+        
+        if (notif.tipo === 'mantenimiento_7dias') {
+            // Botón para ver productos en categorías
+            linkHTML = `<a href="#" class="notif-link" onclick="verProductosMantenimiento('${notif.datos.mantenimientoId}'); return false;">Ver productos</a>`;
+        } else if (notif.tipo === 'mantenimiento_hoy') {
+            // Botón para agregar productos al carrito
+            linkHTML = `<a href="#" class="notif-link" onclick="agregarProductosMantenimientoAlCarrito('${notif.datos.mantenimientoId}'); return false;">Agregar productos al carrito</a>`;
+        } else if (notif.datos && notif.datos.productoId) {
+            // Notificación de producto normal
+            const productoUrl = `../mis flotas/detalleproducto.html?id=${notif.datos.productoId}`;
+            linkHTML = `<a href="${productoUrl}" class="notif-link">Ver productos</a>`;
         }
 
         return `
@@ -223,7 +233,7 @@ class NotificacionesManager {
                             ` : ''}
                         </div>
                     ` : ''}
-                    <a href="${productoUrl}" class="notif-link" ${onclickAttr}>Ver productos</a>
+                    ${linkHTML}
                 </div>
                 <div class="notif-meta">
                     <span class="notif-time">${fecha}</span>
@@ -431,4 +441,144 @@ if (document.readyState === 'loading') {
 // Función global para marcar todas como leídas (puede ser llamada desde el HTML)
 function marcarTodasNotificacionesLeidas() {
     window.notificacionesManager.marcarTodasLeidas();
+}
+
+// ============================================================
+//  FUNCIONES PARA NOTIFICACIONES DE MANTENIMIENTO
+// ============================================================
+
+/**
+ * Ver productos de un mantenimiento programado
+ * Redirige a categorías.html con contexto de mantenimiento
+ */
+function verProductosMantenimiento(mantenimientoId) {
+    const usuarioId = localStorage.getItem('usuarioID');
+    const keyMantenimientos = `mantenimientos_${usuarioId}`;
+    const mantenimientos = JSON.parse(localStorage.getItem(keyMantenimientos) || '[]');
+    
+    const mantenimiento = mantenimientos.find(m => m.id === mantenimientoId);
+    
+    if (!mantenimiento) {
+        alert('No se encontró el mantenimiento programado');
+        return;
+    }
+    
+    // Guardar contexto de mantenimiento en sessionStorage
+    sessionStorage.setItem('contexto_mantenimiento', JSON.stringify({
+        mantenimientoId: mantenimientoId,
+        vehiculo: mantenimiento.vehiculo,
+        productos: mantenimiento.productos,
+        sistemas: mantenimiento.sistemas,
+        fecha: mantenimiento.fecha
+    }));
+    
+    // Guardar también el vehículo seleccionado para categorias.html
+    sessionStorage.setItem('vehiculo-seleccionado', JSON.stringify({
+        marca: mantenimiento.vehiculo.marca,
+        modelo: mantenimiento.vehiculo.modelo,
+        motor: mantenimiento.vehiculo.motor || null,
+        tipo: mantenimiento.vehiculo.tipo || 'camioneta',
+        patente: mantenimiento.vehiculo.patente || null
+    }));
+    
+    // Redirigir a categorias.html
+    // Usar la primera categoría del mantenimiento
+    const primerSistema = mantenimiento.sistemas[0] || 'embragues';
+    const categoriasMap = {
+        'embragues': 'Embragues',
+        'frenos': 'Frenos',
+        'suspension': 'Suspensión',
+        'filtros y diferenciales': 'Filtros%20y%20diferenciales',
+        'filtrosydiferenciales': 'Filtros%20y%20diferenciales',
+        'sistema de aire': 'Sistema%20de%20aire',
+        'sistemadeaire': 'Sistema%20de%20aire',
+        'sistema de direccion': 'Sistema%20de%20dirección',
+        'sistemadedireccion': 'Sistema%20de%20dirección'
+    };
+    
+    const categoria = categoriasMap[primerSistema] || 'Embragues';
+    
+    // Cerrar panel de notificaciones si está abierto
+    if (typeof cerrarNotificaciones === 'function') {
+        cerrarNotificaciones();
+    }
+    
+    window.location.href = `../mis flotas/categorias.html?categoria=${categoria}&mantenimiento=${mantenimientoId}`;
+}
+
+/**
+ * Agregar todos los productos del mantenimiento al carrito
+ */
+async function agregarProductosMantenimientoAlCarrito(mantenimientoId) {
+    const usuarioId = localStorage.getItem('usuarioID');
+    const keyMantenimientos = `mantenimientos_${usuarioId}`;
+    const mantenimientos = JSON.parse(localStorage.getItem(keyMantenimientos) || '[]');
+    
+    const mantenimiento = mantenimientos.find(m => m.id === mantenimientoId);
+    
+    if (!mantenimiento) {
+        alert('No se encontró el mantenimiento programado');
+        return;
+    }
+    
+    if (!mantenimiento.productos || mantenimiento.productos.length === 0) {
+        alert('Este mantenimiento no tiene productos asociados');
+        return;
+    }
+    
+    // Cargar carrito actual
+    const currentUser = JSON.parse(localStorage.getItem('starclutch_user') || 'null');
+    if (!currentUser || !currentUser.id) {
+        alert('Debes iniciar sesión para agregar productos al carrito');
+        return;
+    }
+    
+    const carritoKey = `carrito_${currentUser.id}`;
+    let carrito = JSON.parse(localStorage.getItem(carritoKey) || '[]');
+    
+    // Agregar cada producto del mantenimiento
+    let productosAgregados = 0;
+    
+    for (const producto of mantenimiento.productos) {
+        // Verificar si el producto ya está en el carrito
+        const itemExistente = carrito.find(item => 
+            (item.codSC || item.sku) === (producto.codSC || producto.sku)
+        );
+        
+        if (itemExistente) {
+            // Incrementar cantidad
+            itemExistente.cantidad = (itemExistente.cantidad || 1) + 1;
+        } else {
+            // Agregar nuevo item
+            carrito.push({
+                ...producto,
+                cantidad: 1,
+                agregadoEn: new Date().toISOString()
+            });
+        }
+        productosAgregados++;
+    }
+    
+    // Guardar carrito actualizado
+    localStorage.setItem(carritoKey, JSON.stringify(carrito));
+    
+    // Actualizar badge del carrito si existe la función
+    if (typeof actualizarContadorCarrito === 'function') {
+        actualizarContadorCarrito();
+    } else if (typeof updateCartBadge === 'function') {
+        updateCartBadge();
+    }
+    
+    // Cerrar panel de notificaciones
+    if (typeof cerrarNotificaciones === 'function') {
+        cerrarNotificaciones();
+    }
+    
+    // Mostrar mensaje de confirmación
+    alert(`✓ Se agregaron ${productosAgregados} productos al carrito para el mantenimiento de ${mantenimiento.vehiculo.marca} ${mantenimiento.vehiculo.modelo}`);
+    
+    // Opcional: abrir el carrito
+    if (typeof toggleCarrito === 'function') {
+        toggleCarrito();
+    }
 }

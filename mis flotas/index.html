@@ -331,13 +331,13 @@
   <div class="header-left">
     <img src="../img/Agregar flota.svg" alt="Icono Mis Flotas" class="icono-header">
     <h1>Mis flotas</h1>
+    <button class="btn-primary" onclick="abrirModalMantenimiento()">
+      Mantenimiento de la flota <img src="../img/mantención.svg" alt="Mantenimiento" style="filter: brightness(0) invert(1);">
+    </button>
   </div>
 
   <!-- Bloque DERECHO -->
   <div class="header-actions">
-    <button class="btn-primary">
-      Mantenimiento de la flota <img src="../img/mantención.svg" alt="Mantenimiento" style="filter: brightness(0) invert(1);">
-    </button>
 
     <button class="btn-text">
       <span class="icon-left"><img src="../img/info_471662-01 1.svg" alt="Ayuda"></span> Ayuda
@@ -469,6 +469,182 @@
     <ul class="carousel-indicators"></ul>
   </div>
 </section>
+
+<!-- Modal Mantenimiento -->
+<div id="modal-mantenimiento" class="flota-modal" style="display: none; z-index: 99999;">
+  <div class="flota-modal-content">
+    <div class="flota-modal-header">
+      <span class="modal-flota-title">Mantenimiento de Flota</span>
+      <span class="close-flota-btn" onclick="cerrarModalMantenimiento()" style="cursor:pointer;">&times;</span>
+    </div>
+    <div class="flota-modal-body">
+      <p style="text-align: center; margin-bottom: 24px; font-size: 14px; color: #333;">
+        Gestiona el mantenimiento de tus vehículos
+      </p>
+      <div style="display: flex; gap: 12px;">
+        <button class="btn-primary" style="flex: 1; width: auto; max-width: none; padding: 10px 16px; font-size: 14px; white-space: nowrap;" onclick="verMantenimientos()">
+          Mis mantenimientos
+        </button>
+        <button class="btn-secondary" style="flex: 1; width: auto; max-width: none; padding: 10px 16px; font-size: 14px; white-space: nowrap;" onclick="agendarMantenimiento()">
+          Agendar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Selección de Vehículos para Mantenimiento -->
+<div id="modal-seleccion-vehiculos" class="flota-modal" style="display: none; z-index: 99999;">
+  <div class="flota-modal-content" style="max-width: 900px; width: 90%;">
+    <div class="flota-modal-header">
+      <span class="modal-flota-title" id="titulo-modal-vehiculos">Buscar vehículos (Nombre de la flota)</span>
+      <span class="close-flota-btn" onclick="cerrarModalSeleccionVehiculos()" style="cursor:pointer;">&times;</span>
+    </div>
+    <div class="flota-modal-body" style="padding: 20px;">
+      <!-- Fila con Checkbox y Buscador -->
+      <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+        <!-- Checkbox Seleccionar Todos a la izquierda -->
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; flex: 1;">
+          <input type="checkbox" id="seleccionar-todos-vehiculos" onchange="toggleSeleccionarTodosVehiculos()" style="width: 18px; height: 18px; cursor: pointer; accent-color: #BF1823;">
+          <span style="font-size: 14px; font-weight: 500; color: #333;">Seleccionar todos los vehículos de esta flota</span>
+        </label>
+
+        <!-- Buscador a la derecha -->
+        <div class="search-patente" style="width: 280px; flex-shrink: 0;">
+          <input 
+            type="text" 
+            id="buscador-vehiculos-mantenimiento" 
+            placeholder="Buscador" 
+            class="input-patente"
+            oninput="filtrarVehiculosMantenimiento()"
+          >
+          <button class="btn-search-patente" type="button">
+            <img src="../img/Buscar.svg" alt="Buscar">
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabla de Vehículos -->
+      <div class="table-responsive" style="max-height: 400px; overflow-y: auto; border-radius: 8px; margin-bottom: 0;">
+        <table class="sc-table" style="margin: 0;">
+          <thead>
+            <tr>
+              <th style="width: 40px; text-align: center;"></th>
+              <th>Marca</th>
+              <th>Modelo</th>
+              <th>Patente</th>
+              <th>Conductor</th>
+              <th>Motor</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-vehiculos-mantenimiento">
+            <!-- Los vehículos se cargan dinámicamente -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Indicador de Selección -->
+      <div style="margin-top: 16px; padding: 12px; background: #f8f8f8; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: 14px; color: #666;">
+          <strong id="contador-vehiculos-seleccionados" style="color: #BF1823;">0</strong> de <strong id="total-vehiculos">0</strong> Vehículos seleccionados
+        </span>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div style="margin-top: 20px; display: flex; gap: 12px; justify-content: flex-end;">
+        <button class="btn-secondary" style="padding: 10px 24px; font-size: 14px;" onclick="cerrarModalSeleccionVehiculos()">
+          Cancelar
+        </button>
+        <button class="btn-primary" style="padding: 10px 24px; font-size: 14px;" onclick="siguienteMantenimiento()">
+          Siguiente
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Programación de Mantenimiento -->
+<div id="modal-programacion-mantenimiento" class="flota-modal" style="display: none; z-index: 99999;">
+  <div class="flota-modal-content" style="max-width: 1100px; width: 95%; max-height: 90vh; overflow: hidden;">
+    <div class="flota-modal-header" style="background: #4a4a4a; color: white; padding: 16px 24px;">
+      <span class="modal-flota-title" style="color: white; font-size: 18px;">Programar Mantenimiento</span>
+      <span class="close-flota-btn" onclick="cerrarModalProgramacion()" style="cursor:pointer; color: white; font-size: 28px;">&times;</span>
+    </div>
+    <div class="flota-modal-body" style="padding: 0; display: flex; flex-direction: row; height: calc(90vh - 70px); overflow: hidden;">
+      
+      <!-- Columna Izquierda: Tarjeta del Vehículo -->
+      <div style="flex: 0 0 45%; background: #f5f5f5; display: flex; flex-direction: column; padding: 30px; border-right: 1px solid #ddd; overflow-y: auto;">
+        
+        <!-- Tarjeta del vehículo -->
+        <div id="tarjeta-vehiculo-mantenimiento" class="vehiculo-card" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #E0E0E0; padding: 20px; width: 100%; max-width: 400px; margin: 0 auto;">
+          <!-- El contenido se carga dinámicamente -->
+        </div>
+        
+        <!-- Navegación de vehículos en la parte inferior -->
+        <div style="display: flex; align-items: center; justify-content: center; gap: 24px; margin-top: 30px;">
+          <button id="btn-vehiculo-anterior" onclick="navegarVehiculo(-1)" style="background: none; border: none; cursor: pointer; font-size: 32px; color: #666; padding: 8px 16px; border-radius: 4px; transition: all 0.2s;">
+            ‹
+          </button>
+          <p style="margin: 0; font-size: 16px; font-weight: 500; color: #666;">
+            <span id="indice-vehiculo-actual">1</span> / <span id="total-vehiculos-prog">1</span>
+          </p>
+          <button id="btn-vehiculo-siguiente" onclick="navegarVehiculo(1)" style="background: none; border: none; cursor: pointer; font-size: 32px; color: #666; padding: 8px 16px; border-radius: 4px; transition: all 0.2s;">
+            ›
+          </button>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Formulario -->
+      <div style="flex: 1; padding: 24px 30px; overflow-y: auto; display: flex; flex-direction: column;">
+        
+        <!-- Seleccionar Sistemas -->
+        <div style="margin-bottom: 20px; position: relative;">
+          <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #333; font-size: 13px;">Seleccionar Sistemas</label>
+          <div id="dropdown-sistemas" onclick="toggleDropdownSistemas()" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 50px; font-size: 13px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center; min-height: 40px; font-family: 'Poppins', sans-serif; transition: border-color 0.2s ease;">
+            <span id="texto-sistemas-seleccionados" style="color: #999; font-size: 13px;">Seleccionar sistemas</span>
+            <span style="font-size: 11px; color: #666;">▼</span>
+          </div>
+          
+          <!-- Lista desplegable de sistemas -->
+          <div id="lista-sistemas-dropdown" style="display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: white; border: 1px solid #ccc; border-radius: 12px; max-height: 250px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+            <!-- Las opciones se cargan dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Seleccionar fecha -->
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #666; font-size: 14px;">Seleccionar fecha</label>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <input type="checkbox" id="mantener-fecha-todos" style="width: 18px; height: 18px; cursor: pointer; accent-color: #BF1823;">
+            <label for="mantener-fecha-todos" style="font-size: 14px; color: #666; cursor: pointer;">Repetir mantenimiento el mismo día de cada mes</label>
+            <svg class="info-icon-recurrencia" width="16" height="16" viewBox="0 0 24 24" style="cursor: help; margin-left: 4px; flex-shrink: 0; position: relative; top: 2px;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+              <circle cx="12" cy="12" r="10" fill="none" stroke="#BF1823" stroke-width="2"/>
+              <text x="12" y="16" font-size="14" font-weight="bold" text-anchor="middle" fill="#BF1823">i</text>
+              <title>Se programarán recordatorios 7 días antes y el mismo día, repitiendo por 12 meses.</title>
+            </svg>
+          </div>
+          <input type="date" id="fecha-mantenimiento" style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
+        </div>
+
+        <!-- Área de Productos -->
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #666; font-size: 14px;">Productos para mantenimiento</label>
+          <div id="lista-productos-mantenimiento" style="max-height: 300px; min-height: 250px; border: 1px solid #ccc; border-radius: 4px; padding: 16px; background: #fafafa; overflow-y: auto;">
+            <p style="text-align: center; color: #999; font-size: 14px; margin-top: 80px;">Selecciona sistemas para ver los productos</p>
+          </div>
+        </div>
+
+        <!-- Botón Programar -->
+        <div style="margin-top: auto; padding-top: 20px;">
+          <button class="btn-primary" onclick="guardarMantenimiento()" style="width: 100%; padding: 14px 24px; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <img src="../img/calendario.svg" alt="" style="width: 18px; height: 18px; filter: brightness(0) invert(1);">
+            Programar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div id="flota-modal-index" class="flota-modal" style="display: none; z-index: 99999;">
   <div class="flota-modal-content">
@@ -621,6 +797,1047 @@ function cerrarCarrito() {
   overlay.classList.remove('visible');
   document.body.style.overflow = '';
 }
+
+// Funciones para el modal de mantenimiento
+function abrirModalMantenimiento() {
+  const modal = document.getElementById('modal-mantenimiento');
+  modal.style.display = 'flex';
+  modal.style.position = 'fixed';
+  modal.style.top = '0';
+  modal.style.left = '0';
+  modal.style.width = '100%';
+  modal.style.height = '100%';
+  modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+  modal.style.justifyContent = 'center';
+  modal.style.alignItems = 'center';
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarModalMantenimiento() {
+  const modal = document.getElementById('modal-mantenimiento');
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function verMantenimientos() {
+  // Aquí puedes agregar la lógica para ver mantenimientos
+  console.log('Ver mantenimientos');
+  cerrarModalMantenimiento();
+}
+
+function agendarMantenimiento() {
+  cerrarModalMantenimiento();
+  abrirModalSeleccionVehiculos();
+}
+
+// Funciones para el modal de selección de vehículos
+let vehiculosSeleccionados = new Set();
+
+function abrirModalSeleccionVehiculos() {
+  const modal = document.getElementById('modal-seleccion-vehiculos');
+  modal.style.display = 'flex';
+  modal.style.position = 'fixed';
+  modal.style.top = '0';
+  modal.style.left = '0';
+  modal.style.width = '100%';
+  modal.style.height = '100%';
+  modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+  modal.style.justifyContent = 'center';
+  modal.style.alignItems = 'center';
+  document.body.style.overflow = 'hidden';
+  
+  // Limpiar selección anterior
+  vehiculosSeleccionados.clear();
+  actualizarContadorVehiculos();
+  
+  cargarVehiculosMantenimiento();
+}
+
+function cerrarModalSeleccionVehiculos() {
+  const modal = document.getElementById('modal-seleccion-vehiculos');
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+  vehiculosSeleccionados.clear();
+  actualizarContadorVehiculos();
+  
+  // Desmarcar el checkbox de seleccionar todos
+  const checkboxTodos = document.getElementById('seleccionar-todos-vehiculos');
+  if (checkboxTodos) {
+    checkboxTodos.checked = false;
+    checkboxTodos.indeterminate = false;
+  }
+}
+
+async function cargarVehiculosMantenimiento() {
+  try {
+    const response = await fetch('/datos de flota/flotas.json');
+    const flotas = await response.json();
+    
+    // Obtener el usuario de localStorage (como en el resto de la aplicación)
+    const usuarioId = localStorage.getItem('usuarioID');
+    
+    if (!usuarioId) {
+      console.error('No hay usuario logueado');
+      document.getElementById('tabla-vehiculos-mantenimiento').innerHTML = 
+        '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">No hay usuario logueado</td></tr>';
+      return;
+    }
+
+    // Obtener la flota seleccionada del select
+    const selectFlota = document.getElementById('select-flota');
+    const flotaSeleccionadaId = selectFlota.value;
+    
+    if (!flotaSeleccionadaId) {
+      document.getElementById('tabla-vehiculos-mantenimiento').innerHTML = 
+        '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">Por favor, selecciona una flota primero</td></tr>';
+      document.getElementById('total-vehiculos').textContent = '0';
+      return;
+    }
+
+    // flotas.json es un array, buscar la flota por id
+    const flotaSeleccionada = flotas.find(f => f.id === flotaSeleccionadaId && f.userId === usuarioId);
+    
+    if (!flotaSeleccionada) {
+      console.error('Flota no encontrada. ID buscado:', flotaSeleccionadaId, 'Usuario:', usuarioId);
+      document.getElementById('tabla-vehiculos-mantenimiento').innerHTML = 
+        '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">No se encontró la flota seleccionada</td></tr>';
+      document.getElementById('total-vehiculos').textContent = '0';
+      return;
+    }
+
+    // Actualizar el título del modal con el nombre de la flota
+    document.getElementById('titulo-modal-vehiculos').textContent = 
+      `Buscar vehículos (${flotaSeleccionada.nombre || 'Flota'})`;
+    
+    // Obtener vehículos de la flota seleccionada
+    const vehiculosFlota = flotaSeleccionada.vehiculos || [];
+    
+    if (vehiculosFlota.length === 0) {
+      document.getElementById('tabla-vehiculos-mantenimiento').innerHTML = 
+        '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">Esta flota no tiene vehículos</td></tr>';
+      document.getElementById('total-vehiculos').textContent = '0';
+      return;
+    }
+    
+    mostrarVehiculosEnTabla(vehiculosFlota);
+    document.getElementById('total-vehiculos').textContent = vehiculosFlota.length;
+    
+  } catch (error) {
+    console.error('Error al cargar vehículos:', error);
+    document.getElementById('tabla-vehiculos-mantenimiento').innerHTML = 
+      '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">Error al cargar los vehículos</td></tr>';
+  }
+}
+
+function mostrarVehiculosEnTabla(vehiculos) {
+  const tbody = document.getElementById('tabla-vehiculos-mantenimiento');
+  
+  if (!vehiculos || vehiculos.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">No hay vehículos disponibles</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = vehiculos.map((vehiculo, index) => `
+    <tr data-vehiculo-index="${index}" style="cursor: pointer;">
+      <td style="text-align: center;">
+        <input 
+          type="checkbox" 
+          class="checkbox-vehiculo" 
+          data-vehiculo-id="${index}"
+          style="width: 18px; height: 18px; cursor: pointer; accent-color: #BF1823;"
+        >
+      </td>
+      <td><strong>${vehiculo.marca || 'N/A'}</strong></td>
+      <td>${vehiculo.modelo || 'N/A'}</td>
+      <td>${vehiculo.patente || 'N/A'}</td>
+      <td>${vehiculo.conductor || 'N/A'}</td>
+      <td>${vehiculo.motor || 'No registrado'}</td>
+    </tr>
+  `).join('');
+  
+  // Guardar referencia a los vehículos
+  window.vehiculosMantenimiento = vehiculos;
+  
+  // Agregar event listeners a todos los checkboxes
+  document.querySelectorAll('.checkbox-vehiculo').forEach(checkbox => {
+    checkbox.addEventListener('change', function(e) {
+      e.stopPropagation(); // Evitar que se dispare el evento de la fila
+      const vehiculoId = this.getAttribute('data-vehiculo-id');
+      toggleVehiculoSeleccion(vehiculoId);
+    });
+  });
+  
+  // Agregar event listeners a todas las filas
+  document.querySelectorAll('#tabla-vehiculos-mantenimiento tr[data-vehiculo-index]').forEach(fila => {
+    fila.addEventListener('click', function(e) {
+      // Si el clic fue directamente en el checkbox, no hacer nada (ya lo maneja el checkbox)
+      if (e.target.type === 'checkbox') {
+        return;
+      }
+      
+      // Encontrar el checkbox de esta fila y togglearlo
+      const checkbox = this.querySelector('.checkbox-vehiculo');
+      if (checkbox) {
+        checkbox.checked = !checkbox.checked;
+        const vehiculoId = checkbox.getAttribute('data-vehiculo-id');
+        toggleVehiculoSeleccion(vehiculoId);
+      }
+    });
+  });
+}
+
+function toggleVehiculoSeleccion(vehiculoId) {
+  if (vehiculosSeleccionados.has(vehiculoId)) {
+    vehiculosSeleccionados.delete(vehiculoId);
+  } else {
+    vehiculosSeleccionados.add(vehiculoId);
+  }
+  console.log('Vehículos seleccionados:', vehiculosSeleccionados.size, Array.from(vehiculosSeleccionados));
+  actualizarContadorVehiculos();
+  actualizarCheckboxSeleccionarTodos();
+}
+
+function toggleSeleccionarTodosVehiculos() {
+  const checkbox = document.getElementById('seleccionar-todos-vehiculos');
+  const checkboxes = document.querySelectorAll('.checkbox-vehiculo');
+  
+  // Limpiar el Set primero
+  vehiculosSeleccionados.clear();
+  
+  checkboxes.forEach(cb => {
+    cb.checked = checkbox.checked;
+    const vehiculoId = cb.getAttribute('data-vehiculo-id');
+    if (checkbox.checked) {
+      vehiculosSeleccionados.add(vehiculoId);
+    }
+  });
+  
+  console.log('Seleccionar todos:', checkbox.checked, 'Total:', vehiculosSeleccionados.size);
+  actualizarContadorVehiculos();
+}
+
+function actualizarCheckboxSeleccionarTodos() {
+  const checkboxes = document.querySelectorAll('.checkbox-vehiculo');
+  const checkbox = document.getElementById('seleccionar-todos-vehiculos');
+  
+  const todosSeleccionados = Array.from(checkboxes).every(cb => cb.checked);
+  const algunoSeleccionado = Array.from(checkboxes).some(cb => cb.checked);
+  
+  checkbox.checked = todosSeleccionados;
+  checkbox.indeterminate = algunoSeleccionado && !todosSeleccionados;
+}
+
+function actualizarContadorVehiculos() {
+  const contador = document.getElementById('contador-vehiculos-seleccionados');
+  if (contador) {
+    contador.textContent = vehiculosSeleccionados.size;
+  }
+}
+
+function filtrarVehiculosMantenimiento() {
+  const busqueda = document.getElementById('buscador-vehiculos-mantenimiento').value.toLowerCase();
+  const filas = document.querySelectorAll('#tabla-vehiculos-mantenimiento tr');
+  
+  filas.forEach(fila => {
+    const texto = fila.textContent.toLowerCase();
+    fila.style.display = texto.includes(busqueda) ? '' : 'none';
+  });
+}
+
+function siguienteMantenimiento() {
+  if (vehiculosSeleccionados.size === 0) {
+    alert('Por favor, selecciona al menos un vehículo');
+    return;
+  }
+  
+  console.log('Vehículos seleccionados:', Array.from(vehiculosSeleccionados));
+  
+  // Preparar datos de vehículos para programación
+  window.vehiculosParaMantenimiento = Array.from(vehiculosSeleccionados).map(id => {
+    return window.vehiculosMantenimiento[parseInt(id)];
+  });
+  
+  // Cerrar modal de selección y abrir modal de programación
+  cerrarModalSeleccionVehiculos();
+  abrirModalProgramacion();
+}
+
+// ============================================================
+//  MODAL DE PROGRAMACIÓN DE MANTENIMIENTO
+// ============================================================
+
+let indiceVehiculoActual = 0;
+let datosMantenimientoPorVehiculo = {}; // Almacena productos y fecha por vehículo
+let productosDisponiblesPorVehiculo = {}; // Cache de productos por vehículo
+
+function abrirModalProgramacion() {
+  const modal = document.getElementById('modal-programacion-mantenimiento');
+  modal.style.display = 'flex';
+  modal.style.position = 'fixed';
+  modal.style.top = '0';
+  modal.style.left = '0';
+  modal.style.width = '100%';
+  modal.style.height = '100%';
+  modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+  modal.style.justifyContent = 'center';
+  modal.style.alignItems = 'center';
+  document.body.style.overflow = 'hidden';
+  
+  // Inicializar datos
+  indiceVehiculoActual = 0;
+  datosMantenimientoPorVehiculo = {};
+  productosDisponiblesPorVehiculo = {};
+  
+  // Establecer fecha mínima (hoy)
+  const hoy = new Date().toISOString().split('T')[0];
+  document.getElementById('fecha-mantenimiento').setAttribute('min', hoy);
+  
+  // Cargar primer vehículo
+  cargarVehiculoActual();
+}
+
+function cerrarModalProgramacion() {
+  const modal = document.getElementById('modal-programacion-mantenimiento');
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+  
+  // Limpiar datos
+  indiceVehiculoActual = 0;
+  datosMantenimientoPorVehiculo = {};
+  productosDisponiblesPorVehiculo = {};
+}
+
+function navegarVehiculo(direccion) {
+  // Guardar datos del vehículo actual antes de navegar
+  guardarDatosVehiculoActual();
+  
+  // Calcular nuevo índice
+  const nuevoIndice = indiceVehiculoActual + direccion;
+  
+  if (nuevoIndice >= 0 && nuevoIndice < window.vehiculosParaMantenimiento.length) {
+    indiceVehiculoActual = nuevoIndice;
+    cargarVehiculoActual();
+  }
+}
+
+async function cargarVehiculoActual() {
+  const vehiculo = window.vehiculosParaMantenimiento[indiceVehiculoActual];
+  const totalVehiculos = window.vehiculosParaMantenimiento.length;
+  
+  // Actualizar contador
+  document.getElementById('indice-vehiculo-actual').textContent = indiceVehiculoActual + 1;
+  document.getElementById('total-vehiculos-prog').textContent = totalVehiculos;
+  
+  // Renderizar tarjeta del vehículo
+  const tarjetaContainer = document.getElementById('tarjeta-vehiculo-mantenimiento');
+  
+  // Obtener rutas de imágenes usando las funciones de script.js
+  const imgLogo = window.rutaMarca ? window.rutaMarca(vehiculo.marca) : `../logosvehiculos/${normalizarTexto(vehiculo.marca)}.png`;
+  const imgVehiculo = typeof rutaModelo === 'function' ? rutaModelo(vehiculo.tipo, vehiculo.marca, vehiculo.modelo) : `../vehiculosexpertos/${normalizarTexto(vehiculo.marca)}_${normalizarTexto(vehiculo.modelo)}.png`;
+  
+  // Crear HTML de la tarjeta (mismo estilo que en el carrusel principal)
+  tarjetaContainer.innerHTML = `
+    <div style="position: relative; width: 100%;">
+      <!-- Logo de la marca (esquina superior izquierda) -->
+      <div style="position: absolute; top: -10px; left: -10px; z-index: 10;">
+        <img src="${imgLogo}" 
+             alt="${vehiculo.marca}" 
+             onerror="this.src='../img/Logo SC.svg'"
+             style="width: 56px; height: 56px; object-fit: contain; background: white; border-radius: 8px; padding: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+      </div>
+      
+      <!-- Imagen del vehículo -->
+      <div style="width: 100%; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; margin: 20px 0;">
+        <img src="${imgVehiculo}" 
+             alt="${vehiculo.marca} ${vehiculo.modelo}" 
+             onerror="this.src='../img/Logo SC.svg'"
+             style="width: 100%; height: 100%; object-fit: contain;">
+      </div>
+      
+      <!-- Información del vehículo -->
+      <div style="text-align: center; margin-top: 16px;">
+        <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #252425; line-height: 1.3;">
+          ${vehiculo.marca} ${vehiculo.modelo}
+        </h3>
+        <div style="font-size: 14px; color: #666; line-height: 1.5;">
+          ${vehiculo.patente ? `<div><strong style="font-weight: 600;">${vehiculo.patente}</strong></div>` : ''}
+          ${vehiculo.conductor ? `<div>${vehiculo.conductor}</div>` : '<div style="color: #999;">Sin conductor</div>'}
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Actualizar botones de navegación
+  document.getElementById('btn-vehiculo-anterior').disabled = indiceVehiculoActual === 0;
+  document.getElementById('btn-vehiculo-siguiente').disabled = indiceVehiculoActual === totalVehiculos - 1;
+  
+  // Estilos para botones deshabilitados
+  if (indiceVehiculoActual === 0) {
+    document.getElementById('btn-vehiculo-anterior').style.opacity = '0.3';
+    document.getElementById('btn-vehiculo-anterior').style.cursor = 'not-allowed';
+  } else {
+    document.getElementById('btn-vehiculo-anterior').style.opacity = '1';
+    document.getElementById('btn-vehiculo-anterior').style.cursor = 'pointer';
+  }
+  
+  if (indiceVehiculoActual === totalVehiculos - 1) {
+    document.getElementById('btn-vehiculo-siguiente').style.opacity = '0.3';
+    document.getElementById('btn-vehiculo-siguiente').style.cursor = 'not-allowed';
+  } else {
+    document.getElementById('btn-vehiculo-siguiente').style.opacity = '1';
+    document.getElementById('btn-vehiculo-siguiente').style.cursor = 'pointer';
+  }
+  
+  // Cargar categorías disponibles del vehículo con preselección guardada
+  const vehiculoKey = `vehiculo_${indiceVehiculoActual}`; // Usar índice para garantizar unicidad
+  const sistemasGuardados = datosMantenimientoPorVehiculo[vehiculoKey]?.sistemas || [];
+  await cargarCategoriasVehiculo(vehiculo, sistemasGuardados);
+  
+  // Restaurar datos guardados si existen
+  restaurarDatosVehiculo(vehiculo);
+}
+
+function normalizarTexto(texto) {
+  if (!texto) return '';
+  return texto
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[-_\s]/g, '')
+    .trim();
+}
+
+async function cargarCategoriasVehiculo(vehiculo, preseleccion = []) {
+  try {
+    const response = await fetch('../datosproductos/cruces_vehiculos.json');
+    const data = await response.json();
+    
+    const marcaNorm = normalizarTexto(vehiculo.marca);
+    const modeloNorm = normalizarTexto(vehiculo.modelo);
+    
+    // Buscar el cruce del vehículo
+    const cruce = data.cruces.find(c => {
+      return normalizarTexto(c.marca) === marcaNorm && normalizarTexto(c.modelo) === modeloNorm;
+    });
+    
+    const listaDropdown = document.getElementById('lista-sistemas-dropdown');
+    listaDropdown.innerHTML = '';
+    
+    if (!cruce || !cruce.categorias) {
+      listaDropdown.innerHTML = '<div style="padding: 16px; color: #999; text-align: center; font-size: 13px;">No hay sistemas disponibles para este vehículo</div>';
+      return;
+    }
+    
+    // Cargar productos_db para verificar disponibilidad
+    const productosResponse = await fetch('../datosproductos/productos_db.json');
+    const productosData = await productosResponse.json();
+    const skusValidos = new Set(
+      productosData.map(p => normalizarTexto(p.codSC || p.sku || '')).filter(s => s)
+    );
+    
+    // Mapeo de categorías
+    const categoriasDisplay = {
+      'embragues': 'Embragues',
+      'frenos': 'Frenos',
+      'suspension': 'Suspensión',
+      'filtros y diferenciales': 'Filtros y diferenciales',
+      'filtrosydiferenciales': 'Filtros y diferenciales',
+      'sistema de aire': 'Sistema de aire',
+      'sistemadeaire': 'Sistema de aire',
+      'sistema de direccion': 'Sistema de dirección',
+      'sistemadedireccion': 'Sistema de dirección'
+    };
+    
+    // Agregar opciones solo para categorías con productos válidos
+    const categoriasDisponibles = [];
+    for (const [catKey, catData] of Object.entries(cruce.categorias)) {
+      const catNorm = normalizarTexto(catKey);
+      
+      // Verificar que tenga productos válidos
+      let tieneProductos = false;
+      if (Array.isArray(catData)) {
+        tieneProductos = catData.some(prod => skusValidos.has(normalizarTexto(prod.sku)));
+      } else if (catData.sku) {
+        tieneProductos = skusValidos.has(normalizarTexto(catData.sku));
+      }
+      
+      if (tieneProductos) {
+        const displayName = categoriasDisplay[catNorm] || catKey;
+        categoriasDisponibles.push({ key: catNorm, display: displayName, data: catData });
+      }
+    }
+    
+    // Ordenar alfabéticamente
+    categoriasDisponibles.sort((a, b) => a.display.localeCompare(b.display));
+    
+    // Mapear preselección normalizada para re-aplicar selección
+    const preSelSet = new Set((preseleccion || []).map(k => normalizarTexto(k)));
+
+    // Agregar checkboxes al dropdown
+    categoriasDisponibles.forEach(cat => {
+      const item = document.createElement('div');
+      item.style.cssText = 'padding: 12px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.2s; border-bottom: 1px solid #f0f0f0; font-size: 13px;';
+      item.onmouseover = function() { this.style.background = '#f9f9f9'; };
+      item.onmouseout = function() { this.style.background = 'white'; };
+      
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.value = cat.key;
+      checkbox.id = `sistema-${cat.key}`;
+      checkbox.style.cssText = 'width: 16px; height: 16px; cursor: pointer; accent-color: #BF1823; flex-shrink: 0;';
+      // Reaplicar selección si corresponde
+      checkbox.checked = preSelSet.has(cat.key);
+      checkbox.onchange = function(e) {
+        e.stopPropagation();
+        actualizarSistemasSeleccionados();
+      };
+      
+      const label = document.createElement('label');
+      label.htmlFor = `sistema-${cat.key}`;
+      label.textContent = cat.display;
+      label.style.cssText = 'cursor: pointer; flex: 1; font-size: 13px; color: #333; font-weight: 500;';
+      
+      item.onclick = function(e) {
+        if (e.target === checkbox) return;
+        if (e.target && e.target.tagName && e.target.tagName.toLowerCase() === 'label') return; // deja que el label maneje el toggle
+        checkbox.checked = !checkbox.checked;
+        actualizarSistemasSeleccionados();
+      };
+      
+      item.appendChild(checkbox);
+      item.appendChild(label);
+      listaDropdown.appendChild(item);
+    });
+    
+    // Guardar productos disponibles en cache con clave única por índice
+    productosDisponiblesPorVehiculo[`vehiculo_${indiceVehiculoActual}`] = {
+      cruce: cruce,
+      productos: productosData
+    };
+    
+  } catch (error) {
+    console.error('Error cargando categorías:', error);
+    document.getElementById('lista-sistemas-dropdown').innerHTML = '<div style="padding: 16px; color: #999; text-align: center; font-size: 13px;">Error al cargar sistemas</div>';
+  }
+}
+
+function toggleDropdownSistemas() {
+  const dropdown = document.getElementById('lista-sistemas-dropdown');
+  const isVisible = dropdown.style.display === 'block';
+
+  if (isVisible) {
+    dropdown.style.display = 'none';
+    return;
+  }
+
+  // Al abrir, recargar categorías desde cruces para reflejar cambios del admin
+  try {
+    const vehiculo = window.vehiculosParaMantenimiento?.[indiceVehiculoActual];
+    if (!vehiculo) {
+      dropdown.style.display = 'block';
+      return;
+    }
+
+    // Usar los sistemas guardados del vehículo actual (no lo que hay en el DOM)
+    const vehiculoKey = `vehiculo_${indiceVehiculoActual}`; // Usar índice para garantizar unicidad
+    const sistemasGuardados = datosMantenimientoPorVehiculo[vehiculoKey]?.sistemas || [];
+
+    // Recargar y re-aplicar selección desde datos guardados
+    cargarCategoriasVehiculo(vehiculo, sistemasGuardados).then(() => {
+      dropdown.style.display = 'block';
+      // Actualizar el texto del chip del dropdown para reflejar estado
+      actualizarSistemasSeleccionados();
+    }).catch(() => {
+      dropdown.style.display = 'block';
+    });
+  } catch (e) {
+    console.error('Error al abrir dropdown de sistemas:', e);
+    dropdown.style.display = 'block';
+  }
+}
+
+function actualizarSistemasSeleccionados() {
+  const checkboxes = document.querySelectorAll('#lista-sistemas-dropdown input[type="checkbox"]:checked');
+  const sistemasSeleccionados = Array.from(checkboxes).map(cb => {
+    const label = document.querySelector(`label[for="${cb.id}"]`);
+    return label ? label.textContent : cb.value;
+  });
+  
+  // GUARDAR los sistemas seleccionados (incluye desmarques)
+  const vehiculoKey = `vehiculo_${indiceVehiculoActual}`;
+  if (!datosMantenimientoPorVehiculo[vehiculoKey]) {
+    datosMantenimientoPorVehiculo[vehiculoKey] = {};
+  }
+  // Guardar solo los valores normalizados de los checkboxes (claves)
+  const sistemasValues = Array.from(checkboxes).map(cb => cb.value);
+  datosMantenimientoPorVehiculo[vehiculoKey].sistemas = sistemasValues;
+  
+  const textoSpan = document.getElementById('texto-sistemas-seleccionados');
+  if (sistemasSeleccionados.length === 0) {
+    textoSpan.textContent = 'Seleccionar sistemas';
+    textoSpan.style.color = '#999';
+  } else if (sistemasSeleccionados.length === 1) {
+    textoSpan.textContent = sistemasSeleccionados[0];
+    textoSpan.style.color = '#333';
+  } else {
+    textoSpan.textContent = `${sistemasSeleccionados.length} sistemas seleccionados`;
+    textoSpan.style.color = '#333';
+  }
+  
+  // Cargar productos de los sistemas seleccionados
+  cargarProductosSeleccionados();
+}
+
+async function cargarProductosSeleccionados() {
+  const vehiculo = window.vehiculosParaMantenimiento[indiceVehiculoActual];
+  const vehiculoKey = `vehiculo_${indiceVehiculoActual}`; // Usar índice para garantizar unicidad
+  const checkboxes = document.querySelectorAll('#lista-sistemas-dropdown input[type="checkbox"]:checked');
+  const selectedOptions = Array.from(checkboxes).map(cb => cb.value);
+  
+  if (selectedOptions.length === 0) {
+    // Si no hay sistemas seleccionados, limpiar productos
+    const vehiculoKey = vehiculo.patente || vehiculo.modelo;
+    if (datosMantenimientoPorVehiculo[vehiculoKey]) {
+      datosMantenimientoPorVehiculo[vehiculoKey].productos = [];
+    }
+    document.getElementById('lista-productos-mantenimiento').innerHTML = 
+      '<p style="text-align: center; color: #999; font-size: 14px; margin-top: 80px;">Selecciona sistemas para ver los productos</p>';
+    return;
+  }
+  
+  const cache = productosDisponiblesPorVehiculo[`vehiculo_${indiceVehiculoActual}`];
+  if (!cache) return;
+  
+  const { cruce, productos } = cache;
+  
+  // Recopilar todos los SKUs de las categorías seleccionadas
+  const skusParaCargar = [];
+  selectedOptions.forEach(catNorm => {
+    for (const [catKey, catData] of Object.entries(cruce.categorias)) {
+      if (normalizarTexto(catKey) === catNorm) {
+        if (Array.isArray(catData)) {
+          catData.forEach(prod => skusParaCargar.push(normalizarTexto(prod.sku)));
+        } else if (catData.sku) {
+          skusParaCargar.push(normalizarTexto(catData.sku));
+        }
+      }
+    }
+  });
+  
+  // Buscar productos en productos_db (solo de las categorías seleccionadas)
+  const productosEncontrados = productos.filter(p => 
+    skusParaCargar.includes(normalizarTexto(p.codSC || p.sku || ''))
+  );
+  
+  // Actualizar productos sin combinar con guardados (reemplazar completamente)
+  // Ya tenemos vehiculoKey definida arriba como `vehiculo_${indiceVehiculoActual}`
+  if (!datosMantenimientoPorVehiculo[vehiculoKey]) {
+    datosMantenimientoPorVehiculo[vehiculoKey] = {};
+  }
+  datosMantenimientoPorVehiculo[vehiculoKey].productos = productosEncontrados;
+  
+  // Renderizar productos
+  renderizarProductosMantenimiento(productosEncontrados, vehiculo, true);
+}
+
+function renderizarProductosMantenimiento(productos, vehiculo, reemplazar = false) {
+  const container = document.getElementById('lista-productos-mantenimiento');
+  
+  if (productos.length === 0) {
+    container.innerHTML = '<p style="text-align: center; color: #999; font-size: 14px; margin-top: 80px;">No se encontraron productos</p>';
+    return;
+  }
+  
+  const vehiculoKey = `vehiculo_${indiceVehiculoActual}`; // Usar índice para garantizar unicidad
+  
+  // Si reemplazar es true, usar solo los productos nuevos
+  // Si reemplazar es false, combinar con guardados (para restaurar datos)
+  let productosAMostrar;
+  if (reemplazar) {
+    productosAMostrar = productos;
+  } else {
+    const productosGuardados = datosMantenimientoPorVehiculo[vehiculoKey]?.productos || [];
+    
+    if (productosGuardados.length > 0) {
+      // Crear un Set de SKUs guardados
+      const skusGuardados = new Set(productosGuardados.map(p => p.codSC || p.sku));
+      // Agregar productos nuevos que no estén guardados
+      const productosNuevos = productos.filter(p => !skusGuardados.has(p.codSC || p.sku));
+      productosAMostrar = [...productosGuardados, ...productosNuevos];
+    } else {
+      productosAMostrar = productos;
+    }
+  }
+  
+  container.innerHTML = productosAMostrar.map(prod => {
+    const imagen = prod.imagen || prod.imagenes?.[0] || '/img/Logo SC.svg';
+    const precio = prod.precioFinal || prod.precio || 0;
+    
+    return `
+      <div class="producto-mantenimiento-item" data-sku="${prod.codSC || prod.sku}" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: white; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e0e0e0;">
+        <img src="${imagen}" alt="${prod.repuesto || prod.nombre}" style="width: 60px; height: 60px; object-fit: contain; border-radius: 4px;">
+        <div style="flex: 1;">
+          <h5 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 600; color: #333;">${prod.repuesto || prod.nombre}</h5>
+          <p style="margin: 0; font-size: 12px; color: #666;">${prod.marca} - ${prod.codSC || prod.sku}</p>
+          <p style="margin: 4px 0 0 0; font-size: 14px; font-weight: 600; color: #BF1823;">$${precio.toLocaleString('es-CL')}</p>
+        </div>
+        <button onclick="eliminarProductoMantenimiento('${prod.codSC || prod.sku}')" class="btn-text" style="color: #BF1823; padding: 8px; min-width: auto;">
+          <span style="font-size: 20px; font-weight: bold;">&times;</span>
+        </button>
+      </div>
+    `;
+  }).join('');
+  
+  // Guardar productos actuales
+  if (!datosMantenimientoPorVehiculo[vehiculoKey]) {
+    datosMantenimientoPorVehiculo[vehiculoKey] = {};
+  }
+  datosMantenimientoPorVehiculo[vehiculoKey].productos = productosAMostrar;
+}
+
+function eliminarProductoMantenimiento(sku) {
+  const vehiculo = window.vehiculosParaMantenimiento[indiceVehiculoActual];
+  const vehiculoKey = `vehiculo_${indiceVehiculoActual}`; // Usar índice para garantizar unicidad
+  
+  if (datosMantenimientoPorVehiculo[vehiculoKey]?.productos) {
+    datosMantenimientoPorVehiculo[vehiculoKey].productos = 
+      datosMantenimientoPorVehiculo[vehiculoKey].productos.filter(p => (p.codSC || p.sku) !== sku);
+    
+    // Re-renderizar
+    renderizarProductosMantenimiento(datosMantenimientoPorVehiculo[vehiculoKey].productos, vehiculo);
+  }
+}
+
+function guardarDatosVehiculoActual() {
+  const vehiculo = window.vehiculosParaMantenimiento[indiceVehiculoActual];
+  const vehiculoKey = `vehiculo_${indiceVehiculoActual}`; // Usar índice para garantizar unicidad
+  
+  if (!datosMantenimientoPorVehiculo[vehiculoKey]) {
+    datosMantenimientoPorVehiculo[vehiculoKey] = {};
+  }
+  
+  // Guardar fecha si está seleccionada
+  const fecha = document.getElementById('fecha-mantenimiento').value;
+  if (fecha) {
+    datosMantenimientoPorVehiculo[vehiculoKey].fecha = fecha;
+  }
+
+  // Guardar recurrencia mensual (checkbox per-vehículo)
+  const repetirMensualCheck = document.getElementById('mantener-fecha-todos');
+  if (repetirMensualCheck) {
+    datosMantenimientoPorVehiculo[vehiculoKey].repetirMensual = !!repetirMensualCheck.checked;
+  }
+  
+  // Guardar sistemas seleccionados
+  const checkboxes = document.querySelectorAll('#lista-sistemas-dropdown input[type="checkbox"]:checked');
+  const sistemasSeleccionados = Array.from(checkboxes).map(cb => cb.value);
+  datosMantenimientoPorVehiculo[vehiculoKey].sistemas = sistemasSeleccionados;
+}
+
+function restaurarDatosVehiculo(vehiculo) {
+  // IMPORTANTE: usar índice, no patente/modelo, para evitar compartir datos
+  const vehiculoKey = `vehiculo_${indiceVehiculoActual}`;
+  const datosGuardados = datosMantenimientoPorVehiculo[vehiculoKey];
+  
+  if (datosGuardados) {
+    // Restaurar fecha
+    if (datosGuardados.fecha) {
+      document.getElementById('fecha-mantenimiento').value = datosGuardados.fecha;
+    } else {
+      document.getElementById('fecha-mantenimiento').value = '';
+    }
+
+    // Restaurar recurrencia mensual
+    const repetirMensualCheck = document.getElementById('mantener-fecha-todos');
+    if (repetirMensualCheck) {
+      repetirMensualCheck.checked = !!datosGuardados.repetirMensual;
+    }
+    
+    // Los sistemas ya se restauraron en cargarCategoriasVehiculo() con preselección
+    // Aquí solo actualizamos el texto del chip y productos
+    if (datosGuardados.sistemas && datosGuardados.sistemas.length > 0) {
+      actualizarSistemasSeleccionados();
+      // Restaurar productos si existen
+      if (datosGuardados.productos && datosGuardados.productos.length > 0) {
+        renderizarProductosMantenimiento(datosGuardados.productos, vehiculo);
+      }
+    } else {
+      // Si no hay sistemas guardados, limpiar productos y dropdown
+      document.querySelectorAll('#lista-sistemas-dropdown input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+      });
+      document.getElementById('texto-sistemas-seleccionados').textContent = 'Seleccionar sistemas';
+      document.getElementById('texto-sistemas-seleccionados').style.color = '#999';
+      document.getElementById('lista-productos-mantenimiento').innerHTML = 
+        '<p style="text-align: center; color: #999; font-size: 14px; margin-top: 80px;">Selecciona sistemas para ver los productos</p>';
+    }
+  } else {
+    // Limpiar campos (vehículo sin datos guardados) - IMPORTANTE: desmarcar todos los checkboxes
+    document.getElementById('fecha-mantenimiento').value = '';
+    const repetirMensualCheck = document.getElementById('mantener-fecha-todos');
+    if (repetirMensualCheck) repetirMensualCheck.checked = false;
+    
+    // CRÍTICO: desmarcar TODOS los checkboxes del dropdown para no cargar estado del vehículo anterior
+    document.querySelectorAll('#lista-sistemas-dropdown input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+    });
+    
+    document.getElementById('texto-sistemas-seleccionados').textContent = 'Seleccionar sistemas';
+    document.getElementById('texto-sistemas-seleccionados').style.color = '#999';
+    document.getElementById('lista-productos-mantenimiento').innerHTML = 
+      '<p style="text-align: center; color: #999; font-size: 14px; margin-top: 80px;">Selecciona sistemas para ver los productos</p>';
+  }
+}
+
+async function guardarMantenimiento() {
+  // Guardar datos del vehículo actual
+  guardarDatosVehiculoActual();
+  
+  // Verificar que todos los vehículos tengan fecha y productos
+  // recurrencia es por vehículo (no global)
+  const fechaGlobal = document.getElementById('fecha-mantenimiento').value;
+  
+  const errores = [];
+  
+  window.vehiculosParaMantenimiento.forEach((vehiculo, index) => {
+    const vehiculoKey = vehiculo.patente || vehiculo.modelo;
+    const datos = datosMantenimientoPorVehiculo[vehiculoKey];
+    
+    if (!datos) {
+      errores.push(`${vehiculo.marca} ${vehiculo.modelo}: No se ha configurado`);
+      return;
+    }
+    
+    // Nota: El checkbox ahora indica recurrencia mensual, no aplica fecha global
+    
+    if (!datos.fecha) {
+      errores.push(`${vehiculo.marca} ${vehiculo.modelo}: Falta seleccionar fecha`);
+    }
+    
+    if (!datos.productos || datos.productos.length === 0) {
+      errores.push(`${vehiculo.marca} ${vehiculo.modelo}: No tiene productos seleccionados`);
+    }
+  });
+  
+  if (errores.length > 0) {
+    alert('Por favor completa la siguiente información:\n\n' + errores.join('\n'));
+    return;
+  }
+  
+  // Crear mantenimientos programados
+  const mantenimientos = window.vehiculosParaMantenimiento.map(vehiculo => {
+    const vehiculoKey = vehiculo.patente || vehiculo.modelo;
+    const datos = datosMantenimientoPorVehiculo[vehiculoKey];
+    
+    return {
+      id: `mant_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      vehiculo: vehiculo,
+      fecha: datos.fecha,
+      productos: datos.productos,
+      sistemas: datos.sistemas,
+      repetirMensual: !!datos.repetirMensual,
+      creado: new Date().toISOString(),
+      notificaciones: {
+        sieteDias: false,
+        diaMantenimiento: false
+      }
+    };
+  });
+  
+  // Guardar en localStorage
+  const usuarioId = localStorage.getItem('usuarioID');
+  const keyMantenimientos = `mantenimientos_${usuarioId}`;
+  const mantenimientosExistentes = JSON.parse(localStorage.getItem(keyMantenimientos) || '[]');
+  
+  mantenimientosExistentes.push(...mantenimientos);
+  localStorage.setItem(keyMantenimientos, JSON.stringify(mantenimientosExistentes));
+  
+  // Programar notificaciones
+  await programarNotificacionesMantenimiento(mantenimientos);
+  
+  // Mostrar confirmación
+  const vehiculosTexto = mantenimientos.map(m => `${m.vehiculo.marca} ${m.vehiculo.modelo}`).join(', ');
+  const msgRecurrencia = (mantenimientos[0]?.repetirMensual) ? "\nSe repetirá automáticamente el mismo día de cada mes (12 meses)." : "";
+  alert(`✓ Mantenimiento programado exitosamente para:\n${vehiculosTexto}\n\nRecibirás notificaciones 7 días antes y el día del mantenimiento.${msgRecurrencia}`);
+  
+  // Cerrar modal
+  cerrarModalProgramacion();
+}
+
+async function programarNotificacionesMantenimiento(mantenimientos) {
+  const usuarioId = localStorage.getItem('usuarioID');
+  
+  for (const mant of mantenimientos) {
+    const fechaBase = new Date(mant.fecha);
+    const vehiculoNombre = `${mant.vehiculo.marca} ${mant.vehiculo.modelo} (${mant.vehiculo.patente || 'S/P'})`;
+
+    // helper: sumar meses manteniendo el "día" (si no existe, usa el último día del mes)
+    const addMonthsKeepingDay = (date, months) => {
+      const d = new Date(date);
+      const targetMonth = d.getMonth() + months;
+      const year = d.getFullYear() + Math.floor(targetMonth / 12);
+      const month = ((targetMonth % 12) + 12) % 12;
+      const day = d.getDate();
+      const lastDay = new Date(year, month + 1, 0).getDate();
+      const newDay = Math.min(day, lastDay);
+      return new Date(year, month, newDay, d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds());
+    };
+
+    // cuántos meses programar por adelantado si es recurrente
+    const mesesAdelante = mant.repetirMensual ? 12 : 1;
+
+    const keyNotif = `notificaciones_programadas_${usuarioId}`;
+    const notifsExistentes = JSON.parse(localStorage.getItem(keyNotif) || '[]');
+
+    for (let i = 0; i < mesesAdelante; i++) {
+      const fechaMant = i === 0 ? new Date(fechaBase) : addMonthsKeepingDay(fechaBase, i);
+      const fechaSieteDias = new Date(fechaMant);
+      fechaSieteDias.setDate(fechaSieteDias.getDate() - 7);
+
+      notifsExistentes.push(
+        {
+          id: `notif_${Date.now()}_${i}_${Math.random().toString(36).substr(2, 9)}`,
+          userId: usuarioId,
+          tipo: 'mantenimiento_7dias',
+          titulo: 'Recordatorio de Mantenimiento',
+          mensaje: `Quedan 7 días para el mantenimiento de: ${vehiculoNombre}`,
+          datos: {
+            mantenimientoId: mant.id,
+            vehiculo: vehiculoNombre,
+            fecha: fechaMant.toISOString(),
+            productos: mant.productos,
+            diasRestantes: 7
+          },
+          leida: false,
+          fecha: fechaSieteDias.toISOString(),
+          fechaProgramada: fechaSieteDias.toISOString(),
+          accion: 'ver_productos'
+        },
+        {
+          id: `notif_${Date.now() + 1}_${i}_${Math.random().toString(36).substr(2, 9)}`,
+          userId: usuarioId,
+          tipo: 'mantenimiento_hoy',
+          titulo: '¡Hoy es el día del mantenimiento!',
+          mensaje: `Hoy es el día de mantenimiento de: ${vehiculoNombre}. Si aún no te has abastecido, hazlo ahora.`,
+          datos: {
+            mantenimientoId: mant.id,
+            vehiculo: vehiculoNombre,
+            fecha: fechaMant.toISOString(),
+            productos: mant.productos
+          },
+          leida: false,
+          fecha: fechaMant.toISOString(),
+          fechaProgramada: fechaMant.toISOString(),
+          accion: 'agregar_carrito'
+        }
+      );
+    }
+
+    localStorage.setItem(keyNotif, JSON.stringify(notifsExistentes));
+  }
+  
+  // Iniciar verificación de notificaciones
+  verificarNotificacionesProgramadas();
+}
+
+// Cerrar modal al hacer clic fuera de él
+document.addEventListener('click', function(event) {
+  const modal = document.getElementById('modal-mantenimiento');
+  if (event.target === modal) {
+    cerrarModalMantenimiento();
+  }
+  
+  const modalSeleccion = document.getElementById('modal-seleccion-vehiculos');
+  if (event.target === modalSeleccion) {
+    cerrarModalSeleccionVehiculos();
+  }
+  
+  const modalProgramacion = document.getElementById('modal-programacion-mantenimiento');
+  if (event.target === modalProgramacion) {
+    cerrarModalProgramacion();
+  }
+});
+
+// Cerrar dropdown de sistemas al hacer clic fuera
+document.addEventListener('click', function(event) {
+  const dropdown = document.getElementById('dropdown-sistemas');
+  const lista = document.getElementById('lista-sistemas-dropdown');
+  
+  if (dropdown && lista && !dropdown.contains(event.target) && !lista.contains(event.target)) {
+    lista.style.display = 'none';
+  }
+});
+
+// ============================================================
+//  VERIFICACIÓN DE NOTIFICACIONES PROGRAMADAS
+// ============================================================
+
+function verificarNotificacionesProgramadas() {
+  const usuarioId = localStorage.getItem('usuarioID');
+  if (!usuarioId) return;
+  
+  const keyNotif = `notificaciones_programadas_${usuarioId}`;
+  const notifsProgramadas = JSON.parse(localStorage.getItem(keyNotif) || '[]');
+  
+  const ahora = new Date();
+  const notificacionesParaEnviar = [];
+  const notificacionesRestantes = [];
+  
+  notifsProgramadas.forEach(notif => {
+    const fechaProgramada = new Date(notif.fechaProgramada);
+    
+    // Si la fecha programada ya pasó o es hoy, enviar la notificación
+    if (fechaProgramada <= ahora) {
+      notificacionesParaEnviar.push(notif);
+    } else {
+      notificacionesRestantes.push(notif);
+    }
+  });
+  
+  // Enviar notificaciones que corresponden
+  if (notificacionesParaEnviar.length > 0) {
+    enviarNotificacionesMantenimiento(notificacionesParaEnviar);
+    
+    // Actualizar lista de notificaciones programadas
+    localStorage.setItem(keyNotif, JSON.stringify(notificacionesRestantes));
+  }
+}
+
+async function enviarNotificacionesMantenimiento(notificaciones) {
+  for (const notif of notificaciones) {
+    try {
+      // Intentar enviar al servidor
+      await fetch('/api/notificaciones', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(notif)
+      });
+    } catch (error) {
+      console.error('Error enviando notificación:', error);
+      // Si falla el servidor, guardar en localStorage como respaldo
+      const usuarioId = localStorage.getItem('usuarioID');
+      const keyNotifLocal = `notificaciones_${usuarioId}`;
+      const notifsLocales = JSON.parse(localStorage.getItem(keyNotifLocal) || '[]');
+      notifsLocales.unshift(notif);
+      localStorage.setItem(keyNotifLocal, JSON.stringify(notifsLocales));
+    }
+  }
+  
+  // Recargar notificaciones si el manager existe
+  if (window.notificacionesManager) {
+    window.notificacionesManager.cargarNotificaciones();
+  }
+}
+
+// Verificar notificaciones cada hora
+setInterval(verificarNotificacionesProgramadas, 60 * 60 * 1000);
+
+// Verificar al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+  verificarNotificacionesProgramadas();
+});
 </script>
 
 </body>

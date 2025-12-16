@@ -65,7 +65,7 @@
       "precioNuevo": 12900,
       "imagen": "/uploads/productos/prod-1765419610316-776632336.jpg"
     },
-    "leida": false,
+    "leida": true,
     "fecha": "2025-12-15T19:57:56.431Z"
   },
   {
@@ -88,7 +88,7 @@
       "precioNuevo": 11800,
       "imagen": "/uploads/productos/prod-1765419610324-992056578.png"
     },
-    "leida": false,
+    "leida": true,
     "fecha": "2025-12-15T19:58:04.751Z"
   },
   {
@@ -111,31 +111,8 @@
       "precioNuevo": 48000,
       "imagen": "/uploads/productos/prod-1765419902212-795202632.png"
     },
-    "leida": false,
+    "leida": true,
     "fecha": "2025-12-15T19:58:12.550Z"
-  },
-  {
-    "id": "notif_1765828700551_wbteewgvk",
-    "userId": "ecousuario",
-    "tipo": "descuento_eliminado",
-    "titulo": "Actualización de precio",
-    "mensaje": "Disco de freno ha vuelto a su precio regular.",
-    "datos": {
-      "productoId": "prod_1765420203665_ncymbdv41",
-      "productoNombre": "Disco de freno",
-      "productoMarca": "FRASLE",
-      "repuesto": "Disco de freno",
-      "marca": "FRASLE",
-      "codSC": "FR5280HT",
-      "precio": 21500,
-      "descuento": 0,
-      "precioFinal": 21500,
-      "precioAnterior": 20855,
-      "precioNuevo": 21500,
-      "imagen": "/uploads/productos/prod-1765420203631-819973523.png"
-    },
-    "leida": false,
-    "fecha": "2025-12-15T19:58:20.551Z"
   },
   {
     "id": "notif_1765828707102_6axfx11i2",

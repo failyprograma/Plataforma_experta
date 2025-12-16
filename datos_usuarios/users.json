@@ -125,17 +125,17 @@
     "createdAt": "2025-12-11T01:53:37.245Z",
     "vehiculoDetalle": {
       "tipo": "camioneta",
-      "marca": "Toyota",
-      "modelo": "Hilux 2.8",
+      "marca": "Mitsubishi",
+      "modelo": "L-200 2.4",
       "motor": "",
       "patente": "Sin especificar",
       "anio": "Sin especificar",
-      "id": "veh_1765502675870_1_1frwkq8qc",
-      "vehiculoId": "veh_1765502675870_1_1frwkq8qc",
+      "id": "veh_1765502675870_2_v4uswqx95",
+      "vehiculoId": "veh_1765502675870_2_v4uswqx95",
       "favorito": false,
-      "logo": "../logosvehiculos/toyota.png",
+      "logo": "../logosvehiculos/mitsubishi.png",
       "imagen": "../vehiculosexpertos/pick up.png",
-      "logoUrl": "../logosvehiculos/toyota.png"
+      "logoUrl": "../logosvehiculos/mitsubishi.png"
     },
     "favorites": [],
     "preferencias": {
