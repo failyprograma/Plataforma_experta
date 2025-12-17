@@ -1153,5 +1153,79 @@
     },
     "leida": false,
     "fecha": "2025-12-17T14:42:26.882Z"
+  },
+  {
+    "id": "notif_1765990810750_rtwzmucay",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Pastillas de freno (PT5280HT) con 2% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 12900,
+          "precioProducto": 12900,
+          "precioCampana": 12900,
+          "campanas": [
+            "qasad"
+          ]
+        },
+        {
+          "sku": "PT5280HT",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 0,
+          "precioBase": 11800,
+          "precioProducto": 11800,
+          "precioCampana": 11564,
+          "campanas": [
+            "qasad"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-17T17:00:10.750Z"
+  },
+  {
+    "id": "notif_1765990949136_lnmpa93by",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 0 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": []
+    },
+    "leida": false,
+    "fecha": "2025-12-17T17:02:29.136Z"
+  },
+  {
+    "id": "notif_1765991078484_94zzbyhpz",
+    "userId": "ecousuario",
+    "tipo": "descuento_eliminado",
+    "titulo": "ActualizaciÃ³n de precio",
+    "mensaje": "Pastillas de freno ha vuelto a su precio regular.",
+    "datos": {
+      "productoId": "prod_1765419610363_q3528yidl",
+      "productoNombre": "Pastillas de freno",
+      "productoMarca": "HTECH",
+      "repuesto": "Pastillas de freno",
+      "marca": "HTECH",
+      "codSC": "PT5280HT",
+      "precio": 11800,
+      "descuento": 0,
+      "precioFinal": 11800,
+      "precioAnterior": 11564,
+      "precioNuevo": 11800,
+      "imagen": "/uploads/productos/prod-1765419610324-992056578.png"
+    },
+    "leida": false,
+    "fecha": "2025-12-17T17:04:38.484Z"
   }
 ]

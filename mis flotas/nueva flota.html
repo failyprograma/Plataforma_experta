@@ -271,13 +271,6 @@
     </div>
   </div>
 </div>
-<script src="../notificaciones.js"></script>
-<script>
-function toggleNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); if (panel.classList.contains('open')) { cerrarNotificaciones(); } else { panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
-function cerrarNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
-async function toggleCarrito() { const panel = document.getElementById('cart-panel'); const overlay = document.getElementById('cart-overlay'); if (panel.classList.contains('open')) { cerrarCarrito(); } else { if (typeof CarritoGlobal !== 'undefined') { await CarritoGlobal.sincronizar(); CarritoGlobal.iniciarPolling(); } panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
-function cerrarCarrito() { if (typeof CarritoGlobal !== 'undefined') CarritoGlobal.detenerPolling(); const panel = document.getElementById('cart-panel'); const overlay = document.getElementById('cart-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { const panel = document.getElementById('notif-panel'); if (panel && panel.classList.contains('open')) cerrarNotificaciones(); const cartPanel = document.getElementById('cart-panel'); if (cartPanel && cartPanel.classList.contains('open')) cerrarCarrito(); } });
-</script>
+ 
 </body>
 </html>

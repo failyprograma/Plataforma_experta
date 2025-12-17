@@ -48,116 +48,6 @@
       </a>
     </li>
     <li>
-      <a href="../estado de la cuenta/index.html">
-        <span class="nav-icon"><img src="../img/bill-01 1.svg" alt="Estado de cuenta"></span>
-        <span class="nav-text">Estado de cuenta</span>
-      </a>
-    </li>
-    <li>
-      <a href="../mis compras/index.html.html">
-        <span class="nav-icon"><img src="../img/miscompras.svg" alt="Mis compras"></span>
-        <span class="nav-text">Mis compras</span>
-      </a>
-    </li>
-  </ul>
-  <footer class="sidebar-footer">
-    <a href="https://starclutch.cl/repuestos" target="_blank" rel="noopener noreferrer" class="btn-text footer-link">
-      <span class="icon-left"><img src="../img/Logo SC.svg" alt="Nosotros"></span> Nosotros
-    </a>
-    <p>Starclutch S.p.A<br>© Todos los derechos reservados 2025</p>
-  </footer>
-</nav>
-
-<main class="main-content">
-  <div class="page-container">
-    <header class="main-header">
-      <div class="header-left"><h1>Detalles</h1></div>
-      <div class="header-actions">
-        <button class="btn-text"><span class="icon-left"><img src="../img/info_471662-01 1.svg" alt="Ayuda"></span> Ayuda</button>
-        <button class="btn-text" onclick="toggleCarrito()" style="position: relative;"><span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/carrito.svg" alt="Carrito"><span class="cart-badge" id="cart-badge-count">0</span></span> Carrito</button>
-        <button class="btn-text" id="btn-notificaciones" onclick="toggleNotificaciones()" style="position: relative;"><span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/Alerta.svg" alt="Notificaciones"><span class="notif-badge" id="notif-badge-count">0</span></span> Notificaciones</button>
-      </div>
-    </header>
-
-    <button id="btn-lista-repuestos">
-    <img src="../img/listadorepuestos.svg" alt="">
-    Lista de repuestos
-</button>
-
-
-<div id="detalle-layout">
-
-    <div id="detalle-col-izq">
-        <!-- ——— TU TARJETA DEL VEHÍCULO COMPLETA ——— -->
-        <div id="card-detalle-vehiculo">
-
-            <h2 id="detalle-patente">Patente: ABCD11</h2>
-
-            <div id="detalle-top">
-                <div>
-                    <h2 id="detalle-modelo">B9 2015</h2>
-                    <p id="detalle-conductor">Bastián Bustamante</p>
-                </div>
-                <div>
-                    <img id="detalle-logo" src="placeholder-logo.svg" alt="Logo vehículo">
-                </div>
-            </div>
-
-            <div id="detalle-imagen-wrapper">
-                <img id="detalle-imagen" src="placeholder-vehiculo.svg" alt="Vehículo">
-            </div>
-
-            <div id="detalle-boton-wrapper">
-                <button id="btn-mantencion">
-                    <img src="../img/calendario.svg" alt="">
-                    Programar mantención
-                </button>
-            </div>
-
-          <div id="detalle-favorito" style="cursor: default;">
-    <svg width="24" height="24" viewBox="0 0 24 24">
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" 
-                 fill="#BF1823" stroke="#BF1823"></polygon>
-    </svg>
-</div>
-        </div>
-    </div>
-
-    <div id="detalle-col-der">
-
-        <div id="secciones-wrapper">
-
-            <!-- fila 1 -->
-            <div class="fila-secciones">
-                <a href="categorias.html?categoria=Embragues" class="seccion-item">
-                    <h3>Embragues</h3>
-                    <div class="seccion-img">
-                    <img src="../img/embragues set.png" alt="">
-                    </div>
-                </a>
-
-                <a href="categorias.html?categoria=Frenos" class="seccion-item">
-                    <h3>Frenos</h3>
-                    <div class="seccion-img">
-                    <img src="../img/Frenos set.png" alt="">
-                    </div>
-                </a>
-
-                <a href="categorias.html?categoria=Suspensión" class="seccion-item">
-                    <h3>Suspensión</h3>
-                    <div class="seccion-img">
-                    <img src="../img/suspensión set.png" alt="">
-                    </div>
-                </a>
-            </div>
-
-            <!-- fila 2 -->
-            <div class="fila-secciones">
-                <a href="categorias.html?categoria=Filtros%20y%20diferenciales" class="seccion-item">
-                    <h3>Filtros y diferenciales</h3>
-                    <div class="seccion-img">
-                    <img src="../img/filtros y diferenciales set.png" alt="">
-                    </div>
                 </a>
 
                 <a href="categorias.html?categoria=Sistema%20de%20aire" class="seccion-item">
@@ -229,7 +119,7 @@
 </main>
 
   <script src="../script.js"></script>
-  <script src="../mobile-nav.js"></script>
+  
   <script>
     // Función para normalizar texto (minúsculas, sin acentos, sin espacios, sin guiones)
     function normalizarTexto(texto) {
@@ -983,7 +873,7 @@
   </div>
 </div>
 
-<script src="../notificaciones.js"></script>
+ 
 <script>
 // Modal mantención - funciones públicas
 window.abrirModalMantencion = function() {
