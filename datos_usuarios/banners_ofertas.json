@@ -1,11 +1,61 @@
 {
   "ecousuario": {
-    "campanas": [],
+    "campanas": [
+      {
+        "id": "camp_1765945101176",
+        "nombre": "asdasd",
+        "activa": true,
+        "principal": {
+          "slides": [
+            {
+              "id": "slide_1765945056582",
+              "bannerDesktop": "/uploads/banners/banner-1765945101188-444159427.jpeg",
+              "bannerMobile": "/uploads/banners/banner-1765945101190-608860115.jpg",
+              "skus": [
+                "PAS528",
+                "KITTOY400AR"
+              ]
+            },
+            {
+              "id": "slide_1765945068925",
+              "bannerDesktop": "/uploads/banners/banner-1765945101219-665791661.png",
+              "bannerMobile": "/uploads/banners/banner-1765945101222-649707627.jpg",
+              "skus": [
+                "KITTOY400AR"
+              ]
+            }
+          ]
+        },
+        "secundario": {
+          "slides": [
+            {
+              "id": "slide_1765945085290",
+              "bannerDesktop": "/uploads/banners/banner-1765945101241-792546603.jpeg",
+              "bannerMobile": "/uploads/banners/banner-1765945101243-300810591.jpeg",
+              "skus": [
+                "PAS528",
+                "KITTOY400AR"
+              ]
+            }
+          ]
+        }
+      }
+    ],
     "banners": {
-      "principal-desktop": [],
-      "principal-mobile": [],
-      "secundario-desktop": [],
-      "secundario-mobile": []
+      "principal-desktop": [
+        "/uploads/banners/banner-1765945101188-444159427.jpeg",
+        "/uploads/banners/banner-1765945101219-665791661.png"
+      ],
+      "principal-mobile": [
+        "/uploads/banners/banner-1765945101190-608860115.jpg",
+        "/uploads/banners/banner-1765945101222-649707627.jpg"
+      ],
+      "secundario-desktop": [
+        "/uploads/banners/banner-1765945101241-792546603.jpeg"
+      ],
+      "secundario-mobile": [
+        "/uploads/banners/banner-1765945101243-300810591.jpeg"
+      ]
     }
   }
 }

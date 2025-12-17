@@ -84,12 +84,9 @@
   transition: all 0.2s;
 }
 
-.btn-icon-edit:hover {
-  background: #fff3cd;
-}
-
-.btn-icon-delete:hover {
-  background: #f8d7da;
+.btn-icon-edit:hover img,
+.btn-icon-delete:hover img {
+  transform: scale(1.2);
 }
 
 .campana-card-stats {

@@ -140,7 +140,7 @@ function cambiarTabModal(tipo) {
   renderizarSlidesModal();
 }
 
-function guardarCampanaModal() {
+async function guardarCampanaModal() {
   const nombre = document.getElementById('campana-nombre').value.trim();
   const activa = document.getElementById('campana-activa').checked;
   
@@ -189,10 +189,13 @@ function guardarCampanaModal() {
     campanasState.push(campana);
   }
   
+  console.log('Campaña guardada en estado local:', campana);
+  
+  // Guardar en el servidor
+  await guardarTodasLasCampanas();
+  
   renderizarListaCampanas();
   cerrarModalCampana();
-  
-  console.log('Campaña guardada:', campana);
 }
 
 // ============================================================
@@ -629,7 +632,7 @@ function eliminarCampana(index) {
 
 async function guardarTodasLasCampanas() {
   const clientSelect = document.getElementById('client-select');
-  const userId = clientSelect?.value;
+  const userId = adminSelectedClientId || clientSelect?.value;
   
   if (!userId) {
     alert('Selecciona un cliente primero');

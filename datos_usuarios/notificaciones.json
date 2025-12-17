@@ -430,5 +430,41 @@
     },
     "leida": false,
     "fecha": "2025-12-17T03:16:51.881Z"
+  },
+  {
+    "id": "notif_1765945101247_yo0jqx9d3",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": false,
+    "fecha": "2025-12-17T04:18:21.247Z"
+  },
+  {
+    "id": "notif_1765945385886_raqmvi7ys",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": false,
+    "fecha": "2025-12-17T04:23:05.886Z"
+  },
+  {
+    "id": "notif_1765945399129_ja291hp3u",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": false,
+    "fecha": "2025-12-17T04:23:19.129Z"
   }
 ]

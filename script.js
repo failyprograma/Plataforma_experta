@@ -14335,7 +14335,7 @@ function cambiarTabModal(tipo) {
   renderizarSlidesModal();
 }
 
-function guardarCampanaModal() {
+async function guardarCampanaModal() {
   const nombre = document.getElementById('campana-nombre').value.trim();
   const activa = document.getElementById('campana-activa').checked;
   
@@ -14379,6 +14379,11 @@ function guardarCampanaModal() {
   } else {
     campanasState.push(campana);
   }
+  
+  console.log('Campaña guardada en estado local:', campana);
+  
+  // Guardar en el servidor
+  await guardarTodasLasCampanas();
   
   renderizarListaCampanas();
   cerrarModalCampana();
@@ -14723,14 +14728,26 @@ function renderizarListaCampanas() {
   const container = document.getElementById('campanas-list');
   const emptyState = document.getElementById('campanas-empty-state');
   
+  // Actualizar contadores
+  const countPrincipal = campanasState.filter(c => c.activa && c.principal?.slides?.length > 0).length;
+  const countSecundario = campanasState.filter(c => c.activa && c.secundario?.slides?.length > 0).length;
+  
+  const countPrincipalEl = document.getElementById('count-principal');
+  const countSecundarioEl = document.getElementById('count-secundario');
+  
+  if (countPrincipalEl) countPrincipalEl.textContent = countPrincipal;
+  if (countSecundarioEl) countSecundarioEl.textContent = countSecundario;
+  
+  // Verificar si hay campañas
   if (campanasState.length === 0) {
     container.innerHTML = '';
-    emptyState.style.display = 'block';
+    if (emptyState) emptyState.style.display = 'block';
     return;
   }
   
-  emptyState.style.display = 'none';
+  if (emptyState) emptyState.style.display = 'none';
   
+  // Renderizar campañas
   container.innerHTML = campanasState.map((campana, index) => {
     const totalSlidesPrincipal = campana.principal?.slides?.length || 0;
     const totalSlidesSecundario = campana.secundario?.slides?.length || 0;
@@ -14745,10 +14762,10 @@ function renderizarListaCampanas() {
           </div>
           <div class="campana-card-actions">
             <button type="button" class="btn-icon-edit" onclick="abrirModalEditarCampana(${index})" title="Editar">
-              ✏️
+              <img src="../img/Editar flota.svg" alt="Editar" style="width: 18px; height: 18px; transition: transform 0.2s;">
             </button>
             <button type="button" class="btn-icon-delete" onclick="eliminarCampana(${index})" title="Eliminar">
-              🗑️
+              <img src="../img/Delete.svg" alt="Eliminar" style="width: 18px; height: 18px; transition: transform 0.2s;">
             </button>
           </div>
         </div>
@@ -14776,10 +14793,14 @@ function renderizarListaCampanas() {
   }).join('');
 }
 
-function eliminarCampana(index) {
+async function eliminarCampana(index) {
   if (!confirm(`¿Eliminar la campaña "${campanasState[index].nombre}"?`)) return;
+  
   campanasState.splice(index, 1);
   renderizarListaCampanas();
+  
+  // Guardar cambios en el servidor
+  await guardarTodasLasCampanas();
 }
 
 // ============================================================
@@ -14788,7 +14809,7 @@ function eliminarCampana(index) {
 
 async function guardarTodasLasCampanas() {
   const clientSelect = document.getElementById('client-select');
-  const userId = clientSelect?.value;
+  const userId = adminSelectedClientId || clientSelect?.value;
   
   if (!userId) {
     alert('Selecciona un cliente primero');
