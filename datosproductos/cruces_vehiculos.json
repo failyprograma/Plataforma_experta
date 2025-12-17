@@ -1,0 +1,772 @@
+{
+  "metadata": {
+    "generado": "2025-12-14T22:06:39.427Z",
+    "version": "1.0",
+    "ultimo_archivo": "flota_econorent.xlsx",
+    "clientes": []
+  },
+  "cruces": [
+    {
+      "marca": "toyota",
+      "modelo": "Hilux 2.4",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITTOY400DR",
+            "marca": "exedy"
+          },
+          {
+            "sku": "KITTOY400AR",
+            "marca": "alliance"
+          }
+        ],
+        "frenos": [
+          {
+            "sku": "PAS528",
+            "marca": "frasle"
+          },
+          {
+            "sku": "PT5280HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "DFTOY528F",
+            "marca": "frasle"
+          },
+          {
+            "sku": "FR5280HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAT327T",
+            "marca": "frasle"
+          },
+          {
+            "sku": "TAM-327F",
+            "marca": "frasle"
+          },
+          {
+            "sku": "TF3270HT",
+            "marca": "htech"
+          }
+        ],
+        "suspensión": [
+          {
+            "sku": "SAB-KKMAL",
+            "marca": "sab"
+          }
+        ]
+      }
+    },
+    {
+      "marca": "toyota",
+      "modelo": "Hilux 2.8",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITTOY400DR",
+            "marca": "exedy"
+          },
+          {
+            "sku": "KITTOY400AR",
+            "marca": "alliance"
+          }
+        ],
+        "frenos": [
+          {
+            "sku": "PAS528",
+            "marca": "frasle"
+          },
+          {
+            "sku": "PT5280HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "DFTOY528F",
+            "marca": "frasle"
+          },
+          {
+            "sku": "FR5280HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAT327T",
+            "marca": "frasle"
+          },
+          {
+            "sku": "TAM-327F",
+            "marca": "frasle"
+          },
+          {
+            "sku": "TF3270HT",
+            "marca": "htech"
+          }
+        ]
+      }
+    },
+    {
+      "marca": "mitsubishi",
+      "modelo": "L200 2.4",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITMIT240LR",
+            "marca": "luk"
+          },
+          {
+            "sku": "KITMIT240AR",
+            "marca": "alliance"
+          },
+          {
+            "sku": "KITMIT240LRV",
+            "marca": "luk"
+          },
+          {
+            "sku": "IVMIT240N",
+            "marca": "luk"
+          }
+        ],
+        "frenos": [
+          {
+            "sku": "PAS771A",
+            "marca": "frasle"
+          },
+          {
+            "sku": "PT7710HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "DFMIT771F",
+            "marca": "frasle"
+          },
+          {
+            "sku": "FR7710HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAT377T",
+            "marca": "frasle"
+          },
+          {
+            "sku": "TAM-377F",
+            "marca": "frasle"
+          },
+          {
+            "sku": "TF3770HT",
+            "marca": "htech"
+          }
+        ]
+      }
+    },
+    {
+      "marca": "citroen",
+      "modelo": "Berlingo 1.6 k9",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITCIT160LR",
+            "marca": "luk"
+          }
+        ],
+        "frenos": [
+          {
+            "sku": "PAS2379",
+            "marca": "frasle"
+          },
+          {
+            "sku": "PT2379HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR8288HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAS1605",
+            "marca": "frasle"
+          }
+        ]
+      }
+    },
+    {
+      "marca": "chevrolet",
+      "modelo": "Colorado",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITCHE280LR",
+            "marca": "luk"
+          },
+          {
+            "sku": "IVCHE280N",
+            "marca": "luk"
+          }
+        ]
+      }
+    },
+    {
+      "marca": "volkswagen",
+      "modelo": "Amarok 2.0",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITAMA100LR",
+            "marca": "luk"
+          },
+          {
+            "sku": "IVAMA100N",
+            "marca": "luk"
+          }
+        ],
+        "frenos": [
+          {
+            "sku": "PAS1028",
+            "marca": "frasle"
+          },
+          {
+            "sku": "PT1028HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "DFVW1028D",
+            "marca": "frasle"
+          },
+          {
+            "sku": "FR1028HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAT1028F",
+            "marca": "frasle"
+          },
+          {
+            "sku": "TAM-1028",
+            "marca": "frasle"
+          }
+        ]
+      }
+    },
+    {
+      "marca": "nissan",
+      "modelo": "Navara",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITDAT810DR",
+            "marca": "exedy"
+          },
+          {
+            "sku": "KITDAT810AR",
+            "marca": "alliance"
+          }
+        ],
+        "frenos": [
+          {
+            "sku": "PAS1539",
+            "marca": "frasle"
+          },
+          {
+            "sku": "PT1539HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "DFDAT1539F",
+            "marca": "frasle"
+          },
+          {
+            "sku": "FR1539HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAT1541T",
+            "marca": "frasle"
+          },
+          {
+            "sku": "TAM-1539T",
+            "marca": "frasle"
+          }
+        ]
+      }
+    },
+    {
+      "marca": "nissan",
+      "modelo": "NP 300",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITDAT810DR",
+            "marca": "exedy"
+          },
+          {
+            "sku": "KITDAT810AR",
+            "marca": "alliance"
+          }
+        ],
+        "frenos": [
+          {
+            "sku": "PAS1539",
+            "marca": "frasle"
+          },
+          {
+            "sku": "PT1539HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "DFDAT1539F",
+            "marca": "frasle"
+          },
+          {
+            "sku": "FR1539HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAT1541T",
+            "marca": "frasle"
+          },
+          {
+            "sku": "TAM-1539T",
+            "marca": "frasle"
+          }
+        ]
+      }
+    },
+    {
+      "marca": "maxus",
+      "modelo": "T60 2.0",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITMAX280LR",
+            "marca": "luk"
+          },
+          {
+            "sku": "IVMAX280N",
+            "marca": "luk"
+          },
+          {
+            "sku": "KITMAX900LR",
+            "marca": "luk"
+          },
+          {
+            "sku": "IVMAX900N",
+            "marca": "valeo"
+          }
+        ],
+        "frenos": [
+          {
+            "sku": "PAS1433M",
+            "marca": "frasle"
+          },
+          {
+            "sku": "PAS1341",
+            "marca": "frasle"
+          },
+          {
+            "sku": "PT1433MHT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR3674HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR5112HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PT1602HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PT7700HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PT1287HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR4880HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAS1294",
+            "marca": "frasle"
+          },
+          {
+            "sku": "FR1761HT",
+            "marca": "htech"
+          }
+        ]
+      }
+    },
+    {
+      "marca": "maxus",
+      "modelo": "T60 2.8",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITMAX280LR",
+            "marca": "luk"
+          },
+          {
+            "sku": "IVMAX280N",
+            "marca": "luk"
+          },
+          {
+            "sku": "KITMAX900LR",
+            "marca": "luk"
+          },
+          {
+            "sku": "IVMAX900N",
+            "marca": "valeo"
+          }
+        ],
+        "frenos": [
+          {
+            "sku": "PAS1433M",
+            "marca": "frasle"
+          },
+          {
+            "sku": "PAS1341",
+            "marca": "frasle"
+          },
+          {
+            "sku": "PT1433MHT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR3674HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR5112HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PT1602HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PT7700HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PT1287HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR4880HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAS1294",
+            "marca": "frasle"
+          },
+          {
+            "sku": "FR1761HT",
+            "marca": "htech"
+          }
+        ]
+      }
+    },
+    {
+      "marca": "ford",
+      "modelo": "Ranger",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITFOR220LR",
+            "marca": "luk"
+          }
+        ],
+        "frenos": [
+          {
+            "sku": "PAT1540T",
+            "marca": "frasle"
+          }
+        ]
+      }
+    },
+    {
+      "marca": "hyundai",
+      "modelo": "Porter",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITKIA220AR",
+            "marca": "alliance"
+          }
+        ],
+        "frenos": [
+          {
+            "sku": "PAS69",
+            "marca": "frasle"
+          }
+        ]
+      }
+    },
+    {
+      "marca": "peugeot",
+      "modelo": "Expert",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITCIT200VR",
+            "marca": "valeo"
+          },
+          {
+            "sku": "KITCIT200VRV",
+            "marca": "valeo"
+          },
+          {
+            "sku": "KITPEU200VR",
+            "marca": "valeo"
+          },
+          {
+            "sku": "KITCIT160LR",
+            "marca": "luk"
+          }
+        ],
+        "frenos": [
+          {
+            "sku": "PT1582HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR3380HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PT1583HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR3945HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAS2379",
+            "marca": "frasle"
+          },
+          {
+            "sku": "PT2379HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR8288HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAS1605",
+            "marca": "frasle"
+          }
+        ]
+      }
+    },
+    {
+      "marca": "peugeot",
+      "modelo": "Spacetourer",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITCIT200VR",
+            "marca": "valeo"
+          },
+          {
+            "sku": "KITCIT200VRV",
+            "marca": "valeo"
+          },
+          {
+            "sku": "KITPEU200VR",
+            "marca": "valeo"
+          },
+          {
+            "sku": "KITCIT160LR",
+            "marca": "luk"
+          }
+        ],
+        "frenos": [
+          {
+            "sku": "PT1582HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR3380HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PT1583HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR3945HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAS2379",
+            "marca": "frasle"
+          },
+          {
+            "sku": "PT2379HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR8288HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAS1605",
+            "marca": "frasle"
+          }
+        ]
+      }
+    },
+    {
+      "marca": "peugeot",
+      "modelo": "Landtek",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITCIT200VR",
+            "marca": "valeo"
+          },
+          {
+            "sku": "KITCIT200VRV",
+            "marca": "valeo"
+          },
+          {
+            "sku": "KITPEU200VR",
+            "marca": "valeo"
+          },
+          {
+            "sku": "KITCIT160LR",
+            "marca": "luk"
+          }
+        ],
+        "frenos": [
+          {
+            "sku": "PT1582HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR3380HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PT1583HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR3945HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAS2379",
+            "marca": "frasle"
+          },
+          {
+            "sku": "PT2379HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR8288HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAS1605",
+            "marca": "frasle"
+          }
+        ]
+      }
+    },
+    {
+      "marca": "peugeot",
+      "modelo": "Partner",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITCIT200VR",
+            "marca": "valeo"
+          },
+          {
+            "sku": "KITCIT200VRV",
+            "marca": "valeo"
+          },
+          {
+            "sku": "KITPEU200VR",
+            "marca": "valeo"
+          },
+          {
+            "sku": "KITCIT160LR",
+            "marca": "luk"
+          }
+        ],
+        "frenos": [
+          {
+            "sku": "PT1582HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR3380HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PT1583HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR3945HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAS2379",
+            "marca": "frasle"
+          },
+          {
+            "sku": "PT2379HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR8288HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PAS1605",
+            "marca": "frasle"
+          }
+        ]
+      }
+    },
+    {
+      "marca": "Great Wall",
+      "modelo": "Poer 2.0",
+      "categorias": {
+        "embragues": [
+          {
+            "sku": "KITGWM100A",
+            "marca": "alliance"
+          }
+        ],
+        "frenos": [
+          {
+            "sku": "PT3501HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR3501HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "PT2139HT",
+            "marca": "htech"
+          },
+          {
+            "sku": "FR2102HT",
+            "marca": "htech"
+          }
+        ]
+      }
+    }
+  ]
+}

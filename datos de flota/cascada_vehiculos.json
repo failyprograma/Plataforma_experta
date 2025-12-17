@@ -1,0 +1,552 @@
+{
+  "camion": {
+    "marcas": {
+      "Volvo": [
+        "FH",
+        "FM",
+        "FMX",
+        "FMX MAX",
+        "FE",
+        "FL",
+        "VM",
+        "VMX",
+        "VMX Max",
+        "FHE (eléctrico)",
+        "FME (eléctrico)",
+        "FMXE (eléctrico)",
+        "FMX Electric"
+      ],
+      "Scania": [
+        "P",
+        "G",
+        "R",
+        "S",
+        "XT",
+        "V8",
+        "Super"
+      ],
+      "Mercedes": [
+        "Accelo 1116",
+        "Atego",
+        "Axor",
+        "Actros",
+        "Zetros",
+        "Unimog"
+      ],
+      "MAN": [
+        "TGX",
+        "TGS",
+        "TGM",
+        "TGL"
+      ],
+      "Iveco": [
+        "S-Way 480",
+        "S-Way 570",
+        "S-Way GNL 460",
+        "Tector 24-300",
+        "Tector 26-300",
+        "Tector 17-280",
+        "Tector 17-300",
+        "Trakker 6x4",
+        "Trakker 8x4"
+      ],
+      "DAF": [
+        "XF 480",
+        "XF 530",
+        "CF 430",
+        "CF 480 FAT 6x4",
+        "CF FAD 8x4",
+        "LF 260"
+      ],
+      "Freightliner": [
+        "Cascadia",
+        "SD 114",
+        "Coronado",
+        "M2 106",
+        "CL 120",
+        "Argosy"
+      ],
+      "International": [
+        "ProStar",
+        "WorkStar",
+        "TranStar",
+        "HV613",
+        "HV607",
+        "RH",
+        "LT",
+        "DuraStar"
+      ],
+      "Volkswagen": [
+        "Constellation 14.190",
+        "Constellation 17.230",
+        "Constellation 17.280",
+        "Constellation 19.360",
+        "Constellation 25.360",
+        "Constellation 26.420",
+        "Constellation 24.280",
+        "Constellation 24.330",
+        "Constellation 33.460",
+        "Constellation 25.460",
+        "Constellation 26.280",
+        "Constellation 31.280",
+        "Constellation 31.330",
+        "Constellation 32.360",
+        "Constellation 32.360 8x4",
+        "Delivery 6.160",
+        "Delivery 9.170",
+        "Delivery 11.180",
+        "Delivery 13.180"
+      ],
+      "Kenworth": [
+        "T680",
+        "T880",
+        "T800",
+        "T660",
+        "T460",
+        "T600",
+        "W900",
+        "C500 (Faena)"
+      ],
+      "Sitrak": [
+        "C9H 6x2",
+        "G7 Tracto 4x2",
+        "G7 Tracto 6x2",
+        "G7 Tracto 6x4",
+        "G7 Faena 6x4",
+        "G7 Faena 8x4",
+        "HOWO TX 4x2",
+        "HOWO TX 6x4",
+        "TXEV eléctrico"
+      ],
+      "Mack": [
+        "Anthem",
+        "Granite",
+        "TerraPro",
+        "Pinnacle"
+      ],
+      "Renault": [
+        "Renault K",
+        "Renault C",
+        "Renault D",
+        "Renault T",
+        "Renault Master"
+      ],
+      "Hyundai": [
+        "XCIENT GT Tracto",
+        "XCIENT GT Faena"
+      ]
+    }
+  },
+  "bus": {
+    "marcas": {
+      "Mercedes": [
+        "Sprinter",
+        "Vito",
+        "LO 916",
+        "OF 1621",
+        "OF 1721",
+        "O 500 U",
+        "O 500 UA",
+        "O 500 R 1830",
+        "O 500 RS",
+        "O 500 RSD"
+      ],
+      "Volvo": [
+        "B6F",
+        "B6FA",
+        "B6M",
+        "B6",
+        "B6BLE",
+        "B6LE",
+        "B7R",
+        "B7RLE",
+        "B7L",
+        "B7LA",
+        "B8R",
+        "B8RLE",
+        "B8L",
+        "B5LH",
+        "B5RH",
+        "B9R",
+        "B9RLE",
+        "B9S",
+        "B9TL",
+        "B10M",
+        "B10B",
+        "B10BLE",
+        "B10L",
+        "B10TL",
+        "B11R",
+        "B12B",
+        "B12M",
+        "B12BLE",
+        "B13R",
+        "BXXR",
+        "BZL",
+        "BZR"
+      ],
+      "Scania": [
+        "K 280 UB",
+        "K 310 UB",
+        "K 320 UB",
+        "K 280 EB",
+        "K 310 IB",
+        "K 360 IB",
+        "K 410 IB",
+        "K 410 EB",
+        "K 450 IB",
+        "K 500 IB",
+        "K CB",
+        "N 230UB",
+        "N 270UB",
+        "N 280UB",
+        "N 310UA",
+        "N 230UD",
+        "N 250UD",
+        "N 260UD",
+        "N 270UD",
+        "N 280UD",
+        "N 320UD",
+        "F 310HB",
+        "L IB",
+        "K 280UB 6x2*4"
+      ],
+      "Yutong": [
+        "E10",
+        "E12",
+        "E9",
+        "E11 PRO",
+        "E18",
+        "T13E",
+        "TCe12 / ICe12",
+        "U11DD",
+        "U12",
+        "U13",
+        "U15",
+        "U18",
+        "IC12E",
+        "ZK6128",
+        "ZK6118",
+        "V7",
+        "City Master"
+      ],
+      "KingLong": [
+        "XMQ6112 AY",
+        "XMQ6127",
+        "XMQ6130Y (KING 15)",
+        "XMQ6130EYWE5 (KING 15 EV)",
+        "XMQ6106G (KL 11)",
+        "XMQ6127G (KL 12)",
+        "XMQ6706DY (KING 7)",
+        "XMQ6901Y",
+        "XMQ6126",
+        "XMQ6800",
+        "XMQ6552",
+        "XMQ6127JGWE",
+        "K06 EV",
+        "City Bus EV"
+      ],
+      "Foton": [
+        "Auman",
+        "BJ6129",
+        "BJ6946",
+        "H7",
+        "U12 SC",
+        "BJ6129EVCA"
+      ],
+      "Volkswagen": [
+        "8.180",
+        "9.160 OD",
+        "9.180 S",
+        "10.160 OD",
+        "11.180 R",
+        "11.180 S",
+        "15.210 R",
+        "15.210 S",
+        "17.230 S",
+        "17.260 S",
+        "18.320 SH",
+        "18.320 SL"
+      ],
+      "Hyundai": [
+        "Universe",
+        "Elec City",
+        "Blue City",
+        "Green City",
+        "Aero",
+        "Aero Town",
+        "Super Aero City",
+        "Space",
+        "County",
+        "County Electric",
+        "Solati H350"
+      ],
+      "Peugeot": [
+        "Traveler",
+        "Partner",
+        "Expert",
+        "SpaceTourer",
+        "Boxer",
+        "e-Boxer (Eléctrico)"
+      ],
+      "MAN": [
+        "TGE"
+      ],
+      "Citroen": [
+        "Berlingo 1.6 K9"
+      ]
+    }
+  },
+  "camioneta": {
+    "marcas": {
+      "Toyota": [
+        "Hilux 2.4",
+        "Hilux 2.8",
+        "Hilux Champ",
+        "Fortuner",
+        "4Runner",
+        "Land Cruiser Prado"
+      ],
+      "Ford": [
+        "Ranger",
+        "Ranger Raptor",
+        "Maverick",
+        "F-150",
+        "F-150 Raptor",
+        "Lobo"
+      ],
+      "Chevrolet": [
+        "Colorado",
+        "S10",
+        "Trailblazer",
+        "Silverado",
+        "Cheyenne"
+      ],
+      "Nissan": [
+        "Frontier",
+        "Navara",
+        "NP 300",
+        "Titan",
+        "X-Trail"
+      ],
+      "Mitsubishi": [
+        "L-200",
+        "L-200 2.4",
+        "Triton",
+        "Montero Sport",
+        "Outlander",
+        "Pajero"
+      ],
+      "Isuzu": [
+        "D-Max",
+        "D-Max V-Cross",
+        "MU-X",
+        "Elf Pickup",
+        "D-Max Space Cab"
+      ],
+      "Ssangyong": [
+        "Korando",
+        "Rexton",
+        "Tivoli",
+        "Musso",
+        "Actyon"
+      ],
+      "Kia": [
+        "Sportage",
+        "Sorento",
+        "Carnival",
+        "Seltos",
+        "Telluride",
+        "Mohave",
+        "Stonic",
+        "Sonet"
+      ],
+      "Peugeot": [
+        "Landtrek"
+      ],
+      "Maxus": [
+        "T60 2.0",
+        "T60 2.8",
+        "T90",
+        "T70",
+        "D90",
+        "Euniq 5",
+        "G10",
+        "G50",
+        "E-uniq 6"
+      ],
+      "Foton": [
+        "Tunland",
+        "Tunland G7",
+        "Tunland E+",
+        "Terracota"
+      ],
+      "Fiat": [
+        "Fiorino",
+        "Doblò",
+        "Ducato",
+        "Fullback",
+        "Toro"
+      ],
+      "Volkswagen": [
+        "Amarok 2.0"
+      ],
+      "Great_Wall": [
+        "Poer 2.0"
+      ]
+    }
+  },
+  "3/4": {
+    "marcas": {
+      "Chevrolet": [
+        "NKR 512",
+        "NKR 612",
+        "NPR 715",
+        "NPR 816",
+        "NQR 919",
+        "FTR 1524",
+        "FRR 1119"
+      ],
+      "Isuzu": [
+        "NLR",
+        "NQR",
+        "NPR",
+        "NRR",
+        "QLR",
+        "QMR",
+        "Traviz",
+        "FRR",
+        "FTR",
+        "FVZ"
+      ],
+      "Fuso": [
+        "Canter 611",
+        "Canter 613",
+        "Canter 615 4x4",
+        "Canter 715 DC",
+        "Canter 815",
+        "Fuso 1017"
+      ],
+      "Hyundai": [
+        "Porter",
+        "Mighty EX6",
+        "Mighty EX8",
+        "HD60",
+        "h100"
+      ],
+      "Hino": [
+        "XZU 5.9",
+        "XZU 6.5",
+        "XZU 616",
+        "XZU 617",
+        "XZU 716",
+        "XZU 816",
+        "XZU 817",
+        "XZU 917",
+        "FC 1118",
+        "FD 1121",
+        "FG 1728",
+        "GH 1826",
+        "GH 1835"
+      ],
+      "Ford": [
+        "Cargo 916",
+        "Cargo 1119",
+        "Cargo 1729",
+        "Cargo 1731",
+        "Cargo 2429",
+        "F-4000"
+      ],
+      "Agrale": [
+        "A8700",
+        "A10000",
+        "A10000 4x4",
+        "A15000",
+        "A18000"
+      ]
+    }
+  },
+  "rampla": {
+    "marcas": {
+      "Schmitz": [
+        "S.KO 24",
+        "S.CS 24",
+        "Mega Liner",
+        "S.KI"
+      ],
+      "Krone": [
+        "Cool Liner",
+        "SD",
+        "Profi Liner"
+      ],
+      "Randon": [
+        "SR PT CS 0330",
+        "SPP-14-SD",
+        "SR-FE CG 0226",
+        "SR CS"
+      ],
+      "Schwarzmüller": [
+        "Road Trailer",
+        "Max Trailer"
+      ],
+      "Utility": [
+        "3000R",
+        "4000DX",
+        "VS2RA"
+      ],
+      "GreatDane": [
+        "Champion CS1",
+        "Defender Dry Van",
+        "Infinity Dry Van",
+        "Everest Reefer",
+        "Freedom XP Flatbed",
+        "Freedom SE Flatbed",
+        "Freedom LT Flatbed"
+      ],
+      "Facchini": [
+        "Volcadora",
+        "Granelero LS",
+        "Carga Seca",
+        "Basculante Europa",
+        "Sider"
+      ],
+      "Machile": [
+        "Tolva",
+        "Plano",
+        "Cama Baja",
+        "Total Sider",
+        "Sider",
+        "Estanque",
+        "Porta Neumáticos"
+      ],
+      "Goren": [
+        "R2M 18",
+        "2 Ejes",
+        "3 Ejes",
+        "Cuello Cisne 3 Ejes",
+        "Cama Baja 18 T"
+      ],
+      "Tremac": [
+        "SR Plano 2+1",
+        "RTP-8,5-2-R",
+        "RTP-9-2-R",
+        "SRTP-E-137/224-3-R",
+        "Cargo Fast 50T",
+        "Cama Baja",
+        "Half-Round 20 m³",
+        "Terminator SR 20 m³",
+        "SR Multipropósito",
+        "Semirremolque Bimodal",
+        "Remolque Forestal"
+      ],
+      "Freuhauf": [
+        "T34CGN1NLA",
+        "FST SAF",
+        "TX34",
+        "TF34",
+        "ED32",
+        "ONCR39"
+      ]
+    }
+  }
+}

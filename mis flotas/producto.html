@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle vehiculo | StarClutch</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ==== NAV LATERAL ==== -->
+<nav class="sidebar">
+  <div class="logo">
+    <img src="../img/Logo starclutch web.svg" alt="Logo Starclutch">
+  </div>
+  <div class="user-info">
+    <a href="../perfildeusuario/index.html">
+      <span class="nav-icon"><img src="../img/Usuario.svg" alt="Usuario"></span>
+      <span class="nav-text">Hola, <strong class="nav-username"></strong></span>
+    </a>
+  </div>
+  <div class="search-general">
+    <input type="text" placeholder="Búsqueda general" class="input-general">
+    <button class="btn-search-general">
+      <img src="../img/Buscar.svg" alt="Buscar">
+    </button>
+  </div>
+  <ul class="menu main-nav">
+    <li>
+      <a href="../mis flotas/index.html" class="active" aria-current="page">
+        <span class="nav-icon"><img src="../img/Agregar flota.svg" alt="Ver mis flotas"></span>
+        <span class="nav-text">Mis flotas</span>
+      </a>
+    </li>
+    <li>
+      <a href="../lista de repuestos/index.html">
+        <span class="nav-icon"><img src="../img/Productos.svg" alt="Lista de repuestos"></span>
+        <span class="nav-text">Lista de repuestos</span>
+      </a>
+    </li>
+    <li>
+      <a href="../ofertas exclusivas/index.html" class="active">
+        <span class="nav-icon"><img src="../img/Descuento.svg" alt="Ofertas"></span>
+        <span class="nav-text">Ofertas exclusivas</span>
+      </a>
+    </li>
+    <li>
+      <a href="../estado de la cuenta/index.html">
+        <span class="nav-icon"><img src="../img/bill-01 1.svg" alt="Estado de cuenta"></span>
+        <span class="nav-text">Estado de cuenta</span>
+      </a>
+    </li>
+    <li>
+      <a href="../mis compras/index.html.html">
+        <span class="nav-icon"><img src="../img/miscompras.svg" alt="Mis compras"></span>
+        <span class="nav-text">Mis compras</span>
+      </a>
+    </li>
+  </ul>
+  <footer class="sidebar-footer">
+    <a href="https://starclutch.cl/repuestos" target="_blank" rel="noopener noreferrer" class="btn-text footer-link">
+      <span class="icon-left"><img src="../img/Logo SC.svg" alt="Nosotros"></span> Nosotros
+    </a>
+    <p>Starclutch S.p.A<br>© Todos los derechos reservados 2025</p>
+  </footer>
+</nav>
+
+<main class="main-content">
+  <div class="page-container">
+    <header class="main-header">
+      <div class="header-left"><h1>Detalles</h1></div>
+      <div class="header-actions">
+        <button class="btn-text"><span class="icon-left"><img src="../img/info_471662-01 1.svg" alt="Ayuda"></span> Ayuda</button>
+        <button class="btn-text" onclick="toggleCarrito()" style="position: relative;"><span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/carrito.svg" alt="Carrito"><span class="cart-badge" id="cart-badge-count">0</span></span> Carrito</button>
+        <button class="btn-text" id="btn-notificaciones" onclick="toggleNotificaciones()" style="position: relative;"><span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/Alerta.svg" alt="Notificaciones"><span class="notif-badge" id="notif-badge-count">0</span></span> Notificaciones</button>
+      </div>
+    </header>
+
+    <button id="btn-lista-repuestos">
+    <img src="../img/listadorepuestos.svg" alt="">
+    Lista de repuestos
+</button>
+
+
+<div id="detalle-layout">
+
+    <div id="detalle-col-izq">
+        <!-- ——— TU TARJETA DEL VEHÍCULO COMPLETA ——— -->
+        <div id="card-detalle-vehiculo">
+
+            <h2 id="detalle-patente">Patente: ABCD11</h2>
+
+            <div id="detalle-top">
+                <div>
+                    <h2 id="detalle-modelo">B9 2015</h2>
+                    <p id="detalle-conductor">Bastián Bustamante</p>
+                </div>
+                <div>
+                    <img id="detalle-logo" src="placeholder-logo.svg" alt="Logo vehículo">
+                </div>
+            </div>
+
+            <div id="detalle-imagen-wrapper">
+                <img id="detalle-imagen" src="placeholder-vehiculo.svg" alt="Vehículo">
+            </div>
+
+            <div id="detalle-boton-wrapper">
+                <button id="btn-mantencion">
+                    <img src="../img/calendario.svg" alt="">
+                    Programar mantención
+                </button>
+            </div>
+
+          <div id="detalle-favorito" style="cursor: default;">
+    <svg width="24" height="24" viewBox="0 0 24 24">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" 
+                 fill="#BF1823" stroke="#BF1823"></polygon>
+    </svg>
+</div>
+        </div>
+    </div>
+
+    <div id="detalle-col-der">
+
+        <div id="secciones-wrapper">
+
+            <!-- fila 1 -->
+            <div class="fila-secciones">
+                <a href="categorias.html?categoria=Embragues" class="seccion-item">
+                    <h3>Embragues</h3>
+                    <div class="seccion-img">
+                    <img src="../img/embragues set.png" alt="">
+                    </div>
+                </a>
+
+                <a href="categorias.html?categoria=Frenos" class="seccion-item">
+                    <h3>Frenos</h3>
+                    <div class="seccion-img">
+                    <img src="../img/Frenos set.png" alt="">
+                    </div>
+                </a>
+
+                <a href="categorias.html?categoria=Suspensión" class="seccion-item">
+                    <h3>Suspensión</h3>
+                    <div class="seccion-img">
+                    <img src="../img/suspensión set.png" alt="">
+                    </div>
+                </a>
+            </div>
+
+            <!-- fila 2 -->
+            <div class="fila-secciones">
+                <a href="categorias.html?categoria=Filtros%20y%20diferenciales" class="seccion-item">
+                    <h3>Filtros y diferenciales</h3>
+                    <div class="seccion-img">
+                    <img src="../img/filtros y diferenciales set.png" alt="">
+                    </div>
+                </a>
+
+                <a href="categorias.html?categoria=Sistema%20de%20aire" class="seccion-item">
+                    <h3>Sistema de aire</h3>
+                    <div class="seccion-img">
+                    <img src="../img/sistema de aire set.png" alt="">
+                    </div>
+                </a>
+
+                <a href="categorias.html?categoria=Sistema%20de%20dirección" class="seccion-item">
+                    <h3>Sistema de dirección</h3>
+                    <div class="seccion-img">
+                    <img src="../img/barras set.png" alt="">
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+        <!-- Modal Programar Mantención -->
+        <div id="pm-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99998;"></div>
+        <div id="pm-modal" style="display:none; position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.2); width:92%; max-width:520px; z-index:99999;">
+            <div style="padding:16px 20px; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between;">
+                <h3 style="margin:0; font-size:18px; color:#333;">Programar mantención</h3>
+                <button onclick="window.cerrarModalMantencion()" aria-label="Cerrar" style="background:none; border:none; font-size:24px; cursor:pointer; color:#666">×</button>
+            </div>
+            <div style="padding:20px; display:flex; flex-direction:column; gap:14px;">
+                <div>
+                    <label for="pm-fecha" style="display:block; font-weight:600; color:#444; margin-bottom:6px;">Seleccionar fecha</label>
+                    <input type="date" id="pm-fecha" style="width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:8px; font-size:14px;" />
+                </div>
+                <label style="display:flex; align-items:center; gap:10px; font-size:14px; color:#555;">
+                    <input type="checkbox" id="pm-recurrencia" style="width:18px; height:18px; accent-color:#BF1823;" />
+                    Repetir mantenimiento cada día del mes seleccionado
+                </label>
+                <div style="margin-top:6px; font-size:12px; color:#777;">
+                    Al activar, te recordaremos cada mes en el mismo día; si un mes no tiene ese día (p. ej., 31), programaremos el último día del mes.
+                </div>
+            </div>
+            <div style="padding:16px 20px; border-top:1px solid #eee; display:flex; gap:10px; justify-content:flex-end;">
+                <button onclick="window.cerrarModalMantencion()" class="btn-secondary" style="padding:10px 16px; border:1px solid #ddd; background:#fff; border-radius:8px; cursor:pointer;">Cancelar</button>
+                <button onclick="window.programarMantencionDesdeProducto()" class="btn-primary" style="padding:10px 16px; background:#BF1823; color:#fff; border:none; border-radius:8px; cursor:pointer;">Programar</button>
+            </div>
+        </div>
+        <!-- /Modal Programar Mantención -->
+</div>
+
+<section class="seccion-recomendados-detalle">
+  
+  <h3>Repuestos recomendados</h3>
+
+  <div class="carrusel-contenedor-detalle" data-rows="1" data-cols="4">
+    
+    <button class="btn-nav-detalle prev" aria-label="Anterior">‹</button>
+    
+    <div class="viewport-detalle">
+      <div class="track-detalle">
+        <!-- Los productos se cargarán dinámicamente -->
+      </div>
+    </div>
+
+    <button class="btn-nav-detalle next" aria-label="Siguiente">›</button>
+    
+  </div>
+</section>
+
+</main>
+
+  <script src="../script.js"></script>
+  <script src="../mobile-nav.js"></script>
+  <script>
+    // Función para normalizar texto (minúsculas, sin acentos, sin espacios, sin guiones)
+    function normalizarTexto(texto) {
+        if (!texto) return '';
+        return texto
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "") // Eliminar acentos
+            .replace(/[-_\s]/g, '') // Eliminar guiones, guiones bajos Y espacios
+            .trim();
+    }
+
+    // Función para verificar disponibilidad de categorías según cruce
+    async function verificarCategoriasDisponibles(vehiculo) {
+        try {
+            console.log('🔍 Verificando categorías disponibles para:', vehiculo);
+            
+            // Cargar JSONs de cruces y productos
+            const [crucesResponse, productosResponse] = await Promise.all([
+                fetch('../datosproductos/cruces_vehiculos.json'),
+                fetch('../datosproductos/productos_db.json')
+            ]);
+            
+            const data = await crucesResponse.json();
+            const productosData = await productosResponse.json();
+            
+            const marcaNorm = normalizarTexto(vehiculo.marca);
+            const modeloNorm = normalizarTexto(vehiculo.modelo);
+            
+            console.log('📝 Buscando en cruces:');
+            console.log('   - Marca normalizada:', marcaNorm);
+            console.log('   - Modelo normalizado:', modeloNorm);
+            console.log('   - Total cruces disponibles:', data.cruces.length);
+            
+            // Función auxiliar para limpiar modelos (elimina guiones, espacios)
+            function limpiarModelo(modelo) {
+                return normalizarTexto(modelo).replace(/[-\s_]+/g, ' ').trim();
+            }
+            
+            // Buscar el vehículo en los cruces con búsqueda flexible
+            let cruce = data.cruces.find(c => {
+                const cruceMarca = normalizarTexto(c.marca);
+                const cruceModeloLimpio = limpiarModelo(c.modelo);
+                const vehiculoModeloLimpio = limpiarModelo(vehiculo.modelo);
+                return cruceMarca === marcaNorm && cruceModeloLimpio === vehiculoModeloLimpio;
+            });
+            
+            // Si no encuentra exacta, busca por palabras clave
+            if (!cruce) {
+                const palabrasModelo = modeloNorm.split(/\s+/);
+                cruce = data.cruces.find(c => {
+                    if (normalizarTexto(c.marca) !== marcaNorm) return false;
+                    const palabrasCruce = normalizarTexto(c.modelo).split(/\s+/);
+                    const coincidencias = palabrasModelo.filter(p => 
+                        palabrasCruce.some(pc => pc.startsWith(p) || p.startsWith(pc))
+                    ).length;
+                    return coincidencias >= 2;
+                });
+            }
+            
+            console.log('🎯 Cruce encontrado:', cruce);
+            
+            // Definir mapeo de categorías a sus nombres normalizados
+            const categoriasMap = {
+                'Embragues': 'embragues',
+                'Frenos': 'frenos',
+                'Suspensión': 'suspension',
+                'Filtros y diferenciales': 'filtros y diferenciales',
+                'Sistema de aire': 'sistema de aire',
+                'Sistema de dirección': 'sistema de direccion'
+            };
+            
+            // Obtener categorías disponibles del cruce CON productos reales
+            const categoriasDisponibles = new Set();
+            if (cruce && cruce.categorias) {
+                console.log('📋 Categorías en el cruce:', Object.keys(cruce.categorias));
+                
+                // Crear set de SKUs válidos en productos_db
+                const skusValidos = new Set(
+                    productosData.map(p => normalizarTexto(p.codSC || p.sku || '')).filter(s => s)
+                );
+                
+                for (const [cat, catData] of Object.entries(cruce.categorias)) {
+                    const catNorm = normalizarTexto(cat);
+                    
+                    // Verificar que al menos un producto del cruce existe en productos_db
+                    let tieneProductosValidos = false;
+                    
+                    if (Array.isArray(catData)) {
+                        // Nuevo formato: array de productos
+                        tieneProductosValidos = catData.some(prod => 
+                            skusValidos.has(normalizarTexto(prod.sku))
+                        );
+                        console.log(`   Categoría ${cat} (array): ${catData.length} SKUs, válidos: ${tieneProductosValidos}`);
+                    } else if (catData.sku) {
+                        // Formato antiguo: objeto con sku
+                        tieneProductosValidos = skusValidos.has(normalizarTexto(catData.sku));
+                        console.log(`   Categoría ${cat} (objeto): SKU ${catData.sku}, válido: ${tieneProductosValidos}`);
+                    }
+                    
+                    if (tieneProductosValidos) {
+                        categoriasDisponibles.add(catNorm);
+                        console.log('   ✅ Categoría habilitada:', cat);
+                    } else {
+                        console.log('   ⚠️ Categoría ignorada (sin productos válidos):', cat);
+                    }
+                }
+            } else {
+                console.warn('⚠️ No se encontró cruce o no tiene categorías');
+            }
+            
+            console.log('🔓 Categorías disponibles (normalizadas):', Array.from(categoriasDisponibles));
+            
+            // Bloquear secciones que no tienen productos
+            document.querySelectorAll('.seccion-item').forEach(seccionLink => {
+                const titulo = seccionLink.querySelector('h3').textContent.trim();
+                const categoriaNorm = categoriasMap[titulo] || normalizarTexto(titulo);
+                
+                console.log('🔍 Verificando sección:', titulo, '→', categoriaNorm);
+                console.log('   ¿Está disponible?', categoriasDisponibles.has(categoriaNorm));
+                
+                if (!categoriasDisponibles.has(categoriaNorm)) {
+                    // Bloquear la sección
+                    seccionLink.classList.add('seccion-bloqueada');
+                    seccionLink.style.opacity = '0.5';
+                    seccionLink.style.cursor = 'not-allowed';
+                    seccionLink.style.pointerEvents = 'none';
+                    
+                    // Agregar mensaje de no disponible
+                    const mensaje = document.createElement('div');
+                    mensaje.className = 'mensaje-no-disponible';
+                    mensaje.textContent = 'No existen productos de esta sección para tu vehículo';
+                    mensaje.style.cssText = 'position: absolute; bottom: 10px; left: 10px; right: 10px; background: rgba(191, 24, 35, 0.9); color: white; padding: 8px; border-radius: 4px; font-size: 12px; text-align: center; z-index: 10;';
+                    
+                    seccionLink.style.position = 'relative';
+                    seccionLink.appendChild(mensaje);
+                }
+            });
+            
+            return cruce;
+        } catch (error) {
+            console.error('Error al verificar categorías disponibles:', error);
+            return null;
+        }
+    }
+
+    // Cargar y gestionar el vehículo seleccionado
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Obtener ID del vehículo de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const vehiculoId = urlParams.get('id');
+        
+        let vehiculo = null;
+        
+        // Primero intentar cargar desde localStorage (método más confiable)
+        const vehiculoDetalle = await loadVehiculoDetalleForCurrentUser();
+        
+        console.log('🚗 Cargando producto.html');
+        console.log('  - ID desde URL:', vehiculoId);
+        console.log('  - Vehículo en localStorage:', vehiculoDetalle);
+        
+        if (vehiculoDetalle) {
+            // Si hay un ID en la URL y coincide, usar ese
+            if (vehiculoId && vehiculoDetalle.id === vehiculoId) {
+                vehiculo = vehiculoDetalle;
+            } else if (!vehiculoId) {
+                // Si no hay ID en URL, usar el último vehículo guardado
+                vehiculo = vehiculoDetalle;
+            } else if (vehiculoId && vehiculoId !== 'undefined') {
+                // Buscar en la flota actual si el ID no coincide
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                const currentUser = JSON.parse(localStorage.getItem("starclutch_user") || "null");
+                if (currentUser && currentUser.id) {
+                    try {
+                        const response = await fetch(`/api/flotas/usuario/${encodeURIComponent(currentUser.id)}`);
+                        if (response.ok) {
+                            const flotas = await response.json();
+                            for (const flota of flotas) {
+                                if (flota.vehiculos && Array.isArray(flota.vehiculos)) {
+                                    const encontrado = flota.vehiculos.find(v => v.id === vehiculoId);
+                                    if (encontrado) {
+                                        vehiculo = encontrado;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error cargando flotas:', error);
+                        // Si falla la API, usar el vehiculoDetalle de localStorage
+                        vehiculo = vehiculoDetalle;
+                    }
+                } else {
+                    // Si no hay usuario, usar el vehiculoDetalle de localStorage
+                    vehiculo = vehiculoDetalle;
+                }
+            }
+        }
+        
+        if (vehiculo) {
+            // Guardar datos del vehículo para uso en categorias.html
+            sessionStorage.setItem('vehiculo-seleccionado', JSON.stringify({
+                marca: vehiculo.marca,
+                modelo: vehiculo.modelo,
+                motor: vehiculo.motor || null,
+                tipo: vehiculo.tipo,
+                patente: vehiculo.patente || null
+            }));
+            
+            // Verificar y bloquear categorías no disponibles
+            await verificarCategoriasDisponibles(vehiculo);
+            
+            // Cargar carrusel de productos recomendados
+            await cargarCarruselRecomendados(vehiculo);
+            
+            // Recargar carrusel cuando la página se vuelve visible (para detectar nuevas interacciones)
+            window.addEventListener('pageshow', async (event) => {
+                // Si la página viene del cache (bfcache), recargar el carrusel
+                if (event.persisted) {
+                    console.log('Página restaurada desde cache, recargando carrusel...');
+                    await cargarCarruselRecomendados(vehiculo);
+                }
+            });
+            
+            // También escuchar cuando la página se vuelve visible (al volver con botón atrás)
+            document.addEventListener('visibilitychange', async () => {
+                if (!document.hidden) {
+                    console.log('Página visible de nuevo, recargando carrusel...');
+                    await cargarCarruselRecomendados(vehiculo);
+                }
+            });
+                // Escuchar cambios en localStorage para recomendaciones (si admin las marca en otra ventana)
+                window.addEventListener('storage', async (ev) => {
+                    if (!ev.key) return;
+                    if (ev.key.startsWith('recomendados_user_')) {
+                        // Si las recomendaciones del usuario actual cambiaron, recargar carrusel
+                        const currentUser = JSON.parse(localStorage.getItem('starclutch_user') || 'null');
+                        if (!currentUser || !currentUser.id) return;
+                        if (ev.key === `recomendados_user_${currentUser.id}`) {
+                            console.log('Recomendaciones actualizadas en storage, recargando carrusel...');
+                            await cargarCarruselRecomendados(vehiculo);
+                        }
+                    }
+                });
+            
+            // Agregar evento a todos los enlaces de categorías
+            document.querySelectorAll('.seccion-item').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    if (link.classList.contains('seccion-bloqueada')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    console.log('Click en categoría, vehículo:', vehiculo.marca, vehiculo.modelo, vehiculo.motor || 'sin motor');
+                });
+            });
+        } else {
+            console.warn('No se pudo cargar el vehículo. ID:', vehiculoId || 'No proporcionado');
+            console.log('Intenta clickear nuevamente en una tarjeta de vehículo desde Mis Flotas');
+            
+            // Mostrar mensaje al usuario
+            const detalleLayout = document.getElementById('detalle-layout');
+            if (detalleLayout) {
+                detalleLayout.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                        <img src="../img/Agregar flota.svg" alt="Sin vehículo" style="width: 80px; height: 80px; opacity: 0.3; margin-bottom: 20px;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 20px; color: #333;">No se pudo cargar el vehículo</h3>
+                        <p style="margin: 0 0 20px 0; font-size: 16px; color: #666;">Por favor, selecciona un vehículo desde Mis Flotas</p>
+                        <a href="index.html" class="btn-primary" style="display: inline-block; text-decoration: none;">
+                            Volver a Mis Flotas
+                        </a>
+                    </div>
+                `;
+            }
+        }
+    });
+
+    // ==== CARRUSEL DE PRODUCTOS RECOMENDADOS ====
+    async function cargarCarruselRecomendados(vehiculo) {
+        try {
+            // Obtener usuario actual para cargar productos con descuentos actualizados
+            let userId = null;
+            try {
+                const currentUser = JSON.parse(localStorage.getItem('starclutch_user') || 'null');
+                if (currentUser && currentUser.id) userId = currentUser.id;
+            } catch (e) { console.warn('No hay usuario logueado'); }
+            
+            // Cargar cruces y productos (productos desde servidor si hay userId)
+            let productosData = [];
+            const crucesResponse = await fetch('../datosproductos/cruces_vehiculos.json');
+            const crucesData = await crucesResponse.json();
+            
+            if (userId) {
+                try {
+                    const resp = await fetch(`/api/obtener-productos?userId=${userId}`);
+                    productosData = await resp.json();
+                } catch (e) {
+                    console.warn('Error obteniendo productos del servidor, usando fallback', e);
+                    const resp = await fetch('../datosproductos/productos_db.json');
+                    productosData = await resp.json();
+                }
+            } else {
+                const resp = await fetch('../datosproductos/productos_db.json');
+                productosData = await resp.json();
+            }
+            
+            // Buscar el cruce del vehículo
+            const marcaNorm = normalizarTexto(vehiculo.marca);
+            const modeloNorm = normalizarTexto(vehiculo.modelo);
+            const cruce = crucesData.cruces.find(c => {
+                return normalizarTexto(c.marca) === marcaNorm && normalizarTexto(c.modelo) === modeloNorm;
+            });
+            
+            if (!cruce || !cruce.categorias) {
+                console.warn('No se encontró cruce para el vehículo');
+                return;
+            }
+            
+            // Recopilar todos los SKUs de todas las categorías
+            let todosLosSKUs = [];
+            let marcasPorSKU = {};
+            
+            for (const [catKey, catData] of Object.entries(cruce.categorias)) {
+                if (Array.isArray(catData)) {
+                    catData.forEach(p => {
+                        todosLosSKUs.push(p.sku);
+                        if (p.marca) {
+                            marcasPorSKU[normalizarTexto(p.sku)] = p.marca;
+                        }
+                    });
+                } else if (catData.sku) {
+                    todosLosSKUs.push(catData.sku);
+                    if (catData.marca) {
+                        marcasPorSKU[normalizarTexto(catData.sku)] = catData.marca;
+                    }
+                }
+            }
+            
+            // Buscar todos los productos en la base de datos
+            const skusNormalizados = todosLosSKUs.map(sku => normalizarTexto(sku));
+            let productos = productosData.filter(p => 
+                skusNormalizados.includes(normalizarTexto(p.codSC))
+            );
+            
+            // Aplicar marcas del cruce
+            productos = productos.map(p => ({
+                ...p,
+                marca: marcasPorSKU[normalizarTexto(p.codSC)] || p.marca
+            }));
+            
+            // ==== OBTENER TRACKING DE INTERACCIONES ====
+            function getTrackingKey(vehiculo) {
+                try {
+                    const user = JSON.parse(localStorage.getItem('starclutch_user') || 'null');
+                    if (user && (user.id || user.email)) return `tracking_user_${user.id || user.email}`;
+
+                    let v = vehiculo;
+                    if (!v) {
+                        const vehData = sessionStorage.getItem('vehiculo-seleccionado');
+                        if (vehData) v = JSON.parse(vehData);
+                    }
+                    if (v) {
+                        const parts = [v.marca || '', v.modelo || '', v.motor || '', v.tipo || '']
+                            .map(s => normalizarTexto(String(s || '')))
+                            .filter(Boolean);
+                        const vehKey = parts.join('_') || 'unknown';
+                        return `tracking_veh_${vehKey}`;
+                    }
+                    return 'tracking_global';
+                } catch (e) {
+                    console.error('Error generando tracking key:', e);
+                    return 'tracking_global';
+                }
+            }
+
+            const trackingKey = getTrackingKey(vehiculo);
+            const tracking = JSON.parse(localStorage.getItem(trackingKey) || '{"visitas": {}, "carritos": {}}');
+            
+            // Calcular score de interacción para cada producto
+            // Además, obtener recomendaciones guardadas en servidor para el usuario actual
+            const currentUser = JSON.parse(localStorage.getItem('starclutch_user') || 'null');
+            let adminRecs = [];
+            if (currentUser && currentUser.id) {
+                try {
+                    const resp = await fetch(`/api/recomendados?userId=${encodeURIComponent(currentUser.id)}`);
+                    if (resp.ok) {
+                        const j = await resp.json();
+                        if (j && j.ok && Array.isArray(j.recomendados)) {
+                            adminRecs = j.recomendados.map(s => normalizarTexto(s || ''));
+                        }
+                    }
+                } catch (e) {
+                    // fallback local
+                    try { adminRecs = JSON.parse(localStorage.getItem(`recomendados_user_${currentUser.id}`) || '[]'); } catch (e) { adminRecs = []; }
+                }
+            }
+
+            productos = productos.map(p => {
+                const keySku = normalizarTexto(p.codSC || '');
+                const visitas = tracking.visitas[keySku] || 0;
+                const carritos = tracking.carritos[keySku] || 0;
+
+                // Score: carritos valen más que visitas
+                const score = (carritos * 10) + visitas;
+
+                const isAdminRecommended = adminRecs.includes(keySku);
+
+                return {
+                    ...p,
+                    interactionScore: score,
+                    isAdminRecommended
+                };
+            });
+            
+            // LÓGICA DE PRIORIZACIÓN ESPECIAL
+            productos.sort((a, b) => {
+                // PRIORIDAD 0: Productos marcados manualmente como recomendados por admin
+                if (a.isAdminRecommended && !b.isAdminRecommended) return -1;
+                if (!a.isAdminRecommended && b.isAdminRecommended) return 1;
+
+                // PRIORIDAD 1: Productos con interacciones del usuario (visitas/carritos)
+                if (a.interactionScore > 0 && b.interactionScore === 0) return -1;
+                if (a.interactionScore === 0 && b.interactionScore > 0) return 1;
+                if (a.interactionScore > 0 && b.interactionScore > 0) {
+                    return b.interactionScore - a.interactionScore; // Mayor score primero
+                }
+                
+                // PRIORIDAD 2: Productos en descuento
+                const aDescuento = a.descuento && parseFloat(a.descuento) > 0;
+                const bDescuento = b.descuento && parseFloat(b.descuento) > 0;
+                if (aDescuento && !bDescuento) return -1;
+                if (!aDescuento && bDescuento) return 1;
+                
+                // Función para detectar tipo de producto
+                const esKitEmbrague = (nombre) => {
+                    const n = normalizarTexto(nombre || '');
+                    return n.includes('kit') && n.includes('embrague');
+                };
+                
+                const esKitEmbragueVolante = (nombre) => {
+                    const n = normalizarTexto(nombre || '');
+                    return n.includes('kit') && n.includes('embrague') && n.includes('volante');
+                };
+                
+                const esPastillasFreno = (nombre) => {
+                    const n = normalizarTexto(nombre || '');
+                    return n.includes('pastilla') && n.includes('freno');
+                };
+                
+                // Prioridad 3: Kit de embrague + volante
+                const aEsKitVolante = esKitEmbragueVolante(a.repuesto);
+                const bEsKitVolante = esKitEmbragueVolante(b.repuesto);
+                if (aEsKitVolante && !bEsKitVolante) return -1;
+                if (!aEsKitVolante && bEsKitVolante) return 1;
+                
+                // Prioridad 4: Kit de embrague
+                const aEsKit = esKitEmbrague(a.repuesto);
+                const bEsKit = esKitEmbrague(b.repuesto);
+                if (aEsKit && !bEsKit) return -1;
+                if (!aEsKit && bEsKit) return 1;
+                
+                // Prioridad 5: Pastillas de freno
+                const aEsPastillas = esPastillasFreno(a.repuesto);
+                const bEsPastillas = esPastillasFreno(b.repuesto);
+                if (aEsPastillas && !bEsPastillas) return -1;
+                if (!aEsPastillas && bEsPastillas) return 1;
+                
+                // Prioridad 6: Resto - Mezclar productos caros con otros
+                // Ordenar por precio pero con factor aleatorio para mezclar
+                const precioA = a.precio || 0;
+                const precioB = b.precio || 0;
+                
+                // Dividir en rangos de precio para mezclar
+                const rangoA = Math.floor(precioA / 50000); // Rangos de 50k
+                const rangoB = Math.floor(precioB / 50000);
+                
+                if (rangoA !== rangoB) {
+                    return rangoB - rangoA; // Más caros primero por rango
+                }
+                
+                // Dentro del mismo rango, mezclar aleatoriamente (usar hash del SKU como seed)
+                const hashA = a.codSC.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                const hashB = b.codSC.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                return hashA - hashB;
+            });
+            
+            // Renderizar carrusel
+            renderizarCarruselRecomendados(productos);
+
+            // Helper de depuración: exponer función para inspeccionar scores en consola
+            window.__debugRecomendados = function() {
+                try {
+                    const listado = productos.map(p => ({ sku: p.codSC, interactionScore: p.interactionScore || 0, isAdminRecommended: !!p.isAdminRecommended, nombre: p.repuesto }));
+                    console.table(listado.sort((a,b) => (b.isAdminRecommended - a.isAdminRecommended) || (b.interactionScore - a.interactionScore)));
+                    const key = getTrackingKey(vehiculo);
+                    console.log('Tracking key usada:', key, localStorage.getItem(key));
+                    return listado;
+                } catch (e) { console.error(e); }
+            };
+            
+        } catch (error) {
+            console.error('Error cargando carrusel recomendados:', error);
+        }
+    }
+    
+    function renderizarCarruselRecomendados(productos) {
+        const track = document.querySelector('.seccion-recomendados-detalle .track-detalle');
+        if (!track) return;
+        
+        track.innerHTML = '';
+        
+        // Renderizar TODOS los productos (el carrusel navegará entre ellos)
+        productos.forEach(producto => {
+            const tieneDescuento = producto.descuento && producto.descuento > 0;
+            const precioOriginal = producto.precio || 0;
+            const precioFinal = tieneDescuento ? (precioOriginal * (1 - producto.descuento / 100)) : precioOriginal;
+            
+            const marca = (producto.marca || '').toUpperCase();
+            const marcaLogo = `../marcasproductos/${marca}.png`;
+            const tieneImagen = producto.imagenes && producto.imagenes.length > 0;
+            const primeraImagen = tieneImagen ? producto.imagenes[0] : null;
+            
+            // Determinar qué SKU mostrar
+            const codCliente = producto.codCliente || '';
+            const codSC = producto.codSC || '';
+            const skuVisible = codCliente ? codCliente : codSC;
+            const skuInvisible = codCliente ? codSC : '';
+            
+            const card = document.createElement('div');
+            card.className = 'card-producto-detalle';
+            card.style.cursor = 'pointer';
+            
+            card.innerHTML = `
+                <div class="header-producto-detalle">
+                    <h4>${producto.repuesto || 'Producto sin nombre'}</h4>
+                    <span class="sku-visible">SKU: ${skuVisible}</span>
+                    ${skuInvisible ? `<span class="sku-invisible">${skuInvisible}</span>` : ''}
+                    ${tieneDescuento ? '<span class="badge-oferta">Oferta</span>' : ''}
+                </div>
+                <div class="body-producto-detalle" data-sku="${codSC}">
+                    ${tieneImagen ? `<img src="${primeraImagen}" alt="${producto.repuesto}" class="carousel-image">` : `<div class="placeholder-sin-imagen"><img src="../img/Logo SC.svg" alt="StarClutch"><p>No hay imagen</p></div>`}
+                </div>
+                <div class="footer-producto-detalle">
+                    <div class="logo-marca-detalle">
+                        <img src="${marcaLogo}" alt="${marca}" onerror="this.src='../img/placeholder-logo-marca.svg'">
+                    </div>
+                    <div class="precio-container-detalle">
+                        ${tieneDescuento ? `<span class="precio-anterior-detalle">$${Math.round(precioOriginal).toLocaleString('es-CL')}</span>` : ''}
+                        <span class="precio-actual-detalle">$${Math.round(precioFinal).toLocaleString('es-CL')}</span>
+                    </div>
+                </div>
+            `;
+            
+            // Click en tarjeta: ir a detalle del producto (flujo cruce)
+            card.addEventListener('click', async () => {
+                // Guardar producto en sessionStorage
+                sessionStorage.setItem('productoDetalle', JSON.stringify({
+                    ...producto,
+                    fichaTecnica: producto.fichaTecnica || '',
+                    referenciaCruzada: producto.referenciaCruzada || '',
+                    oem: producto.oem || '',
+                    stock: producto.stock || 0
+                }));
+                
+                // Obtener vehículo actual
+                const vehiculoStr = sessionStorage.getItem('vehiculo-seleccionado');
+                if (vehiculoStr) {
+                    try {
+                        // Cargar TODOS los productos del vehículo para el carrusel de "Otros productos"
+                        const [crucesResponse, productosResponse] = await Promise.all([
+                            fetch('../datosproductos/cruces_vehiculos.json'),
+                            fetch('../datosproductos/productos_db.json')
+                        ]);
+                        
+                        const crucesData = await crucesResponse.json();
+                        const productosData = await productosResponse.json();
+                        
+                        const vehiculo = JSON.parse(vehiculoStr);
+                        const marcaNorm = normalizarTexto(vehiculo.marca);
+                        const modeloNorm = normalizarTexto(vehiculo.modelo);
+                        const cruce = crucesData.cruces.find(c => {
+                            return normalizarTexto(c.marca) === marcaNorm && normalizarTexto(c.modelo) === modeloNorm;
+                        });
+                        
+                        if (cruce && cruce.categorias) {
+                            let todosLosSKUs = [];
+                            let todasMarcasPorSKU = {};
+                            
+                            for (const [catKey, catData] of Object.entries(cruce.categorias)) {
+                                if (Array.isArray(catData)) {
+                                    catData.forEach(p => {
+                                        todosLosSKUs.push(p.sku);
+                                        if (p.marca) {
+                                            todasMarcasPorSKU[normalizarTexto(p.sku)] = p.marca;
+                                        }
+                                    });
+                                } else if (catData.sku) {
+                                    todosLosSKUs.push(catData.sku);
+                                    if (catData.marca) {
+                                        todasMarcasPorSKU[normalizarTexto(catData.sku)] = catData.marca;
+                                    }
+                                }
+                            }
+                            
+                            const skusNormalizados = todosLosSKUs.map(sku => normalizarTexto(sku));
+                            let todosLosProductos = productosData.filter(p => 
+                                skusNormalizados.includes(normalizarTexto(p.codSC))
+                            );
+                            
+                            todosLosProductos = todosLosProductos.map(p => ({
+                                ...p,
+                                marca: todasMarcasPorSKU[normalizarTexto(p.codSC)] || p.marca
+                            }));
+                            
+                            // Priorizar con descuentos y coincidencias
+                            const productoActual = producto.codSC;
+                            todosLosProductos.sort((a, b) => {
+                                const aDescuento = a.descuento && a.descuento > 0;
+                                const bDescuento = b.descuento && b.descuento > 0;
+                                
+                                const tieneCoincidencia = (sku1, sku2) => {
+                                    const base1 = sku1.replace(/^[A-Z]+/, '');
+                                    const base2 = sku2.replace(/^[A-Z]+/, '');
+                                    return base1 === base2 && base1.length > 0;
+                                };
+                                
+                                const aCoincide = tieneCoincidencia(a.codSC, productoActual);
+                                const bCoincide = tieneCoincidencia(b.codSC, productoActual);
+                                
+                                if (aDescuento && !bDescuento) return -1;
+                                if (!aDescuento && bDescuento) return 1;
+                                if (aCoincide && !bCoincide) return -1;
+                                if (!aCoincide && bCoincide) return 1;
+                                
+                                return 0;
+                            });
+                            
+                            sessionStorage.setItem('productosCarrusel', JSON.stringify(todosLosProductos));
+                        }
+                    } catch (error) {
+                        console.error('Error cargando productos del cruce:', error);
+                    }
+                }
+                
+                sessionStorage.setItem('origenCarrusel', 'cruce');
+                
+                // Navegar a detalleproducto.html
+                window.location.href = `detalleproducto.html?sku=${encodeURIComponent(producto.codSC)}`;
+            });
+            
+            track.appendChild(card);
+        });
+        
+        // Inicializar navegación del carrusel
+        inicializarNavegacionCarrusel();
+    }
+    
+    // Variables para navegación del carrusel
+    let paginaCarruselActual = 0;
+    const PRODUCTOS_POR_PAGINA_CARRUSEL = 4;
+    
+    function inicializarNavegacionCarrusel() {
+        const track = document.querySelector('.seccion-recomendados-detalle .track-detalle');
+        const prevBtn = document.querySelector('.seccion-recomendados-detalle .btn-nav-detalle.prev');
+        const nextBtn = document.querySelector('.seccion-recomendados-detalle .btn-nav-detalle.next');
+        
+        if (!track || !prevBtn || !nextBtn) return;
+        
+        const totalProductos = track.children.length;
+        const totalPaginas = Math.ceil(totalProductos / PRODUCTOS_POR_PAGINA_CARRUSEL);
+        
+        function actualizarCarrusel() {
+            const desplazamiento = paginaCarruselActual * 100;
+            track.style.transform = `translateX(-${desplazamiento}%)`;
+            
+            // Actualizar estado de botones
+            prevBtn.disabled = paginaCarruselActual === 0;
+            nextBtn.disabled = paginaCarruselActual >= totalPaginas - 1;
+        }
+        
+        prevBtn.addEventListener('click', () => {
+            if (paginaCarruselActual > 0) {
+                paginaCarruselActual--;
+                actualizarCarrusel();
+            }
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            if (paginaCarruselActual < totalPaginas - 1) {
+                paginaCarruselActual++;
+                actualizarCarrusel();
+            }
+        });
+        
+        // Estado inicial
+        actualizarCarrusel();
+    }
+  </script>
+
+<!-- Panel de Carrito -->
+<div class="cart-overlay" id="cart-overlay" onclick="cerrarCarrito()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-header">
+    <h3><img src="../img/carrito.svg" alt="" style="width:20px;height:20px;filter:brightness(0) invert(1);margin-right:8px;">Carrito</h3>
+    <button class="cart-close" onclick="cerrarCarrito()">&times;</button>
+  </div>
+  <div class="cart-body">
+    <div class="cart-empty" id="cart-empty">
+      <img src="../img/carrito.svg" alt="Carrito vacío" />
+      <p>Tu carrito está vacío</p>
+    </div>
+    <ul class="cart-list" id="cart-list"></ul>
+  </div>
+  <div class="cart-footer" id="cart-footer" style="display:none;">
+    <p class="cart-total"><strong>Total:</strong> $0 <span>IVA incluido</span></p>
+    <div class="cart-actions">
+      <button class="cart-btn-primary" onclick="generarOrdenCompraDesdeOtroHTML()">Generar OC</button>
+      <button class="cart-btn-secondary" onclick="cotizarDesdeOtroHTML()">Cotizar</button>
+    </div>
+    <a href="carrito.html" class="cart-link">Ver resumen del carrito</a>
+  </div>
+</div>
+
+<!-- Panel de Notificaciones -->
+<div class="notif-overlay" id="notif-overlay" onclick="cerrarNotificaciones()"></div>
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">
+    <h3>
+      Todas las notificaciones
+      <button class="notif-close" onclick="cerrarNotificaciones()">&times;</button>
+    </h3>
+  </div>
+  
+  <div class="notif-tabs">
+    <div class="notif-tabs-left">
+      <button class="notif-tab active" data-filter="todas">Todas</button>
+      <button class="notif-tab" data-filter="sin-leer">Sin leer <span class="notif-tab-count"></span></button>
+    </div>
+    <button id="marcar-todas-vistas">Marcar como vistas</button>
+  </div>
+  
+  <div class="notif-body">
+    <div id="notif-list" style="display: none;"></div>
+    <div class="notif-empty" id="notif-empty">
+      <div class="notif-empty-icon">
+        <img src="../img/Alerta.svg" alt="Sin notificaciones">
+      </div>
+      <h4>No hay notificaciones</h4>
+      <p>Cuando tengas novedades sobre productos, ofertas o actualizaciones, aparecerán aquí.</p>
+    </div>
+  </div>
+</div>
+
+<script src="../notificaciones.js"></script>
+<script>
+// Modal mantención - funciones públicas
+window.abrirModalMantencion = function() {
+    const overlay = document.getElementById('pm-overlay');
+    const modal = document.getElementById('pm-modal');
+    const inputFecha = document.getElementById('pm-fecha');
+    if (inputFecha && !inputFecha.value) {
+        const hoy = new Date();
+        const yyyy = hoy.getFullYear();
+        const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+        const dd = String(hoy.getDate()).padStart(2, '0');
+        inputFecha.value = `${yyyy}-${mm}-${dd}`;
+    }
+    if (overlay) overlay.style.display = 'block';
+    if (modal) modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+};
+
+window.cerrarModalMantencion = function() {
+    const overlay = document.getElementById('pm-overlay');
+    const modal = document.getElementById('pm-modal');
+    if (overlay) overlay.style.display = 'none';
+    if (modal) modal.style.display = 'none';
+    document.body.style.overflow = '';
+};
+
+function obtenerUsuarioId() {
+    const sesion = JSON.parse(localStorage.getItem('starclutch_user') || 'null');
+    const uid = sesion && sesion.id ? sesion.id : localStorage.getItem('usuarioID');
+    if (sesion && sesion.id) localStorage.setItem('usuarioID', sesion.id);
+    return uid;
+}
+
+function ultimoDiaDelMes(year, monthIndex) {
+    return new Date(year, monthIndex + 1, 0).getDate();
+}
+
+window.programarMantencionDesdeProducto = function() {
+    const usuarioId = obtenerUsuarioId();
+    if (!usuarioId) {
+        alert('Debes iniciar sesión para programar mantenciones.');
+        return;
+    }
+
+    const fechaStr = document.getElementById('pm-fecha').value;
+    const esRecurrente = document.getElementById('pm-recurrencia').checked;
+    if (!fechaStr) {
+        alert('Selecciona una fecha válida.');
+        return;
+    }
+
+    const vehiculo = (window.detalleVehiculoActual) ? {
+        marca: window.detalleVehiculoActual.marca || window.detalleVehiculoActual.fabricante || 'Vehículo',
+        modelo: window.detalleVehiculoActual.modelo || '',
+        anio: window.detalleVehiculoActual.anio || null,
+        patente: window.detalleVehiculoActual.patente || null,
+        motor: window.detalleVehiculoActual.motor || null,
+        tipo: window.detalleVehiculoActual.tipo || 'camioneta'
+    } : null;
+
+    if (!vehiculo) {
+        alert('No se pudo obtener el vehículo actual.');
+        return;
+    }
+
+    const mant = {
+        id: `mant_${Date.now()}_${Math.random().toString(36).slice(2,10)}`,
+        vehiculo,
+        fecha: fechaStr,
+        productos: [],
+        sistemas: [],
+        creado: new Date().toISOString(),
+        recurrente: null
+    };
+
+    if (esRecurrente) {
+        const [y,m,d] = fechaStr.split('-').map(Number);
+        mant.recurrente = {
+            tipo: 'mensual',
+            dia: d,
+            activo: true,
+            proxima: fechaStr
+        };
+    }
+
+    const keyMants = `mantenimientos_${usuarioId}`;
+    const existentes = JSON.parse(localStorage.getItem(keyMants) || '[]');
+    existentes.push(mant);
+    localStorage.setItem(keyMants, JSON.stringify(existentes));
+
+    // Intentar programar notificaciones locales/siguientes ocurrencias
+    if (window.programadorMantenimientos && typeof window.programadorMantenimientos.recalcular === 'function') {
+        window.programadorMantenimientos.recalcular();
+    }
+
+    alert(`✓ Mantención programada para ${vehiculo.marca} ${vehiculo.modelo}${esRecurrente ? ' (repetición mensual activa)' : ''}`);
+    window.cerrarModalMantencion();
+};
+</script>
+<script>
+function toggleNotificaciones() {
+  const panel = document.getElementById('notif-panel');
+  const overlay = document.getElementById('notif-overlay');
+  if (panel.classList.contains('open')) {
+    cerrarNotificaciones();
+  } else {
+    panel.classList.add('open');
+    overlay.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+  }
+}
+function cerrarNotificaciones() {
+  const panel = document.getElementById('notif-panel');
+  const overlay = document.getElementById('notif-overlay');
+  panel.classList.remove('open');
+  overlay.classList.remove('visible');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const panel = document.getElementById('notif-panel');
+    if (panel && panel.classList.contains('open')) cerrarNotificaciones();
+    const cartPanel = document.getElementById('cart-panel');
+    if (cartPanel && cartPanel.classList.contains('open')) cerrarCarrito();
+  }
+});
+async function toggleCarrito() { const panel = document.getElementById('cart-panel'); const overlay = document.getElementById('cart-overlay'); if (panel.classList.contains('open')) { cerrarCarrito(); } else { if (typeof CarritoGlobal !== 'undefined') { await CarritoGlobal.sincronizar(); CarritoGlobal.iniciarPolling(); } panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
+function cerrarCarrito() { if (typeof CarritoGlobal !== 'undefined') CarritoGlobal.detenerPolling(); const panel = document.getElementById('cart-panel'); const overlay = document.getElementById('cart-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+</script>
+</body>
+</html>

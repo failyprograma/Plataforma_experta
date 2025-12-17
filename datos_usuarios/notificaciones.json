@@ -1,0 +1,1157 @@
+[
+  {
+    "id": "notif_1765912474511_y3ef7wnoj",
+    "userId": "ecousuario",
+    "tipo": "mantenimiento_programado",
+    "titulo": "Mantenimientos Programados",
+    "mensaje": "Se programaron 3 mantenimientos para tus vehículos.\n\nVehículos: Toyota Hilux 2.8 (Sin especificar), Mitsubishi L-200 2.4 (Sin especificar), Citroen Berlingo 1.6 K9 (Sin especificar)\n\n⚠️ 2 mantenimientos programados en los próximos 7 días.",
+    "datos": {
+      "groupId": "mant_1765912474510",
+      "cantidadVehiculos": 3,
+      "vehiculos": [
+        "Toyota Hilux 2.8 (Sin especificar)",
+        "Mitsubishi L-200 2.4 (Sin especificar)",
+        "Citroen Berlingo 1.6 K9 (Sin especificar)"
+      ]
+    },
+    "leida": true,
+    "fecha": "2025-12-16T19:14:34.511Z"
+  },
+  {
+    "id": "notif_1765928252179_eo00zsrzk",
+    "userId": null,
+    "tipo": "nuevo_producto",
+    "titulo": "Nuevo producto disponible",
+    "mensaje": "Se ha agregado Barra de dirección de la marca SAB a nuestro catÃ¡logo.",
+    "datos": {
+      "productoId": "prod_1765928252178_ejdsxp1tm",
+      "productoNombre": "Barra de dirección",
+      "productoMarca": "SAB",
+      "precioNuevo": 222,
+      "descuento": 2
+    },
+    "leida": true,
+    "fecha": "2025-12-16T23:37:32.179Z"
+  },
+  {
+    "id": "notif_1765928350096_ojce78vr3",
+    "userId": null,
+    "tipo": "nuevo_producto",
+    "titulo": "Nuevo producto disponible",
+    "mensaje": "Se ha agregado Barra de dirección de la marca SAB a nuestro catÃ¡logo.",
+    "datos": {
+      "productoId": "prod_1765928350095_1jm7xr608",
+      "productoNombre": "Barra de dirección",
+      "productoMarca": "SAB",
+      "precioNuevo": 2131,
+      "descuento": 3
+    },
+    "leida": true,
+    "fecha": "2025-12-16T23:39:10.096Z"
+  },
+  {
+    "id": "notif_1765932478303_q8ku6czie",
+    "userId": "ecousuario",
+    "tipo": "banner_actualizado",
+    "titulo": "Tus banners de ofertas han sido actualizados",
+    "mensaje": "Se han actualizado los banners de ofertas exclusivas en tu cuenta. Revisa las nuevas promociones disponibles para ti.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": true,
+    "fecha": "2025-12-17T00:47:58.303Z"
+  },
+  {
+    "id": "notif_1765933292244_bvmaefs84",
+    "userId": "ecousuario",
+    "tipo": "banner_actualizado",
+    "titulo": "Tus banners de ofertas han sido actualizados",
+    "mensaje": "Se han actualizado los banners de ofertas exclusivas en tu cuenta. Revisa las nuevas promociones disponibles para ti.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": true,
+    "fecha": "2025-12-17T01:01:32.244Z"
+  },
+  {
+    "id": "notif_1765934867591_jqkexnars",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": true,
+    "fecha": "2025-12-17T01:27:47.591Z"
+  },
+  {
+    "id": "notif_1765935418630_cmtpu35jz",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 0 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": true,
+    "fecha": "2025-12-17T01:36:58.630Z"
+  },
+  {
+    "id": "notif_1765935548863_desywkyqs",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": true,
+    "fecha": "2025-12-17T01:39:08.863Z"
+  },
+  {
+    "id": "notif_1765935572249_17jwqm9e2",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 0 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": true,
+    "fecha": "2025-12-17T01:39:32.249Z"
+  },
+  {
+    "id": "notif_1765936628996_xco5r9url",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": true,
+    "fecha": "2025-12-17T01:57:08.996Z"
+  },
+  {
+    "id": "notif_1765936868065_42s7xy4zy",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 0 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": true,
+    "fecha": "2025-12-17T02:01:08.065Z"
+  },
+  {
+    "id": "notif_1765936915231_5oly1xpnr",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": true,
+    "fecha": "2025-12-17T02:01:55.231Z"
+  },
+  {
+    "id": "notif_1765937103598_ljx6g163r",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 0 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": true,
+    "fecha": "2025-12-17T02:05:03.598Z"
+  },
+  {
+    "id": "notif_1765937147463_jknjjn868",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": true,
+    "fecha": "2025-12-17T02:05:47.463Z"
+  },
+  {
+    "id": "notif_1765937179723_fuzyytrw8",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 0 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": true,
+    "fecha": "2025-12-17T02:06:19.723Z"
+  },
+  {
+    "id": "notif_1765938090885_58hlrtm6z",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": true,
+    "fecha": "2025-12-17T02:21:30.885Z"
+  },
+  {
+    "id": "notif_1765938887026_9hg3trvkt",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": true,
+    "fecha": "2025-12-17T02:34:47.026Z"
+  },
+  {
+    "id": "notif_1765938901726_1bemgfb3q",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": true,
+    "fecha": "2025-12-17T02:35:01.726Z"
+  },
+  {
+    "id": "notif_1765939466232_7d4qdgzwp",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 2 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": false,
+    "fecha": "2025-12-17T02:44:26.232Z"
+  },
+  {
+    "id": "notif_1765939508843_evzk11icr",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": false,
+    "fecha": "2025-12-17T02:45:08.843Z"
+  },
+  {
+    "id": "notif_1765939686178_9udvv63zg",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 2 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": false,
+    "fecha": "2025-12-17T02:48:06.178Z"
+  },
+  {
+    "id": "notif_1765940647858_7usnwk0fq",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": false,
+    "fecha": "2025-12-17T03:04:07.858Z"
+  },
+  {
+    "id": "notif_1765940651694_c4lz7opbu",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 0 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": false,
+    "fecha": "2025-12-17T03:04:11.694Z"
+  },
+  {
+    "id": "notif_1765941411881_sxjml5ttm",
+    "userId": "ecousuario",
+    "tipo": "mantenimiento_hoy",
+    "titulo": "🔔 Mantenimiento Hoy",
+    "mensaje": "Hoy tienes programado un mantenimiento.\n\nVehículo: Mitsubishi L-200 2.4 (Sin especificar)\nSistemas: frenos\n\nProductos:\n• undefined\n• undefined\n• undefined\n• undefined\n• undefined\n• undefined",
+    "datos": {
+      "mantenimientoId": "mant_1765912474510_1",
+      "vehiculo": "Mitsubishi L-200 2.4 (Sin especificar)",
+      "fecha": "2025-12-17",
+      "productos": [
+        {
+          "id": "prod_1765421675357_oqs2zndkl",
+          "userId": "ecousuario",
+          "codCliente": "",
+          "repuesto": "Pastillas de freno",
+          "marca": "FRASLE",
+          "linea": "Frenos",
+          "codSC": "PAS771A",
+          "precio": 12900,
+          "descuento": 0,
+          "stock": 1,
+          "fichaTecnica": "Posición: Delantera\nFormulación: Advanced\nAltura [mm]: 51\nAncho [mm]: 155,4\nEspesor [mm]: 16",
+          "referenciaCruzada": "MITSUBISHI: 4605A284\nMITSUBISHI: 4605A198\nMITSUBISHI: 4605B233\nMITSUBISHI: MZ690356\nMITSUBISHI:4605A930\nMITSUBISHI: MZ690587\nMITSUBISHI:TS200052\nMITSUBISHI: 4605B290\nFIAT: 6000609714\nFIAT: 0006000609714\nFIAT: 6000609715\nFIAT: 0006000609715\nJURID: 24529\nJURID: 24530\nJURID: 572574",
+          "oem": "FRASLE: PD/771",
+          "imagenes": [
+            "/uploads/productos/prod-1765421675301-57416835.png"
+          ],
+          "fechaCreacion": "2025-12-11T02:54:35.357Z",
+          "fechaModificacion": "2025-12-11T18:55:47.560Z"
+        },
+        {
+          "id": "prod_1765421675357_wi2fxpnkq",
+          "userId": "ecousuario",
+          "codCliente": "",
+          "repuesto": "Pastillas de freno",
+          "marca": "HTECH",
+          "linea": "Frenos",
+          "codSC": "PT7710HT",
+          "precio": 10800,
+          "descuento": 0,
+          "stock": 1,
+          "fichaTecnica": "Posición: Delantera\nFormulación: Advanced\nAltura [mm]: 51\nAncho [mm]: 155,4\nEspesor [mm]: 16",
+          "referenciaCruzada": "MITSUBISHI: 4605A284\nMITSUBISHI: 4605A198\nMITSUBISHI: 4605B233\nMITSUBISHI: MZ690356\nMITSUBISHI:4605A930\nMITSUBISHI: MZ690587\nMITSUBISHI:TS200052\nMITSUBISHI: 4605B290\nFIAT: 6000609714\nFIAT: 0006000609714\nFIAT: 6000609715\nFIAT: 0006000609715\nJURID: 24529\nJURID: 24530\nJURID: 572574",
+          "oem": "FRASLE: PD/771",
+          "imagenes": [
+            "/uploads/productos/prod-1765421675309-508549841.png"
+          ],
+          "fechaCreacion": "2025-12-11T02:54:35.357Z",
+          "fechaModificacion": "2025-12-11T18:56:49.292Z"
+        },
+        {
+          "id": "prod_1765421675357_deywl71g4",
+          "userId": "ecousuario",
+          "codCliente": "",
+          "repuesto": "Disco de freno",
+          "marca": "FRASLE",
+          "linea": "Frenos",
+          "codSC": "DFMIT771F",
+          "precio": 42900,
+          "descuento": 0,
+          "stock": 1,
+          "fichaTecnica": "Diámetro exterior: 294 mm.\nPernos: 6 x 12,5 mm.\nDistancia entre pernos: 139,7 mm.\nEspesor: 28 mm.\nAltura: 46,5 mm.\nDiámetro interior: 94 mm.\nDiámetro corona: 184 mm.\n2 Discos de Freno",
+          "referenciaCruzada": "FIAT: K6000609712\nMITSUBISHI ORIGINAL: 4615A200\nMITSUBISHI ORIGINAL: MN102276\nMITSUBISHI ORIGINAL: 4615A201\nMITSUBISHI ORIGINAL: 4615A147\nFRASLE: FLDI00024\nFREMAX: BD7019",
+          "oem": "",
+          "imagenes": [
+            "/uploads/productos/prod-1765421675328-788321647.png"
+          ],
+          "fechaCreacion": "2025-12-11T02:54:35.357Z",
+          "fechaModificacion": "2025-12-11T18:58:13.203Z"
+        },
+        {
+          "id": "prod_1765421675357_4ox91g0ki",
+          "userId": "ecousuario",
+          "codCliente": "",
+          "repuesto": "Disco de freno",
+          "marca": "HTECH",
+          "linea": "Frenos",
+          "codSC": "FR7710HT",
+          "precio": 18500,
+          "descuento": 0,
+          "stock": 1,
+          "fichaTecnica": "",
+          "referenciaCruzada": "",
+          "oem": "",
+          "imagenes": [
+            "/uploads/productos/prod-1765421675330-345237860.png",
+            "/uploads/productos/prod-1765421675334-558058515.png",
+            "/uploads/productos/prod-1765421675346-904931210.png"
+          ],
+          "fechaCreacion": "2025-12-11T02:54:35.357Z",
+          "fechaModificacion": "2025-12-11T19:01:46.571Z"
+        },
+        {
+          "id": "prod_1765422068691_e222fkh02",
+          "userId": "ecousuario",
+          "codCliente": "",
+          "repuesto": "Patines",
+          "marca": "FRASLE",
+          "linea": "Frenos",
+          "codSC": "PAT377T",
+          "precio": 12900,
+          "descuento": 0,
+          "stock": 1,
+          "fichaTecnica": "ADVANCED\nAncho [mm]: 50\nDiámetro interior de tambor de freno [mm]: 295",
+          "referenciaCruzada": "Chevrolet: 94726878\nIsuzu: 8979478020\nMitsubishi: 4600A106\nMitsubishi: 4600A122\nCobreq: 2700-CP\nJurid: HQJ-543\nMazzicar bpsa: 0095280\nNakata nkf: 3040\nRoc: 24721\nSinter Freios: SP043\nISUZU: 5878322570\nISUZU: 5876150620\nISUZU: 8976627560\nISUZU: 89800180360\nMAZDA: 1K0249240\nMAZDA: 1K0649240",
+          "oem": "",
+          "imagenes": [
+            "/uploads/productos/prod-1765422068638-639490469.jpg",
+            "/uploads/productos/prod-1765422068641-916669775.jpg"
+          ],
+          "fechaCreacion": "2025-12-11T03:01:08.691Z",
+          "fechaModificacion": "2025-12-11T19:02:57.052Z"
+        },
+        {
+          "id": "prod_1765422068691_fmjeu2awo",
+          "userId": "ecousuario",
+          "codCliente": "",
+          "repuesto": "Tambor de freno",
+          "marca": "FRASLE",
+          "linea": "Frenos",
+          "codSC": "TAM-377F",
+          "precio": 36400,
+          "descuento": 0,
+          "stock": 1,
+          "fichaTecnica": "ADVANCED\nDiámetro exterior del tambor de freno [mm]: 343\nDiámetro interior de tambor de freno [mm]: 295\nAltura interior de tambor de freno [mm]: 73\nCantidad de taladros: 06\nCorona de agujeros - Ø [mm]: 139,7\nAltura total de tambor de freno [mm]: 91\nDistancia máx. de desenroscado de tambor de freno [mm]: 297",
+          "referenciaCruzada": "MITSUBISHI: 4615A127\nMITSUBISHI: MN102439\nMITSUBISHI: 6000609724\nTEXTAR: 98100035301\nFIAT: 6000609724",
+          "oem": "FRASLE: FLDR00228",
+          "imagenes": [
+            "/uploads/productos/prod-1765422068645-764615123.png"
+          ],
+          "fechaCreacion": "2025-12-11T03:01:08.691Z",
+          "fechaModificacion": "2025-12-11T19:03:57.282Z"
+        }
+      ],
+      "sistemas": [
+        "frenos"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-17T03:16:51.881Z"
+  },
+  {
+    "id": "notif_1765945101247_yo0jqx9d3",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": false,
+    "fecha": "2025-12-17T04:18:21.247Z"
+  },
+  {
+    "id": "notif_1765945385886_raqmvi7ys",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": false,
+    "fecha": "2025-12-17T04:23:05.886Z"
+  },
+  {
+    "id": "notif_1765945399129_ja291hp3u",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": false,
+    "fecha": "2025-12-17T04:23:19.129Z"
+  },
+  {
+    "id": "notif_1765972081647_nr9xfddrf",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 0 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": false,
+    "fecha": "2025-12-17T11:48:01.647Z"
+  },
+  {
+    "id": "notif_1765972160595_96iwakcgb",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent"
+    },
+    "leida": false,
+    "fecha": "2025-12-17T11:49:20.595Z"
+  },
+  {
+    "id": "notif_1765973466519_2296irieo",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Kit de embrague (KITTOY400DR) con 22% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 22,
+          "descuentoProducto": 0,
+          "precioBase": 179400,
+          "precioProducto": 179400,
+          "precioCampana": 139932,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 12900,
+          "precioProducto": 12900,
+          "precioCampana": 12900,
+          "campanas": [
+            "asdsad"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-17T12:11:06.519Z"
+  },
+  {
+    "id": "notif_1765973530276_k9y1oiw9f",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Kit de embrague (KITTOY400DR) con 22% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 22,
+          "descuentoProducto": 0,
+          "precioBase": 179400,
+          "precioProducto": 179400,
+          "precioCampana": 139932,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 12900,
+          "precioProducto": 12900,
+          "precioCampana": 12900,
+          "campanas": [
+            "asdsad"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-17T12:12:10.276Z"
+  },
+  {
+    "id": "notif_1765973984236_ivg947p36",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Kit de embrague (KITTOY400DR) con 23% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 23,
+          "descuentoProducto": 0,
+          "precioBase": 179400,
+          "precioProducto": 179400,
+          "precioCampana": 138138,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 12900,
+          "precioProducto": 12900,
+          "precioCampana": 12900,
+          "campanas": [
+            "asdsad"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-17T12:19:44.236Z"
+  },
+  {
+    "id": "notif_1765973996183_wt24byo21",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Kit de embrague (KITTOY400DR) con 23% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 23,
+          "descuentoProducto": 0,
+          "precioBase": 179400,
+          "precioProducto": 179400,
+          "precioCampana": 138138,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 12900,
+          "precioProducto": 12900,
+          "precioCampana": 12900,
+          "campanas": [
+            "asdsad"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-17T12:19:56.183Z"
+  },
+  {
+    "id": "notif_1765974367681_yvocy5i86",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Kit de embrague (KITTOY400DR) con 24% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 24,
+          "descuentoProducto": 0,
+          "precioBase": 179400,
+          "precioProducto": 179400,
+          "precioCampana": 136344,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 12900,
+          "precioProducto": 12900,
+          "precioCampana": 12900,
+          "campanas": [
+            "asdsad"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-17T12:26:07.681Z"
+  },
+  {
+    "id": "notif_1765974557014_vn3p26lgo",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Kit de embrague (KITTOY400DR) con 33% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 33,
+          "descuentoProducto": 0,
+          "precioBase": 179400,
+          "precioProducto": 179400,
+          "precioCampana": 120198,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 12900,
+          "precioProducto": 12900,
+          "precioCampana": 12900,
+          "campanas": [
+            "asdsad"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-17T12:29:17.014Z"
+  },
+  {
+    "id": "notif_1765974570638_fw8sy3t0y",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Kit de embrague (KITTOY400DR) con 33% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 33,
+          "descuentoProducto": 0,
+          "precioBase": 179400,
+          "precioProducto": 179400,
+          "precioCampana": 120198,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 12900,
+          "precioProducto": 12900,
+          "precioCampana": 12900,
+          "campanas": [
+            "asdsad"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-17T12:29:30.638Z"
+  },
+  {
+    "id": "notif_1765974979898_makxa5kek",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Kit de embrague (KITTOY400DR) con 33% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 33,
+          "descuentoProducto": 0,
+          "precioBase": 179400,
+          "precioProducto": 179400,
+          "precioCampana": 120198,
+          "campanas": [
+            "asdsad",
+            "sadasd"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 12900,
+          "precioProducto": 12900,
+          "precioCampana": 12900,
+          "campanas": [
+            "asdsad"
+          ]
+        }
+      ]
+    },
+    "leida": true,
+    "fecha": "2025-12-17T12:36:19.898Z"
+  },
+  {
+    "id": "notif_1765975182402_2zax5b9k9",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Kit de embrague (KITTOY400DR) con 33% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 33,
+          "descuentoProducto": 0,
+          "precioBase": 179400,
+          "precioProducto": 179400,
+          "precioCampana": 120198,
+          "campanas": [
+            "asdsad",
+            "sadasd"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 12900,
+          "precioProducto": 12900,
+          "precioCampana": 12900,
+          "campanas": [
+            "asdsad"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-17T12:39:42.402Z"
+  },
+  {
+    "id": "notif_1765982261523_4a9acbnhp",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Kit de embrague (KITTOY400DR) con 33% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 33,
+          "descuentoProducto": 33,
+          "precioBase": 179400,
+          "precioProducto": 120198,
+          "precioCampana": 80533,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "asdsad",
+            "sadasd"
+          ]
+        },
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 12900,
+          "precioProducto": 12900,
+          "precioCampana": 12900,
+          "campanas": [
+            "asdsad"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-17T14:37:41.523Z"
+  },
+  {
+    "id": "notif_1765982274056_k9j8tdw92",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Kit de embrague (KITTOY400DR) con 33% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 33,
+          "descuentoProducto": 33,
+          "precioBase": 179400,
+          "precioProducto": 120198,
+          "precioCampana": 80533,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 5,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "asdsad",
+            "sadasd"
+          ]
+        },
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 12900,
+          "precioProducto": 12900,
+          "precioCampana": 12900,
+          "campanas": [
+            "asdsad"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-17T14:37:54.056Z"
+  },
+  {
+    "id": "notif_1765982308338_3ssyore55",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Kit de embrague (KITTOY400DR) con 33% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 33,
+          "descuentoProducto": 33,
+          "precioBase": 179400,
+          "precioProducto": 120198,
+          "precioCampana": 80533,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 5,
+          "precioBase": 125000,
+          "precioProducto": 118750,
+          "precioCampana": 118750,
+          "campanas": [
+            "asdsad"
+          ]
+        },
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 12900,
+          "precioProducto": 12900,
+          "precioCampana": 12900,
+          "campanas": [
+            "asdsad"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-17T14:38:28.338Z"
+  },
+  {
+    "id": "notif_1765982327545_q70uhdpvb",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 0 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": []
+    },
+    "leida": false,
+    "fecha": "2025-12-17T14:38:47.545Z"
+  },
+  {
+    "id": "notif_1765982540569_46aa0vczg",
+    "userId": "ecousuario",
+    "tipo": "descuento_eliminado",
+    "titulo": "ActualizaciÃ³n de precio",
+    "mensaje": "Kit de embrague ha vuelto a su precio regular.",
+    "datos": {
+      "productoId": "prod_1765419425976_h672r0fna",
+      "productoNombre": "Kit de embrague",
+      "productoMarca": "EXEDY",
+      "repuesto": "Kit de embrague",
+      "marca": "EXEDY",
+      "codSC": "KITTOY400DR",
+      "precio": 179400,
+      "descuento": 0,
+      "precioFinal": 179400,
+      "precioAnterior": 120198,
+      "precioNuevo": 179400,
+      "imagen": "/uploads/productos/prod-1765419425972-599986316.png"
+    },
+    "leida": false,
+    "fecha": "2025-12-17T14:42:20.569Z"
+  },
+  {
+    "id": "notif_1765982546882_4j3bwifkh",
+    "userId": "ecousuario",
+    "tipo": "descuento_eliminado",
+    "titulo": "ActualizaciÃ³n de precio",
+    "mensaje": "Kit de embrague ha vuelto a su precio regular.",
+    "datos": {
+      "productoId": "prod_1765419610363_qz6tbh6y5",
+      "productoNombre": "Kit de embrague",
+      "productoMarca": "ALLIANCE",
+      "repuesto": "Kit de embrague",
+      "marca": "ALLIANCE",
+      "codSC": "KITTOY400AR",
+      "precio": 125000,
+      "descuento": 0,
+      "precioFinal": 125000,
+      "precioAnterior": 118750,
+      "precioNuevo": 125000,
+      "imagen": "/uploads/productos/prod-1765419610299-523187208.png"
+    },
+    "leida": false,
+    "fecha": "2025-12-17T14:42:26.882Z"
+  }
+]

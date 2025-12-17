@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nueva flota | StarClutch</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ==== NAV LATERAL ==== -->
+<nav class="sidebar">
+  <div class="logo">
+    <img src="../img/Logo starclutch web.svg" alt="Logo Starclutch">
+  </div>
+  <div class="user-info">
+    <a href="../perfildeusuario/index.html">
+      <span class="nav-icon"><img src="../img/Usuario.svg" alt="Usuario"></span>
+      <span class="nav-text">Hola, <strong class="nav-username"></strong></span>
+    </a>
+  </div>
+  <div class="search-general">
+    <input type="text" placeholder="Búsqueda general" class="input-general">
+    <button class="btn-search-general">
+      <img src="../img/Buscar.svg" alt="Buscar">
+    </button>
+  </div>
+    <ul class="menu main-nav">
+        <li>
+          <a href="../mis flotas/index.html" class="active" aria-current="page">
+            <span class="nav-icon"><img src="../img/Agregar flota.svg" alt="Ver mi flotas"></span>
+            <span class="nav-text">Mis flotas</span>
+          </a>
+        </li>
+        <li>
+          <a href="../lista de repuestos/index.html">
+            <span class="nav-icon"><img src="../img/Productos.svg" alt="Ver mis repuestos"></span>
+            <span class="nav-text">Lista de repuestos</span>
+          </a>
+        </li>
+        <li>
+          <a href="../ofertas exclusivas/index.html">
+            <span class="nav-icon"><img src="../img/Descuento.svg" alt="Ofertas"></span>
+            <span class="nav-text">Ofertas exclusivas</span>
+          </a>
+        </li>
+        <li>
+          <a href="../estado de la cuenta/index.html">
+            <span class="nav-icon"><img src="../img/bill-01 1.svg" alt="Ver mis repuestos"></span>
+            <span class="nav-text">Estado de cuenta</span>
+          </a>
+        </li>
+        <li>
+          <a href="../mis compras/index.html.html">
+            <span class="nav-icon"><img src="../img/miscompras.svg" alt="Mis compras"></span>
+            <span class="nav-text">Mis compras</span>
+          </a>
+        </li>
+      </ul>
+  <footer class="sidebar-footer">
+    <a href="https://starclutch.cl/repuestos" target="_blank" rel="noopener noreferrer" class="btn-text footer-link">
+      <span class="icon-left"><img src="../img/Logo SC.svg" alt="Nosotros"></span> Nosotros
+    </a>
+    <p>Starclutch S.p.A<br>© Todos los derechos reservados 2025</p>
+  </footer>
+</nav>
+
+<main class="main-content">
+  <div class="page-container">
+    <header class="main-header">
+      <div class="header-left"><h1>Carga manual</h1></div>
+      <div class="header-actions">
+        <button class="btn-text"><span class="icon-left"><img src="../img/info_471662-01 1.svg" alt="Ayuda"></span> Ayuda</button>
+        <button class="btn-text" onclick="toggleCarrito()" style="position: relative;"><span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/carrito.svg" alt="Carrito"><span class="cart-badge" id="cart-badge-count">0</span></span> Carrito</button>
+        <button class="btn-text" onclick="toggleNotificaciones()" style="position: relative;"><span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/Alerta.svg" alt="Notificaciones"><span class="notif-badge" id="notif-badge-count">0</span></span> Notificaciones</button>
+      </div>
+    </header>
+
+    <div class="flotas-container">
+      <div class="pagina-container" data-pagina="1">
+        <div class="pagina-header top-bar">
+          <button class="btn-text-page"><img src="../img/Signo más.svg" alt="agregar otra página"><span>Agregar nueva página</span></button>
+          <div class="pagina-indicator">
+            <button class="prev">&lt;</button>
+            <span class="page-info">Página 1 de 1</span>
+            <button class="next">&gt;</button>
+          </div>
+        </div>
+
+        <div class="listados-row">
+
+          <!-- LISTADO 1 -->
+          <div class="listado">
+            <label>Tipo de vehículo</label>
+            <select class="tipo-vehiculo">
+              <option value="">Seleccionar tipo</option>
+              <option value="camion">Camión</option>
+              <option value="bus">Bus / Van</option>
+              <option value="camioneta">Camioneta</option>
+              <option value="3/4">3/4</option>
+              <option value="rampla">Rámpla</option>
+            </select>
+
+            <label>Marca</label>
+            <select class="marca" disabled>
+              <option value="">Seleccionar marca</option>
+            </select>
+
+            <label>Modelo</label>
+            <select class="modelo" disabled>
+              <option value="">Seleccionar modelo</option>
+            </select>
+
+              <label>Año</label>
+             <input type="text" class="anio" placeholder="Año">
+
+
+
+            <label>Motor (opcional)</label>
+            <input type="text" class="motor" placeholder="Motor">
+            <label>Patente</label>
+            <input type="text" class="patente" placeholder="Patente">
+          </div>
+
+          <!-- LISTADO 2 -->
+          <div class="listado">
+            <label>Tipo de vehículo</label>
+            <select class="tipo-vehiculo">
+              <option value="">Seleccionar tipo</option>
+              <option value="camion">Camión</option>
+              <option value="bus">Bus / Van</option>
+              <option value="camioneta">Camioneta</option>
+              <option value="3/4">3/4</option>
+              <option value="rampla">Rámpla</option>
+            </select>
+
+            <label>Marca</label>
+            <select class="marca" disabled>
+              <option value="">Seleccionar marca</option>
+            </select>
+
+            <label>Modelo</label>
+            <select class="modelo" disabled>
+              <option value="">Seleccionar modelo</option>
+            </select>
+  <label>Año</label>
+  <input type="text" class="anio" placeholder="Año">
+
+
+            <label>Motor (opcional)</label>
+            <input type="text" class="motor" placeholder="Motor">
+            <label>Patente</label>
+            <input type="text" class="patente" placeholder="Patente">
+          </div>
+
+          <!-- LISTADO 3 -->
+          <div class="listado">
+            <label>Tipo de vehículo</label>
+            <select class="tipo-vehiculo">
+              <option value="">Seleccionar tipo</option>
+              <option value="camion">Camión</option>
+              <option value="bus">Bus / Van</option>
+              <option value="camioneta">Camioneta</option>
+              <option value="3/4">3/4</option>
+              <option value="rampla">Rámpla</option>
+            </select>
+
+            <label>Marca</label>
+            <select class="marca" disabled>
+              <option value="">Seleccionar marca</option>
+            </select>
+
+            <label>Modelo</label>
+            <select class="modelo" disabled>
+              <option value="">Seleccionar modelo</option>
+            </select>
+
+  <label>Año</label>
+  <input type="text" class="anio" placeholder="Año">
+
+
+  
+            <label>Motor (opcional)</label>
+            <input type="text" class="motor" placeholder="Motor">
+            <label>Patente</label>
+            <input type="text" class="patente" placeholder="Patente">
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+  <!-- Footer debajo del listado -->
+<div class="flotas-footer">
+  <div class="totales">
+    <span id="total-vehiculos">Total de vehículos: 0</span> | 
+    <span id="total-modelos">Total de modelos: 0</span>
+  </div>
+
+<!-- Botón que abre el modal -->
+<button id="crear-flota" class="btn-primary">
+  <img src="../img/Signo más.svg" alt="Agregar flota">
+  Crear flota
+</button>
+
+<!-- Modal para nombrar flota -->
+<div id="flota-modal" class="flota-modal">
+  <div class="flota-modal-content">
+    
+    <div class="flota-modal-header">
+      <span>Nombra tu flota</span>
+      <span id="flota-close" class="flota-close-btn">&times;</span>
+    </div>
+    <div class="flota-modal-body">
+      <p class="flota-modal-text" style="text-align: center; margin-bottom: 16px; font-size: 14px; color: #333;">
+        Ingresa un nombre que te permita identificar fácilmente esta flota.
+      </p>
+      <input type="text" placeholder="Ingresa el nombre de tu flota" class="flota-input-text" />
+      <button class="btn-primary">Guardar</button>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <script src="../script.js"></script>
+
+<!-- Panel de Carrito -->
+<div class="cart-overlay" id="cart-overlay" onclick="cerrarCarrito()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-header">
+    <h3><img src="../img/carrito.svg" alt="" style="width:20px;height:20px;filter:brightness(0) invert(1);margin-right:8px;">Carrito</h3>
+    <button class="cart-close" onclick="cerrarCarrito()">&times;</button>
+  </div>
+  <div class="cart-body">
+    <div class="cart-empty" id="cart-empty">
+      <img src="../img/carrito.svg" alt="Carrito vacío" />
+      <p>Tu carrito está vacío</p>
+    </div>
+    <ul class="cart-list" id="cart-list"></ul>
+  </div>
+  <div class="cart-footer" id="cart-footer" style="display:none;">
+    <p class="cart-total"><strong>Total:</strong> $0 <span>IVA incluido</span></p>
+    <div class="cart-actions">
+      <button class="cart-btn-primary" onclick="generarOrdenCompraDesdeOtroHTML()">Generar OC</button>
+      <button class="cart-btn-secondary" onclick="cotizarDesdeOtroHTML()">Cotizar</button>
+    </div>
+    <a href="carrito.html" class="cart-link">Ver resumen del carrito</a>
+  </div>
+</div>
+
+<!-- Panel de Notificaciones -->
+<div class="notif-overlay" id="notif-overlay" onclick="cerrarNotificaciones()"></div>
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">
+    <h3><img src="../img/Alerta.svg" alt="Notificaciones" style="width: 20px; height: 20px; filter: brightness(0) invert(1);"> Notificaciones</h3>
+    <button class="notif-close" onclick="cerrarNotificaciones()">&times;</button>
+  </div>
+  <div class="notif-body">
+    <div id="notif-list" style="display: none;"></div>
+    <div class="notif-empty" id="notif-empty">
+      <div class="notif-empty-icon"><img src="../img/Alerta.svg" alt="Sin notificaciones"></div>
+      <h4>No hay notificaciones</h4>
+      <p>Cuando tengas novedades sobre productos, ofertas o actualizaciones, aparecerán aquí.</p>
+    </div>
+  </div>
+</div>
+<script src="../notificaciones.js"></script>
+<script>
+function toggleNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); if (panel.classList.contains('open')) { cerrarNotificaciones(); } else { panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
+function cerrarNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+async function toggleCarrito() { const panel = document.getElementById('cart-panel'); const overlay = document.getElementById('cart-overlay'); if (panel.classList.contains('open')) { cerrarCarrito(); } else { if (typeof CarritoGlobal !== 'undefined') { await CarritoGlobal.sincronizar(); CarritoGlobal.iniciarPolling(); } panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
+function cerrarCarrito() { if (typeof CarritoGlobal !== 'undefined') CarritoGlobal.detenerPolling(); const panel = document.getElementById('cart-panel'); const overlay = document.getElementById('cart-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { const panel = document.getElementById('notif-panel'); if (panel && panel.classList.contains('open')) cerrarNotificaciones(); const cartPanel = document.getElementById('cart-panel'); if (cartPanel && cartPanel.classList.contains('open')) cerrarCarrito(); } });
+</script>
+</body>
+</html>
