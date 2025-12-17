@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ofertas Exclusivas | StarClutch</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* Solo ajustes específicos para responsividad móvil */
+    
+    /* Móvil: Banner principal cuadrado (400x400) */
+    @media (max-width: 768px) {
+      .banner-viewport-single {
+        aspect-ratio: 1 / 1 !important; /* Móvil: cuadrado */
+      }
+      
+      .banner-item-single {
+        object-fit: cover;
+      }
+    }
+
+    /* Desktop: Carrusel secundario 2 por página */
+    @media (min-width: 769px) {
+      .fleet-slide {
+        flex: 0 0 50%;
+        max-width: 50%;
+      }
+    }
+
+    /* Móvil: Carrusel secundario 1 por página */
+    @media (max-width: 768px) {
+      /* Forzar 1 slide por página en móvil */
+      .fleet-slide {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+      }
+      
+      .fleet-slide img {
+        aspect-ratio: 5 / 4; /* Móvil: más cuadrado */
+        object-fit: cover;
+        width: 100%;
+      }
+    }
+
+    /* Sin banners mensaje */
+    .no-banners-msg {
+      text-align: center;
+      padding: 60px 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      color: #666;
+    }
+
+    .no-banners-msg p {
+      margin: 0;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .no-banners-msg .icon-descuento {
+      width: 24px;
+      height: 24px;
+      filter: invert(12%) sepia(98%) saturate(5765%) hue-rotate(353deg) brightness(82%) contrast(96%);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==== NAV LATERAL ==== -->
+<nav class="sidebar">
+  <!-- LOGO -->
+  <div class="logo">
+    <img src="../img/Logo starclutch web.svg" alt="Logo Starclutch">
+  </div>
+
+  <!-- USUARIO -->
+  <div class="user-info">
+    <a href="../perfildeusuario/index.html">
+      <span class="nav-icon"><img src="../img/Usuario.svg" alt="Usuario"></span>
+      <span class="nav-text">Hola, <strong class="nav-username"></strong></span>
+    </a>
+  </div>
+
+  <!-- BUSCADOR GENERAL -->
+  <div class="search-general">
+    <input type="text" placeholder="Búsqueda general" class="input-general">
+    <button class="btn-search-general">
+      <img src="../img/Buscar.svg" alt="Buscar">
+    </button>
+  </div>
+
+  <!-- MENÚ PRINCIPAL -->
+  <ul class="menu main-nav">
+    <li>
+      <a href="../mis flotas/index.html">
+        <span class="nav-icon"><img src="../img/Agregar flota.svg" alt="Ver mis flotas"></span>
+        <span class="nav-text">Mis flotas</span>
+      </a>
+    </li>
+    <li>
+      <a href="../lista de repuestos/index.html">
+        <span class="nav-icon"><img src="../img/Productos.svg" alt="Lista de repuestos"></span>
+        <span class="nav-text">Lista de repuestos</span>
+      </a>
+    </li>
+    <li>
+      <a href="../ofertas exclusivas/index.html" class="active">
+        <span class="nav-icon"><img src="../img/Descuento.svg" alt="Ofertas"></span>
+        <span class="nav-text">Ofertas exclusivas</span>
+      </a>
+    </li>
+    <li>
+      <a href="../estado de la cuenta/index.html">
+        <span class="nav-icon"><img src="../img/bill-01 1.svg" alt="Estado de cuenta"></span>
+        <span class="nav-text">Estado de cuenta</span>
+      </a>
+    </li>
+    <li>
+      <a href="../mis compras/index.html.html">
+        <span class="nav-icon"><img src="../img/miscompras.svg" alt="Mis compras"></span>
+        <span class="nav-text">Mis compras</span>
+      </a>
+    </li>
+  </ul>
+
+  <!-- FOOTER -->
+  <footer class="sidebar-footer">
+    <a
+      href="https://starclutch.cl/repuestos"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="btn-text footer-link"
+    >
+      <span class="icon-left">
+        <img src="../img/Logo SC.svg" alt="Nosotros">
+      </span>
+      Nosotros
+    </a>
+    <p>Starclutch S.p.A<br>© Todos los derechos reservados 2025</p>
+  </footer>
+</nav>
+
+<main class="main-content">
+  <div class="page-container">
+
+    <!-- HEADER -->
+    <header class="main-header">
+      <!-- Bloque IZQUIERDO -->
+      <div class="header-left">
+        <img src="../img/Descuento.svg" alt="Icono Ofertas exclusivas" class="icono-header">
+        <h1>Ofertas exclusivas</h1>
+      </div>
+
+      <!-- Bloque DERECHO -->
+      <div class="header-actions">
+        <button class="btn-text">
+          <span class="icon-left"><img src="../img/info_471662-01 1.svg" alt="Ayuda"></span> Ayuda
+        </button>
+
+        <button class="btn-text" onclick="toggleCarrito()" style="position: relative;">
+          <span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/carrito.svg" alt="Carrito"><span class="cart-badge" id="cart-badge-count">0</span></span> Carrito
+        </button>
+
+        <button class="btn-text" id="btn-notificaciones" onclick="toggleNotificaciones()" style="position: relative;">
+          <span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/Alerta.svg" alt="Notificaciones"><span class="notif-badge" id="notif-badge-count">0</span></span> Notificaciones
+        </button>
+      </div>
+    </header>
+
+    <!-- CARRUSEL PRINCIPAL -->
+    <section class="fleet-section" id="seccion-principal">
+      <div class="banner-carousel-single" id="carousel-principal">
+        <button class="banner-btn-single prev" aria-label="Anterior">‹</button>
+
+        <div class="banner-viewport-single">
+          <div class="banner-track-single" id="track-principal">
+            <!-- Slides se generan dinámicamente -->
+          </div>
+        </div>
+
+        <button class="banner-btn-single next" aria-label="Siguiente">›</button>
+      </div>
+      
+      <ul class="banner-indicators-single" id="indicators-principal"></ul>
+      
+      <div class="no-banners-msg" id="no-principal" style="display: none;">
+        <p><img src="../img/Descuento.svg" alt="" class="icon-descuento"> No hay ofertas principales disponibles en este momento</p>
+      </div>
+    </section>
+
+    <!-- CARRUSEL SECUNDARIO -->
+    <section class="fleet-section" id="seccion-secundario">
+      <h2 class="fleet-title">Ofertas según tu flota</h2>
+
+      <div class="fleet-carousel" id="carousel-secundario">
+        <div class="fleet-viewport">
+          <div class="fleet-track" id="track-secundario">
+            <!-- Slides se generan dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Flechas -->
+        <button class="fleet-btn prev" aria-label="Anterior">‹</button>
+        <button class="fleet-btn next" aria-label="Siguiente">›</button>
+      </div>
+
+      <ul class="fleet-indicators" id="indicators-secundario"></ul>
+      
+      <div class="no-banners-msg" id="no-secundario" style="display: none;">
+        <p><img src="../img/Descuento.svg" alt="" class="icon-descuento"> No hay ofertas para tu flota en este momento</p>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script src="../script.js"></script>
+<script src="../mobile-nav.js"></script>
+
+<script>
+// ============================================
+// GESTIÓN DE BANNERS DINÁMICOS - CORREGIDO
+// ============================================
+
+let bannersPrincipal = [];
+let bannersSecundario = [];
+let slidesPrincipal = [];
+let slidesSecundario = [];
+let campanasData = null; // Datos de campañas con SKUs
+let currentPrincipal = 0;
+let currentSecundario = 0;
+let autoplayInterval = null;
+let carouselsInitialized = false;
+let lastMobileState = null; // Trackear el estado anterior
+
+function getIsMobile() {
+  return window.innerWidth <= 768;
+}
+
+// Detectar cambio de tamaño para responsividad
+let resizeTimeout = null;
+window.addEventListener('resize', () => {
+  // Debounce para evitar múltiples llamadas
+  if (resizeTimeout) clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    const nowMobile = getIsMobile();
+    if (lastMobileState !== null && lastMobileState !== nowMobile) {
+      console.log('Cambio de vista detectado:', lastMobileState ? 'mobile→desktop' : 'desktop→mobile');
+      carouselsInitialized = false;
+      cargarBannersUsuario();
+    }
+    lastMobileState = nowMobile;
+  }, 150);
+});
+
+// Cargar banners al iniciar
+document.addEventListener('DOMContentLoaded', () => {
+  lastMobileState = getIsMobile();
+  cargarBannersUsuario();
+});
+
+async function cargarBannersUsuario() {
+  const loggedUser = localStorage.getItem('starclutch_user');
+  console.log('🔐 Usuario del localStorage:', loggedUser);
+  if (!loggedUser) {
+    console.warn('❌ No hay usuario logueado');
+    mostrarMensajeSinBanners();
+    return;
+  }
+
+  try {
+    const userData = JSON.parse(loggedUser);
+    const userId = userData.id;
+    console.log('👤 Usuario ID:', userId);
+
+    const response = await fetch(`/api/banners-ofertas?userId=${encodeURIComponent(userId)}`);
+    const result = await response.json();
+    console.log('📦 Respuesta del servidor:', result);
+
+    if (result.ok && result.banners) {
+      const isMobile = getIsMobile();
+      const principalKey = isMobile ? 'principal-mobile' : 'principal-desktop';
+      const secundarioKey = isMobile ? 'secundario-mobile' : 'secundario-desktop';
+
+      console.log('📱 Vista:', isMobile ? 'MOBILE' : 'DESKTOP');
+      console.log('🔑 Cargando:', principalKey, secundarioKey);
+
+      bannersPrincipal = result.banners[principalKey] || [];
+      bannersSecundario = result.banners[secundarioKey] || [];
+      if (result.slides) {
+        slidesPrincipal = result.slides[principalKey] || [];
+        slidesSecundario = result.slides[secundarioKey] || [];
+      } else {
+        slidesPrincipal = [];
+        slidesSecundario = [];
+      }
+      campanasData = result.campanas || null; // Guardar datos de campañas
+
+      console.log('🖼️ Banners principal:', bannersPrincipal.length, bannersPrincipal);
+      console.log('🖼️ Banners secundario:', bannersSecundario.length, bannersSecundario);
+      if (campanasData) {
+        console.log('🎯 Campañas cargadas:', campanasData);
+      }
+
+      // Fallback a desktop si no hay móvil
+      if (isMobile && bannersPrincipal.length === 0) {
+        console.log('⚠️ Fallback principal-mobile → principal-desktop');
+        bannersPrincipal = result.banners['principal-desktop'] || [];
+        slidesPrincipal = (result.slides && result.slides['principal-desktop']) ? result.slides['principal-desktop'] : [];
+      }
+      if (isMobile && bannersSecundario.length === 0) {
+        console.log('⚠️ Fallback secundario-mobile → secundario-desktop');
+        bannersSecundario = result.banners['secundario-desktop'] || [];
+        slidesSecundario = (result.slides && result.slides['secundario-desktop']) ? result.slides['secundario-desktop'] : [];
+      }
+
+      renderCarruselPrincipal();
+      renderCarruselSecundario();
+      
+      if (!carouselsInitialized) {
+        initCarousels();
+        carouselsInitialized = true;
+      }
+    } else {
+      mostrarMensajeSinBanners();
+    }
+  } catch (error) {
+    console.error('Error cargando banners:', error);
+    mostrarMensajeSinBanners();
+  }
+}
+
+function mostrarMensajeSinBanners() {
+  document.getElementById('carousel-principal').style.display = 'none';
+  document.getElementById('no-principal').style.display = 'block';
+  document.getElementById('indicators-principal').style.display = 'none';
+  document.getElementById('carousel-secundario').style.display = 'none';
+  document.getElementById('no-secundario').style.display = 'block';
+  document.querySelector('.fleet-title').style.display = 'none';
+  document.getElementById('indicators-secundario').style.display = 'none';
+}
+
+function renderCarruselPrincipal() {
+  const track = document.getElementById('track-principal');
+  const indicators = document.getElementById('indicators-principal');
+  const carousel = document.getElementById('carousel-principal');
+  const noMsg = document.getElementById('no-principal');
+
+  if (bannersPrincipal.length === 0) {
+    carousel.style.display = 'none';
+    indicators.style.display = 'none';
+    noMsg.style.display = 'block';
+    return;
+  }
+
+  carousel.style.display = 'block';
+  indicators.style.display = 'flex';
+  noMsg.style.display = 'none';
+
+  track.innerHTML = bannersPrincipal.map((url, index) => {
+    const meta = Array.isArray(slidesPrincipal) && slidesPrincipal[index] ? slidesPrincipal[index] : null;
+    const hasSkus = meta && Array.isArray(meta.skus) && meta.skus.length > 0;
+    const clickable = hasSkus || (campanasData && campanasData.principal && Array.isArray(campanasData.principal.skus) && campanasData.principal.skus.length > 0);
+    const onClick = clickable ? `style=\"cursor:pointer;\" onclick=\"manejarClickBannerPrincipal(${index})\"` : '';
+    return `
+      <div class="banner-slide-single" ${onClick}>
+        <img src="${url}" alt="Banner ${index + 1}" class="banner-item-single">
+      </div>
+    `;
+  }).join('');
+
+  indicators.innerHTML = bannersPrincipal.map((_, index) => `
+    <li class="${index === 0 ? 'active' : ''}" data-index="${index}"></li>
+  `).join('');
+
+  currentPrincipal = 0;
+  updatePrincipal();
+}
+
+function renderCarruselSecundario() {
+  const track = document.getElementById('track-secundario');
+  const indicators = document.getElementById('indicators-secundario');
+  const carousel = document.getElementById('carousel-secundario');
+  const noMsg = document.getElementById('no-secundario');
+  const title = document.querySelector('.fleet-title');
+
+  if (bannersSecundario.length === 0) {
+    carousel.style.display = 'none';
+    indicators.style.display = 'none';
+    noMsg.style.display = 'block';
+    title.style.display = 'none';
+    return;
+  }
+
+  carousel.style.display = 'block';
+  indicators.style.display = 'flex';
+  noMsg.style.display = 'none';
+  title.style.display = 'block';
+
+  const isMobile = getIsMobile();
+  const perPage = isMobile ? 1 : 2;
+  
+  // Generar slides - el CSS se encarga de los anchos según responsive
+  track.innerHTML = bannersSecundario.map((url, index) => {
+    const meta = Array.isArray(slidesSecundario) && slidesSecundario[index] ? slidesSecundario[index] : null;
+    const hasSkus = meta && Array.isArray(meta.skus) && meta.skus.length > 0;
+    const clickable = hasSkus || (campanasData && campanasData.secundario && Array.isArray(campanasData.secundario.skus) && campanasData.secundario.skus.length > 0);
+    const onClick = clickable ? `style=\"cursor:pointer;\" onclick=\"manejarClickBannerSecundario(${index})\"` : '';
+    return `
+      <div class="fleet-slide" ${onClick}>
+        <img src="${url}" alt="Oferta ${index + 1}">
+      </div>`;
+  }).join('');
+
+  const totalPages = Math.ceil(bannersSecundario.length / perPage);
+
+  indicators.innerHTML = Array.from({ length: totalPages }, (_, index) => `
+    <li class="${index === 0 ? 'active' : ''}" data-index="${index}"></li>
+  `).join('');
+
+  currentSecundario = 0;
+  updateSecundario();
+}
+
+function initCarousels() {
+  console.log('🎬 Inicializando carruseles...');
+  
+  // ===== CARRUSEL PRINCIPAL =====
+  const prevPrincipal = document.querySelector('#carousel-principal .banner-btn-single.prev');
+  const nextPrincipal = document.querySelector('#carousel-principal .banner-btn-single.next');
+  
+  console.log('🔍 Botones principal encontrados:', { prev: !!prevPrincipal, next: !!nextPrincipal });
+  
+  if (prevPrincipal) {
+    prevPrincipal.addEventListener('click', (e) => {
+      console.log('⬅️ Click en prev principal');
+      e.preventDefault();
+      e.stopPropagation();
+      // Prev = ir al slide anterior (índice menor)
+      currentPrincipal--;
+      if (currentPrincipal < 0) currentPrincipal = bannersPrincipal.length - 1;
+      updatePrincipal();
+      resetAutoplay();
+    }, { passive: false });
+  }
+  
+  if (nextPrincipal) {
+    nextPrincipal.addEventListener('click', (e) => {
+      console.log('➡️ Click en next principal');
+      e.preventDefault();
+      e.stopPropagation();
+      // Next = ir al slide siguiente (índice mayor)
+      currentPrincipal++;
+      if (currentPrincipal >= bannersPrincipal.length) currentPrincipal = 0;
+      updatePrincipal();
+      resetAutoplay();
+    }, { passive: false });
+  }
+
+  // Indicadores Principal - usar delegación de eventos
+  const indicatorsPrincipal = document.getElementById('indicators-principal');
+  if (indicatorsPrincipal) {
+    indicatorsPrincipal.addEventListener('click', (e) => {
+      if (e.target.tagName === 'LI' && e.target.dataset.index !== undefined) {
+        currentPrincipal = parseInt(e.target.dataset.index);
+        updatePrincipal();
+        resetAutoplay();
+      }
+    });
+  }
+
+  // ===== CARRUSEL SECUNDARIO =====
+  const prevSecundario = document.querySelector('#carousel-secundario .fleet-btn.prev');
+  const nextSecundario = document.querySelector('#carousel-secundario .fleet-btn.next');
+  
+  console.log('🔍 Botones secundario encontrados:', { prev: !!prevSecundario, next: !!nextSecundario });
+  
+  if (prevSecundario) {
+    prevSecundario.addEventListener('click', (e) => {
+      console.log('⬅️ Click en prev secundario');
+      e.preventDefault();
+      e.stopPropagation();
+      const isMobile = getIsMobile();
+      const perPage = isMobile ? 1 : 2;
+      const totalPages = Math.ceil(bannersSecundario.length / perPage);
+      
+      currentSecundario--;
+      if (currentSecundario < 0) currentSecundario = totalPages - 1;
+      updateSecundario();
+    }, { passive: false });
+  }
+  
+  if (nextSecundario) {
+    nextSecundario.addEventListener('click', (e) => {
+      console.log('➡️ Click en next secundario');
+      e.preventDefault();
+      e.stopPropagation();
+      const isMobile = getIsMobile();
+      const perPage = isMobile ? 1 : 2;
+      const totalPages = Math.ceil(bannersSecundario.length / perPage);
+      
+      currentSecundario++;
+      if (currentSecundario >= totalPages) currentSecundario = 0;
+      updateSecundario();
+    }, { passive: false });
+  }
+
+  // Indicadores Secundario - usar delegación de eventos
+  const indicatorsSecundario = document.getElementById('indicators-secundario');
+  if (indicatorsSecundario) {
+    indicatorsSecundario.addEventListener('click', (e) => {
+      if (e.target.tagName === 'LI' && e.target.dataset.index !== undefined) {
+        currentSecundario = parseInt(e.target.dataset.index);
+        updateSecundario();
+      }
+    });
+  }
+
+  // Autoplay
+  startAutoplay();
+  
+  // Pausar autoplay al hover
+  const carouselPrincipal = document.getElementById('carousel-principal');
+  if (carouselPrincipal) {
+    carouselPrincipal.addEventListener('mouseenter', () => {
+      if (autoplayInterval) clearInterval(autoplayInterval);
+    });
+    carouselPrincipal.addEventListener('mouseleave', startAutoplay);
+  }
+  
+  console.log('✅ Carruseles inicializados');
+}
+
+function updatePrincipal() {
+  const track = document.getElementById('track-principal');
+  if (!track) return;
+  
+  // translateX negativo para mover a la izquierda (mostrar slides de la derecha)
+  track.style.transform = `translateX(-${currentPrincipal * 100}%)`;
+  
+  document.querySelectorAll('#indicators-principal li').forEach((li, i) => {
+    li.classList.toggle('active', i === currentPrincipal);
+  });
+}
+
+function updateSecundario() {
+  const track = document.getElementById('track-secundario');
+  if (!track) return;
+  
+  const isMobile = getIsMobile();
+  const perPage = isMobile ? 1 : 2;
+  
+  // En mobile: cada slide = 100%, mover 1 página = 100%
+  // En desktop: cada slide = 50%, mover 1 página (2 slides) = 100%
+  // En ambos casos, mover currentSecundario * 100% funciona
+  const offset = currentSecundario * 100;
+  track.style.transform = `translateX(-${offset}%)`;
+  
+  document.querySelectorAll('#indicators-secundario li').forEach((li, i) => {
+    li.classList.toggle('active', i === currentSecundario);
+  });
+}
+
+function startAutoplay() {
+  if (autoplayInterval) clearInterval(autoplayInterval);
+  autoplayInterval = setInterval(() => {
+    if (bannersPrincipal.length > 0) {
+      currentPrincipal++;
+      if (currentPrincipal >= bannersPrincipal.length) currentPrincipal = 0;
+      updatePrincipal();
+    }
+  }, 5000);
+}
+
+function resetAutoplay() {
+  startAutoplay();
+}
+
+// ============================================================
+// FUNCIONES PARA MANEJAR CLICKS EN BANNERS DE CAMPAÑA
+// ============================================================
+
+function manejarClickBannerPrincipal(index) {
+  if (!campanasData || !campanasData.principal || !campanasData.principal.activa) {
+    return; // No hacer nada si no hay campaña activa
+  }
+  
+  let skus = [];
+  if (Array.isArray(slidesPrincipal) && slidesPrincipal[index] && Array.isArray(slidesPrincipal[index].skus)) {
+    skus = slidesPrincipal[index].skus;
+  } else {
+    skus = campanasData.principal.skus || [];
+  }
+  
+  if (skus.length === 0) {
+    return; // No hacer nada si no hay SKUs
+  }
+  
+  if (skus.length === 1) {
+    // Un solo producto: ir directo a detalle
+    window.location.href = `../mis flotas/detalleproducto.html?sku=${encodeURIComponent(skus[0])}`;
+  } else {
+    // Múltiples productos: ir a categorías con filtro
+    localStorage.setItem('campana_skus', JSON.stringify(skus));
+    window.location.href = `../mis flotas/categorias.html?campana=principal`;
+  }
+}
+
+function manejarClickBannerSecundario(index) {
+  if (!campanasData || !campanasData.secundario || !campanasData.secundario.activa) {
+    return; // No hacer nada si no hay campaña activa
+  }
+  
+  let skus = [];
+  if (Array.isArray(slidesSecundario) && slidesSecundario[index] && Array.isArray(slidesSecundario[index].skus)) {
+    skus = slidesSecundario[index].skus;
+  } else {
+    skus = campanasData.secundario.skus || [];
+  }
+  
+  if (skus.length === 0) {
+    return; // No hacer nada si no hay SKUs
+  }
+  
+  if (skus.length === 1) {
+    // Un solo producto: ir directo a detalle
+    window.location.href = `../mis flotas/detalleproducto.html?sku=${encodeURIComponent(skus[0])}`;
+  } else {
+    // Múltiples productos: ir a categorías con filtro
+    localStorage.setItem('campana_skus', JSON.stringify(skus));
+    window.location.href = `../mis flotas/categorias.html?campana=secundario`;
+  }
+}
+</script>
+
+<!-- Panel de Carrito -->
+<div class="cart-overlay" id="cart-overlay" onclick="cerrarCarrito()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-header">
+    <h3><img src="../img/carrito.svg" alt="" style="width:20px;height:20px;filter:brightness(0) invert(1);margin-right:8px;">Carrito</h3>
+    <button class="cart-close" onclick="cerrarCarrito()">&times;</button>
+  </div>
+  <div class="cart-body">
+    <div class="cart-empty" id="cart-empty">
+      <img src="../img/carrito.svg" alt="Carrito vacío" />
+      <p>Tu carrito está vacío</p>
+    </div>
+    <ul class="cart-list" id="cart-list"></ul>
+  </div>
+  <div class="cart-footer" id="cart-footer" style="display:none;">
+    <p class="cart-total"><strong>Total:</strong> $0 <span>IVA incluido</span></p>
+    <div class="cart-actions">
+      <button class="cart-btn-primary" onclick="generarOrdenCompraDesdeOtroHTML()">Generar OC</button>
+      <button class="cart-btn-secondary" onclick="cotizarDesdeOtroHTML()">Cotizar</button>
+    </div>
+    <a href="../mis flotas/carrito.html" class="cart-link">Ver resumen del carrito</a>
+  </div>
+</div>
+
+<!-- Panel de Notificaciones -->
+<div class="notif-overlay" id="notif-overlay" onclick="cerrarNotificaciones()"></div>
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">
+    <h3>
+      Todas las notificaciones
+      <button class="notif-close" onclick="cerrarNotificaciones()">&times;</button>
+    </h3>
+  </div>
+  
+  <div class="notif-tabs">
+    <div class="notif-tabs-left">
+      <button class="notif-tab active" data-filter="todas">Todas</button>
+      <button class="notif-tab" data-filter="sin-leer">Sin leer <span class="notif-tab-count"></span></button>
+    </div>
+    <button id="marcar-todas-vistas">Marcar como vistas</button>
+  </div>
+  <div class="notif-body">
+    <div id="notif-list" style="display: none;"></div>
+    <div class="notif-empty" id="notif-empty">
+      <div class="notif-empty-icon"><img src="../img/Alerta.svg" alt="Sin notificaciones"></div>
+      <h4>No hay notificaciones</h4>
+      <p>Cuando tengas novedades sobre productos, ofertas o actualizaciones, aparecerán aquí.</p>
+    </div>
+  </div>
+</div>
+<script src="../notificaciones.js"></script>
+<script>
+function toggleNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); if (panel.classList.contains('open')) { cerrarNotificaciones(); } else { panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
+function cerrarNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { const panel = document.getElementById('notif-panel'); if (panel && panel.classList.contains('open')) cerrarNotificaciones(); const cartPanel = document.getElementById('cart-panel'); if (cartPanel && cartPanel.classList.contains('open')) cerrarCarrito(); } });
+async function toggleCarrito() { const panel = document.getElementById('cart-panel'); const overlay = document.getElementById('cart-overlay'); if (panel.classList.contains('open')) { cerrarCarrito(); } else { if (typeof CarritoGlobal !== 'undefined') { await CarritoGlobal.sincronizar(); CarritoGlobal.iniciarPolling(); } panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
+function cerrarCarrito() { if (typeof CarritoGlobal !== 'undefined') CarritoGlobal.detenerPolling(); const panel = document.getElementById('cart-panel'); const overlay = document.getElementById('cart-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+</script>
+
+</body>
+</html>
+
+

@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categoría | StarClutch</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* Panel de filtros (mismo estilo que Mis flotas) */
+    .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9998; opacity: 0; transition: opacity 0.3s ease; }
+    .overlay--visible { opacity: 1; }
+    .filtros-panel { position: fixed; top: 0; right: 0; width: 400px; max-width: 90%; height: 100%; background: #fff; box-shadow: -2px 0 15px rgba(0,0,0,0.2); transform: translateX(100%); transition: transform 0.3s ease; display: flex; flex-direction: column; z-index: 9999; }
+    .panel--open { transform: translateX(0); }
+    .filtros-header-container { border-bottom: 1px solid #e0e0e0; padding: 20px 24px; flex-shrink: 0; }
+    .filtros-header { display: flex; justify-content: space-between; align-items: center; }
+    .filtros-header h2 { font-size: 20px; font-weight: 600; color: #333; margin: 0; }
+    .close-filtros { background: none; border: none; font-size: 28px; color: #666; cursor: pointer; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: all 0.2s; }
+    .close-filtros:hover { background: #f5f5f5; color: #BF1823; }
+    .filtros-main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+    .filtros-tags { padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #e0e0e0; min-height: 56px; }
+    .tag { display: inline-flex; align-items: center; gap: 8px; background: #BF1823; color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+    .tag button { background: none; border: none; color: #fff; cursor: pointer; font-size: 16px; padding: 0; margin-left: 4px; opacity: .8; transition: opacity .2s; }
+    .tag button:hover { opacity: 1; }
+    .filtros-content { padding: 16px 24px; flex: 1; }
+    .filtros-section { margin-bottom: 20px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+    .section-toggle { width: 100%; background: #f8f9fa; border: none; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 600; color: #333; transition: background .2s; }
+    .section-toggle:hover { background: #e9ecef; }
+    .section-toggle .arrow { transition: transform .3s; font-size: 14px; }
+    .section-toggle[aria-expanded="false"] .arrow { transform: rotate(-90deg); }
+    .section-content { padding: 16px; display: flex; flex-direction: column; gap: 10px; max-height: 1000px; overflow: hidden; transition: max-height .3s ease, padding .3s ease; }
+    .section-content.collapsed { max-height: 0; padding: 0 16px; }
+    .section-content.filtros-scroll { max-height: 250px; overflow-y: auto; }
+    .section-content label { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px 0; font-size: 14px; color: #333; }
+    .section-content input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: #BF1823; }
+    .price-range { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .price-range input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+    .filtros-footer-container { padding: 20px 24px; border-top: 1px solid #e0e0e0; flex-shrink: 0; }
+    .aplicar-filtros { width: 100%; padding: 12px; background: #BF1823; color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; transition: background .2s; }
+    .aplicar-filtros:hover { background: #a01620; }
+    .limpiar-filtros:hover { background: #e0e0e0 !important; }
+  </style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="logo">
+    <img src="../img/Logo starclutch web.svg" alt="Logo Starclutch">
+  </div>
+  <div class="user-info">
+    <a href="../perfildeusuario/index.html">
+      <span class="nav-icon"><img src="../img/Usuario.svg" alt="Usuario"></span>
+      <span class="nav-text">Hola, <strong class="nav-username"></strong></span>
+    </a>
+  </div>
+  <div class="search-general">
+    <input type="text" placeholder="Búsqueda general" class="input-general">
+    <button class="btn-search-general">
+      <img src="../img/Buscar.svg" alt="Buscar">
+    </button>
+  </div>
+  <ul class="menu main-nav">
+    <li>
+      <a href="../mis flotas/index.html" class="active" aria-current="page">
+        <span class="nav-icon"><img src="../img/Agregar flota.svg" alt="Ver mi flotas"></span>
+        <span class="nav-text">Mis flotas</span>
+      </a>
+    </li>
+    <li>
+      <a href="../lista de repuestos/index.html">
+        <span class="nav-icon"><img src="../img/Productos.svg" alt="Lista de repuestos"></span>
+        <span class="nav-text">Lista de repuestos</span>
+      </a>
+    </li>
+    <li>
+      <a href="../ofertas exclusivas/index.html" class="active">
+        <span class="nav-icon"><img src="../img/Descuento.svg" alt="Ofertas"></span>
+        <span class="nav-text">Ofertas exclusivas</span>
+      </a>
+    </li>
+    <li>
+      <a href="../estado de la cuenta/index.html">
+        <span class="nav-icon"><img src="../img/bill-01 1.svg" alt="Estado de cuenta"></span>
+        <span class="nav-text">Estado de cuenta</span>
+      </a>
+    </li>
+    <li>
+      <a href="../mis compras/index.html.html">
+        <span class="nav-icon"><img src="../img/miscompras.svg" alt="Mis compras"></span>
+        <span class="nav-text">Mis compras</span>
+      </a>
+    </li>
+  </ul>
+  <footer class="sidebar-footer">
+    <a href="https://starclutch.cl/repuestos" target="_blank" rel="noopener noreferrer" class="btn-text footer-link">
+      <span class="icon-left"><img src="../img/Logo SC.svg" alt="Nosotros"></span> Nosotros
+    </a>
+    <p>Starclutch S.p.A<br>© Todos los derechos reservados 2025</p>
+  </footer>
+</nav>
+
+<main class="main-content">
+  <div class="page-container">
+    
+    <header class="main-header">
+      <div class="header-left"><h1>Embragues</h1></div>
+      <div class="header-actions">
+        <button class="btn-text"><span class="icon-left"><img src="../img/info_471662-01 1.svg" alt="Ayuda"></span> Ayuda</button>
+        <button class="btn-text" onclick="toggleCarrito()" style="position: relative;"><span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/carrito.svg" alt="Carrito"><span class="cart-badge" id="cart-badge-count">0</span></span> Carrito</button>
+        <button class="btn-text" id="btn-notificaciones" onclick="toggleNotificaciones()" style="position: relative;"><span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/Alerta.svg" alt="Notificaciones"><span class="notif-badge" id="notif-badge-count">0</span></span> Notificaciones</button>
+      </div>
+    </header>
+
+    <div class="products-container">
+
+      <div class="toolbar-products">
+        
+        <div class="toolbar-left">
+            <div class="search-repuesto">
+                <input type="text" placeholder="Buscar repuesto" class="input-repuesto">
+                <button class="btn-search-repuesto">
+                    <img src="../img/Buscar.svg" alt="Buscar">
+                </button>
+            </div>
+            <span class="results-text">Página 1 de 4 - 23 productos encontrados</span>
+        </div>
+
+        <div class="toolbar-right">
+          <button id="btn-filtrar-categorias" class="btn-text">
+                Filtrar <img src="../img/Filtros.svg" alt="Filtros">
+            </button>
+        </div>
+
+      </div>
+      <section class="products-grid">
+
+       
+
+      </section>
+
+      <div class="pagination">
+        <button class="page-btn arrow"> &lt; </button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn">4</button>
+        <button class="page-btn">5</button>
+        <button class="page-btn arrow"> &gt; </button>
+      </div>
+
+    </div> 
+  </div> 
+</main>
+
+<script src="../script.js"></script>
+<script src="../mobile-nav.js"></script>
+
+<script>
+  // Función para normalizar texto (minúsculas, sin acentos, sin espacios, sin guiones)
+  function normalizarTexto(texto) {
+    if (!texto) return '';
+    return texto
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "") // Eliminar acentos
+      .replace(/[-_\s]/g, '') // Eliminar guiones, guiones bajos Y espacios
+      .trim();
+  }
+
+  // Sistema de cruces vehículos-productos
+  document.addEventListener('DOMContentLoaded', async function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryName = urlParams.get('categoria');
+    const campanaParam = urlParams.get('campana'); // principal | secundario
+    const esMantenimiento = urlParams.get('mantenimiento') === '1';
+    
+    console.log('🔍 DEBUG - Iniciando carga de categoría:', categoryName);
+    
+    if (categoryName || campanaParam) {
+      // Decodificar categoría
+      const decodedCategory = categoryName ? decodeURIComponent(categoryName) : '';
+      
+      // Obtener vehículo seleccionado
+      const vehiculoStr = sessionStorage.getItem('vehiculo-seleccionado');
+      console.log('🚗 Vehículo en sessionStorage:', vehiculoStr);
+      
+      // Actualizar header con categoría y vehículo
+      const headerH1 = document.querySelector('.header-left h1');
+      if (headerH1 && vehiculoStr) {
+        try {
+          const vehiculo = JSON.parse(vehiculoStr);
+          
+          // Construir texto del header
+          let headerText = decodedCategory;
+          
+          // Capitalizar primera letra de marca
+          const marcaCapitalizada = vehiculo.marca.charAt(0).toUpperCase() + vehiculo.marca.slice(1);
+          const modeloCapitalizado = vehiculo.modelo.charAt(0).toUpperCase() + vehiculo.modelo.slice(1);
+          
+          // Agregar marca y modelo
+          headerText += ` (${marcaCapitalizada} ${modeloCapitalizado}`;
+          
+          // Agregar patente si existe
+          if (vehiculo.patente) {
+            headerText += ` - ${vehiculo.patente.toUpperCase()}`;
+          }
+          
+          headerText += ')';
+          
+          headerH1.textContent = headerText;
+        } catch (e) {
+          console.error('Error parseando vehículo:', e);
+          headerH1.textContent = decodedCategory;
+        }
+      } else if (headerH1) {
+        headerH1.textContent = decodedCategory;
+      }
+      
+      // Si viene desde mantenimiento, priorizar lista de SKUs guardada
+      const mantenimientoSkusStr = sessionStorage.getItem('mantenimiento_skus');
+
+      if (esMantenimiento && mantenimientoSkusStr) {
+        try {
+          const skus = JSON.parse(mantenimientoSkusStr);
+          showLoader('Cargando productos de mantenimiento...');
+
+          // Cargar base de productos única
+          const productosResponse = await fetch('../datosproductos/productos_db.json');
+          const productosData = await productosResponse.json();
+
+          // Filtrar por SKUs guardados
+          const normalizar = (t) => (t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[-_\s]/g,'').trim();
+          const skusNorm = skus.map(s => normalizar(s));
+          const productosEncontrados = productosData.filter(p => skusNorm.includes(normalizar(p.codSC)));
+
+          // Actualizar header
+          const headerH1 = document.querySelector('.header-left h1');
+          if (headerH1) headerH1.textContent = 'Productos de mantenimiento';
+
+          // Renderizar y limpiar marcador
+          renderizarProductosCruzados(productosEncontrados, {}, 'Mantenimiento');
+          actualizarPaginacion();
+          hideLoader();
+          sessionStorage.removeItem('mantenimiento_skus');
+          return; // No seguir con flujo de cruce estándar
+        } catch (e) {
+          console.error('Error mostrando productos de mantenimiento en categorías:', e);
+          hideLoader();
+        }
+      }
+
+      // Si viene desde campaña (ofertas exclusivas), priorizar SKUs de la campaña
+      const campanaSkusStr = localStorage.getItem('campana_skus');
+      if (campanaParam && campanaSkusStr) {
+        try {
+          const skus = JSON.parse(campanaSkusStr) || [];
+          if (!Array.isArray(skus) || skus.length === 0) {
+            console.warn('Campaña sin SKUs válidos');
+          } else {
+            showLoader('Cargando ofertas de campaña...');
+
+            const productosResponse = await fetch('../datosproductos/productos_db.json');
+            const productosData = await productosResponse.json();
+
+            const normalizar = (t) => (t || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/[-_\s]/g,'').trim();
+            const skusNorm = skus.map(s => normalizar(s));
+            const productosEncontrados = productosData.filter(p => skusNorm.includes(normalizar(p.codSC)));
+
+            // Actualizar header
+            const headerH1 = document.querySelector('.header-left h1');
+            if (headerH1) headerH1.textContent = 'Ofertas de campaña';
+
+            if (productosEncontrados.length > 0) {
+              renderizarProductosCruzados(productosEncontrados, {}, 'Campaña');
+              actualizarPaginacion();
+            } else {
+              mostrarMensajeSinProductos();
+            }
+
+            hideLoader();
+          }
+        } catch (e) {
+          console.error('Error mostrando productos de campaña en categorías:', e);
+          hideLoader();
+        } finally {
+          // Evitar estado obsoleto en recargas posteriores
+          localStorage.removeItem('campana_skus');
+        }
+        return; // No seguir con flujo de cruce estándar
+      }
+
+      if (vehiculoStr) {
+        try {
+          const vehiculo = JSON.parse(vehiculoStr);
+          console.log('✅ Vehículo parseado:', vehiculo);
+          console.log('   - Marca:', vehiculo.marca);
+          console.log('   - Modelo:', vehiculo.modelo);
+          console.log('   - Patente:', vehiculo.patente || 'Sin patente');
+          console.log('   - Categoría solicitada:', decodedCategory);
+          
+          // Mostrar loader
+          showLoader('Cargando productos...');
+          
+          // Cargar ambos JSON
+          const [crucesResponse, productosResponse] = await Promise.all([
+            fetch('../datosproductos/cruces_vehiculos.json'),
+            fetch('../datosproductos/productos_db.json')
+          ]);
+          
+          const crucesData = await crucesResponse.json();
+          const productosData = await productosResponse.json();
+          
+          console.log('📦 Datos cargados:', {
+            cruces: crucesData.cruces.length,
+            productos: productosData.length
+          });
+          
+          // Buscar el cruce del vehículo
+          const marcaNorm = normalizarTexto(vehiculo.marca);
+          const modeloNorm = normalizarTexto(vehiculo.modelo);
+          
+          console.log('🔎 Buscando cruce con:');
+          console.log('   - Marca normalizada:', marcaNorm);
+          console.log('   - Modelo normalizado:', modeloNorm);
+          
+          const cruce = crucesData.cruces.find(c => {
+            const cruceMarca = normalizarTexto(c.marca);
+            const cruceModelo = normalizarTexto(c.modelo);
+            console.log('   Comparando con:', cruceMarca, cruceModelo);
+            return cruceMarca === marcaNorm && cruceModelo === modeloNorm;
+          });
+          
+          console.log('🎯 Cruce encontrado:', cruce);
+          
+          if (!cruce) {
+            console.error('❌ No se encontró cruce para:', vehiculo.marca, vehiculo.modelo);
+            mostrarMensajeSinProductos();
+            return;
+          }
+          
+          // Mapear nombre de categoría del frontend al backend
+          const categoriaMap = {
+            'Embragues': 'embragues',
+            'Frenos': 'frenos',
+            'Suspensión': 'suspension',
+            'Filtros y diferenciales': 'filtros y diferenciales',
+            'Sistema de aire': 'sistema de aire',
+            'Sistema de dirección': 'sistema de direccion'
+          };
+          
+          const categoriaKey = normalizarTexto(categoriaMap[decodedCategory] || decodedCategory);
+          console.log('🔑 Categoría mapeada:', decodedCategory, '→', categoriaKey);
+          
+          // Buscar el SKU en las categorías del cruce
+          let skusBuscados = [];
+          let marcasPorSKU = {}; // Mapeo de SKU → marca desde el cruce
+          
+          if (cruce.categorias) {
+            console.log('📋 Categorías disponibles en cruce:', Object.keys(cruce.categorias));
+            
+            // Buscar en las categorías del cruce
+            for (const [catKey, catData] of Object.entries(cruce.categorias)) {
+              const catKeyNorm = normalizarTexto(catKey);
+              console.log('   Comparando categoría:', catKeyNorm, 'vs', categoriaKey);
+              
+              if (catKeyNorm === categoriaKey) {
+                // Manejar tanto formato antiguo (objeto) como nuevo (array)
+                if (Array.isArray(catData)) {
+                  // Nuevo formato: array de productos con su marca específica
+                  catData.forEach(p => {
+                    skusBuscados.push(p.sku);
+                    if (p.marca) {
+                      marcasPorSKU[normalizarTexto(p.sku)] = p.marca;
+                    }
+                  });
+                  console.log('✅ SKUs encontrados (array):', skusBuscados);
+                  console.log('✅ Marcas por SKU:', marcasPorSKU);
+                } else if (catData.sku) {
+                  // Formato antiguo: objeto con sku
+                  skusBuscados = [catData.sku];
+                  if (catData.marca) {
+                    marcasPorSKU[normalizarTexto(catData.sku)] = catData.marca;
+                  }
+                  console.log('✅ SKU encontrado (objeto):', skusBuscados[0], '- Marca:', catData.marca);
+                }
+                break;
+              }
+            }
+          }
+          
+          if (skusBuscados.length === 0) {
+            console.log('❌ No hay productos en esta categoría para el vehículo');
+            mostrarMensajeSinProductos();
+            return;
+          }
+          
+          console.log('🔍 Buscando productos con SKUs:', skusBuscados);
+          
+          // Buscar los productos en la base de datos por SKUs (codSC)
+          const skusNormalizados = skusBuscados.map(sku => normalizarTexto(sku));
+          const productosEncontrados = productosData.filter(p => {
+            const match = skusNormalizados.includes(normalizarTexto(p.codSC));
+            if (match) {
+              console.log('✅ Producto encontrado:', p.repuesto, '- codSC:', p.codSC);
+            }
+            return match;
+          });
+          
+          console.log('📦 Total productos encontrados:', productosEncontrados.length);
+          
+          if (productosEncontrados.length > 0) {
+            renderizarProductosCruzados(productosEncontrados, marcasPorSKU, decodedCategory);
+          } else {
+            console.log('⚠️ SKUs encontrados en cruce pero no en productos_db.json:', skusBuscados);
+            console.log('   Esto es normal si los SKUs son de prueba o aún no están cargados.');
+            mostrarMensajeSinProductos();
+          }
+          
+          hideLoader();
+          
+        } catch (e) {
+          console.error('❌ Error cargando cruces:', e);
+          mostrarMensajeError();
+          hideLoader();
+        }
+      } else {
+        // No hay vehículo seleccionado, cargar todos los productos de la categoría
+        console.log('⚠️ No hay vehículo seleccionado, mostrando todos los productos');
+        hideLoader();
+      }
+    }
+  });
+  
+  // Variables de paginación
+  let todosLosProductos = [];
+  let paginaActual = 1;
+  const PRODUCTOS_POR_PAGINA = 20; // 4 columnas x 5 filas
+  window.marcasPorSKUGlobal = {}; // Variable global para mantener marcas del cruce
+
+  function renderizarProductosCruzados(productos, marcasPorSKU, categoria) {
+    const grid = document.querySelector('.products-grid');
+    if (!grid) return;
+    
+    // Guardar productos y marcas para paginación
+    todosLosProductos = productos;
+    window.marcasPorSKUGlobal = marcasPorSKU;
+    paginaActual = 1;
+    
+    // Renderizar primera página
+    renderizarPagina(1, marcasPorSKU);
+    
+    // Actualizar paginación
+    actualizarPaginacion();
+  }
+
+  function renderizarPagina(numeroPagina, marcasPorSKU) {
+    const grid = document.querySelector('.products-grid');
+    if (!grid) return;
+    
+    const inicio = (numeroPagina - 1) * PRODUCTOS_POR_PAGINA;
+    const fin = inicio + PRODUCTOS_POR_PAGINA;
+    const productosPagina = todosLosProductos.slice(inicio, fin);
+    
+    // Actualizar contador
+    const resultsText = document.querySelector('.results-text');
+    if (resultsText) {
+      resultsText.textContent = `${todosLosProductos.length} producto${todosLosProductos.length !== 1 ? 's' : ''} encontrado${todosLosProductos.length !== 1 ? 's' : ''}`;
+    }
+    
+    // Renderizar productos de esta página
+    renderizarProductosHTML(productosPagina, marcasPorSKU);
+  }
+
+  // Función auxiliar para navegar al detalle del producto
+  async function irADetalleProducto(producto, marcaCorrecta, event) {
+      if (event) event.preventDefault();
+      
+      console.log('🚀 Iniciando navegación a detalle del producto:', producto.codSC);
+      
+      // Guardar producto completo en sessionStorage con la marca correcta del cruce
+      sessionStorage.setItem('productoDetalle', JSON.stringify({
+        ...producto,
+        marca: marcaCorrecta || producto.marca, // Usar marca del cruce si existe
+        fichaTecnica: producto.fichaTecnica || '',
+        referenciaCruzada: producto.referenciaCruzada || '',
+        oem: producto.oem || '',
+        stock: producto.stock || 0
+      }));
+      
+      // OBTENER TODOS LOS PRODUCTOS DE TODAS LAS CATEGORÍAS DEL CRUCE
+      try {
+        const vehiculoStr = sessionStorage.getItem('vehiculo-seleccionado');
+        console.log('📦 Vehículo seleccionado:', vehiculoStr ? 'encontrado' : 'NO encontrado');
+        
+        if (vehiculoStr) {
+          const vehiculo = JSON.parse(vehiculoStr);
+          console.log('🔄 Cargando cruces y productos...');
+          
+          const [crucesResponse, productosResponse] = await Promise.all([
+            fetch('../datosproductos/cruces_vehiculos.json'),
+            fetch('../datosproductos/productos_db.json')
+          ]);
+          
+          if (!crucesResponse.ok) {
+            throw new Error(`Error cargando cruces: ${crucesResponse.status}`);
+          }
+          if (!productosResponse.ok) {
+            throw new Error(`Error cargando productos: ${productosResponse.status}`);
+          }
+          
+          const crucesData = await crucesResponse.json();
+          const productosData = await productosResponse.json();
+          
+          console.log('✅ Datos cargados - Cruces:', crucesData.cruces.length, 'Productos:', productosData.length);
+          
+          // Buscar el cruce del vehículo
+          const marcaNorm = normalizarTexto(vehiculo.marca);
+          const modeloNorm = normalizarTexto(vehiculo.modelo);
+          const cruce = crucesData.cruces.find(c => {
+            return normalizarTexto(c.marca) === marcaNorm && normalizarTexto(c.modelo) === modeloNorm;
+          });
+          
+          console.log('🔍 Cruce encontrado:', cruce ? 'SÍ' : 'NO');
+          
+          if (cruce && cruce.categorias) {
+            console.log('📋 Categorías en cruce:', Object.keys(cruce.categorias));
+            
+            // Recopilar todos los SKUs de todas las categorías
+            let todosLosSKUs = [];
+            let todasMarcasPorSKU = {};
+            
+            for (const [catKey, catData] of Object.entries(cruce.categorias)) {
+              if (Array.isArray(catData)) {
+                catData.forEach(p => {
+                  todosLosSKUs.push(p.sku);
+                  if (p.marca) {
+                    todasMarcasPorSKU[normalizarTexto(p.sku)] = p.marca;
+                  }
+                });
+              } else if (catData.sku) {
+                todosLosSKUs.push(catData.sku);
+                if (catData.marca) {
+                  todasMarcasPorSKU[normalizarTexto(catData.sku)] = catData.marca;
+                }
+              }
+            }
+            
+            console.log('🎯 Total SKUs encontrados en cruce:', todosLosSKUs.length);
+            
+            // Buscar todos los productos en la base de datos
+            const skusNormalizados = todosLosSKUs.map(sku => normalizarTexto(sku));
+            let todosLosProductos = productosData.filter(p => 
+              skusNormalizados.includes(normalizarTexto(p.codSC))
+            );
+            
+            console.log('✅ Productos encontrados en DB:', todosLosProductos.length);
+            
+            // Aplicar marcas del cruce
+            todosLosProductos = todosLosProductos.map(p => ({
+              ...p,
+              marca: todasMarcasPorSKU[normalizarTexto(p.codSC)] || p.marca
+            }));
+            
+            // PRIORIZACIÓN: descuentos primero, luego coincidencias, luego resto
+            const productoActual = producto.codSC;
+            todosLosProductos.sort((a, b) => {
+              const aDescuento = a.descuento && a.descuento > 0;
+              const bDescuento = b.descuento && b.descuento > 0;
+              
+              // Función para detectar coincidencia en código (ej: KITTOY300AR - PASTTOY300AR)
+              const tieneCoincidencia = (sku1, sku2) => {
+                const base1 = sku1.replace(/^[A-Z]+/, ''); // quitar prefijo de letras
+                const base2 = sku2.replace(/^[A-Z]+/, '');
+                return base1 === base2 && base1.length > 0;
+              };
+              
+              const aCoincide = tieneCoincidencia(a.codSC, productoActual);
+              const bCoincide = tieneCoincidencia(b.codSC, productoActual);
+              
+              // Prioridad 1: Descuentos
+              if (aDescuento && !bDescuento) return -1;
+              if (!aDescuento && bDescuento) return 1;
+              
+              // Prioridad 2: Coincidencias de código
+              if (aCoincide && !bCoincide) return -1;
+              if (!aCoincide && bCoincide) return 1;
+              
+              return 0;
+            });
+            
+            console.log('💾 Guardando en carrusel:', todosLosProductos.length, 'productos');
+            sessionStorage.setItem('productosCarrusel', JSON.stringify(todosLosProductos));
+          } else {
+            console.log('⚠️ Fallback: usando solo productos de categoría actual');
+            sessionStorage.setItem('productosCarrusel', JSON.stringify(productos));
+          }
+        } else {
+          console.log('⚠️ Fallback: no hay vehículo seleccionado');
+          sessionStorage.setItem('productosCarrusel', JSON.stringify(productos));
+        }
+      } catch (error) {
+        console.error('❌ Error obteniendo productos del cruce:', error);
+        sessionStorage.setItem('productosCarrusel', JSON.stringify(productos));
+      }
+      
+      sessionStorage.setItem('origenCarrusel', 'cruce');
+      console.log('🎬 Navegando a detalleproducto.html');
+      
+      // Navegar a detalleproducto.html
+      window.location.href = `detalleproducto.html?sku=${encodeURIComponent(producto.codSC)}`;
+    }
+
+  function renderizarProductosHTML(productos, marcasPorSKU) {
+    const grid = document.querySelector('.products-grid');
+    if (!grid) return;
+    
+    let html = '';
+    // Heurística para inferir el tipo de producto desde el nombre
+    function inferirTipo(nombre) {
+      const n = normalizarTexto(nombre || '');
+      const patterns = [
+        { key: 'kit de embrague', label: 'Kit de embrague' },
+        { key: 'volante', label: 'Volante' },
+        { key: 'rodamiento', label: 'Rodamiento' },
+        { key: 'prensa', label: 'Prensa' },
+        { key: 'servos', label: 'Servos' },
+        { key: 'componentes amt', label: 'Componentes AMT' },
+        { key: 'caliper', label: 'Caliper' },
+        { key: 'pastillas de freno', label: 'Pastillas de freno' },
+        { key: 'disco de freno', label: 'Disco de freno' },
+        { key: 'tambor de freno', label: 'Tambor de freno' },
+        { key: 'patines', label: 'Patines' },
+        { key: 'pulmon de freno', label: 'Pulmón de freno' },
+        { key: 'mazas', label: 'Mazas' },
+        { key: 'chicharras', label: 'Chicharras' },
+        { key: 'freno motor', label: 'Freno motor' },
+        { key: 'pulmon de suspension', label: 'Pulmón de suspensión' },
+        { key: 'pulmon de levante', label: 'Pulmón de levante' },
+        { key: 'fuelle', label: 'Fuelle' },
+        { key: 'filtro de aceite', label: 'Filtro de aceite' },
+        { key: 'filtro de aire', label: 'Filtro de aire' },
+        { key: 'filtro de cabina', label: 'Filtro de cabina' },
+        { key: 'filtro de combustible', label: 'Filtro de combustible' },
+        { key: 'filtro separador', label: 'Filtro separador' },
+        { key: 'filtro hidraulico', label: 'Filtro Hidráulico' },
+        { key: 'valvula', label: 'Válvula' },
+        { key: 'secador', label: 'Secador' },
+        { key: 'compresor', label: 'Compresor' },
+        { key: 'correa', label: 'Correa' },
+        { key: 'barra de direccion', label: 'Barra de dirección' },
+        { key: 'barra estabilizadora', label: 'Barra estabilizadora' },
+        { key: 'barra tensora', label: 'Barra tensora' },
+        { key: 'barras en v', label: 'Barras en V' },
+        { key: 'terminales de direccion', label: 'Terminales de dirección' },
+        { key: 'soporte', label: 'Soporte' },
+      ];
+      for (const p of patterns) { if (n.includes(p.key)) return p.label; }
+      const words = (nombre || '').trim().split(/\s+/).slice(0,3).join(' ');
+      return words || 'Producto';
+    }
+
+    productos.forEach(producto => {
+      const tieneDescuento = producto.descuento && producto.descuento > 0;
+      const precioOriginal = producto.precio;
+      const precioFinal = tieneDescuento ? (producto.precio * (1 - producto.descuento / 100)) : producto.precio;
+      
+      // Logo de marca - PRIORIDAD: marca del cruce > marca del producto
+      const skuNorm = normalizarTexto(producto.codSC);
+      const marcaCruce = marcasPorSKU[skuNorm]; // Marca específica del cruce para este SKU
+      const marcaFinal = (marcaCruce || producto.marca || '').toUpperCase();
+      const marcaLogo = `../marcasproductos/${marcaFinal}.png`;
+      
+      console.log(`🔍 SKU: ${producto.codSC} | Marca Cruce: ${marcaCruce || 'N/A'} | Marca Producto: ${producto.marca} | Final: ${marcaFinal}`);
+      
+      // Imagen principal del producto (primera imagen del array)
+      const tieneImagen = producto.imagenes && producto.imagenes.length > 0;
+      const imagenPrincipal = tieneImagen ? producto.imagenes[0] : null;
+      
+      // Serializar producto para data-attribute (con marca correcta del cruce)
+      const productoConMarcaCorrecta = {
+        ...producto,
+        marcaOriginal: producto.marca, // Guardar marca original por si acaso
+        marca: marcaCruce || producto.marca // Usar marca del cruce si existe
+      };
+      const productoJSON = JSON.stringify(productoConMarcaCorrecta).replace(/"/g, '&quot;');
+      const dataMarca = marcaFinal; // en mayúsculas
+      const dataPrecio = Math.round(precioFinal || 0);
+      const dataOferta = tieneDescuento ? '1' : '0';
+      const dataTipo = inferirTipo(producto.repuesto || '');
+      
+      html += `
+        <article class="sc-card${tieneDescuento ? ' oferta' : ''}"
+                 data-producto='${productoJSON}'
+                 data-marca-correcta="${marcaCruce || producto.marca || ''}"
+                 data-marca="${dataMarca}"
+                 data-precio="${dataPrecio}"
+                 data-oferta="${dataOferta}"
+                 data-tipo="${dataTipo}"
+                 style="cursor: pointer;">
+          <div class="sc-card-header">
+            <img src="${marcaLogo}" 
+                 alt="${marcaFinal}" 
+                 class="brand-logo"
+                 onerror="this.src='../img/placeholder-logo-marca.svg'">
+            <span class="sku-visible">SKU: ${producto.codCliente ? producto.codCliente : (producto.codSC || 'N/A')}</span>
+            ${producto.codCliente ? `<span class="sku-invisible" style="display:none;">${producto.codSC || ''}</span>` : ''}
+          </div>
+          
+          ${tieneDescuento ? '<div class="badge-offer">OFERTA</div>' : ''}
+
+          <div class="sc-card-img card-carousel-container ${producto.imagenes && producto.imagenes.length > 1 ? 'has-carousel' : ''}" data-current-index="0">
+            ${tieneImagen ? 
+              producto.imagenes.map((img, index) => 
+                `<img src="${img}" 
+                     alt="${producto.repuesto || 'Producto'} - Vista ${index + 1}"
+                     class="carousel-image ${index === 0 ? 'active' : ''}"
+                     onerror="this.style.display='none';">`
+              ).join('') + 
+              (producto.imagenes.length > 1 ? `
+                <button class="card-carousel-btn prev" onclick="event.stopPropagation(); navegarCarrusel(this, -1)">‹</button>
+                <button class="card-carousel-btn next" onclick="event.stopPropagation(); navegarCarrusel(this, 1)">›</button>
+                <div class="card-carousel-indicators">
+                  ${producto.imagenes.map((_, index) => 
+                    `<span class="dot ${index === 0 ? 'active' : ''}" onclick="event.stopPropagation(); irAImagenCarrusel(this, ${index})"></span>`
+                  ).join('')}
+                </div>
+              ` : '')
+            : `
+              <div class="image-placeholder" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; background: #f8f9fa;">
+                <img src="../img/Logo SC.svg" alt="StarClutch" style="width: 80px; height: 80px; margin-bottom: 12px; opacity: 0.5;">
+                <p style="text-align: center; color: #999; font-size: 13px; margin: 0;">No hay imagen para este producto</p>
+              </div>
+            `}
+          </div>
+
+          <div class="sc-card-body">
+            <h3 class="sc-card-title">${producto.repuesto || 'Producto sin nombre'}</h3>
+          </div>
+
+          <div class="price-section">
+            ${tieneDescuento ? `<span class="price-old">$${Math.round(precioOriginal).toLocaleString('es-CL')}</span>` : ''}
+            <span class="price-current">$${Math.round(precioFinal).toLocaleString('es-CL')}</span>
+          </div>
+
+          <div class="sc-card-actions">
+            <button class="btn-secondary btn-carrito" onclick="event.stopPropagation(); agregarAlCarrito('${producto.codSC}')">
+              Agregar <img src="../img/carritorojo.svg" alt="Carrito">
+            </button>
+            
+            <button class="btn-primary btn-detalle" onclick="event.stopPropagation();">
+               Más detalles
+            </button>
+          </div>
+        </article>
+      `;
+    });
+    
+    grid.innerHTML = html;
+    
+    // Agregar event listeners a las cards después de renderizar
+    document.querySelectorAll('.sc-card').forEach(card => {
+      const productoData = card.getAttribute('data-producto');
+      const marcaCorrecta = card.getAttribute('data-marca-correcta');
+      if (!productoData) return;
+      
+      const producto = JSON.parse(productoData);
+      
+      // Click en la card completa
+      card.addEventListener('click', async (e) => {
+        // Evitar navegación si se hace clic en los botones
+        if (e.target.closest('.btn-carrito') || e.target.closest('.btn-detalle')) return;
+        
+        // DEBUG: Verificar sessionStorage ANTES de la función
+        const vehiculoCheck = sessionStorage.getItem('vehiculo-seleccionado');
+        console.log('🔍 ANTES de irADetalleProducto - vehiculo-seleccionado existe:', !!vehiculoCheck);
+        if (vehiculoCheck) {
+          console.log('   Contenido:', JSON.parse(vehiculoCheck));
+        }
+        
+        await irADetalleProducto(producto, marcaCorrecta, e);
+      });
+      
+      // Click en botón "Más detalles"
+      const btnDetalle = card.querySelector('.btn-detalle');
+      if (btnDetalle) {
+        btnDetalle.addEventListener('click', async (e) => {
+          await irADetalleProducto(producto, marcaCorrecta, e);
+        });
+      }
+    });
+  }
+  
+  function mostrarMensajeSinProductos() {
+    const grid = document.querySelector('.products-grid');
+    if (!grid) return;
+    
+    grid.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #666;">
+        <img src="../img/Productos.svg" alt="Sin productos" style="width: 80px; height: 80px; opacity: 0.3; margin-bottom: 20px;">
+        <h3 style="margin: 0 0 10px 0; font-size: 20px; color: #333;">No hay productos disponibles</h3>
+        <p style="margin: 0; font-size: 16px;">No se encontraron productos específicos para este vehículo en esta categoría.</p>
+      </div>
+    `;
+    
+    const resultsText = document.querySelector('.results-text');
+    if (resultsText) {
+      resultsText.textContent = '0 productos encontrados';
+    }
+  }
+  
+  function mostrarMensajeError() {
+    const grid = document.querySelector('.products-grid');
+    if (!grid) return;
+    
+    grid.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #ff4444;">
+        <h3 style="margin: 0 0 10px 0; font-size: 20px;">Error al cargar productos</h3>
+        <p style="margin: 0; font-size: 16px;">Por favor, intenta nuevamente más tarde.</p>
+      </div>
+    `;
+  }
+  
+  // La función agregarAlCarrito está en script.js (CarritoGlobal)
+
+  // ==== FUNCIONES CARRUSEL EN HOVER ====
+  function navegarCarrusel(btn, direccion) {
+    const container = btn.closest('.card-carousel-container');
+    if (!container) return;
+    
+    const imagenes = container.querySelectorAll('.carousel-image');
+    if (imagenes.length <= 1) return;
+    
+    let currentIndex = parseInt(container.getAttribute('data-current-index')) || 0;
+    
+    // Ocultar imagen actual
+    imagenes[currentIndex].classList.remove('active');
+    
+    // Calcular nuevo índice
+    currentIndex += direccion;
+    if (currentIndex < 0) currentIndex = imagenes.length - 1;
+    if (currentIndex >= imagenes.length) currentIndex = 0;
+    
+    // Mostrar nueva imagen
+    imagenes[currentIndex].classList.add('active');
+    container.setAttribute('data-current-index', currentIndex);
+    
+    // Actualizar indicadores
+    const dots = container.querySelectorAll('.dot');
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === currentIndex);
+    });
+  }
+
+  function irAImagenCarrusel(dot, index) {
+    const container = dot.closest('.card-carousel-container');
+    if (!container) return;
+    
+    const imagenes = container.querySelectorAll('.carousel-image');
+    if (imagenes.length <= 1) return;
+    
+    const currentIndex = parseInt(container.getAttribute('data-current-index')) || 0;
+    
+    // Ocultar imagen actual
+    imagenes[currentIndex].classList.remove('active');
+    
+    // Mostrar nueva imagen
+    imagenes[index].classList.add('active');
+    container.setAttribute('data-current-index', index);
+    
+    // Actualizar indicadores
+    const dots = container.querySelectorAll('.dot');
+    dots.forEach((d, i) => {
+      d.classList.toggle('active', i === index);
+    });
+  }
+
+  // ==== FUNCIONES DE PAGINACIÓN ====
+  function actualizarPaginacion() {
+    const totalPaginas = Math.ceil(todosLosProductos.length / PRODUCTOS_POR_PAGINA);
+    const paginationContainer = document.querySelector('.pagination');
+    
+    if (!paginationContainer) return;
+    
+    // Siempre mostrar la paginación
+    paginationContainer.style.display = 'flex';
+    
+    let html = '';
+    
+    // Botón anterior
+    html += `<button class="page-btn arrow" onclick="cambiarPagina(${paginaActual - 1})" ${paginaActual === 1 ? 'disabled' : ''}>&lt;</button>`;
+    
+    // Números de página
+    for (let i = 1; i <= totalPaginas; i++) {
+      // Mostrar máximo 5 números de página
+      if (i === 1 || i === totalPaginas || (i >= paginaActual - 1 && i <= paginaActual + 1)) {
+        html += `<button class="page-btn ${i === paginaActual ? 'active' : ''}" onclick="cambiarPagina(${i})">${i}</button>`;
+      } else if (i === paginaActual - 2 || i === paginaActual + 2) {
+        html += `<span style="padding: 0 8px; color: #999;">...</span>`;
+      }
+    }
+    
+    // Botón siguiente
+    html += `<button class="page-btn arrow" onclick="cambiarPagina(${paginaActual + 1})" ${paginaActual === totalPaginas ? 'disabled' : ''}>&gt;</button>`;
+    
+    paginationContainer.innerHTML = html;
+  }
+
+  function cambiarPagina(nuevaPagina) {
+    const totalPaginas = Math.ceil(todosLosProductos.length / PRODUCTOS_POR_PAGINA);
+    
+    if (nuevaPagina < 1 || nuevaPagina > totalPaginas) return;
+    
+    paginaActual = nuevaPagina;
+    
+    // Obtener marcasPorSKU del scope (necesitamos guardarlo globalmente)
+    renderizarPagina(nuevaPagina, window.marcasPorSKUGlobal || {});
+    actualizarPaginacion();
+    
+    // Scroll al inicio de la grilla
+    const grid = document.querySelector('.products-grid');
+    if (grid) {
+      grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+</script>
+
+<!-- Panel de Carrito -->
+<div class="cart-overlay" id="cart-overlay" onclick="cerrarCarrito()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-header">
+    <h3><img src="../img/carrito.svg" alt="" style="width:20px;height:20px;filter:brightness(0) invert(1);margin-right:8px;">Carrito</h3>
+    <button class="cart-close" onclick="cerrarCarrito()">&times;</button>
+  </div>
+  <div class="cart-body">
+    <div class="cart-empty" id="cart-empty">
+      <img src="../img/carrito.svg" alt="Carrito vacío" />
+      <p>Tu carrito está vacío</p>
+    </div>
+    <ul class="cart-list" id="cart-list"></ul>
+  </div>
+  <div class="cart-footer" id="cart-footer" style="display:none;">
+    <p class="cart-total"><strong>Total:</strong> $0 <span>IVA incluido</span></p>
+    <div class="cart-actions">
+      <button class="cart-btn-primary" onclick="generarOrdenCompraDesdeOtroHTML()">Generar OC</button>
+      <button class="cart-btn-secondary" onclick="cotizarDesdeOtroHTML()">Cotizar</button>
+    </div>
+    <a href="carrito.html" class="cart-link">Ver resumen del carrito</a>
+  </div>
+</div>
+
+<!-- Panel de Notificaciones -->
+<div class="notif-overlay" id="notif-overlay" onclick="cerrarNotificaciones()"></div>
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">
+    <h3>
+      Todas las notificaciones
+      <button class="notif-close" onclick="cerrarNotificaciones()">&times;</button>
+    </h3>
+  </div>
+  
+  <div class="notif-tabs">
+    <div class="notif-tabs-left">
+      <button class="notif-tab active" data-filter="todas">Todas</button>
+      <button class="notif-tab" data-filter="sin-leer">Sin leer <span class="notif-tab-count"></span></button>
+    </div>
+    <button id="marcar-todas-vistas">Marcar como vistas</button>
+  </div>
+  <div class="notif-body">
+    <div id="notif-list" style="display: none;"></div>
+    <div class="notif-empty" id="notif-empty">
+      <div class="notif-empty-icon"><img src="../img/Alerta.svg" alt="Sin notificaciones"></div>
+      <h4>No hay notificaciones</h4>
+      <p>Cuando tengas novedades sobre productos, ofertas o actualizaciones, aparecerán aquí.</p>
+    </div>
+  </div>
+</div>
+<script src="../notificaciones.js"></script>
+<script>
+function toggleNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); if (panel.classList.contains('open')) { cerrarNotificaciones(); } else { panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
+function cerrarNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { const panel = document.getElementById('notif-panel'); if (panel && panel.classList.contains('open')) cerrarNotificaciones(); const cartPanel = document.getElementById('cart-panel'); if (cartPanel && cartPanel.classList.contains('open')) cerrarCarrito(); } });
+async function toggleCarrito() { const panel = document.getElementById('cart-panel'); const overlay = document.getElementById('cart-overlay'); if (panel.classList.contains('open')) { cerrarCarrito(); } else { if (typeof CarritoGlobal !== 'undefined') { await CarritoGlobal.sincronizar(); CarritoGlobal.iniciarPolling(); } panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
+function cerrarCarrito() { if (typeof CarritoGlobal !== 'undefined') CarritoGlobal.detenerPolling(); const panel = document.getElementById('cart-panel'); const overlay = document.getElementById('cart-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+</script>
+
+</body>
+</html>
