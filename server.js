@@ -459,7 +459,7 @@ app.get("/api/notificaciones", (req, res) => {
     }
 });
 
-// 2. MARCAR NOTIFICACIÓN COMO LEÍDA
+// 2. MARCAR NOTIFICACIÃ“N COMO LEÃDA
 app.post("/api/notificaciones/marcar-leida", (req, res) => {
     try {
         const { notifId, userId } = req.body;
@@ -472,10 +472,10 @@ app.post("/api/notificaciones/marcar-leida", (req, res) => {
         const index = notificaciones.findIndex(n => n.id === notifId);
         
         if (index === -1) {
-            return res.status(404).json({ ok: false, msg: "Notificación no encontrada" });
+            return res.status(404).json({ ok: false, msg: "NotificaciÃ³n no encontrada" });
         }
         
-        // Verificar que la notificación pertenece al usuario
+        // Verificar que la notificaciÃ³n pertenece al usuario
         if (notificaciones[index].userId !== userId && notificaciones[index].userId !== null) {
             return res.status(403).json({ ok: false, msg: "No autorizado" });
         }
@@ -483,14 +483,14 @@ app.post("/api/notificaciones/marcar-leida", (req, res) => {
         notificaciones[index].leida = true;
         writeJSON(NOTIFICACIONES_DB, notificaciones);
         
-        res.json({ ok: true, msg: "Notificación marcada como leída" });
+        res.json({ ok: true, msg: "NotificaciÃ³n marcada como leÃ­da" });
     } catch (error) {
         console.error("Error marcando notificaciÃ³n:", error);
         res.status(500).json({ ok: false, msg: "Error interno" });
     }
 });
 
-// 3. MARCAR TODAS LAS NOTIFICACIONES COMO LEÍDAS
+// 3. MARCAR TODAS LAS NOTIFICACIONES COMO LEÃDAS
 app.post("/api/notificaciones/marcar-todas-leidas", (req, res) => {
     try {
         const { userId } = req.body;
@@ -510,14 +510,14 @@ app.post("/api/notificaciones/marcar-todas-leidas", (req, res) => {
         
         writeJSON(NOTIFICACIONES_DB, notificaciones);
         
-        res.json({ ok: true, msg: "Todas las notificaciones marcadas como leídas" });
+        res.json({ ok: true, msg: "Todas las notificaciones marcadas como leÃ­das" });
     } catch (error) {
         console.error("Error marcando todas las notificaciones:", error);
         res.status(500).json({ ok: false, msg: "Error interno" });
     }
 });
 
-// 4. ELIMINAR UNA NOTIFICACIÓN
+// 4. ELIMINAR UNA NOTIFICACIÃ“N
 app.delete("/api/notificaciones/:notifId", (req, res) => {
     try {
         const { notifId } = req.params;
@@ -531,10 +531,10 @@ app.delete("/api/notificaciones/:notifId", (req, res) => {
         const index = notificaciones.findIndex(n => n.id === notifId);
         
         if (index === -1) {
-            return res.status(404).json({ ok: false, msg: "Notificación no encontrada" });
+            return res.status(404).json({ ok: false, msg: "NotificaciÃ³n no encontrada" });
         }
         
-        // Verificar que la notificación pertenece al usuario
+        // Verificar que la notificaciÃ³n pertenece al usuario
         if (notificaciones[index].userId !== userId && notificaciones[index].userId !== null) {
             return res.status(403).json({ ok: false, msg: "No autorizado" });
         }
@@ -542,7 +542,7 @@ app.delete("/api/notificaciones/:notifId", (req, res) => {
         notificaciones.splice(index, 1);
         writeJSON(NOTIFICACIONES_DB, notificaciones);
         
-        res.json({ ok: true, msg: "Notificación eliminada" });
+        res.json({ ok: true, msg: "NotificaciÃ³n eliminada" });
     } catch (error) {
         console.error("Error eliminando notificaciÃ³n:", error);
         res.status(500).json({ ok: false, msg: "Error interno" });
@@ -769,7 +769,7 @@ async function crearNotificacion(userId, tipo, titulo, mensaje, datos = {}) {
             }
         }
         
-        console.log(`✓ Notificación creada: ${tipo} - ${titulo}`);
+        console.log(`âœ“ NotificaciÃ³n creada: ${tipo} - ${titulo}`);
         return notif;
     } catch (error) {
         console.error('Error creando notificaciÃ³n:', error);
@@ -789,11 +789,11 @@ async function enviarEmailNotificacion(userId, tipo, titulo, mensaje, datos) {
             return; // Usuario no tiene email registrado
         }
         
-        // Iconos y colores según tipo
+        // Iconos y colores segÃºn tipo
         const tiposConfig = {
             'nuevo_producto': { icon: '', color: '#BF1823', label: 'Nuevo Producto' },
             'descuento_agregado': { icon: '', color: '#BF1823', label: 'Nueva Oferta' },
-            'descuento_eliminado': { icon: '', color: '#BF1823', label: 'Actualización de Precio' },
+            'descuento_eliminado': { icon: '', color: '#BF1823', label: 'ActualizaciÃ³n de Precio' },
             'banner_actualizado': { icon: '', color: '#BF1823', label: 'Nuevas Ofertas' },
             'campanas_actualizadas': { icon: '', color: '#BF1823', label: 'Ofertas Exclusivas' },
             'mantenimiento_programado': { icon: '🔧', color: '#BF1823', label: 'Mantenimiento Programado' },
@@ -801,7 +801,7 @@ async function enviarEmailNotificacion(userId, tipo, titulo, mensaje, datos) {
             'mantenimiento_hoy': { icon: '🔔', color: '#BF1823', label: 'Mantenimiento Hoy' }
         };
         
-        const config = tiposConfig[tipo] || { icon: '', color: '#BF1823', label: 'Notificación' };
+        const config = tiposConfig[tipo] || { icon: '', color: '#BF1823', label: 'NotificaciÃ³n' };
         
         const html = `
         <div style="font-family:Poppins,Arial,sans-serif;max-width:520px;margin:0 auto;background:#ffffff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);overflow:hidden;">
@@ -818,7 +818,7 @@ async function enviarEmailNotificacion(userId, tipo, titulo, mensaje, datos) {
                     <div style="font-size:12px;color:#666;margin-bottom:8px;">Producto:</div>
                     <div style="font-weight:600;font-size:15px;color:#252425;margin-bottom:6px;">${datos.productoNombre}</div>
                     ${datos.productoMarca ? `<div style="font-size:13px;color:#888;margin-bottom:8px;">Marca: ${datos.productoMarca}</div>` : ''}
-                    ${datos.codSC ? `<div style="font-size:13px;color:#888;margin-bottom:8px;">Código: ${datos.codSC}</div>` : ''}
+                    ${datos.codSC ? `<div style="font-size:13px;color:#888;margin-bottom:8px;">CÃ³digo: ${datos.codSC}</div>` : ''}
                     ${datos.precioAnterior && datos.precioNuevo ? `
                     <div style="margin-top:12px;display:flex;align-items:center;gap:12px;">
                         <span style="text-decoration:line-through;color:#999;font-size:14px;">$${datos.precioAnterior.toLocaleString('es-CL')}</span>
@@ -832,11 +832,11 @@ async function enviarEmailNotificacion(userId, tipo, titulo, mensaje, datos) {
                     <a href="https://starclutch.com/mis%20flotas/" style="display:inline-block;background:#BF1823;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:600;font-size:14px;">Ver en la Plataforma</a>
                 </div>
                 <p style="margin:24px 0 0 0;font-size:12px;color:#666;line-height:1.5;">
-                    Esta notificación se envió porque estás suscrito a las actualizaciones de StarClutch. Puedes gestionar notificaciones desde tu perfil.
+                    Esta notificaciÃ³n se enviÃ³ porque estÃ¡s suscrito a las actualizaciones de StarClutch. Puedes gestionar notificaciones desde tu perfil.
                 </p>
             </div>
             <div style="padding:16px 24px;background:#f5f5f5;color:#555;font-size:12px;text-align:center;">
-                © ${new Date().getFullYear()} STARCLUTCH S.p.A. - Todos los derechos reservados
+                Â© ${new Date().getFullYear()} STARCLUTCH S.p.A. - Todos los derechos reservados
             </div>
         </div>`;
         
@@ -847,9 +847,9 @@ async function enviarEmailNotificacion(userId, tipo, titulo, mensaje, datos) {
             html
         });
         
-        console.log(`✓ Email de notificación enviado a: ${user.email}`);
+        console.log(`âœ“ Email de notificaciÃ³n enviado a: ${user.email}`);
     } catch (error) {
-        console.error('Error enviando email de notificación:', error);
+        console.error('Error enviando email de notificaciÃ³n:', error);
     }
 }
 
@@ -858,29 +858,29 @@ app.post('/api/enviar-correo-pin', async (req, res) => {
                 const { email, pin, userName } = req.body;
                 if (!email || !pin) return res.status(400).json({ ok: false, msg: 'Faltan email o pin' });
 
-                const subject = 'Confirmación de PIN — StarClutch';
+                const subject = 'ConfirmaciÃ³n de PIN â€” Starclutch';
                 const html = `
                 <div style="font-family:Poppins,Arial,sans-serif;max-width:520px;margin:0 auto;background:#ffffff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);overflow:hidden;">
                     <div style="background:#BF1823;color:#fff;padding:20px 24px;">
-                        <h2 style="margin:0;font-size:20px;font-weight:600;">Confirmación de PIN</h2>
+                        <h2 style="margin:0;font-size:20px;font-weight:600;">ConfirmaciÃ³n de PIN</h2>
                         <p style="margin:8px 0 0 0;opacity:0.9;">Starclutch Plataforma Experta</p>
                     </div>
                     <div style="padding:24px;color:#333;">
                         <div style="background:#fff3cd;border:1px solid #ffeeba;color:#856404;border-radius:8px;padding:12px 14px;font-size:13px;margin-bottom:14px;">
                             <strong>Asunto:</strong> ${subject}
                         </div>
-                        <p style="margin:0 0 12px 0;font-size:15px;">Hola${userName ? `, <strong>${userName}</strong>` : ''} 👋</p>
-                        <p style="margin:0 0 16px 0;font-size:14px;line-height:1.6;">Este es tu PIN de seguridad. Úsalo para autorizar acciones sensibles dentro de la plataforma (eliminar flotas, enviar órdenes, modificar datos). Cuídalo y no lo compartas.</p>
+                        <p style="margin:0 0 12px 0;font-size:15px;">Hola${userName ? `, <strong>${userName}</strong>` : ''} ðŸ‘‹</p>
+                        <p style="margin:0 0 16px 0;font-size:14px;line-height:1.6;">Este es tu PIN de seguridad. Ãšsalo para autorizar acciones sensibles dentro de la plataforma (eliminar flotas, enviar Ã³rdenes, modificar datos). CuÃ­dalo y no lo compartas.</p>
                         <div style="background:#f8f9fa;border:1px solid #e6e6e6;border-radius:8px;padding:18px;text-align:center;">
                             <div style="font-size:13px;color:#666;margin-bottom:8px;">Tu PIN</div>
                             <div style="font-size:28px;letter-spacing:10px;font-weight:700;color:#BF1823;">${String(pin).padStart(4,'0')}</div>
                         </div>
                         <ul style="margin:18px 0;padding-left:18px;font-size:13px;color:#666;">
                             <li>Puedes cambiar tu PIN desde tu perfil.</li>
-                            <li>Si tú no solicitaste esto, responde a este correo.</li>
+                            <li>Si tÃº no solicitaste esto, responde a este correo.</li>
                         </ul>
                     </div>
-                    <div style="padding:16px 24px;background:#f5f5f5;color:#555;font-size:12px;">© ${new Date().getFullYear()} Starclutch.</div>
+                    <div style="padding:16px 24px;background:#f5f5f5;color:#555;font-size:12px;">Â© ${new Date().getFullYear()} Starclutch.</div>
                 </div>`;
 
                 const info = await mailTransport.sendMail({
@@ -916,7 +916,7 @@ app.post('/api/solicitar-producto', async (req, res) => {
                 } = req.body;
 
                 if (!producto) {
-                    return res.status(400).json({ success: false, message: 'Debes indicar qué producto necesitas' });
+                        return res.status(400).json({ success: false, message: 'Debes indicar quÃ© producto necesitas' });
                 }
 
                 const fechaSolicitud = new Date().toLocaleString('es-CL', {
@@ -927,7 +927,7 @@ app.post('/api/solicitar-producto', async (req, res) => {
                 const html = `
                 <div style="max-width:520px;margin:0 auto;font-family:'Poppins',Arial,sans-serif;background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.12);">
                         <div style="background:#BF1823;padding:24px 28px;text-align:left;">
-                                <h1 style="margin:0;color:#fff;font-size:18px;font-weight:600;">📦 Nueva Solicitud de Producto</h1>
+                                <h1 style="margin:0;color:#fff;font-size:18px;font-weight:600;">ðŸ“¦ Nueva Solicitud de Producto</h1>
                         </div>
                         <div style="padding:24px 28px;">
                                 <p style="margin:0 0 20px 0;font-size:14px;line-height:1.6;color:#333;">
@@ -943,7 +943,7 @@ app.post('/api/solicitar-producto', async (req, res) => {
                                 <!-- Detalles de la solicitud -->
                                 <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
                                         <tr>
-                                                <td style="padding:10px 0;border-bottom:1px solid #eee;font-size:13px;color:#666;width:40%;">Vehículo / Aplicación</td>
+                                                <td style="padding:10px 0;border-bottom:1px solid #eee;font-size:13px;color:#666;width:40%;">VehÃ­culo / AplicaciÃ³n</td>
                                                 <td style="padding:10px 0;border-bottom:1px solid #eee;font-size:13px;color:#333;font-weight:500;">${vehiculo}</td>
                                         </tr>
                                         <tr>
@@ -985,7 +985,7 @@ app.post('/api/solicitar-producto', async (req, res) => {
                                                         <td style="padding:6px 0;font-size:13px;color:#333;font-weight:500;">${emailUsuario}</td>
                                                 </tr>
                                                 <tr>
-                                                        <td style="padding:6px 0;font-size:13px;color:#666;">Teléfono:</td>
+                                                        <td style="padding:6px 0;font-size:13px;color:#666;">TelÃ©fono:</td>
                                                         <td style="padding:6px 0;font-size:13px;color:#333;font-weight:500;">${telefonoUsuario}</td>
                                                 </tr>
                                         </table>
@@ -999,7 +999,7 @@ app.post('/api/solicitar-producto', async (req, res) => {
                 const info = await mailTransport.sendMail({
                     from: `Plataforma Experta <${MAIL_USER}>`,
                     to: 'scplataformaexperta@gmail.com',
-                    subject: `📦 Solicitud de Producto: ${producto} - ${nombreUsuario}`,
+                    subject: `ðŸ“¦ Solicitud de Producto: ${producto} - ${nombreUsuario}`,
                     html
                 });
 
@@ -1013,7 +1013,7 @@ app.post('/api/solicitar-producto', async (req, res) => {
                             <p style="margin:8px 0 0 0;color:rgba(255,255,255,0.85);font-size:13px;">Plataforma Experta StarClutch</p>
                         </div>
                         <div style="padding:24px 28px;">
-                            <p style="margin:0 0 18px 0;font-size:14px;line-height:1.6;color:#333;">Hola ${nombreUsuario !== 'Usuario no identificado' ? nombreUsuario : 'Cliente'}, recibimos tu solicitud y nuestro equipo te contactará muy pronto para ayudarte con el producto que necesitas.</p>
+                            <p style="margin:0 0 18px 0;font-size:14px;line-height:1.6;color:#333;">Hola ${nombreUsuario !== 'Usuario no identificado' ? nombreUsuario : 'Cliente'}, recibimos tu solicitud y nuestro equipo te contactara muy pronto para ayudarte con el producto que necesitas.</p>
                             <div style="background:#FFF5F5;border:1px solid #FFCDD2;border-radius:8px;padding:16px;margin-bottom:16px;">
                                 <div style="font-size:12px;color:#BF1823;font-weight:600;margin-bottom:8px;text-transform:uppercase;">Producto solicitado</div>
                                 <div style="font-size:16px;font-weight:600;color:#333;">${producto}</div>
@@ -1042,7 +1042,7 @@ app.post('/api/solicitar-producto', async (req, res) => {
                                 <div style="font-size:13px;color:#333;line-height:1.5;">${comentarios}</div>
                             </div>
                             ` : ''}
-                            <p style="margin:0 0 18px 0;font-size:13px;line-height:1.6;color:#666;">Si necesitas agregar más información o realizar ajustes, solo responde este correo o contáctanos por tus canales habituales.</p>
+                            <p style="margin:0 0 18px 0;font-size:13px;line-height:1.6;color:#666;">Si necesitas agregar mas informacion o realizar ajustes, solo responde este correo o contactanos por tus canales habituales.</p>
                             <div style="text-align:center;">
                                 <a href="https://starclutch.com" style="display:inline-block;background:#BF1823;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:600;font-size:14px;">Volver a la plataforma</a>
                             </div>
@@ -1105,7 +1105,7 @@ app.post("/api/upload-productos", uploadProductos.any(), async (req, res) => {
                 duplicados.push({
                     codSC: prod.codSC,
                     precio: prod.precio,
-                    mensaje: `Ya existe un producto con código ${prod.codSC} y precio $${prod.precio}`
+                    mensaje: `Ya existe un producto con cÃ³digo ${prod.codSC} y precio $${prod.precio}`
                 });
             } else {
                 // Asignar fotos
@@ -1144,7 +1144,7 @@ app.post("/api/upload-productos", uploadProductos.any(), async (req, res) => {
                     null, // null = notificaciÃ³n para todos los usuarios
                     'nuevo_producto',
                     'Nuevo producto disponible',
-                    `Se ha agregado ${producto.repuesto} de la marca ${producto.marca} a nuestro catálogo.`,
+                    `Se ha agregado ${producto.repuesto} de la marca ${producto.marca} a nuestro catÃ¡logo.`,
                     {
                         productoId: producto.id,
                         productoNombre: producto.repuesto,
@@ -1252,7 +1252,7 @@ app.post("/api/editar-producto", uploadProductos.any(), async (req, res) => {
                 await crearNotificacion(
                     userId, // Enviar solo al usuario del producto
                     'descuento_agregado',
-                    '¡Nueva oferta disponible!',
+                    'Â¡Nueva oferta disponible!',
                     `${datosObj.repuesto} ahora tiene un ${descuentoNuevo}% de descuento.`,
                     {
                         productoId: productoId,
@@ -1274,7 +1274,7 @@ app.post("/api/editar-producto", uploadProductos.any(), async (req, res) => {
                 await crearNotificacion(
                     userId, // Enviar solo al usuario del producto
                     'descuento_eliminado',
-                    'Actualización de precio',
+                    'ActualizaciÃ³n de precio',
                     `${datosObj.repuesto} ha vuelto a su precio regular.`,
                     {
                         productoId: productoId,
@@ -1352,7 +1352,7 @@ app.post("/api/eliminar-producto", (req, res) => {
                 const rutaCompleta = path.join(__dirname, imagenPath);
                 if (fs.existsSync(rutaCompleta)) {
                     fs.unlinkSync(rutaCompleta);
-                    console.log(`✓ Imagen eliminada: ${imagenPath}`);
+                    console.log(`âœ“ Imagen eliminada: ${imagenPath}`);
                 }
             } catch (err) {
                 console.error(`Error al eliminar imagen ${imagenPath}:`, err);
@@ -1395,12 +1395,12 @@ app.post("/api/upload-flota", uploadFlota.single("file"), (req, res) => {
             const data = XLSX.utils.sheet_to_json(wb.Sheets[sheet], { defval: "" });
             vehicles = data.map(r => ({
                 id: `veh_${Date.now()}_${Math.random()}`,
-                tipo: r.tipo || r["Tipo de vehículo"] || "",
+                tipo: r.tipo || r["Tipo de vehÃ­culo"] || "",
                 marca: r.marca || "",
                 modelo: r.modelo || "",
                 motor: r.motor || "",
                 patente: r.patente || "",
-                anio: r.anio || r["Año"] || ""
+                anio: r.anio || r["AÃ±o"] || ""
             }));
             fs.unlinkSync(path.join(DATA_DIR_FLOTAS, req.file.filename));
         } else if (req.body.vehiculos) {
@@ -1471,7 +1471,7 @@ app.get('/api/me', (req, res) => {
 app.put("/api/flota/:id", (req, res) => {
     const id = req.params.id;
     const { vehiculos } = req.body;
-    if (!Array.isArray(vehiculos)) return res.status(400).json({ ok: false, msg: "Formato inválido" });
+    if (!Array.isArray(vehiculos)) return res.status(400).json({ ok: false, msg: "Formato invÃ¡lido" });
 
     const flotas = readFlotasIndex();
     const idx = flotas.findIndex(f => f.id === id);
@@ -3061,6 +3061,73 @@ app.post("/api/campanas-ofertas", uploadBanners.any(), async (req, res) => {
             return result;
         });
         
+        // Identificar y eliminar banners que ya no están en uso
+        console.log('🗑️ Identificando banners a eliminar...');
+        try {
+            const bannersData = readJSONObject(BANNERS_DB);
+            const campanasAnteriores = bannersData[userId]?.campanas || [];
+            
+            // Recopilar URLs de banners anteriores
+            const bannersAnteriores = new Set();
+            campanasAnteriores.forEach(campana => {
+                ['principal', 'secundario'].forEach(tipo => {
+                    if (campana[tipo]?.slides) {
+                        campana[tipo].slides.forEach(slide => {
+                            if (slide.bannerDesktop && typeof slide.bannerDesktop === 'string' && slide.bannerDesktop.startsWith('/uploads/banners/')) {
+                                bannersAnteriores.add(slide.bannerDesktop);
+                            }
+                            if (slide.bannerMobile && typeof slide.bannerMobile === 'string' && slide.bannerMobile.startsWith('/uploads/banners/')) {
+                                bannersAnteriores.add(slide.bannerMobile);
+                            }
+                        });
+                    }
+                });
+            });
+            
+            // Recopilar URLs de banners nuevos
+            const bannersNuevos = new Set();
+            campanasConUrls.forEach(campana => {
+                ['principal', 'secundario'].forEach(tipo => {
+                    if (campana[tipo]?.slides) {
+                        campana[tipo].slides.forEach(slide => {
+                            if (slide.bannerDesktop && typeof slide.bannerDesktop === 'string' && slide.bannerDesktop.startsWith('/uploads/banners/')) {
+                                bannersNuevos.add(slide.bannerDesktop);
+                            }
+                            if (slide.bannerMobile && typeof slide.bannerMobile === 'string' && slide.bannerMobile.startsWith('/uploads/banners/')) {
+                                bannersNuevos.add(slide.bannerMobile);
+                            }
+                        });
+                    }
+                });
+            });
+            
+            // Identificar banners a eliminar (están en anteriores pero no en nuevos)
+            const bannersAEliminar = [...bannersAnteriores].filter(url => !bannersNuevos.has(url));
+            
+            // Eliminar archivos físicos
+            let eliminados = 0;
+            bannersAEliminar.forEach(url => {
+                try {
+                    const filePath = path.join(__dirname, url);
+                    if (fs.existsSync(filePath)) {
+                        fs.unlinkSync(filePath);
+                        eliminados++;
+                        console.log(`✓ Banner eliminado: ${url}`);
+                    }
+                } catch (err) {
+                    console.error(`Error eliminando banner ${url}:`, err);
+                }
+            });
+            
+            if (eliminados > 0) {
+                console.log(`✅ ${eliminados} banner(s) eliminado(s) del sistema de archivos`);
+            } else {
+                console.log('ℹ️ No hay banners para eliminar');
+            }
+        } catch (bannerError) {
+            console.error('❌ Error eliminando banners:', bannerError);
+        }
+        
         // Guardar en la base de datos
         const bannersData = readJSONObject(BANNERS_DB);
         bannersData[userId] = {
@@ -3689,7 +3756,7 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
         let detallesHTML = '<table style="width:100%; border-collapse:collapse; margin:20px 0;">';
         detallesHTML += '<thead style="background-color:#f0f0f0; border-bottom:2px solid #333;">';
         detallesHTML += '<tr><th style="padding:8px; text-align:left;">SKU</th>';
-        detallesHTML += '<th style="padding:8px; text-align:left;">Descripción</th>';
+        detallesHTML += '<th style="padding:8px; text-align:left;">DescripciÃ³n</th>';
         detallesHTML += '<th style="padding:8px; text-align:center;">Cantidad</th>';
         detallesHTML += '<th style="padding:8px; text-align:right;">Precio Unit.</th>';
         detallesHTML += '<th style="padding:8px; text-align:right;">Total</th></tr></thead>';
@@ -3722,8 +3789,8 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
         const emailHTML = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <h2 style="color: #252425; margin: 0;">Nueva Cotización Generada</h2>
-                <p style="color: #575657; margin: 10px 0 0 0;">Nº ${numeroCot} - ${fecha}</p>
+                <h2 style="color: #252425; margin: 0;">Nueva CotizaciÃ³n Generada</h2>
+                <p style="color: #575657; margin: 10px 0 0 0;">NÂº ${numeroCot} - ${fecha}</p>
             </div>
             
             <div style="margin-bottom: 20px;">
@@ -3731,7 +3798,7 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
                 <p><strong>Empresa:</strong> ${usuario.empresa || usuario.nombre || 'N/A'}</p>
                 <p><strong>Contacto:</strong> ${usuario.nombre || 'N/A'}</p>
                 <p><strong>Email:</strong> ${usuario.email || 'N/A'}</p>
-                <p><strong>Teléfono:</strong> ${usuario.telefono || 'N/A'}</p>
+                <p><strong>TelÃ©fono:</strong> ${usuario.telefono || 'N/A'}</p>
             </div>
             
             <div style="margin-bottom: 20px;">
@@ -3747,19 +3814,19 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
             
             <div style="background-color: #fff3cd; padding: 12px; border-radius: 8px; border-left: 4px solid #BF1823; margin-bottom: 20px;">
                 <p style="margin: 0; color: #252425; font-size: 12px;">
-                    <strong>Validez:</strong> Esta cotización tiene una validez de ${validezDias} días desde su emisión (hasta el ${fechaValidez.toLocaleDateString('es-CL')}).
+                    <strong>Validez:</strong> Esta cotizaciÃ³n tiene una validez de ${validezDias} dÃ­as desde su emisiÃ³n (hasta el ${fechaValidez.toLocaleDateString('es-CL')}).
                 </p>
             </div>
             
             <div style="background-color: #e8f4f8; padding: 12px; border-radius: 8px; border-left: 4px solid #BF1823;">
                 <p style="margin: 0; color: #252425; font-size: 12px;">
-                    <strong>Nota:</strong> Esta cotización fue generada automáticamente desde la plataforma StarClutch. 
-                    Los precios están sujetos a disponibilidad de stock.
+                    <strong>Nota:</strong> Esta cotizaciÃ³n fue generada automÃ¡ticamente desde la plataforma StarClutch. 
+                    Los precios estÃ¡n sujetos a disponibilidad de stock.
                 </p>
             </div>
             
             <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; color: #575657; font-size: 11px;">
-                <p>© 2025 STARCLUTCH S.p.A. - Todos los derechos reservados</p>
+                <p>Â© 2025 STARCLUTCH S.p.A. - Todos los derechos reservados</p>
             </div>
         </div>
         `;
@@ -3775,7 +3842,7 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
         const mailOptions = {
             from: MAIL_USER,
             to: 'scplataformaexperta@gmail.com',
-            subject: `Nueva Cotización - ${numeroCot}`,
+            subject: `Nueva CotizaciÃ³n - ${numeroCot}`,
             html: emailHTML,
             attachments: pdfBuffer ? [
                 {
@@ -3858,7 +3925,7 @@ app.post("/api/enviar-oc", async (req, res) => {
         let detallesHTML = '<table style="width:100%; border-collapse:collapse; margin:20px 0;">';
         detallesHTML += '<thead style="background-color:#f0f0f0; border-bottom:2px solid #333;">';
         detallesHTML += '<tr><th style="padding:8px; text-align:left;">SKU</th>';
-        detallesHTML += '<th style="padding:8px; text-align:left;">Descripción</th>';
+        detallesHTML += '<th style="padding:8px; text-align:left;">DescripciÃ³n</th>';
         detallesHTML += '<th style="padding:8px; text-align:center;">Cantidad</th>';
         detallesHTML += '<th style="padding:8px; text-align:right;">Precio Unit.</th>';
         detallesHTML += '<th style="padding:8px; text-align:right;">Total</th></tr></thead>';
@@ -3887,7 +3954,7 @@ app.post("/api/enviar-oc", async (req, res) => {
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
                 <h2 style="color: #252425; margin: 0;">Nueva Orden de Compra Recibida</h2>
-                <p style="color: #575657; margin: 10px 0 0 0;">Nº ${numeroOC} - ${fecha}</p>
+                <p style="color: #575657; margin: 10px 0 0 0;">NÂº ${numeroOC} - ${fecha}</p>
             </div>
             
             <div style="margin-bottom: 20px;">
@@ -3895,7 +3962,7 @@ app.post("/api/enviar-oc", async (req, res) => {
                 <p><strong>Empresa:</strong> ${usuario.empresa || usuario.nombre || 'N/A'}</p>
                 <p><strong>Contacto:</strong> ${usuario.nombre || 'N/A'}</p>
                 <p><strong>Email:</strong> ${usuario.email || 'N/A'}</p>
-                <p><strong>Teléfono:</strong> ${usuario.telefono || 'N/A'}</p>
+                <p><strong>TelÃ©fono:</strong> ${usuario.telefono || 'N/A'}</p>
             </div>
             
             <div style="margin-bottom: 20px;">
@@ -3911,13 +3978,13 @@ app.post("/api/enviar-oc", async (req, res) => {
             
             <div style="background-color: #e8f4f8; padding: 12px; border-radius: 8px; border-left: 4px solid #BF1823;">
                 <p style="margin: 0; color: #252425; font-size: 12px;">
-                    <strong>Nota:</strong> Esta orden fue generada automáticamente desde la plataforma StarClutch. 
-                    Requiere confirmación por parte del proveedor.
+                    <strong>Nota:</strong> Esta orden fue generada automÃ¡ticamente desde la plataforma StarClutch. 
+                    Requiere confirmaciÃ³n por parte del proveedor.
                 </p>
             </div>
             
             <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; color: #575657; font-size: 11px;">
-                <p>© 2025 STARCLUTCH S.p.A. - Todos los derechos reservados</p>
+                <p>Â© 2025 STARCLUTCH S.p.A. - Todos los derechos reservados</p>
             </div>
         </div>
         `;
