@@ -1067,22 +1067,31 @@ function initLoginModule() {
         });
 
         console.log("Response status:", response.status);
-        const data = await response.json();
+
+        let data = null;
+        try {
+          data = await response.json();
+        } catch (e) {
+          console.warn('No se pudo parsear JSON de /api/login');
+        }
         console.log("Response data:", data);
 
-        if (data.ok) {
-            // Guardar sesión en el navegador (necesario para saber quién está logueado mientras navega)
-            // Esto NO guarda la contraseña, solo el ID y el ROL
-            const sessionData = { ...data.user, id: username, role: data.role };
-            
-            // Usamos 'usuarioID' que es lo que espera tu otro script
-            localStorage.setItem("usuarioID", username); 
-            localStorage.setItem("starclutch_user", JSON.stringify(sessionData)); // Respaldo completo
+        if (response.ok && data && data.ok) {
+            // Guardar sesión en el navegador (sin contraseña)
+            const sessionData = {
+              id: data.user?.id || username,
+              nombre: data.user?.nombre || '',
+              empresa: data.user?.empresa || '',
+              role: data.role || 'client'
+            };
 
-            console.log("Login exitoso, rol:", data.role);
-            
+            localStorage.setItem("usuarioID", sessionData.id);
+            localStorage.setItem("starclutch_user", JSON.stringify(sessionData));
+
+            console.log("Login exitoso, rol:", sessionData.role);
+
             // Redirección según rol
-            if (data.role === 'admin') {
+            if (sessionData.role === 'admin') {
                 console.log("Redirigiendo a vista admin...");
                 window.location.href = "administrador/vista_administrador.html";
             } else {
@@ -1090,17 +1099,23 @@ function initLoginModule() {
                 window.location.href = "mis flotas/index.html";
             }
         } else {
-            // Credenciales incorrectas
+            // Limpia posible sesión vieja y muestra error claro
+            localStorage.removeItem("usuarioID");
+            localStorage.removeItem("starclutch_user");
+
+            const msg = (data && (data.msg || data.error)) || "Usuario o contraseña incorrectos";
             if(errorMsg) {
                 errorMsg.style.display = 'block';
-                errorMsg.textContent = "Usuario o contraseña incorrectos";
+                errorMsg.textContent = msg;
             } else {
-                alert("Usuario o contraseña incorrectos");
+                alert(msg);
             }
         }
 
     } catch (error) {
         console.error("Error de conexión:", error);
+        localStorage.removeItem("usuarioID");
+        localStorage.removeItem("starclutch_user");
         if(errorMsg) {
             errorMsg.style.display = 'block';
             errorMsg.textContent = "Error de conexión con el servidor";
@@ -1155,7 +1170,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderizarFavoritosGlobales();
     }
 
-    if (!selectFlotas || !track) return;
+    // Si no hay select de flotas, no hacemos nada
+    if (!selectFlotas) return;
+
+    // track es opcional - puede que estemos en mis flotas con grid en lugar de carrusel
+    // if (!selectFlotas || !track) return;
 
     // ----------------------------------------------------
     // 1. DEFINIMOS LA LÓGICA DE CARGA (Aquí adentro para no mover nada)
@@ -1167,6 +1186,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             // A. OBTENER USUARIO ACTUAL
             const currentUser = JSON.parse(localStorage.getItem("starclutch_user"));
+            console.log("🔍 Usuario actual:", currentUser);
             
             // Si no hay usuario, no cargamos nada (o redirigimos)
             if (!currentUser) {
@@ -1174,10 +1194,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
+            console.log("📤 Llamando a /api/flotas?userId=" + currentUser.id);
+
             // B. PETICIÓN AL SERVIDOR FILTRANDO POR ID DE USUARIO
             // (Asegúrate de que tu server.js ya tenga el cambio que hicimos antes)
             const resp = await fetch(`/api/flotas?userId=${currentUser.id}`);
             const flotas = await resp.json();
+            console.log("📥 Flotas recibidas:", flotas);
             
             if (!Array.isArray(flotas)) throw new Error("Flotas no es un array");
 
@@ -1208,6 +1231,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 selectFlotas.value = idASeleccionar;
+                console.log("✅ Flota seleccionada:", idASeleccionar);
                 
                 // Forzamos la carga de vehículos
                 if (typeof cargarYRenderizarFlota === 'function') {
@@ -1215,8 +1239,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
             } else {
+                console.log("⚠️ No hay flotas disponibles para este usuario");
                 selectFlotas.value = "";
-                track.innerHTML = "";
+                if (track) track.innerHTML = "";
             }
         } catch (error) {
             console.error("Error al cargar flotas:", error);
@@ -1298,63 +1323,64 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!res.ok || !body.ok) { console.error("Error cargando flota:", body); return; }
         let vehiculos = body.vehiculos || [];
 
-        // Aseguramos que 'track' esté definido
-        const track = document.querySelector('.main-carousel .carousel-track');
-        if (!track) return;
-
-        // limpiar carrusel principal
-        track.innerHTML = '';
-
         // Asegurar que cada vehículo tenga un ID único usando la función helper
         vehiculos = asegurarIdsUnicos(vehiculos, 'main');
 
         window.VEHICULOS_CURRENT = vehiculos;
 
-        // crear tarjetas
-        vehiculos.forEach(v => {
-            const imgModelo = typeof rutaModelo === 'function' ? rutaModelo(v.tipo, v.marca, v.modelo) : "../vehiculosexpertos/default.png";
-           const imgMarca = obtenerLogoMarcaInteligente(v.marca);
-            v.logo = imgMarca;
+        // Aseguramos que 'track' esté definido - SI EXISTE, RENDERIZAMOS EL CARRUSEL
+        const track = document.querySelector('.main-carousel .carousel-track');
+        if (track) {
+            // limpiar carrusel principal
+            track.innerHTML = '';
 
-            const card = document.createElement('div');
-            card.className = 'vehicle-card';
-            
-            // DATOS PUROS PARA EL FILTRO
-            card.dataset.vehiculoId = v.id; 
-            card.dataset.marca = (v.marca || '').toLowerCase().trim();
-            card.dataset.tipo = (v.tipo || v.modelo || '').toLowerCase().trim();
-            card.dataset.anio = v.anio || '';
+            // crear tarjetas
+            vehiculos.forEach(v => {
+                const imgModelo = typeof rutaModelo === 'function' ? rutaModelo(v.tipo, v.marca, v.modelo) : "../vehiculosexpertos/default.png";
+               const imgMarca = obtenerLogoMarcaInteligente(v.marca);
+                v.logo = imgMarca;
 
-            card.innerHTML = `
-                <div class="vehicle-header">
-                    <p class="vehicle-model">${v.modelo || v.tipo || ''}</p>
-                    <img src="${imgMarca}" alt="${v.marca || ''}" class="vehicle-brand">
-                </div>
-                <img src="${imgModelo}" alt="Vehículo" class="vehicle-img">
-                <p class="model">
-                    <span class="patente-text">${v.patente || ''}</span>
-                    <span class="conductor-text">${v.conductor ? `(${v.conductor})` : ""}</span>
-                </p>
-                <span class="meta-anio-oculto" style="display:none !important;">${v.anio || ''}</span>
-            `;  
+                const card = document.createElement('div');
+                card.className = 'vehicle-card';
+                
+                // DATOS PUROS PARA EL FILTRO
+                card.dataset.vehiculoId = v.id; 
+                card.dataset.marca = (v.marca || '').toLowerCase().trim();
+                card.dataset.tipo = (v.tipo || v.modelo || '').toLowerCase().trim();
+                card.dataset.anio = v.anio || '';
 
-            // --- LÓGICA DE REDIRECCIÓN (YA ESTABA, LA MANTENEMOS) ---
-            card.style.cursor = "pointer";
-            card.addEventListener('click', async () => {
-              const datosParaDetalle = {
-                ...v,
-                imagen: imgModelo,
-                logoUrl: imgMarca
-              };
-              await saveVehiculoDetalleForCurrentUser(datosParaDetalle);
-              // Pasar ID del vehículo en la URL para el sistema de cruces
-              window.location.href = `producto.html?id=${encodeURIComponent(v.id)}`;
+                card.innerHTML = `
+                    <div class="vehicle-header">
+                        <p class="vehicle-model">${v.modelo || v.tipo || ''}</p>
+                        <img src="${imgMarca}" alt="${v.marca || ''}" class="vehicle-brand">
+                    </div>
+                    <img src="${imgModelo}" alt="Vehículo" class="vehicle-img">
+                    <p class="model">
+                        <span class="patente-text">${v.patente || ''}</span>
+                        <span class="conductor-text">${v.conductor ? `(${v.conductor})` : ""}</span>
+                    </p>
+                    <span class="meta-anio-oculto" style="display:none !important;">${v.anio || ''}</span>
+                `;  
+
+                // --- LÓGICA DE REDIRECCIÓN (YA ESTABA, LA MANTENEMOS) ---
+                card.style.cursor = "pointer";
+                card.addEventListener('click', async () => {
+                  const datosParaDetalle = {
+                    ...v,
+                    imagen: imgModelo,
+                    logoUrl: imgMarca
+                  };
+                  await saveVehiculoDetalleForCurrentUser(datosParaDetalle);
+                  // Pasar ID del vehículo en la URL para el sistema de cruces
+                  window.location.href = `producto.html?id=${encodeURIComponent(v.id)}`;
+                });
+                // --------------------------------------------------------
+
+                track.appendChild(card);
             });
-            // --------------------------------------------------------
+        }
 
-            track.appendChild(card);
-        });
-
+        // CÓDIGO QUE SIEMPRE SE EJECUTA (esté o no el track):
         // 2. ACTUALIZAR LA MEMORIA DE LOS FILTROS
         if (window.actualizarBaseFiltros) {
             window.actualizarBaseFiltros();
@@ -1365,11 +1391,220 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (typeof initCarruselesGenericos === 'function') initCarruselesGenericos();
         if (typeof renderizarFavoritos === 'function') { /* ... */ }
 
+        // RENDERIZAR GRID SI ESTAMOS EN MIS FLOTAS
+        if (typeof renderizarFlotaEnGridMarcasModelos === 'function') {
+            renderizarFlotaEnGridMarcasModelos();
+        }
+
     } catch (e) {
         console.error("Error en cargarYRenderizarFlota:", e);
     }
 }
 });
+
+
+// ==============================
+// RENDERIZACIÓN DE FLOTA EN GRID (MARCAS/MODELOS)
+// Solo se ejecuta en mis flotas/index.html
+// ==============================
+function renderizarFlotaEnGridMarcasModelos() {
+    const gridContainer = document.querySelector('#track-grupos-flotas');
+    if (!gridContainer) return; // Solo ejecutar si existe el contenedor grid
+    
+    // Verificar que NO estemos en editar flota
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes("editar flota.html") || path.includes("editar%20flota.html")) {
+        return; // No ejecutar en editar flota
+    }
+    
+    if (!window.VEHICULOS_CURRENT || window.VEHICULOS_CURRENT.length === 0) {
+        gridContainer.innerHTML = '<p>No hay vehículos disponibles</p>';
+        return;
+    }
+
+    // Agrupar vehículos por marca + modelo exacto
+    const grupos = {};
+    window.VEHICULOS_CURRENT.forEach(v => {
+        // Normalizar marca y modelo para la agrupación
+        const marca = (v.marca || 'Sin marca').trim().toLowerCase();
+        const modelo = (v.modelo || v.tipo || 'sin modelo').trim().toLowerCase();
+        const imagenClave = typeof rutaModelo === 'function' ? rutaModelo(v.tipo, v.marca, v.modelo) : (v.imagen || "../vehiculosexpertos/default.png");
+
+        // Agrupar por marca + modelo exacto (no por imagen)
+        const key = `${marca}|${modelo}`;
+        
+        if (!grupos[key]) {
+            grupos[key] = {
+                marca: v.marca || 'Sin marca',
+                modelo: v.modelo || v.tipo || 'Sin modelo',
+                tipo: v.tipo || '',
+                vehiculos: [],
+                logo: obtenerLogoMarcaInteligente(v.marca),
+                imagen: imagenClave
+            };
+        }
+        grupos[key].vehiculos.push(v);
+    });
+
+    // Limpiar contenedor
+    gridContainer.innerHTML = '';
+
+    // Ordenar grupos alfabéticamente por marca y modelo
+    const gruposOrdenados = Object.values(grupos).sort((a, b) => {
+        const marcaComp = a.marca.localeCompare(b.marca);
+        if (marcaComp !== 0) return marcaComp;
+        return a.modelo.localeCompare(b.modelo);
+    });
+
+    // Crear tarjetas agrupadas en páginas de 10 (5x2)
+    const cardsPerPage = 10;
+    const totalPages = Math.ceil(gruposOrdenados.length / cardsPerPage);
+    
+    for (let pageIndex = 0; pageIndex < totalPages; pageIndex++) {
+        const startIdx = pageIndex * cardsPerPage;
+        const endIdx = Math.min(startIdx + cardsPerPage, gruposOrdenados.length);
+        const gruposPagina = gruposOrdenados.slice(startIdx, endIdx);
+        
+        // Crear contenedor de página
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'carousel-page';
+        pageDiv.style.display = 'grid';
+        pageDiv.style.gridTemplateColumns = 'repeat(5, 1fr)';
+        pageDiv.style.gridTemplateRows = 'repeat(2, 1fr)';
+        pageDiv.style.gap = '20px';
+        pageDiv.style.minHeight = '600px';
+        
+        gruposPagina.forEach(grupo => {
+            const card = document.createElement('div');
+            card.className = 'vehicle-group-card';
+            
+            const tituloCard = `${grupo.marca} ${grupo.modelo}`;
+            
+            card.innerHTML = `
+                <div class="group-image-container">
+                    <img src="${grupo.imagen}" alt="${tituloCard}" class="group-model-image">
+                    <span class="vehicle-count-badge">${grupo.vehiculos.length}</span>
+                </div>
+                <div class="group-info">
+                    <img src="${grupo.logo}" alt="${grupo.marca}" class="group-brand-logo">
+                    <h3 class="group-title">${tituloCard}</h3>
+                    <p class="group-count">${grupo.vehiculos.length} vehículo${grupo.vehiculos.length !== 1 ? 's' : ''}</p>
+                </div>
+            `;
+            
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', () => {
+                mostrarTablaGrupo(grupo);
+            });
+            
+            pageDiv.appendChild(card);
+        });
+        
+        gridContainer.appendChild(pageDiv);
+    }
+
+    // Inicializar carrusel de grupos después de agregar todas las páginas
+    setTimeout(() => {
+        const track = document.querySelector('.carousel-grupos .carousel-track');
+        const slides = track ? Array.from(track.querySelectorAll('.carousel-page')) : [];
+        
+        if (!track || slides.length === 0) return;
+
+        const carouselContainer = document.querySelector('.carousel-grupos');
+        const prevBtn = carouselContainer.querySelector('.carousel-btn.prev');
+        const nextBtn = carouselContainer.querySelector('.carousel-btn.next');
+        const indicatorsContainer = carouselContainer.querySelector('.carousel-indicators');
+
+        const slidesPerView = 1;
+        const totalSlides = slides.length;
+        let currentIndex = 0;
+
+        // Crear indicadores dinámicamente
+        const numIndicators = Math.ceil(totalSlides / slidesPerView);
+        if (indicatorsContainer) {
+            indicatorsContainer.innerHTML = "";
+            for (let i = 0; i < numIndicators; i++) {
+                const li = document.createElement("li");
+                if (i === 0) li.classList.add("active");
+                li.addEventListener("click", () => goToSlide(i));
+                indicatorsContainer.appendChild(li);
+            }
+        }
+        const indicators = indicatorsContainer ? indicatorsContainer.querySelectorAll("li") : [];
+
+        function updateSlidePosition() {
+            const slideWidth = slides[0].getBoundingClientRect().width;
+            const moveAmount = slideWidth * slidesPerView * currentIndex;
+            track.style.transform = `translateX(-${moveAmount}px)`;
+
+            indicators.forEach((dot, i) => {
+                dot.classList.toggle("active", i === currentIndex);
+            });
+            
+            // Deshabilitar botones en los extremos
+            if (prevBtn) {
+                prevBtn.disabled = currentIndex === 0;
+            }
+            if (nextBtn) {
+                nextBtn.disabled = currentIndex >= numIndicators - 1;
+            }
+        }
+
+        function goToSlide(index) {
+            currentIndex = Math.max(0, Math.min(index, numIndicators - 1));
+            updateSlidePosition();
+        }
+
+        function nextSlide() {
+            if (currentIndex < numIndicators - 1) {
+                currentIndex++;
+                updateSlidePosition();
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlidePosition();
+            }
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener("click", prevSlide);
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener("click", nextSlide);
+        }
+
+        window.addEventListener("resize", updateSlidePosition);
+        
+        // Asegurar posición inicial y estado de botones
+        updateSlidePosition();
+    }, 100);
+}
+
+// ==============================
+// CARRUSEL DE GRUPOS - Eliminado (usa la lógica genérica)
+// ==============================
+
+// Vista tabla por grupo - redirige a vista-grupo.html
+function mostrarTablaGrupo(grupo) {
+    // Guardar datos del grupo en localStorage
+    localStorage.setItem('grupoSeleccionado', JSON.stringify(grupo));
+    
+    // Redirigir a la página de vista de grupo
+    window.location.href = 'vista-grupo.html';
+}
+
+function volverAGridGrupo() {
+    const seccionGrid = document.querySelector('.main-grouped-section');
+    const seccionTabla = document.getElementById('vista-tabla-grupo');
+    if (!seccionGrid || !seccionTabla) return;
+    seccionTabla.style.display = 'none';
+    seccionGrid.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 
 // ==============================
@@ -1505,7 +1740,7 @@ function renderizarTarjetasEditar(vehiculos) {
         };
     });
 
-    // Ordenamos la visual: Favoritos primero
+    // Ordenamos la visual: Primero favoritos, luego por marca y modelo alfabéticamente
     listaVisual.sort((a, b) => {
         const idA = a.datos.id || a.datos.vehiculoId;
         const idB = b.datos.id || b.datos.vehiculoId;
@@ -1513,9 +1748,22 @@ function renderizarTarjetasEditar(vehiculos) {
         const esFavA = typeof esVehiculoFavorito === 'function' ? esVehiculoFavorito(idA) : false;
         const esFavB = typeof esVehiculoFavorito === 'function' ? esVehiculoFavorito(idB) : false;
 
+        // Favoritos primero
         if (esFavA && !esFavB) return -1; 
-        if (!esFavA && esFavB) return 1;  
-        return 0; 
+        if (!esFavA && esFavB) return 1;
+        
+        // Si ambos son favoritos o ninguno es favorito, ordenar alfabéticamente por marca y modelo
+        const marcaA = (a.datos.marca || '').toLowerCase().trim();
+        const marcaB = (b.datos.marca || '').toLowerCase().trim();
+        const modeloA = (a.datos.modelo || a.datos.tipo || '').toLowerCase().trim();
+        const modeloB = (b.datos.modelo || b.datos.tipo || '').toLowerCase().trim();
+        
+        // Comparar por marca primero
+        const comparaMarca = marcaA.localeCompare(marcaB);
+        if (comparaMarca !== 0) return comparaMarca;
+        
+        // Si la marca es igual, comparar por modelo
+        return modeloA.localeCompare(modeloB);
     });
 
     // =======================================================================
@@ -1794,17 +2042,18 @@ async function renderizarFavoritos(mantenerPagina = false) {
                  }
             });
 
-            // Clic en la tarjeta -> Ir a producto.html
-            card.addEventListener('click', async () => {
-              const datosParaDetalle = {
-                ...v,
-                imagen: img,
-                logoUrl: logo
-              };
-              await saveVehiculoDetalleForCurrentUser(datosParaDetalle);
-              // Pasar ID del vehículo en la URL para el sistema de cruces
-              window.location.href = `producto.html?id=${encodeURIComponent(v.id)}&fav=1`;
-            });
+                        // Clic en la tarjeta -> Ir a vista-grupo.html mostrando características
+                        card.addEventListener('click', () => {
+                            const grupo = {
+                                marca: v.marca || 'Sin marca',
+                                modelo: v.modelo || v.tipo || 'Sin modelo',
+                                tipo: v.tipo || '',
+                                vehiculos: [v],
+                                logo: (typeof obtenerLogoMarcaInteligente === 'function') ? obtenerLogoMarcaInteligente(v.marca) : logo,
+                                imagen: (typeof rutaModelo === 'function') ? rutaModelo(v.tipo, v.marca, v.modelo) : img
+                            };
+                            mostrarTablaGrupo(grupo);
+                        });
 
             page.appendChild(card);
         });
@@ -2481,7 +2730,8 @@ function initCarruselesGenericos() {
   // Verificar si existe al menos uno de estos carruseles
   const existeCarrusel =
     document.querySelector(".banner-track-single") ||
-    document.querySelector(".fleet-track");
+    document.querySelector(".fleet-track") ||
+    document.querySelector(".carousel-grupos .carousel-track");
 
   if (!existeCarrusel) return; // ⛔ No hay carruseles → no ejecutar nada
 
@@ -2508,6 +2758,9 @@ function initCarruselesGenericos() {
     const totalSlides = slides.length;
     let currentIndex = 0;
 
+        // Detectar viewport contenedor del track (para traslación exacta por página)
+        const viewportEl = track.closest('.carousel-viewport') || track.parentElement;
+
     // Crear indicadores dinámicamente
     const numIndicators = Math.ceil(totalSlides / slidesPerView);
     if (indicatorsContainer) {
@@ -2521,10 +2774,11 @@ function initCarruselesGenericos() {
     }
     const indicators = indicatorsContainer ? indicatorsContainer.querySelectorAll("li") : [];
 
-    function updateSlidePosition() {
-      const slideWidth = slides[0].getBoundingClientRect().width;
-      const moveAmount = slideWidth * slidesPerView * currentIndex;
-      track.style.transform = `translateX(-${moveAmount}px)`;
+        function updateSlidePosition() {
+            // Mover el track por "páginas" completas usando el ancho del viewport
+            const viewportWidth = viewportEl ? viewportEl.getBoundingClientRect().width : (slides[0]?.getBoundingClientRect().width || 0) * slidesPerView;
+            const moveAmount = viewportWidth * currentIndex;
+            track.style.transform = `translateX(-${moveAmount}px)`;
 
       indicators.forEach((dot, i) => {
         dot.classList.toggle("active", i === currentIndex);
@@ -2556,29 +2810,19 @@ function initCarruselesGenericos() {
     if (autoplay) setInterval(nextSlide, 5000);
   }
 
-  // Carrusel del banner grande
-  initCarousel({
-    trackSelector: ".banner-track-single",
-    slideSelector: ".banner-slide-single",
-    prevBtnSelector: ".banner-btn-single.prev",
-    nextBtnSelector: ".banner-btn-single.next",
-    indicatorsSelector: ".banner-indicators-single",
-    slidesPerViewDesktop: 1,
-    slidesPerViewMobile: 1,
-    autoplay: true,
-  });
-
-  // Carrusel de ofertas por flota
-  initCarousel({
-    trackSelector: ".fleet-track",
-    slideSelector: ".fleet-slide",
-    prevBtnSelector: ".fleet-btn.prev",
-    nextBtnSelector: ".fleet-btn.next",
-    indicatorsSelector: ".fleet-indicators",
-    slidesPerViewDesktop: 2,
-    slidesPerViewMobile: 1,
-    autoplay: false,
-  });
+  // Carrusel de favoritos (Mis flotas) - solo en página mis flotas
+  if (document.querySelector('#track-favoritos-global')) {
+    initCarousel({
+      trackSelector: "#track-favoritos-global",
+      slideSelector: ".vehicle-card",
+      prevBtnSelector: ".favorites-section .carousel-btn.prev",
+      nextBtnSelector: ".favorites-section .carousel-btn.next",
+      indicatorsSelector: ".favorites-section .carousel-indicators",
+      slidesPerViewDesktop: 4,
+      slidesPerViewMobile: 1,
+      autoplay: false,
+    });
+  }
 }
 
 // ================================
@@ -2736,10 +2980,13 @@ function renderizarPaginaCliente() {
 
         const codigoSC = p.codSC || p.codStarClutch || "S/N";
         
-        // Calcular precio con descuento
+        // Calcular precio neto y con descuento (antes venía con IVA)
         const precio = parseFloat(p.precio || 0);
         const descuento = parseFloat(p.descuento || 0);
-        const precioConDescuento = precio - (precio * descuento / 100);
+        const precioNeto = precio > 0 ? Math.round(precio / 1.19) : 0;
+        const precioNetoConDescuento = descuento > 0 ? Math.round(precioNeto * (1 - (descuento / 100))) : precioNeto;
+        // Exponer precio para filtros
+        tr.setAttribute('data-precio', String(precioNetoConDescuento));
         
         // Agregar clase si tiene descuento
         if (descuento > 0) {
@@ -2762,7 +3009,7 @@ function renderizarPaginaCliente() {
                 referenciaCruzada,
                 oem,
                 stock,
-                precioConDescuento: precioConDescuento,
+                precioConDescuento: precioNetoConDescuento,
                 descuentoPorcentaje: descuento
             }));
             
@@ -2772,61 +3019,62 @@ function renderizarPaginaCliente() {
             
             // Navegar a detalleproducto.html
             window.location.href = '../mis flotas/detalleproducto.html';
-        });        // Celda 1: Código StarClutch
-        const td1 = document.createElement('td');
-        td1.style.fontWeight = 'bold';
-        td1.style.color = '#d32f2f';
-        td1.textContent = codigoSC;
-        tr.appendChild(td1);
-        
-        // Celda 2: Repuesto
-        const td2 = document.createElement('td');
-        td2.textContent = p.repuesto;
-        tr.appendChild(td2);
-        
-        // Celda 3: Marca
-        const td3 = document.createElement('td');
-        td3.textContent = p.marca;
-        tr.appendChild(td3);
-        
-        // Celda 4: Línea
-        const td4 = document.createElement('td');
-        td4.innerHTML = `<span class="badge-linea">${p.linea || 'General'}</span>`;
-        tr.appendChild(td4);
-        
+        });        // Celda 1: Línea
+        const tdLinea = document.createElement('td');
+        tdLinea.innerHTML = `<span class="badge-linea">${p.linea || 'General'}</span>`;
+        tr.appendChild(tdLinea);
+
+        // Celda 2: Código StarClutch
+        const tdCodigo = document.createElement('td');
+        tdCodigo.style.fontWeight = 'bold';
+        tdCodigo.style.color = '#d32f2f';
+        tdCodigo.textContent = codigoSC;
+        tr.appendChild(tdCodigo);
+
+        // Celda 3: Descripción (repuesto)
+        const tdDescripcion = document.createElement('td');
+        tdDescripcion.textContent = p.repuesto;
+        tr.appendChild(tdDescripcion);
+
+        // Celda 4: Marca
+        const tdMarca = document.createElement('td');
+        tdMarca.textContent = p.marca;
+        tr.appendChild(tdMarca);
+
         // Celda 5: Código Cliente
-        const td5 = document.createElement('td');
-        td5.textContent = p.codCliente || '-';
-        tr.appendChild(td5);
-        
-        // Celda 6: Precio
-        const td6 = document.createElement('td');
-        if (precio > 0) {
+        const tdCodCliente = document.createElement('td');
+        tdCodCliente.textContent = p.codCliente || '-';
+        tr.appendChild(tdCodCliente);
+
+        // Celda 6: Precio autorizado (neto)
+        const tdPrecio = document.createElement('td');
+        tdPrecio.style.verticalAlign = 'middle';
+        if (precioNeto > 0) {
             if (descuento > 0) {
-                td6.innerHTML = `
-                    <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
-                        <span style="text-decoration: line-through; color: #999; font-size: 12px;">
-                            ${formatoPrecio(precio)}
-                        </span>
-                        <span style="color: #BF1823; font-weight: bold; font-size: 13px;">
+                tdPrecio.innerHTML = `
+                    <div style="display: inline-block; text-align: left;">
+                        <div style="text-decoration: line-through; color: #999; font-size: 12px;">
+                            ${formatoPrecio(precioNeto)}
+                        </div>
+                        <div style="color: #BF1823; font-weight: bold; font-size: 13px;">
                             ¡DESCUENTO ${descuento.toFixed(0)}%!
-                        </span>
-                        <span style="color: #BF1823; font-weight: bold; font-size: 16px;">
-                            ${formatoPrecio(precioConDescuento)}
-                        </span>
+                        </div>
+                        <div style="color: #BF1823; font-weight: bold; font-size: 16px;">
+                            ${formatoPrecio(precioNetoConDescuento)}
+                        </div>
                     </div>
                 `;
             } else {
-                td6.style.fontWeight = 'bold';
-                td6.style.fontSize = '16px';
-                td6.textContent = formatoPrecio(precio);
+                tdPrecio.style.fontWeight = 'bold';
+                tdPrecio.style.fontSize = '16px';
+                tdPrecio.textContent = formatoPrecio(precioNeto);
             }
         } else {
-            td6.style.color = '#999';
-            td6.style.fontStyle = 'italic';
-            td6.textContent = 'Sin precio';
+            tdPrecio.style.color = '#999';
+            tdPrecio.style.fontStyle = 'italic';
+            tdPrecio.textContent = 'Sin precio';
         }
-        tr.appendChild(td6);
+        tr.appendChild(tdPrecio);
         
         // Celda 7 (OCULTA): Ficha Técnica - No visible pero almacena datos
         const td7 = document.createElement('td');
@@ -2860,30 +3108,30 @@ function renderizarPaginaCliente() {
         // Celda 8: Acciones (Ver fotos + Agregar al carrito)
         const td8 = document.createElement('td');
         td8.style.textAlign = 'center';
-        td8.style.display = 'flex';
-        td8.style.gap = '8px';
-        td8.style.justifyContent = 'center';
-        td8.style.alignItems = 'center';
+        td8.style.verticalAlign = 'middle';
+        td8.style.padding = '8px';
         
-        // Botón Ver fotos
-        if (p.imagenes && p.imagenes.length > 0) {
-            const btnFotos = document.createElement('button');
-            btnFotos.className = 'btn-text';
-            btnFotos.style.cssText = 'color:#BF1823; font-weight:600; cursor:pointer; font-size:13px; padding:4px 8px; display:flex; align-items:center; justify-content:center; gap:6px; border:none; background:none;';
-            btnFotos.onclick = function(e) { 
-                e.stopPropagation(); // IMPORTANTE: Evitar que active el click de la fila
-                verFotos(this); 
-            };
-            btnFotos.innerHTML = '📷 Ver fotos';
-            td8.appendChild(btnFotos);
-        }
+        // Wrapper con flexbox para los botones
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = 'display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;';
+        
+        // Botón Ver fotos (siempre visible, incluso si no hay imágenes)
+        const btnFotos = document.createElement('button');
+        btnFotos.className = 'btn-text';
+        btnFotos.style.cssText = 'color:#BF1823; font-weight:600; cursor:pointer; font-size:13px; padding:4px 8px; display:inline-flex; align-items:center; justify-content:center; gap:6px; border:none; background:none; white-space:nowrap;';
+        btnFotos.onclick = function(e) { 
+            e.stopPropagation();
+            verFotos(this); 
+        };
+        btnFotos.innerHTML = '📷 Ver fotos';
+        wrapper.appendChild(btnFotos);
         
         // Botón Agregar al carrito
         const btnCarrito = document.createElement('button');
         btnCarrito.className = 'btn-text btn-carrito-tabla';
-        btnCarrito.style.cssText = 'color:#BF1823; font-weight:600; cursor:pointer; font-size:13px; padding:4px 8px; display:flex; align-items:center; justify-content:center; gap:4px; border:none; background:none;';
+        btnCarrito.style.cssText = 'color:#BF1823; font-weight:600; cursor:pointer; font-size:13px; padding:4px 8px; display:inline-flex; align-items:center; justify-content:center; gap:4px; border:none; background:none; white-space:nowrap;';
         btnCarrito.onclick = function(e) { 
-            e.stopPropagation(); // Evitar que active el click de la fila
+            e.stopPropagation();
             agregarAlCarrito(codigoSC);
         };
         
@@ -2894,8 +3142,9 @@ function renderizarPaginaCliente() {
         
         btnCarrito.appendChild(imgCarrito);
         btnCarrito.appendChild(document.createTextNode(' Agregar'));
-        td8.appendChild(btnCarrito);
+        wrapper.appendChild(btnCarrito);
         
+        td8.appendChild(wrapper);
         tr.appendChild(td8);
         
         tbody.appendChild(tr);
@@ -2952,14 +3201,26 @@ function verFotos(btn) {
     if(titulo) titulo.textContent = `Fotos de: ${nombre}`;
     contenedor.innerHTML = '';
 
-    // Solo ahora creamos las imágenes visibles
-    imagenes.forEach(url => {
-        const img = document.createElement('img');
-        img.src = url;
-        img.style.cssText = "width: 200px; height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; cursor:pointer;";
-        img.onclick = () => window.open(url, '_blank'); // Click para ver full size
-        contenedor.appendChild(img);
-    });
+    // Verificar si hay imágenes
+    if (imagenes && imagenes.length > 0) {
+        // Mostrar imágenes reales
+        imagenes.forEach(url => {
+            const img = document.createElement('img');
+            img.src = url;
+            img.style.cssText = "width: 200px; height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; cursor:pointer;";
+            img.onclick = () => window.open(url, '_blank'); // Click para ver full size
+            contenedor.appendChild(img);
+        });
+    } else {
+        // Mostrar placeholder cuando no hay imágenes
+        const placeholder = document.createElement('div');
+        placeholder.style.cssText = "width: 400px; height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 8px; border: 1px solid #ddd;";
+        placeholder.innerHTML = `
+            <img src="/img/Logo SC.svg" alt="Sin imagen" style="width: 120px; height: 120px; opacity: 0.5;">
+            <p style="margin-top: 20px; color: #666; font-size: 16px; text-align: center;">No hay imagen para este producto</p>
+        `;
+        contenedor.appendChild(placeholder);
+    }
 
     if(modal) modal.classList.add('active');
 }
@@ -4910,13 +5171,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchBtn = flotaHeader.querySelector(".search-header-btn") || flotaHeader.querySelector("button");
     
     const vehiculosCount = flotaHeader.querySelector(".vehiculos-count");
-    const paginaInfo = flotaHeader.querySelector(".pagina-info");
     const agregarBtn = flotaHeader.querySelector("#btn-agregar-vehiculo");
 
-    let prevBtn = flotaHeader.querySelector(".pagina-prev");
-    let nextBtn = flotaHeader.querySelector(".pagina-next");
-
     const grid = document.getElementById("vehiculosGrid");
+    const paginationContainer = document.querySelector(".pagination");
 
     // Configuración
     const itemsPerPage = 16;
@@ -4927,6 +5185,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function getCards() {
         return Array.from(document.querySelectorAll(".vehiculo-card"));
+    }
+
+    function actualizarPaginacion() {
+        if (!paginationContainer) return;
+        
+        const totalItems = filteredCards.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+        
+        let html = '';
+        html += `<button class="page-btn arrow" onclick="cambiarPaginaEditarFlota(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>&lt;</button>`;
+        
+        const maxBotones = 5;
+        let inicio = Math.max(1, currentPage - Math.floor(maxBotones / 2));
+        let fin = Math.min(totalPages, inicio + maxBotones - 1);
+        
+        if (fin - inicio < maxBotones - 1) {
+            inicio = Math.max(1, fin - maxBotones + 1);
+        }
+        
+        for (let i = inicio; i <= fin; i++) {
+            html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="cambiarPaginaEditarFlota(${i})">${i}</button>`;
+        }
+        
+        html += `<button class="page-btn arrow" onclick="cambiarPaginaEditarFlota(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>&gt;</button>`;
+        
+        paginationContainer.innerHTML = html;
     }
 
     function showPage(page) {
@@ -4943,14 +5227,19 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const totalItems = filteredCards.length;
-        const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
 
         if (vehiculosCount) vehiculosCount.textContent = `${totalItems} vehículo${totalItems !== 1 ? 's' : ''} encontrados`;
-        if (paginaInfo) paginaInfo.textContent = `Página ${page} de ${totalPages}`;
-
-        if (prevBtn) prevBtn.disabled = (page === 1);
-        if (nextBtn) nextBtn.disabled = (page === totalPages);
+        
+        actualizarPaginacion();
     }
+
+    // Función global para cambiar página (llamada desde botones de paginación)
+    window.cambiarPaginaEditarFlota = function(nuevaPagina) {
+        const totalPages = Math.ceil(filteredCards.length / itemsPerPage) || 1;
+        if (nuevaPagina < 1 || nuevaPagina > totalPages) return;
+        currentPage = nuevaPagina;
+        showPage(currentPage);
+    };
 
     function resetFilteredToAll() {
         filteredCards = getCards();
@@ -4999,36 +5288,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         currentPage = 1;
         showPage(currentPage);
-    }
-
-    // --- C. Botones Paginación ---
-    if (prevBtn) {
-        const nuevoPrev = prevBtn.cloneNode(true);
-        prevBtn.parentNode.replaceChild(nuevoPrev, prevBtn);
-        prevBtn = nuevoPrev;
-
-        prevBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            if (currentPage > 1) {
-                currentPage--;
-                showPage(currentPage);
-            }
-        });
-    }
-
-    if (nextBtn) {
-        const nuevoNext = nextBtn.cloneNode(true);
-        nextBtn.parentNode.replaceChild(nuevoNext, nextBtn);
-        nextBtn = nuevoNext;
-
-        nextBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            const totalPages = Math.ceil((filteredCards.length || 0) / itemsPerPage) || 1;
-            if (currentPage < totalPages) {
-                currentPage++;
-                showPage(currentPage);
-            }
-        });
     }
 
     // --- D. EVENTOS DEL BUSCADOR (SOLO ENTER Y CLICK) ---
@@ -8944,13 +9203,14 @@ function renderizarPaginaAdmin() {
         const codigoMostrado = p.codSC || p.codStarClutch || '-';
         const skuKey = (p.codSC || p.codStarClutch || '').toString();
         
-        // Formatear precio y descuento
+        // Formatear precio y descuento (mostrar precio autorizado NETO)
         const precio = parseFloat(p.precio || 0);
         const descuento = parseFloat(p.descuento || 0);
+        const precioNeto = precio > 0 ? Math.round(precio / 1.19) : 0;
         
         let precioHTML = '-';
-        if (precio > 0) {
-            precioHTML = `$${precio.toLocaleString('es-CL', {minimumFractionDigits: 0, maximumFractionDigits: 2})}`;
+        if (precioNeto > 0) {
+            precioHTML = `$${precioNeto.toLocaleString('es-CL', {minimumFractionDigits: 0, maximumFractionDigits: 2})}`;
         }
         
         let descuentoHTML = '-';
@@ -8970,25 +9230,22 @@ function renderizarPaginaAdmin() {
         tr.setAttribute('data-producto', JSON.stringify(p));
         
         tr.innerHTML = `
-            <td>${p.codCliente || '-'}</td>
+            <td>${p.linea || ''}</td>
+            <td style="font-weight:bold; color:#d32f2f;">${codigoMostrado}</td>
             <td>${p.repuesto}</td>
             <td>${p.marca}</td>
-            <td>${p.linea}</td>
-            <td style="font-weight:bold; color:#d32f2f;">${codigoMostrado}</td>
-            <td style="text-align:center;">
-                <input type="checkbox" class="admin-recomendado-toggle" data-sku="${skuKey}" style="width:18px; height:18px; cursor:pointer; accent-color:#BF1823;">
-            </td>
+            <td>${p.codCliente || '-'}</td>
             <td>${precioHTML}</td>
             <td>${descuentoHTML}</td>
             <td>${stockHTML}</td>
             <td style="text-align:center;">
                 ${(p.imagenes && p.imagenes.length > 0) 
-                    ? `<span style="color:#666; font-size:13px;">${p.imagenes.length} foto${p.imagenes.length > 1 ? 's' : ''}</span>`
+                    ? `<span style=\"color:#666; font-size:13px;\">${p.imagenes.length} foto${p.imagenes.length > 1 ? 's' : ''}</span>`
                     : '<span style="color:#ccc; font-size:12px;">Sin fotos</span>'}
             </td>
             <td style="text-align:center;">
                 ${(p.fichaTecnica || p.referenciaCruzada || p.oem)
-                    ? `<button class="btn-text" onclick="verFichaTecnicaAdmin(this)" style="color:#BF1823; font-weight:600; cursor:pointer; font-size:13px; padding:4px 8px; display:flex; align-items:center; justify-content:center; gap:6px;"><img src="/img/fichatecnica.svg" alt="Ficha Técnica" style="width:14px; height:14px;"> Ver</button>`
+                    ? `<button class=\"btn-text\" onclick=\"verFichaTecnicaAdmin(this)\" style=\"color:#BF1823; font-weight:600; cursor:pointer; font-size:13px; padding:4px 8px; display:flex; align-items:center; justify-content:center; gap:6px;\"><img src=\"/img/fichatecnica.svg\" alt=\"Ficha Técnica\" style=\"width:14px; height:14px;\"> Ver</button>`
                     : '<span style="color:#ccc; font-size:12px;">-</span>'}
             </td>
             <td style="text-align:center;">
@@ -10599,9 +10856,10 @@ function inicializarPestanasSpecs() {
 }
 
 function llenarPrecioYDescuento() {
-    const precio = parseFloat(productoDetalleActual.precio || 0);
+    const precioBruto = parseFloat(productoDetalleActual.precio || 0);
     const descuento = productoDetalleActual.descuentoPorcentaje || parseFloat(productoDetalleActual.descuento || 0);
-    const precioConDescuento = productoDetalleActual.precioConDescuento || (precio - (precio * descuento / 100));
+    const precioNeto = precioBruto > 0 ? Math.round(precioBruto / 1.19) : 0;
+    const precioConDescuento = productoDetalleActual.precioConDescuento || (precioNeto - (precioNeto * descuento / 100));
 
     const priceStack = document.querySelector('.price-stack');
     if (!priceStack) return;
@@ -10631,14 +10889,14 @@ function llenarPrecioYDescuento() {
             <span style="color: #BF1823; font-size: 12px; font-weight: bold;">
                 ¡DESCUENTO ${descuento.toFixed(0)}%!
             </span>
-            <span class="iva-text">IVA incluido</span>
+            
         `;
     } else {
         priceStack.innerHTML = `
             <span class="price-final" style="font-weight: bold; font-size: 20px;">
                 ${formatoPrecio(precio)}
             </span>
-            <span class="iva-text">IVA incluido</span>
+            
         `;
     }
 }
@@ -11841,7 +12099,6 @@ async function limpiarTodosCruces() {
         
         if (data.ok) {
             alert("✅ " + data.msg);
-            // Si el modal de ver cruces está abierto, actualizarlo
             const modal = document.getElementById('modal-ver-cruces-sistema');
             if (modal && modal.classList.contains('active')) {
                 await cargarCrucesSistema();
@@ -11854,9 +12111,7 @@ async function limpiarTodosCruces() {
         alert("❌ Error de conexión al limpiar cruces. Asegúrate de que el servidor esté corriendo.\n\nDetalle: " + error.message);
     }
 }
-
 async function abrirModalVerCrucesSistema() {
-    const modal = document.getElementById('modal-ver-cruces-sistema');
     if (modal) {
         modal.classList.add('active');
         await cargarCrucesSistema();
@@ -13614,15 +13869,16 @@ const CarritoGlobal = {
                 return false;
             }
             
-            // Calcular precio con descuento
-            const precioOriginal = producto.precio || 0;
+            // Calcular precio neto (sin IVA) con descuento
+            const precioBruto = producto.precio || 0;
+            const precioOriginalNeto = Math.round(precioBruto / 1.19);
             const descuento = producto.descuento || 0;
-            const precioFinal = descuento > 0 ? Math.round(precioOriginal * (1 - descuento / 100)) : precioOriginal;
+            const precioFinal = descuento > 0 ? Math.round(precioOriginalNeto * (1 - descuento / 100)) : precioOriginalNeto;
             
             // Obtener imagen principal
             const imagen = producto.imagenes && producto.imagenes.length > 0 
                 ? producto.imagenes[0] 
-                : '/img/carrito.svg';
+                : '/img/producto-sin-imagen.png';
             
             if (itemExistente) {
                 // Actualizar cantidad
@@ -13637,7 +13893,7 @@ const CarritoGlobal = {
                     marca: producto.marca || '',
                     imagen: imagen,
                     precio: precioFinal,
-                    precioOriginal: precioOriginal,
+                    precioOriginal: precioOriginalNeto,
                     descuento: descuento,
                     cantidad: cantidad,
                     stock: stockDisponible
@@ -13931,10 +14187,18 @@ const CarritoGlobal = {
                 const subtotal = item.precio * item.cantidad;
                 const linkDetalle = `mis flotas/detalleproducto.html?id=${encodeURIComponent(item.id)}`;
                 
+                // Verificar si tiene imagen real o es placeholder
+                const esPlaceholder = !item.imagen || item.imagen === '/img/foto.svg' || item.imagen.includes('foto.svg');
+                
                 html += `
                     <li class="cart-item" data-id="${item.id}">
                         <div class="cart-item-img" onclick="CarritoGlobal.irADetalleProducto('${item.id}')" style="cursor:pointer;">
-                            <img src="${item.imagen}" alt="${item.nombre}" onerror="this.src='/img/carrito.svg'">
+                            ${esPlaceholder ? `
+                                <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 4px;">
+                                    <img src="/img/Logo SC.svg" alt="Sin imagen" style="width: 40px; height: 40px; opacity: 0.5;">
+                                    <p style="margin-top: 4px; color: #999; font-size: 9px; text-align: center; line-height: 1.2;">Sin imagen</p>
+                                </div>
+                            ` : `<img src="${item.imagen}" alt="${item.nombre}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 4px;\\'><img src=\\'/img/Logo SC.svg\\' alt=\\'Sin imagen\\' style=\\'width: 40px; height: 40px; opacity: 0.5;\\'><p style=\\'margin-top: 4px; color: #999; font-size: 9px; text-align: center; line-height: 1.2;\\'>Sin imagen</p></div>';">`}
                             ${item.descuento > 0 ? `<span class="cart-item-discount">-${item.descuento}%</span>` : ''}
                         </div>
                         <div class="cart-item-info">
@@ -13963,7 +14227,7 @@ const CarritoGlobal = {
             // Actualizar total
             const cartTotal = document.querySelector('.cart-total');
             if (cartTotal) {
-                cartTotal.innerHTML = `<strong>Total:</strong> ${this.formatearPrecio(this.calcularTotal())} <span>IVA incluido</span>`;
+                cartTotal.innerHTML = `<strong>Total:</strong> ${this.formatearPrecio(this.calcularTotal())}`;
             }
         }
     },

@@ -46,6 +46,69 @@
     }
     
     .panel--open {
+      transform: translateX(0);
+    }
+    
+    .filtros-header-container {
+      border-bottom: 1px solid #e0e0e0;
+      padding: 20px 24px;
+      flex-shrink: 0;
+    }
+    
+    .filtros-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .filtros-header h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+    
+    .close-filtros {
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #666;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    
+    .close-filtros:hover {
+      background: #f5f5f5;
+      color: #BF1823;
+    }
+    
+    .filtros-main {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .filtros-tags {
+      padding: 16px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 1px solid #e0e0e0;
+      min-height: 56px;
+    }
+    
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       background: #BF1823;
       color: white;
       padding: 6px 12px;
@@ -184,6 +247,421 @@
     
     .limpiar-filtros:hover {
       background: #e0e0e0 !important;
+    }
+
+    /* ===== ESTILOS PARA CARRUSEL DE MARCA/MODELO ===== */
+    .main-grouped-section {
+      padding: 20px;
+    }
+
+    /* ===== TARJETAS DE GRUPO (MARCA/MODELO) ===== */
+    .vehicle-group-card {
+      background: #FFFFFF;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .vehicle-group-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      border-color: #BF1823;
+    }
+
+    .group-image-container {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .group-model-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 16px;
+    }
+
+    .vehicle-count-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #BF1823;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .group-info {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .group-brand-logo {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      margin-bottom: 12px;
+    }
+
+    .group-title {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .group-count {
+      margin: 0;
+      font-size: 13px;
+      color: #999;
+    }
+
+    /* ===== VISTA TABLA POR GRUPO ===== */
+    #vista-tabla-grupo {
+      display: none;
+      padding: 10px 20px 30px 20px;
+    }
+
+    .tabla-grupo-header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    #tabla-grupo-titulo {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    #tabla-grupo-subtitulo {
+      margin: 0;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .tabla-grupo-wrapper {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+
+    table.tabla-grupo {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    table.tabla-grupo thead {
+      background: #f7f7f7;
+    }
+
+    table.tabla-grupo th, table.tabla-grupo td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid #eaeaea;
+      color: #333;
+    }
+
+    table.tabla-grupo th {
+      font-weight: 700;
+      font-size: 13px;
+      color: #555;
+    }
+
+    table.tabla-grupo tr:hover td {
+      background: #fafafa;
+    }
+
+    .tabla-grupo-empty {
+      text-align: center;
+      padding: 16px;
+      color: #777;
+    }
+
+    .vehicle-brand-card {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .vehicle-brand-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      border-color: #BF1823;
+    }
+
+    .brand-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      width: 100%;
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .brand-name {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .model-name {
+      font-size: 11px;
+      color: #999;
+    }
+
+    .brand-card-logo {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      margin: 16px 0;
+    }
+
+    .brand-card-model-img {
+      width: 100px;
+      height: 60px;
+      object-fit: contain;
+      margin-bottom: 12px;
+    }
+
+    .brand-card-count {
+      background: #BF1823;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+
+    /* ===== MODAL CARRUSEL MODELO ===== */
+    .modal-carousel-modelo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+
+    .modal-carousel-content {
+      background: white;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 1000px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .close-modal-carousel {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 32px;
+      color: #666;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .close-modal-carousel:hover {
+      color: #BF1823;
+    }
+
+    .modal-carousel-header {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 24px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .modal-logo {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+    }
+
+    .modal-info h3 {
+      margin: 0 0 8px 0;
+      font-size: 24px;
+      color: #333;
+    }
+
+    .modal-info p {
+      margin: 0;
+      font-size: 14px;
+      color: #999;
+    }
+
+    .modal-carousel-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 24px;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .modal-carousel-wrapper .carousel-btn {
+      background: none;
+      border: 1px solid #e0e0e0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      color: #333;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .modal-carousel-wrapper .carousel-btn:hover {
+      background: #f5f5f5;
+      border-color: #BF1823;
+      color: #BF1823;
+    }
+
+    .modal-carousel-wrapper .carousel-viewport {
+      flex: 1;
+      overflow: hidden;
+      height: 300px;
+    }
+
+    #modal-carousel-track {
+      display: flex;
+      gap: 16px;
+      transition: transform 0.3s ease;
+    }
+
+    .modal-carousel-track .vehicle-card {
+      flex: 0 0 calc(100% / 3);
+      min-width: 240px;
+    }
+
+    @media (max-width: 768px) {
+      .vehicles-grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+        padding: 0 12px;
+      }
+
+      .vehicle-group-card {
+        min-height: 280px;
+      }
+
+      .group-image-container {
+        height: 160px;
+      }
+
+      .vehicle-brand-card {
+        padding: 16px;
+      }
+
+      .modal-carousel-content {
+        width: 95%;
+        max-height: 80vh;
+      }
+
+      .modal-carousel-header {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .modal-carousel-wrapper {
+        padding: 16px;
+      }
+
+      .modal-carousel-wrapper .carousel-viewport {
+        height: 250px;
+      }
+
+      .modal-carousel-track .vehicle-card {
+        flex: 0 0 calc(100% / 2);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .vehicles-grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 12px;
+        padding: 0 8px;
+      }
+
+      .vehicle-group-card {
+        min-height: 240px;
+      }
+
+      .group-image-container {
+        height: 120px;
+      }
+
+      .group-brand-logo {
+        width: 50px;
+        height: 50px;
+      }
+
+      .group-title {
+        font-size: 14px;
+      }
+
+      .vehicle-brand-card {
+        padding: 12px;
+      }
+
+      .brand-card-logo {
+        width: 60px;
+        height: 60px;
+      }
+
+      .brand-card-model-img {
+        width: 80px;
+        height: 50px;
+      }
+
+      .modal-carousel-track .vehicle-card {
+        flex: 0 0 100%;
+      }
     }
   </style>
 </head>
@@ -378,23 +856,74 @@
           </div>
         </div>
 
+        <!-- SECCIÓN DE TARJETAS AGRUPADAS POR MARCA/MODELO -->
+        <section class="main-grouped-section">
+          <div class="carousel carousel-grupos" data-rows="2" data-cols="5">
+            <button class="carousel-btn prev" aria-label="Anterior">‹</button>
+            <div class="carousel-viewport">
+              <div class="carousel-track" id="track-grupos-flotas">
+                <!-- Las tarjetas de marca/modelo se renderizan aquí -->
+              </div>
+            </div>
+            <button class="carousel-btn next" aria-label="Siguiente">›</button>
+            <ul class="carousel-indicators"></ul>
+          </div>
 
-        
-     <section class="main-carousel">
-  <div class="carousel" data-rows="2" data-cols="5">
-    <button class="carousel-btn prev" aria-label="Anterior">‹</button>
-    <div class="carousel-viewport">
-      <div class="carousel-track">
-       
-      </div>
-    </div>
-    <button class="carousel-btn next" aria-label="Siguiente">›</button>
-    <ul class="carousel-indicators"></ul>
-  </div>
-</section>
+          <!-- MODAL PARA VER CARRUSEL DE VEHÍCULOS DE UNA MARCA/MODELO -->
+          <div id="modal-carousel-modelo" class="modal-carousel-modelo" style="display: none;">
+            <div class="modal-carousel-content">
+              <button class="close-modal-carousel" onclick="cerrarModalCarruselModelo()">×</button>
+              
+              <div class="modal-carousel-header">
+                <img id="modal-logo-marca" src="" alt="Logo marca" class="modal-logo">
+                <div class="modal-info">
+                  <h3 id="modal-titulo-marca">Marca</h3>
+                  <p id="modal-info-modelo">Modelo</p>
+                </div>
+              </div>
 
-<section class="favorites-section">
-  <div class="section-header"><h2>Vehículos favoritos</h2></div>
+              <div class="modal-carousel-wrapper">
+                <button class="carousel-btn prev" aria-label="Anterior">‹</button>
+                <div class="carousel-viewport">
+                  <div class="carousel-track" id="modal-carousel-track">
+                    <!-- Vehículos del carrusel -->
+                  </div>
+                </div>
+                <button class="carousel-btn next" aria-label="Siguiente">›</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VISTA TABLA POR GRUPO (se muestra al clickear una tarjeta) -->
+        <section id="vista-tabla-grupo">
+          <div class="tabla-grupo-header">
+            <div>
+              <h2 id="tabla-grupo-titulo">Grupo</h2>
+              <p id="tabla-grupo-subtitulo">0 vehículos</p>
+            </div>
+            <button class="btn-primary" id="btn-volver-grid">← Volver atrás</button>
+          </div>
+          <div class="tabla-grupo-wrapper">
+            <table class="tabla-grupo">
+              <thead>
+                <tr>
+                  <th>Patente</th>
+                  <th>Marca</th>
+                  <th>Modelo/Tipo</th>
+                  <th>Año</th>
+                  <th>Conductor</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-grupo-tbody">
+                <tr><td colspan="5" class="tabla-grupo-empty">Selecciona una tarjeta para ver sus vehículos</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="favorites-section">
+          <div class="section-header"><h2>Vehículos favoritos</h2></div>
   <div class="carousel" data-rows="1" data-cols="4">
     <button class="carousel-btn prev" aria-label="Anterior favorito">‹</button>
     <div class="carousel-viewport">
@@ -604,7 +1133,7 @@
   
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 <script src="../script.js"></script>
- 
+<script src="../mobile-nav.js"></script>
 
 <!-- Panel de Carrito -->
 <div class="cart-overlay" id="cart-overlay" onclick="cerrarCarrito()"></div>
@@ -621,7 +1150,7 @@
     <ul class="cart-list" id="cart-list"></ul>
   </div>
   <div class="cart-footer" id="cart-footer" style="display:none;">
-    <p class="cart-total"><strong>Total:</strong> $0 <span>IVA incluido</span></p>
+    <p class="cart-total"><strong>Total:</strong> $0</p>
     <div class="cart-actions">
       <button class="cart-btn-primary" onclick="generarOrdenCompraDesdeOtroHTML()">Generar OC</button>
       <button class="cart-btn-secondary" onclick="cotizarDesdeOtroHTML()">Cotizar</button>
@@ -663,7 +1192,7 @@
   </div>
 </div>
 
- 
+<script src="../notificaciones.js"></script>
 <script>
 // Funciones del panel de notificaciones
 function toggleNotificaciones() {
@@ -2498,6 +3027,150 @@ function eliminarMantenimiento(id) {
     else { alert('Error eliminando mantenimiento'); }
   }).catch(e=>console.error('Error eliminando', e));
 }
+
+// ========================================
+// FUNCIONES PARA MODAL DE CARRUSEL POR MARCA/MODELO
+// ========================================
+
+let estadoCarruselModal = {
+  indice: 0,
+  vehiculos: [],
+  carouselWrapper: null
+};
+
+function abrirModalCarruselModelo(grupo, imgMarca, imgModelo) {
+  const modal = document.getElementById('modal-carousel-modelo');
+  if (!modal) return;
+
+  // Configurar datos del modal
+  document.getElementById('modal-logo-marca').src = imgMarca;
+  document.getElementById('modal-titulo-marca').textContent = grupo.marca;
+  document.getElementById('modal-info-modelo').textContent = `${grupo.modelo} (${grupo.vehiculos.length} vehículos)`;
+
+  // Preparar vehículos con datos de imagen
+  const vehiculosConImagenes = grupo.vehiculos.map(v => {
+    const imgModelo = typeof rutaModelo === 'function' ? rutaModelo(v.tipo, v.marca, v.modelo) : "../vehiculosexpertos/default.png";
+    const imgMarca = obtenerLogoMarcaInteligente(v.marca);
+    return { ...v, imagen: imgModelo, logo: imgMarca };
+  });
+
+  estadoCarruselModal.vehiculos = vehiculosConImagenes;
+  estadoCarruselModal.indice = 0;
+  estadoCarruselModal.carouselWrapper = null;
+
+  // Renderizar carrusel
+  renderizarCarruselModal();
+
+  // Mostrar modal
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  // Inicializar controles
+  inicializarControlesCarruselModal();
+}
+
+function renderizarCarruselModal() {
+  const track = document.getElementById('modal-carousel-track');
+  if (!track) return;
+
+  track.innerHTML = '';
+
+  estadoCarruselModal.vehiculos.forEach((v, idx) => {
+    const card = document.createElement('div');
+    card.className = 'vehicle-card';
+    card.dataset.vehiculoId = v.id;
+
+    card.innerHTML = `
+      <div class="vehicle-header">
+        <p class="vehicle-model">${v.modelo || v.tipo || ''}</p>
+        <img src="${v.logo}" alt="${v.marca || ''}" class="vehicle-brand">
+      </div>
+      <img src="${v.imagen}" alt="Vehículo" class="vehicle-img">
+      <p class="model">
+        <span class="patente-text">${v.patente || ''}</span>
+        <span class="conductor-text">${v.conductor ? `(${v.conductor})` : ""}</span>
+      </p>
+    `;
+
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', async () => {
+      const datosParaDetalle = {
+        ...v,
+        imagen: v.imagen,
+        logoUrl: v.logo
+      };
+      await saveVehiculoDetalleForCurrentUser(datosParaDetalle);
+      window.location.href = `producto.html?id=${encodeURIComponent(v.id)}`;
+    });
+
+    track.appendChild(card);
+  });
+
+  // Aplicar transformación
+  actualizarPosicionCarruselModal();
+}
+
+function inicializarControlesCarruselModal() {
+  const modal = document.getElementById('modal-carousel-modelo');
+  const btns = modal.querySelectorAll('.carousel-btn');
+  
+  btns.forEach((btn, idx) => {
+    btn.removeEventListener('click', null);
+    if (idx === 0) {
+      btn.addEventListener('click', () => moverCarruselModal(-1));
+    } else {
+      btn.addEventListener('click', () => moverCarruselModal(1));
+    }
+  });
+}
+
+function moverCarruselModal(direccion) {
+  const cantidad = estadoCarruselModal.vehiculos.length;
+  if (cantidad === 0) return;
+
+  estadoCarruselModal.indice = (estadoCarruselModal.indice + direccion + cantidad) % cantidad;
+  actualizarPosicionCarruselModal();
+}
+
+function actualizarPosicionCarruselModal() {
+  const track = document.getElementById('modal-carousel-track');
+  if (!track) return;
+
+  const cards = track.querySelectorAll('.vehicle-card');
+  const cardWidth = cards[0]?.offsetWidth || 240;
+  const gapSize = 16;
+  const desplazamiento = -(estadoCarruselModal.indice * (cardWidth + gapSize));
+
+  track.style.transform = `translateX(${desplazamiento}px)`;
+}
+
+function cerrarModalCarruselModelo() {
+  const modal = document.getElementById('modal-carousel-modelo');
+  if (modal) {
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    estadoCarruselModal = { indice: 0, vehiculos: [], carouselWrapper: null };
+  }
+}
+
+// Cerrar modal al hacer click en el fondo
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('modal-carousel-modelo');
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        cerrarModalCarruselModelo();
+      }
+    });
+  }
+});
+
+// Cerrar con tecla ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    cerrarModalCarruselModelo();
+  }
+});
 </script>
 
 </body>

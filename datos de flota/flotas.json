@@ -537,15 +537,16 @@
         "favorito": false
       },
       {
-        "tipo": "bus",
+        "tipo": "",
         "marca": "Citroen",
         "modelo": "Berlingo 1.6 K9",
         "motor": "",
-        "patente": "Sin especificar",
-        "anio": "Sin especificar",
+        "patente": "",
+        "anio": "",
         "id": "veh_1765502675870_3_d333phqbv",
         "vehiculoId": "veh_1765502675870_3_d333phqbv",
-        "favorito": false
+        "favorito": true,
+        "conductor": ""
       },
       {
         "tipo": "camioneta",
@@ -556,7 +557,8 @@
         "anio": "Sin especificar",
         "id": "veh_1765502675870_4_3olg50y2q",
         "vehiculoId": "veh_1765502675870_4_3olg50y2q",
-        "favorito": false
+        "favorito": false,
+        "conductor": "Hola"
       },
       {
         "tipo": "camioneta",
@@ -600,7 +602,7 @@
         "anio": "Sin especificar",
         "id": "veh_1765502675870_8_hg5e6w61z",
         "vehiculoId": "veh_1765502675870_8_hg5e6w61z",
-        "favorito": false
+        "favorito": true
       },
       {
         "tipo": "camioneta",
@@ -622,7 +624,7 @@
         "anio": "Sin especificar",
         "id": "veh_1765502675870_10_uw8ib8r5n",
         "vehiculoId": "veh_1765502675870_10_uw8ib8r5n",
-        "favorito": false
+        "favorito": true
       },
       {
         "tipo": "3/4",
@@ -633,7 +635,7 @@
         "anio": "Sin especificar",
         "id": "veh_1765502675870_11_rmpgmf7cf",
         "vehiculoId": "veh_1765502675870_11_rmpgmf7cf",
-        "favorito": false
+        "favorito": true
       },
       {
         "tipo": "bus",
@@ -644,7 +646,7 @@
         "anio": "Sin especificar",
         "id": "veh_1765502675870_12_h2ok6fjwg",
         "vehiculoId": "veh_1765502675870_12_h2ok6fjwg",
-        "favorito": false
+        "favorito": true
       },
       {
         "tipo": "bus",
@@ -666,7 +668,7 @@
         "anio": "Sin especificar",
         "id": "veh_1765502675870_14_593e5qnio",
         "vehiculoId": "veh_1765502675870_14_593e5qnio",
-        "favorito": false
+        "favorito": true
       },
       {
         "tipo": "bus",
@@ -688,10 +690,20 @@
         "anio": "Sin especificar",
         "id": "veh_1765502675870_16_8wk4eqtxu",
         "vehiculoId": "veh_1765502675870_16_8wk4eqtxu",
-        "favorito": false
+        "favorito": true
+      },
+      {
+        "id": "veh_1766019874075_3802",
+        "tipo": "camioneta",
+        "marca": "Toyota",
+        "modelo": "Hilux 2.4",
+        "anio": "sadas",
+        "motor": "dasdas",
+        "patente": "dasd",
+        "conductor": ""
       }
     ],
-    "updatedAt": "2025-12-12T01:25:13.030Z"
+    "updatedAt": "2025-12-18T02:02:56.821Z"
   },
   {
     "id": "flota_1765465304486",
@@ -707,6 +719,23 @@
         "motor": "1234",
         "patente": "1234",
         "anio": "1234"
+      }
+    ]
+  },
+  {
+    "id": "flota_1766019744049",
+    "userId": "ecousuario",
+    "nombre": "asdas",
+    "file": "1766019744043_asdas.xlsx",
+    "createdAt": "2025-12-18T01:02:24.049Z",
+    "vehiculos": [
+      {
+        "tipo": "camion",
+        "marca": "Scania",
+        "modelo": "R",
+        "motor": "12312",
+        "patente": "3123123",
+        "anio": "123123"
       }
     ]
   }

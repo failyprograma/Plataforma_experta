@@ -334,6 +334,7 @@ app.get("/api/users", (req, res) => {
 // 2. LOGIN REAL (AquÃ­ es donde ocurre la magia segura)
 app.post("/api/login", (req, res) => {
     const { user, pass } = req.body;
+    try { console.log(`[LOGIN] intento de usuario: ${user}`); } catch {}
     
     // A. VERIFICACIÃ“N ADMIN (Hardcoded Seguro en Backend)
     // Esto es seguro porque el usuario nunca ve este archivo.
@@ -360,7 +361,8 @@ app.post("/api/login", (req, res) => {
     }
 
     // C. CREDENCIALES INCORRECTAS
-    res.status(401).json({ ok: false, msg: "Usuario o contraseÃ±a incorrectos" });
+    try { console.warn(`[LOGIN] fallo de autenticación para usuario: ${user}`); } catch {}
+    res.status(401).json({ ok: false, msg: "Usuario o contraseña incorrectos" });
 });
 
 // 3. REGISTRO (Crear nuevos clientes en JSON)
@@ -3397,16 +3399,17 @@ app.get("/api/carrito/:userId", (req, res) => {
             const productoActual = productos.find(p => p.id === item.id);
             
             if (productoActual) {
-                // Actualizar datos del producto si cambiaron
-                const precioOriginal = productoActual.precio || 0;
+                // Actualizar datos del producto si cambiaron (convertir a precio neto sin IVA)
+                const precioBruto = productoActual.precio || 0;
+                const precioOriginalNeto = Math.round(precioBruto / 1.19);
                 const descuento = productoActual.descuento || 0;
-                const precioFinal = descuento > 0 ? Math.round(precioOriginal * (1 - descuento / 100)) : precioOriginal;
+                const precioFinal = descuento > 0 ? Math.round(precioOriginalNeto * (1 - descuento / 100)) : precioOriginalNeto;
                 const stockActual = productoActual.stock || 0;
                 
                 // Verificar si hubo cambios
                 if (item.precio !== precioFinal || 
                     item.descuento !== descuento || 
-                    item.precioOriginal !== precioOriginal ||
+                    item.precioOriginal !== precioOriginalNeto ||
                     item.stock !== stockActual) {
                     carritoActualizado = true;
                 }
@@ -3421,7 +3424,7 @@ app.get("/api/carrito/:userId", (req, res) => {
                 // Obtener imagen actualizada
                 const imagen = productoActual.imagenes && productoActual.imagenes.length > 0 
                     ? productoActual.imagenes[0] 
-                    : '/img/carrito.svg';
+                    : '/img/foto.svg';
                 
                 return {
                     ...item,
@@ -3429,7 +3432,7 @@ app.get("/api/carrito/:userId", (req, res) => {
                     marca: productoActual.marca || item.marca,
                     imagen: imagen,
                     precio: precioFinal,
-                    precioOriginal: precioOriginal,
+                    precioOriginal: precioOriginalNeto,
                     descuento: descuento,
                     stock: stockActual,
                     cantidad: cantidadFinal,
@@ -3532,21 +3535,22 @@ app.post("/api/carrito/:userId/agregar", (req, res) => {
             return res.status(400).json({ ok: false, msg: `Stock insuficiente. Disponible: ${stockDisponible}` });
         }
         
-        // Calcular precio con descuento
-        const precioOriginal = producto.precio || 0;
+        // Calcular precio neto (sin IVA) con descuento
+        const precioBruto = producto.precio || 0;
+        const precioOriginalNeto = Math.round(precioBruto / 1.19);
         const descuento = producto.descuento || 0;
-        const precioFinal = descuento > 0 ? Math.round(precioOriginal * (1 - descuento / 100)) : precioOriginal;
+        const precioFinal = descuento > 0 ? Math.round(precioOriginalNeto * (1 - descuento / 100)) : precioOriginalNeto;
         
         // Obtener imagen principal
         const imagen = producto.imagenes && producto.imagenes.length > 0 
             ? producto.imagenes[0] 
-            : '/img/carrito.svg';
+            : '/img/foto.svg';
         
         if (itemExistente) {
             itemExistente.cantidad = cantidadTotal;
             // Actualizar datos del producto por si cambiaron
             itemExistente.precio = precioFinal;
-            itemExistente.precioOriginal = precioOriginal;
+            itemExistente.precioOriginal = precioOriginalNeto;
             itemExistente.descuento = descuento;
             itemExistente.stock = stockDisponible;
             itemExistente.imagen = imagen;
@@ -3559,7 +3563,7 @@ app.post("/api/carrito/:userId/agregar", (req, res) => {
                 marca: producto.marca || '',
                 imagen: imagen,
                 precio: precioFinal,
-                precioOriginal: precioOriginal,
+                precioOriginal: precioOriginalNeto,
                 descuento: descuento,
                 cantidad: cantidad,
                 stock: stockDisponible
@@ -3739,20 +3743,38 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
             return res.status(400).json({ ok: false, msg: "Datos de cotizaciÃ³n incompletos" });
         }
         
-        // Incrementar contador de cotizaciones del usuario
+        // Incrementar contador de cotizaciones del usuario y registrar SKUs cotizados
         try {
             const usersData = JSON.parse(fs.readFileSync(USERS_DB, "utf-8") || "[]");
             const userIndex = usersData.findIndex(u => u.id === usuario.id);
             
             if (userIndex !== -1) {
                 usersData[userIndex].cotizacionesEnviadas = numeroCot || 1;
+                // Unir SKUs cotizados
+                const skusCotizadosPrev = Array.isArray(usersData[userIndex].cotizacionSkus) ? usersData[userIndex].cotizacionSkus : [];
+                const nuevosSkus = (items || []).map(it => (it.sku || it.codSC || it.id || '')).filter(Boolean);
+                const union = Array.from(new Set([...
+                    skusCotizadosPrev,
+                    ...nuevosSkus
+                ]));
+                usersData[userIndex].cotizacionSkus = union;
                 fs.writeFileSync(USERS_DB, JSON.stringify(usersData, null, 2), "utf-8");
             }
         } catch (e) {
             console.warn("Error actualizando contador de cotizaciones:", e);
         }
         
-        // Preparar detalles de items para el email
+        // Recalcular totales en servidor (precios netos, IVA separado)
+        let subtotalCalc = 0;
+        items.forEach(item => {
+            const precioUnit = Number(item.precio) || 0; // asumimos neto
+            const cantidad = Number(item.cantidad) || 1;
+            subtotalCalc += precioUnit * cantidad;
+        });
+        const ivaCalc = Math.round(subtotalCalc * 0.19);
+        const totalCalc = Math.round(subtotalCalc + ivaCalc);
+
+        // Preparar detalles de items para el email (usando precios netos)
         let detallesHTML = '<table style="width:100%; border-collapse:collapse; margin:20px 0;">';
         detallesHTML += '<thead style="background-color:#f0f0f0; border-bottom:2px solid #333;">';
         detallesHTML += '<tr><th style="padding:8px; text-align:left;">SKU</th>';
@@ -3765,8 +3787,8 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
         items.forEach(item => {
             const sku = item.sku || item.codSC || item.id || 'N/A';
             const nombre = item.nombre || 'Producto';
-            const cantidad = item.cantidad || 1;
-            const precio = item.precio || 0;
+            const cantidad = Number(item.cantidad) || 1;
+            const precio = Number(item.precio) || 0; // neto
             const itemTotal = precio * cantidad;
             
             detallesHTML += `<tr style="border-bottom:1px solid #e0e0e0;">
@@ -3807,9 +3829,9 @@ app.post("/api/enviar-cotizacion", async (req, res) => {
             </div>
             
             <div style="background-color: #f5f5f5; padding: 16px; border-radius: 8px; text-align: right; margin-bottom: 20px;">
-                <p style="margin: 8px 0;"><strong>Subtotal:</strong> $${Math.round(subtotal).toLocaleString('es-CL')}</p>
-                <p style="margin: 8px 0;"><strong>IVA (19%):</strong> $${Math.round(iva).toLocaleString('es-CL')}</p>
-                <p style="margin: 8px 0; font-size: 18px; color: #BF1823;"><strong>Total: $${Math.round(total).toLocaleString('es-CL')}</strong></p>
+                <p style="margin: 8px 0;"><strong>Subtotal:</strong> $${Math.round(subtotalCalc).toLocaleString('es-CL')}</p>
+                <p style="margin: 8px 0;"><strong>IVA (19%):</strong> $${Math.round(ivaCalc).toLocaleString('es-CL')}</p>
+                <p style="margin: 8px 0; font-size: 18px; color: #BF1823;"><strong>Total: $${Math.round(totalCalc).toLocaleString('es-CL')}</strong></p>
             </div>
             
             <div style="background-color: #fff3cd; padding: 12px; border-radius: 8px; border-left: 4px solid #BF1823; margin-bottom: 20px;">

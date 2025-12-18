@@ -155,7 +155,7 @@
 </main>
 
 <script src="../script.js"></script>
- 
+<script src="../mobile-nav.js"></script>
 
 <script>
   // Función para normalizar texto (minúsculas, sin acentos, sin espacios, sin guiones)
@@ -663,8 +663,8 @@
 
     productos.forEach(producto => {
       const tieneDescuento = producto.descuento && producto.descuento > 0;
-      const precioOriginal = producto.precio;
-      const precioFinal = tieneDescuento ? (producto.precio * (1 - producto.descuento / 100)) : producto.precio;
+      const precioNeto = Math.round(producto.precio || 0);
+      const precioNetoConDescuento = tieneDescuento ? Math.round(precioNeto * (1 - (parseFloat(producto.descuento) / 100))) : precioNeto;
       
       // Logo de marca - PRIORIDAD: marca del cruce > marca del producto
       const skuNorm = normalizarTexto(producto.codSC);
@@ -686,7 +686,7 @@
       };
       const productoJSON = JSON.stringify(productoConMarcaCorrecta).replace(/"/g, '&quot;');
       const dataMarca = marcaFinal; // en mayúsculas
-      const dataPrecio = Math.round(precioFinal || 0);
+      const dataPrecio = Math.round(precioNetoConDescuento || 0);
       const dataOferta = tieneDescuento ? '1' : '0';
       const dataTipo = inferirTipo(producto.repuesto || '');
       
@@ -740,8 +740,8 @@
           </div>
 
           <div class="price-section">
-            ${tieneDescuento ? `<span class="price-old">$${Math.round(precioOriginal).toLocaleString('es-CL')}</span>` : ''}
-            <span class="price-current">$${Math.round(precioFinal).toLocaleString('es-CL')}</span>
+            ${tieneDescuento ? `<span class="price-old">$${Math.round(precioNeto).toLocaleString('es-CL')}</span>` : ''}
+            <span class="price-current">$${Math.round(precioNetoConDescuento).toLocaleString('es-CL')}</span>
           </div>
 
           <div class="sc-card-actions">
@@ -941,7 +941,7 @@
     <ul class="cart-list" id="cart-list"></ul>
   </div>
   <div class="cart-footer" id="cart-footer" style="display:none;">
-    <p class="cart-total"><strong>Total:</strong> $0 <span>IVA incluido</span></p>
+    <p class="cart-total"><strong>Total:</strong> $0</p>
     <div class="cart-actions">
       <button class="cart-btn-primary" onclick="generarOrdenCompraDesdeOtroHTML()">Generar OC</button>
       <button class="cart-btn-secondary" onclick="cotizarDesdeOtroHTML()">Cotizar</button>
@@ -976,6 +976,14 @@
     </div>
   </div>
 </div>
- 
+<script src="../notificaciones.js"></script>
+<script>
+function toggleNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); if (panel.classList.contains('open')) { cerrarNotificaciones(); } else { panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
+function cerrarNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { const panel = document.getElementById('notif-panel'); if (panel && panel.classList.contains('open')) cerrarNotificaciones(); const cartPanel = document.getElementById('cart-panel'); if (cartPanel && cartPanel.classList.contains('open')) cerrarCarrito(); } });
+async function toggleCarrito() { const panel = document.getElementById('cart-panel'); const overlay = document.getElementById('cart-overlay'); if (panel.classList.contains('open')) { cerrarCarrito(); } else { if (typeof CarritoGlobal !== 'undefined') { await CarritoGlobal.sincronizar(); CarritoGlobal.iniciarPolling(); } panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
+function cerrarCarrito() { if (typeof CarritoGlobal !== 'undefined') CarritoGlobal.detenerPolling(); const panel = document.getElementById('cart-panel'); const overlay = document.getElementById('cart-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+</script>
+
 </body>
 </html>

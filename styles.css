@@ -577,6 +577,15 @@ body {
     width: 100%;
 }
 
+/* Asegurar 4 tarjetas por vista en favoritos */
+.favorites-section .carousel-viewport { width: 100%; }
+.favorites-section #track-favoritos-global { display: flex; }
+.favorites-section #track-favoritos-global .vehicle-card { flex: 0 0 25%; }
+
+@media (max-width: 700px) {
+  .favorites-section #track-favoritos-global .vehicle-card { flex: 0 0 100%; }
+}
+
 
 /* Página interna del carrusel */
 .carousel-page {
@@ -706,7 +715,7 @@ body {
 
 /* TARJETAS DE VEHÍCULO */
 .vehicle-card {
-    background: #fff;
+    background: #FFFFFF;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     display: flex;
@@ -3272,11 +3281,13 @@ input[type=date]{
 }
 
 .viewport-detalle {
-    width: 100%; /* Ocupa todo el ancho */
+    width: 100%;
     max-width: 100%;
     overflow: hidden;
     padding: 15px 0 25px 0;
     box-sizing: border-box;
+    /* Aseguramos que solo muestre 4 tarjetas a la vez */
+    display: block;
 }
 
 .track-detalle {
@@ -7248,6 +7259,188 @@ line-height: 1.3;
   background: #a01620;
 }
 
+.limpiar-filtros {
+  width: 100%;
+  padding: 12px;
+  background: #f5f5f5;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 12px;
+}
+
 .limpiar-filtros:hover {
   background: #e0e0e0 !important;
+}
+/* ===== MODAL EDITAR VEHÍCULO ===== */
+.modal-editar-vehiculo-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.modal-editar-vehiculo-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-editar-vehiculo {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.3s, opacity 0.3s, visibility 0.3s;
+}
+
+.modal-editar-vehiculo.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #BF1823;
+}
+
+.form-group input:read-only {
+  background: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-cancel,
+.btn-save {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-cancel {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.btn-cancel:hover {
+  background: #e0e0e0;
+  transform: translateY(-1px);
+}
+
+.btn-save {
+  background: #BF1823;
+  color: white;
+}
+
+.btn-save:hover {
+  background: #a01620;
+  transform: translateY(-1px);
+}
+
+.btn-editar-fila {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.btn-editar-fila:hover {
+  transform: scale(1.15);
 }

@@ -646,12 +646,12 @@
         <table class="sc-table" id="tabla-productos">
           <thead>
             <tr>
-              <th>Cód. StarClutch</th>
-              <th>Repuesto</th>
-              <th>Marca</th>
               <th>Línea</th>
+              <th>Cód. StarClutch</th>
+              <th>Descripción</th>
+              <th>Marca</th>
               <th>Cód. Cliente</th>
-              <th>Precio</th>
+              <th>Precio autorizado</th>
               <th style="text-align: center;">Acciones</th>
             </tr>
           </thead>
@@ -750,7 +750,7 @@
 </div>
 
 <script src="../script.js"></script>
- 
+<script src="../oc-generator.js"></script>
 
 <script>
     // Buscador que filtra en TODOS los productos cargados, no solo la página actual
@@ -813,7 +813,7 @@
         }
     });
 </script>
- 
+<script src="../mobile-nav.js"></script>
 
 <script>
 // ============================================
@@ -1055,7 +1055,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <ul class="cart-list" id="cart-list"></ul>
   </div>
   <div class="cart-footer" id="cart-footer" style="display:none;">
-    <p class="cart-total"><strong>Total:</strong> $0 <span>IVA incluido</span></p>
+    <p class="cart-total"><strong>Total:</strong> $0</p>
     <div class="cart-actions">
       <button class="cart-btn-primary" onclick="generarOrdenCompraDesdeOtroHTML()">Generar OC</button>
       <button class="cart-btn-secondary" onclick="cotizarDesdeOtroHTML()">Cotizar</button>
@@ -1090,7 +1090,7 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
 </div>
- 
+<script src="../notificaciones.js"></script>
 <script>
 function toggleNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); if (panel.classList.contains('open')) { cerrarNotificaciones(); } else { panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
 function cerrarNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }

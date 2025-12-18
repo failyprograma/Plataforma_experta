@@ -124,21 +124,91 @@
     "email": "gonzavidalj@gmail.com",
     "createdAt": "2025-12-11T01:53:37.245Z",
     "vehiculoDetalle": {
-      "id": "veh_1765502675870_0_ajn45tje7",
-      "vehiculoId": "veh_1765502675870_0_ajn45tje7",
-      "tipo": "camioneta",
-      "marca": "Toyota",
-      "modelo": "Hilux 2.4",
-      "motor": "",
-      "patente": "Sin especificar",
+      "id": "veh_1765502675870_3_d333phqbv",
+      "vehiculoId": "veh_1765502675870_3_d333phqbv",
+      "marca": "Citroen",
+      "modelo": "Berlingo 1.6 K9",
       "anio": "",
+      "patente": "",
       "conductor": "",
-      "favorito": false,
-      "logo": "../logosvehiculos/toyota.png",
-      "imagen": "../vehiculosexpertos/pick up.png",
-      "logoUrl": "../logosvehiculos/toyota.png"
+      "tipo": "",
+      "motor": "",
+      "imagen": "../vehiculosexpertos/van de transporte.png",
+      "logoUrl": "../logosvehiculos/citroen.png"
     },
-    "favorites": [],
+    "favorites": [
+      {
+        "id": "veh_1765502675870_3_d333phqbv",
+        "vehiculoId": "veh_1765502675870_3_d333phqbv",
+        "marca": "Citroen",
+        "modelo": "Berlingo 1.6 K9",
+        "anio": "",
+        "patente": "",
+        "conductor": "",
+        "tipo": "",
+        "motor": ""
+      },
+      {
+        "id": "veh_1765502675870_10_uw8ib8r5n",
+        "vehiculoId": "veh_1765502675870_10_uw8ib8r5n",
+        "marca": "Ford",
+        "modelo": "Ranger",
+        "anio": "Sin especificar",
+        "patente": "Sin especificar",
+        "tipo": "camioneta",
+        "motor": ""
+      },
+      {
+        "id": "veh_1765502675870_16_8wk4eqtxu",
+        "vehiculoId": "veh_1765502675870_16_8wk4eqtxu",
+        "marca": "Great Wall",
+        "modelo": "Poer 2.0",
+        "anio": "Sin especificar",
+        "patente": "Sin especificar",
+        "tipo": "camioneta",
+        "motor": ""
+      },
+      {
+        "id": "veh_1765502675870_14_593e5qnio",
+        "vehiculoId": "veh_1765502675870_14_593e5qnio",
+        "marca": "Peugeot",
+        "modelo": "Landtrek",
+        "anio": "Sin especificar",
+        "patente": "Sin especificar",
+        "tipo": "camioneta",
+        "motor": ""
+      },
+      {
+        "id": "veh_1765502675870_12_h2ok6fjwg",
+        "vehiculoId": "veh_1765502675870_12_h2ok6fjwg",
+        "marca": "Peugeot",
+        "modelo": "Expert",
+        "anio": "Sin especificar",
+        "patente": "Sin especificar",
+        "tipo": "bus",
+        "motor": ""
+      },
+      {
+        "id": "veh_1765502675870_8_hg5e6w61z",
+        "vehiculoId": "veh_1765502675870_8_hg5e6w61z",
+        "marca": "Maxus",
+        "modelo": "T60 2.0",
+        "anio": "Sin especificar",
+        "patente": "Sin especificar",
+        "tipo": "camioneta",
+        "motor": ""
+      },
+      {
+        "id": "veh_1765502675870_11_rmpgmf7cf",
+        "vehiculoId": "veh_1765502675870_11_rmpgmf7cf",
+        "marca": "Hyundai",
+        "modelo": "Porter",
+        "anio": "Sin especificar",
+        "patente": "Sin especificar",
+        "tipo": "3/4",
+        "motor": ""
+      }
+    ],
     "preferencias": {
       "pinActivo": false
     },
@@ -147,10 +217,24 @@
     ],
     "telefono": "953919607",
     "carrito": {
-      "items": [],
-      "ultimaActualizacion": "2025-12-16T19:44:57.882Z"
+      "items": [
+        {
+          "id": "prod_1765422437810_c54mgjmrh",
+          "sku": "KITCHE280LR",
+          "skuCliente": "",
+          "nombre": "Kit de embrague",
+          "marca": "LUK",
+          "imagen": "/uploads/productos/prod-1765422437779-389922479.png",
+          "precio": 239412,
+          "precioOriginal": 239412,
+          "descuento": 0,
+          "cantidad": 1,
+          "stock": 1
+        }
+      ],
+      "ultimaActualizacion": "2025-12-18T16:39:03.278Z"
     },
     "ordenesCompraEnviadas": 1,
-    "cotizacionesEnviadas": 11
+    "cotizacionesEnviadas": 13
   }
 ]

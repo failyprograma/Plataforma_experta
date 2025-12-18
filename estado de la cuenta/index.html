@@ -207,6 +207,7 @@
 </body>
 
       <script src="../script.js"></script>
+      <script src="../mobile-nav.js"></script>
 
 <!-- Panel de Carrito -->
 <div class="cart-overlay" id="cart-overlay" onclick="cerrarCarrito()"></div>
@@ -223,7 +224,7 @@
     <ul class="cart-list" id="cart-list"></ul>
   </div>
   <div class="cart-footer" id="cart-footer" style="display:none;">
-    <p class="cart-total"><strong>Total:</strong> $0 <span>IVA incluido</span></p>
+    <p class="cart-total"><strong>Total:</strong> $0</p>
     <div class="cart-actions">
       <button class="cart-btn-primary" onclick="generarOrdenCompraDesdeOtroHTML()">Generar OC</button>
       <button class="cart-btn-secondary" onclick="cotizarDesdeOtroHTML()">Cotizar</button>
@@ -248,7 +249,7 @@
     </div>
   </div>
 </div>
- 
+<script src="../notificaciones.js"></script>
 <script>
 function toggleNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); if (panel.classList.contains('open')) { cerrarNotificaciones(); } else { panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
 function cerrarNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }

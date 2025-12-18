@@ -198,9 +198,8 @@
 
             <div class="price-buy-block">
                 <div class="price-stack">
-                    <span class="price-old">$1.500.000</span>
-                    <span class="price-final">$1.250.000</span>
-                    <span class="iva-text">IVA incluido</span>
+                  <span class="price-old">$1.500.000</span>
+                  <span class="price-final">$1.250.000</span>
                 </div>
                 
                 <button class="btn-secondary btn-buy-final">
@@ -234,7 +233,7 @@
 </main>
 
 <script src="../script.js"></script>
- 
+<script src="../pdf-generator.js"></script>
 <script>
   // Variable global para almacenar el producto actual
   let productoActual = null;
@@ -650,7 +649,7 @@
         priceHtml += `<span class="price-old">$${Math.round(precioOriginal).toLocaleString('es-CL')}</span>`;
       }
       priceHtml += `<span class="price-final">$${Math.round(precioFinal).toLocaleString('es-CL')}</span>`;
-      priceHtml += `<span class="iva-text">IVA incluido</span>`;
+      
       priceStack.innerHTML = priceHtml;
     }
     
@@ -1429,7 +1428,7 @@
     </div>
   </div>
 </div>
- 
+<script src="../notificaciones.js"></script>
 <script>
 function toggleNotificaciones() {
   const panel = document.getElementById('notif-panel');

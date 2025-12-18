@@ -302,8 +302,8 @@ class CotizacionPDFGenerator {
       
       this.updateProgress(40, 'Agregando productos...');
       
-      const columnas = ['SKU', 'Descripción', 'Cant.', 'Precio Unit.', 'Desc.%', 'IVA (19%)', 'Total'];
-      const anchos = [70, 190, 40, 70, 45, 60, 60];
+      const columnas = ['SKU', 'Descripción', 'Cant.', 'Precio Unit.', 'Total'];
+      const anchos = [80, 210, 40, 90, 90];
       
       // Dibujar encabezado de tabla - TEXTO NEGRO SIN FONDO
       this.setTextColor(doc, this.colors.text);
@@ -328,7 +328,6 @@ class CotizacionPDFGenerator {
       doc.setFontSize(8);
       
       let subtotal = 0;
-      let ivaTotal = 0;
       items.forEach((item, idx) => {
         // Alternancia de colores
         if (idx % 2 === 0) {
@@ -338,15 +337,9 @@ class CotizacionPDFGenerator {
         const sku = item.sku || item.codSC || 'N/A';
         const nombre = item.nombre || 'Producto';
         const cantidad = item.cantidad || 1;
-        const precioUnit = item.precio || 0;
-        const desc = item.descuento || 0;
-        const neto = precioUnit * cantidad;
-        const netoDesc = neto * (1 - desc / 100);
-        const ivaLinea = netoDesc * 0.19;
-        const totalLinea = netoDesc + ivaLinea;
-        
-        subtotal += netoDesc;
-        ivaTotal += ivaLinea;
+        const precioUnit = item.precio || 0; // esperado neto
+        const totalLinea = precioUnit * cantidad;
+        subtotal += totalLinea;
         
         // Dibujar bordes de fila
         this.setDrawColor(doc, this.colors.borderLight);
@@ -358,8 +351,6 @@ class CotizacionPDFGenerator {
           nombre,
           String(cantidad),
           this.formatearPrecio(precioUnit),
-          `${desc ? desc.toFixed(0) : '0'}%`,
-          this.formatearPrecio(ivaLinea),
           this.formatearPrecio(totalLinea)
         ];
         
@@ -396,6 +387,8 @@ class CotizacionPDFGenerator {
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
       
+      const ivaTotal = Math.round(subtotal * 0.19);
+      const totalDoc = subtotal + ivaTotal;
       let totalY = totalBoxY + 12;
       doc.text('Subtotal:', totalBoxX + 8, totalY);
       doc.text(this.formatearPrecio(subtotal), totalBoxX + totalBoxWidth - 8, totalY, { align: 'right' });
@@ -409,7 +402,7 @@ class CotizacionPDFGenerator {
       doc.setFontSize(10);
       this.setTextColor(doc, this.colors.red);
       doc.text('Total:', totalBoxX + 8, totalY);
-      doc.text(this.formatearPrecio(subtotal + ivaTotal), totalBoxX + totalBoxWidth - 8, totalY, { align: 'right' });
+      doc.text(this.formatearPrecio(totalDoc), totalBoxX + totalBoxWidth - 8, totalY, { align: 'right' });
       
       currentY += totalBoxHeight + this.spacing.lg;
       
