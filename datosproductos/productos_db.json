@@ -507,7 +507,7 @@
     "linea": "Frenos",
     "codSC": "PAS2379",
     "precio": 13400,
-    "descuento": 0,
+    "descuento": 22,
     "stock": 1,
     "fichaTecnica": "Lado de montaje: Eje delantero\nEspesor [mm]: 17,1\nAltura [mm]: 71\nAncho [mm]: 155,3",
     "referenciaCruzada": "CITROËN: 1623162380\nCITROËN: 1636925480\nCITROËN: 1667817080\nPEUGEOT: 1678168480\nOPEL: 95525370\nOPEL: 93487177\nTOYOTA: SU001A8883\nTOYOTA: SU001-B3587",
@@ -516,7 +516,7 @@
       "/uploads/productos/prod-1765422068683-796678334.png"
     ],
     "fechaCreacion": "2025-12-11T03:01:08.691Z",
-    "fechaModificacion": "2025-12-11T19:08:57.932Z"
+    "fechaModificacion": "2025-12-18T17:04:10.167Z"
   },
   {
     "id": "prod_1765422105677_esnaew017",

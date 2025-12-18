@@ -637,19 +637,19 @@
       }
     }
     
-    // Actualizar precios
+    // Actualizar precios (mostrar NETO y descuento aplicado al NETO)
     const tieneDescuento = producto.descuento && producto.descuento > 0;
-    const precioOriginal = producto.precio;
-    const precioFinal = tieneDescuento ? (producto.precio * (1 - producto.descuento / 100)) : producto.precio;
-    
+    const precioBruto = parseFloat(producto.precio || 0);
+    const precioOriginalNeto = precioBruto > 0 ? Math.round(precioBruto / 1.19) : 0;
+    const precioFinalNeto = tieneDescuento ? Math.round(precioOriginalNeto * (1 - (producto.descuento / 100))) : precioOriginalNeto;
+
     const priceStack = document.querySelector('.price-stack');
     if (priceStack) {
       let priceHtml = '';
       if (tieneDescuento) {
-        priceHtml += `<span class="price-old">$${Math.round(precioOriginal).toLocaleString('es-CL')}</span>`;
+        priceHtml += `<span class="price-old">$${precioOriginalNeto.toLocaleString('es-CL')}</span>`;
       }
-      priceHtml += `<span class="price-final">$${Math.round(precioFinal).toLocaleString('es-CL')}</span>`;
-      
+      priceHtml += `<span class="price-final">$${precioFinalNeto.toLocaleString('es-CL')}</span>`;
       priceStack.innerHTML = priceHtml;
     }
     
@@ -1232,8 +1232,9 @@
     
     tarjetas.forEach(producto => {
       const tieneDescuento = producto.descuento && producto.descuento > 0;
-      const precioOriginal = producto.precio || 0;
-      const precioFinal = tieneDescuento ? (precioOriginal * (1 - producto.descuento / 100)) : precioOriginal;
+      const precioBruto = parseFloat(producto.precio || 0);
+      const precioOriginalNeto = precioBruto > 0 ? Math.round(precioBruto / 1.19) : 0;
+      const precioFinalNeto = tieneDescuento ? Math.round(precioOriginalNeto * (1 - (producto.descuento / 100))) : precioOriginalNeto;
       
       const marca = (producto.marca || '').toUpperCase();
       const marcaLogo = `../marcasproductos/${marca}.png`;
@@ -1265,8 +1266,8 @@
             <img src="${marcaLogo}" alt="${marca}" onerror="this.src='../img/placeholder-logo-marca.svg'">
           </div>
           <div class="precio-container-detalle">
-            ${tieneDescuento ? `<span class="precio-anterior-detalle">$${Math.round(precioOriginal).toLocaleString('es-CL')}</span>` : ''}
-            <span class="precio-actual-detalle">$${Math.round(precioFinal).toLocaleString('es-CL')}</span>
+            ${tieneDescuento ? `<span class="precio-anterior-detalle">$${precioOriginalNeto.toLocaleString('es-CL')}</span>` : ''}
+            <span class="precio-actual-detalle">$${precioFinalNeto.toLocaleString('es-CL')}</span>
           </div>
         </div>
       `;

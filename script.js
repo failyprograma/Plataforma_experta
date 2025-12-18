@@ -3076,36 +3076,7 @@ function renderizarPaginaCliente() {
         }
         tr.appendChild(tdPrecio);
         
-        // Celda 7 (OCULTA): Ficha Técnica - No visible pero almacena datos
-        const td7 = document.createElement('td');
-        td7.style.display = 'none'; // OCULTA pero presente en el DOM
-        td7.style.textAlign = 'center';
-        if (p.fichaTecnica || p.referenciaCruzada || p.oem) {
-            const btn = document.createElement('button');
-            btn.className = 'btn-text';
-            btn.style.cssText = 'color:#BF1823; font-weight:600; cursor:pointer; font-size:13px; padding:4px 8px; display:flex; align-items:center; justify-content:center; gap:6px; border:none; background:none;';
-            btn.onclick = function(e) { 
-                e.stopPropagation(); // Evitar que active el click de la fila
-                verFichaTecnicaCliente(this); 
-            };
-            
-            const icon = document.createElement('img');
-            icon.src = '/img/fichatecnica.svg';
-            icon.alt = 'Ficha Técnica';
-            icon.style.cssText = 'width:16px; height:16px;';
-            
-            const text = document.createElement('span');
-            text.textContent = 'Ver';
-            
-            btn.appendChild(icon);
-            btn.appendChild(text);
-            td7.appendChild(btn);
-        } else {
-            td7.innerHTML = '<span style="color:#ccc; font-size:12px;">-</span>';
-        }
-        tr.appendChild(td7);
-        
-        // Celda 8: Acciones (Ver fotos + Agregar al carrito)
+        // Celda 7: Acciones (Ver fotos + Agregar al carrito)
         const td8 = document.createElement('td');
         td8.style.textAlign = 'center';
         td8.style.verticalAlign = 'middle';
@@ -6957,29 +6928,30 @@ function initModalListaRepuestosProducto() {
         productos.forEach(p => {
             const tr = document.createElement('tr');
             
-            // Calcular precio con descuento si existe
-            const precioOriginal = parseFloat(p.precio || 0);
+            // Calcular precio NETO (sin IVA) y aplicar descuento si existe
+            const precioBruto = parseFloat(p.precio || 0);
             const descuento = parseFloat(p.descuento || 0);
             const tieneDescuento = descuento > 0;
-            const precioFinal = tieneDescuento ? precioOriginal * (1 - descuento / 100) : precioOriginal;
+            const precioOriginalNeto = precioBruto > 0 ? Math.round(precioBruto / 1.19) : 0;
+            const precioFinalNeto = tieneDescuento ? Math.round(precioOriginalNeto * (1 - descuento / 100)) : precioOriginalNeto;
             
             let precioHTML = '';
             if (tieneDescuento) {
                 precioHTML = `
                     <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
                         <span style="text-decoration: line-through; color: #999; font-size: 12px;">
-                            $${Math.round(precioOriginal).toLocaleString('es-CL')}
+                            $${precioOriginalNeto.toLocaleString('es-CL')}
                         </span>
                         <span style="color: #BF1823; font-weight: bold; font-size: 13px;">
                             ¡DESCUENTO ${descuento.toFixed(0)}%!
                         </span>
                         <span style="color: #BF1823; font-weight: bold; font-size: 16px;">
-                            $${Math.round(precioFinal).toLocaleString('es-CL')}
+                            $${precioFinalNeto.toLocaleString('es-CL')}
                         </span>
                     </div>
                 `;
             } else {
-                precioHTML = `<span style="font-weight: bold; font-size: 16px;">$${Math.round(precioOriginal).toLocaleString('es-CL')}</span>`;
+                precioHTML = `<span style="font-weight: bold; font-size: 16px;">$${precioOriginalNeto.toLocaleString('es-CL')}</span>`;
             }
             
             tr.innerHTML = `
@@ -7004,7 +6976,7 @@ function initModalListaRepuestosProducto() {
                     referenciaCruzada: p.referenciaCruzada || '',
                     oem: p.oem || '',
                     stock: p.stock || 0,
-                    precioConDescuento: precioFinal,
+                    precioConDescuento: precioFinalNeto,
                     descuentoPorcentaje: descuento
                 }));
                 window.location.href = `detalleproducto.html?sku=${encodeURIComponent(sku)}`;
@@ -9253,6 +9225,9 @@ function renderizarPaginaAdmin() {
                     <img src="../img/Editar flota.svg" alt="Editar">
                 </button>
             </td>
+            <td style="text-align:center;">
+                <input type="checkbox" class="admin-recomendado-toggle" data-sku="${skuKey}" aria-label="Recomendar">
+            </td>
         `;
         tbody.appendChild(tr);
     });
@@ -9261,9 +9236,11 @@ function renderizarPaginaAdmin() {
     const clientId = adminSelectedClientId || localStorage.getItem('adminSelectedClient') || (clienteActualInfo && clienteActualInfo.id) || null;
     if (clientId) {
         getRecomendadosForClient(clientId).then(recs => {
+            // Ajustar checkboxes según estado actual y su texto
             tbody.querySelectorAll('.admin-recomendado-toggle').forEach(cb => {
                 const s = (cb.getAttribute('data-sku') || '').toString().toLowerCase().trim();
-                cb.checked = recs.includes(s);
+                const isReco = recs.includes(s);
+                cb.checked = isReco;
             });
         }).catch(e => console.error('Error aplicando recomendados en tabla:', e));
     }
@@ -9417,11 +9394,6 @@ document.addEventListener('change', (e) => {
         const clientId = adminSelectedClientId || (clienteActualInfo && clienteActualInfo.id) || null;
         const sku = checkbox.getAttribute('data-sku');
         toggleRecomendadoAdmin(clientId, sku, checkbox.checked);
-        // Update label text
-        try {
-            const labelSpan = checkbox.parentElement ? checkbox.parentElement.querySelector('.label-reco') : null;
-            if (labelSpan) labelSpan.textContent = checkbox.checked ? 'Recomendado' : 'Recomendar';
-        } catch (err) { console.error(err); }
     }
 });
 
@@ -9960,7 +9932,12 @@ function abrirModalEditarProducto(btn) {
     document.getElementById('edit-repuesto').value = productoEditando.repuesto || '';
     document.getElementById('edit-marca').value = productoEditando.marca || '';
     document.getElementById('edit-linea').value = productoEditando.linea || '';
-    document.getElementById('edit-precio').value = productoEditando.precio || '';
+    // Prefill precio como NETO (sin IVA) para edición
+    {
+        const bruto = parseFloat(productoEditando.precio || 0);
+        const neto = bruto > 0 ? Math.round(bruto / 1.19) : '';
+        document.getElementById('edit-precio').value = neto;
+    }
     document.getElementById('edit-descuento').value = productoEditando.descuento || '';
     document.getElementById('edit-stock').value = productoEditando.stock || 0;
     
@@ -12924,13 +12901,14 @@ function renderizarPaginaAdminConFiltros() {
         const codigoMostrado = p.codSC || p.codStarClutch || '-';
         const skuKey = (p.codSC || p.codStarClutch || '').toString();
         
-        // Formatear precio y descuento
-        const precio = parseFloat(p.precio || 0);
+        // Formatear precio NETO y descuento (consistencia con render normal)
+        const precioBruto = parseFloat(p.precio || 0);
         const descuento = parseFloat(p.descuento || 0);
+        const precioNeto = precioBruto > 0 ? Math.round(precioBruto / 1.19) : 0;
         
         let precioHTML = '-';
-        if (precio > 0) {
-            precioHTML = `$${precio.toLocaleString('es-CL', {minimumFractionDigits: 0, maximumFractionDigits: 2})}`;
+        if (precioNeto > 0) {
+            precioHTML = `$${precioNeto.toLocaleString('es-CL', {minimumFractionDigits: 0, maximumFractionDigits: 2})}`;
         }
         
         let descuentoHTML = '-';
@@ -12950,31 +12928,31 @@ function renderizarPaginaAdminConFiltros() {
         tr.setAttribute('data-producto', JSON.stringify(p));
         
         tr.innerHTML = `
-            <td>${p.codCliente || '-'}</td>
+            <td>${p.linea || ''}</td>
+            <td style="font-weight:bold; color:#d32f2f;">${codigoMostrado}</td>
             <td>${p.repuesto}</td>
             <td>${p.marca}</td>
-            <td>${p.linea}</td>
-            <td style="font-weight:bold; color:#d32f2f;">${codigoMostrado}</td>
-            <td style="text-align:center;">
-                <input type="checkbox" class="admin-recomendado-toggle" data-sku="${skuKey}" style="width:18px; height:18px; cursor:pointer; accent-color:#BF1823;">
-            </td>
+            <td>${p.codCliente || '-'}</td>
             <td>${precioHTML}</td>
             <td>${descuentoHTML}</td>
             <td>${stockHTML}</td>
             <td style="text-align:center;">
                 ${(p.imagenes && p.imagenes.length > 0) 
-                    ? `<span style="color:#666; font-size:13px;">${p.imagenes.length} foto${p.imagenes.length > 1 ? 's' : ''}</span>`
+                    ? `<span style=\"color:#666; font-size:13px;\">${p.imagenes.length} foto${p.imagenes.length > 1 ? 's' : ''}</span>`
                     : '<span style="color:#ccc; font-size:12px;">Sin fotos</span>'}
             </td>
             <td style="text-align:center;">
                 ${(p.fichaTecnica || p.referenciaCruzada || p.oem)
-                    ? `<button class="btn-text" onclick="verFichaTecnicaAdmin(this)" style="color:#BF1823; font-weight:600; cursor:pointer; font-size:13px; padding:4px 8px; display:flex; align-items:center; justify-content:center; gap:6px;"><img src="/img/fichatecnica.svg" alt="Ficha Técnica" style="width:14px; height:14px;"> Ver</button>`
+                    ? `<button class=\"btn-text\" onclick=\"verFichaTecnicaAdmin(this)\" style=\"color:#BF1823; font-weight:600; cursor:pointer; font-size:13px; padding:4px 8px; display:flex; align-items:center; justify-content:center; gap:6px;\"><img src=\"/img/fichatecnica.svg\" alt=\"Ficha Técnica\" style=\"width:14px; height:14px;\"> Ver</button>`
                     : '<span style="color:#ccc; font-size:12px;">-</span>'}
             </td>
             <td style="text-align:center;">
                 <button class="btn-icon-only" onclick="abrirModalEditarProducto(this)">
                     <img src="../img/Editar flota.svg" alt="Editar">
                 </button>
+            </td>
+            <td style="text-align:center;">
+                <input type="checkbox" class="admin-recomendado-toggle" data-sku="${skuKey}" aria-label="Recomendar">
             </td>
         `;
         tbody.appendChild(tr);

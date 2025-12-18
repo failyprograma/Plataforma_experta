@@ -327,5 +327,28 @@
     },
     "leida": false,
     "fecha": "2025-12-18T12:59:19.210Z"
+  },
+  {
+    "id": "notif_1766077450168_uc0tw90x8",
+    "userId": "ecousuario",
+    "tipo": "descuento_agregado",
+    "titulo": "Â¡Nueva oferta disponible!",
+    "mensaje": "Pastillas de freno ahora tiene un 22% de descuento.",
+    "datos": {
+      "productoId": "prod_1765422068691_b8sv60vmb",
+      "productoNombre": "Pastillas de freno",
+      "productoMarca": "FRASLE",
+      "repuesto": "Pastillas de freno",
+      "marca": "FRASLE",
+      "codSC": "PAS2379",
+      "precio": 13400,
+      "descuento": 22,
+      "precioFinal": 10452,
+      "precioAnterior": 13400,
+      "precioNuevo": 10452,
+      "imagen": "/uploads/productos/prod-1765422068683-796678334.png"
+    },
+    "leida": false,
+    "fecha": "2025-12-18T17:04:10.168Z"
   }
 ]

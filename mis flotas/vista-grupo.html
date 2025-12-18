@@ -460,6 +460,8 @@
       }
 
       const grupo = JSON.parse(grupoData);
+      // Cargar favoritos del usuario para marcar estrella en la tabla
+      try { if (typeof loadFavoritesForCurrentUser === 'function') { await loadFavoritesForCurrentUser(); } } catch (e) {}
       
       // Actualizar título y subtítulo
       const titulo = document.getElementById('tabla-grupo-titulo');
@@ -552,9 +554,35 @@
         }
 
         // Paginación de 10 filas
+        // helper para saber si el vehículo es favorito (por bandera local, patente o id)
+        function esFavorito(v) {
+          // 1) Si el objeto del vehículo ya trae la bandera `favorito`, úsala
+          if (v && (v.favorito === true || v.favorito === 'true' || v.favorito === 1)) {
+            return true;
+          }
+
+          // 2) Revisar caché global de favoritos por id o patente
+          try {
+            if (Array.isArray(window.FAVORITES_CACHE)) {
+              const vid = String(v.id || v.vehiculoId || '').trim();
+              const pat = String(v.patente || '').toLowerCase().trim();
+              return window.FAVORITES_CACHE.some(f => {
+                const fid = String(f.id || f.vehiculoId || '').trim();
+                const fpat = String(f.patente || '').toLowerCase().trim();
+                return (vid && fid && fid === vid) || (pat && fpat && fpat === pat);
+              });
+            }
+          } catch (e) {}
+          return false;
+        }
+
         const filas = grupo.vehiculos.map((v, idx) => {
           let row = `<tr data-vehicle-idx="${idx}" data-patente="${v.patente || ''}" data-marca="${v.marca || ''}" data-modelo="${v.modelo || v.tipo || ''}">` +
-            `<td>${v.patente || 'Sin especificar'}</td>` +
+            `<td>${esFavorito(v) ? `<span class="star-favorite-card active" style="display:inline-block; vertical-align:middle; margin-right:6px; pointer-events:none; cursor:default;">
+                <svg width="16" height="16" viewBox="0 0 24 24">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#BF1823" stroke="#BF1823"></polygon>
+                </svg>
+              </span>` : ''}${v.patente || 'Sin especificar'}</td>` +
             `<td>${v.anio || ''}</td>` +
             `<td>${v.conductor || ''}</td>`;
           categoriasVisibles.forEach(cat => {
@@ -846,7 +874,8 @@
         const repuesto = producto.repuesto || '';
         const marca = (producto.marca || '').toUpperCase();
         const codCliente = producto.codCliente || '—';
-        const precioNeto = Math.round(producto.precio || 0);
+        const precioBruto = parseFloat(producto.precio || 0);
+        const precioNeto = precioBruto > 0 ? Math.round(precioBruto / 1.19) : 0;
         const descuentoPct = parseFloat(producto.descuento || 0) || 0;
         const tieneDescuento = descuentoPct > 0;
         const precioAutorizado = tieneDescuento ? Math.round(precioNeto * (1 - (descuentoPct / 100))) : precioNeto;
@@ -1069,8 +1098,9 @@
 
       productos.forEach(producto => {
         const tieneDescuento = producto.descuento && producto.descuento > 0;
-        const precioOriginal = producto.precio || 0;
-        const precioFinal = tieneDescuento ? (precioOriginal * (1 - producto.descuento / 100)) : precioOriginal;
+        const precioBruto = parseFloat(producto.precio || 0);
+        const precioOriginalNeto = precioBruto > 0 ? Math.round(precioBruto / 1.19) : 0;
+        const precioFinalNeto = tieneDescuento ? Math.round(precioOriginalNeto * (1 - (producto.descuento / 100))) : precioOriginalNeto;
         const marca = (producto.marca || '').toUpperCase();
         const marcaLogo = `../marcasproductos/${marca}.png`;
         const tieneImagen = producto.imagenes && producto.imagenes.length > 0;
@@ -1097,10 +1127,10 @@
               <div class="logo-marca-detalle">
                   <img src="${marcaLogo}" alt="${marca}" onerror="this.src='../img/placeholder-logo-marca.svg'">
               </div>
-              <div class="precio-container-detalle">
-                  ${tieneDescuento ? `<span class="precio-anterior-detalle">$${Math.round(precioOriginal).toLocaleString('es-CL')}</span>` : ''}
-                  <span class="precio-actual-detalle">$${Math.round(precioFinal).toLocaleString('es-CL')}</span>
-              </div>
+                <div class="precio-container-detalle">
+                  ${tieneDescuento ? `<span class="precio-anterior-detalle">$${precioOriginalNeto.toLocaleString('es-CL')}</span>` : ''}
+                  <span class="precio-actual-detalle">$${precioFinalNeto.toLocaleString('es-CL')}</span>
+                </div>
           </div>`;
 
         card.addEventListener('click', async () => {

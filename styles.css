@@ -5529,6 +5529,8 @@ line-height: 1.3;
 /* Checkbox de "Recomendar" en admin con color corporativo */
 .admin-recomendado-toggle {
   accent-color: #BF1823;
+  width: 18px;
+  height: 18px;
 }
 
 /* ========================================

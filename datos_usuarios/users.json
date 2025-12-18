@@ -219,20 +219,20 @@
     "carrito": {
       "items": [
         {
-          "id": "prod_1765422437810_c54mgjmrh",
-          "sku": "KITCHE280LR",
+          "id": "prod_1765422068691_b8sv60vmb",
+          "sku": "PAS2379",
           "skuCliente": "",
-          "nombre": "Kit de embrague",
-          "marca": "LUK",
-          "imagen": "/uploads/productos/prod-1765422437779-389922479.png",
-          "precio": 239412,
-          "precioOriginal": 239412,
-          "descuento": 0,
+          "nombre": "Pastillas de freno",
+          "marca": "FRASLE",
+          "imagen": "/uploads/productos/prod-1765422068683-796678334.png",
+          "precio": 8784,
+          "precioOriginal": 11261,
+          "descuento": 22,
           "cantidad": 1,
           "stock": 1
         }
       ],
-      "ultimaActualizacion": "2025-12-18T16:39:03.278Z"
+      "ultimaActualizacion": "2025-12-18T17:08:13.560Z"
     },
     "ordenesCompraEnviadas": 1,
     "cotizacionesEnviadas": 13
