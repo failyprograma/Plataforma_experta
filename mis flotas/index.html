@@ -251,7 +251,8 @@
 
     /* ===== ESTILOS PARA CARRUSEL DE MARCA/MODELO ===== */
     .main-grouped-section {
-      padding: 20px;
+      padding: 0px 20px 20px 20px;
+      margin-top: 0px;
     }
 
     /* ===== TARJETAS DE GRUPO (MARCA/MODELO) ===== */
@@ -835,11 +836,10 @@
 
             
             
-  <!-- 🔍 Buscador de patente -->
-<!-- Buscador patente -->
+  <!-- 🔍 Buscador por marca/modelo -->
 <div class="search-patente">
-  <input type="text" placeholder="Buscar patente" class="input-patente">
-  <button class="btn-search-patente">
+  <input type="text" id="input-buscar-marca-modelo" placeholder="Buscar por marca y/o modelo" class="input-patente">
+  <button class="btn-search-patente" onclick="buscarPorMarcaModelo()">
     <img src="../img/Buscar.svg" alt="Buscar">
   </button>
   
@@ -3168,6 +3168,159 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     cerrarModalCarruselModelo();
+  }
+});
+
+// ========================================
+// BÚSQUEDA POR MARCA/MODELO
+// ========================================
+// Variable global para guardar los grupos originales
+window.gruposOriginales = null;
+
+function buscarPorMarcaModelo() {
+  const input = document.getElementById('input-buscar-marca-modelo');
+  if (!input) return;
+  
+  const textoBusqueda = input.value.trim().toLowerCase();
+  
+  // Si no hay búsqueda, restaurar grupos originales
+  if (!textoBusqueda) {
+    if (typeof renderizarFlotaEnGridMarcasModelos === 'function') {
+      renderizarFlotaEnGridMarcasModelos();
+      // Reinicializar carruseles
+      setTimeout(() => {
+        if (typeof initCarruselesGenericos === 'function') initCarruselesGenericos();
+      }, 100);
+    }
+    return;
+  }
+  
+  // Normalizar texto de búsqueda
+  const palabrasBusqueda = textoBusqueda.split(/\s+/).filter(p => p.length > 0);
+  
+  // Filtrar vehículos basándose en marca y/o modelo
+  const vehiculosFiltrados = (window.VEHICULOS_CURRENT || []).filter(v => {
+    const marca = (v.marca || '').toLowerCase();
+    const modelo = (v.modelo || v.tipo || '').toLowerCase();
+    const textoCompleto = `${marca} ${modelo}`;
+    
+    // Verificar si todas las palabras de búsqueda están en marca o modelo
+    return palabrasBusqueda.every(palabra => textoCompleto.includes(palabra));
+  });
+  
+  // Renderizar solo los grupos filtrados
+  renderizarGruposFiltrados(vehiculosFiltrados);
+}
+
+function renderizarGruposFiltrados(vehiculosFiltrados) {
+  const gridContainer = document.querySelector('#track-grupos-flotas');
+  if (!gridContainer) return;
+  
+  if (vehiculosFiltrados.length === 0) {
+    gridContainer.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #999; font-size: 16px;">No se encontraron vehículos que coincidan con la búsqueda</div>';
+    return;
+  }
+  
+  // Agrupar vehículos filtrados por marca + modelo exacto
+  const grupos = {};
+  vehiculosFiltrados.forEach(v => {
+    const marca = (v.marca || 'Sin marca').trim().toLowerCase();
+    const modelo = (v.modelo || v.tipo || 'sin modelo').trim().toLowerCase();
+    const imagenClave = typeof rutaModelo === 'function' ? rutaModelo(v.tipo, v.marca, v.modelo) : (v.imagen || "../vehiculosexpertos/default.png");
+    const key = `${marca}|${modelo}`;
+    
+    if (!grupos[key]) {
+      grupos[key] = {
+        marca: v.marca || 'Sin marca',
+        modelo: v.modelo || v.tipo || 'Sin modelo',
+        tipo: v.tipo || '',
+        vehiculos: [],
+        logo: obtenerLogoMarcaInteligente(v.marca),
+        imagen: imagenClave
+      };
+    }
+    grupos[key].vehiculos.push(v);
+  });
+  
+  // Limpiar contenedor
+  gridContainer.innerHTML = '';
+  
+  // Ordenar grupos alfabéticamente
+  const gruposOrdenados = Object.values(grupos).sort((a, b) => {
+    const marcaComp = a.marca.localeCompare(b.marca);
+    if (marcaComp !== 0) return marcaComp;
+    return a.modelo.localeCompare(b.modelo);
+  });
+  
+  // Crear tarjetas agrupadas en páginas de 10 (5x2)
+  const cardsPerPage = 10;
+  const totalPages = Math.ceil(gruposOrdenados.length / cardsPerPage);
+  
+  for (let pageIndex = 0; pageIndex < totalPages; pageIndex++) {
+    const startIdx = pageIndex * cardsPerPage;
+    const endIdx = Math.min(startIdx + cardsPerPage, gruposOrdenados.length);
+    const gruposPagina = gruposOrdenados.slice(startIdx, endIdx);
+    
+    // Crear contenedor de página
+    const pageDiv = document.createElement('div');
+    pageDiv.className = 'carousel-page';
+    pageDiv.style.display = 'grid';
+    pageDiv.style.gridTemplateColumns = 'repeat(5, 1fr)';
+    pageDiv.style.gridTemplateRows = 'repeat(2, 1fr)';
+    pageDiv.style.gap = '20px';
+    pageDiv.style.minHeight = '600px';
+    
+    gruposPagina.forEach(grupo => {
+      const card = document.createElement('div');
+      card.className = 'vehicle-group-card';
+      
+      const tituloCard = `${grupo.marca} ${grupo.modelo}`;
+      
+      card.innerHTML = `
+        <div class="group-image-container">
+          <img src="${grupo.imagen}" alt="${tituloCard}" class="group-model-image">
+          <span class="vehicle-count-badge">${grupo.vehiculos.length}</span>
+        </div>
+        <div class="group-info">
+          <img src="${grupo.logo}" alt="${grupo.marca}" class="group-brand-logo">
+          <h3 class="group-title">${tituloCard}</h3>
+          <p class="group-count">${grupo.vehiculos.length} vehículo${grupo.vehiculos.length !== 1 ? 's' : ''}</p>
+        </div>
+      `;
+      
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => {
+        mostrarTablaGrupo(grupo);
+      });
+      
+      pageDiv.appendChild(card);
+    });
+    
+    gridContainer.appendChild(pageDiv);
+  }
+  
+  // Reinicializar carrusel con los resultados filtrados
+  setTimeout(() => {
+    if (typeof initCarruselesGenericos === 'function') {
+      initCarruselesGenericos();
+    }
+  }, 100);
+}
+
+// Agregar event listener para buscar al presionar Enter
+document.addEventListener('DOMContentLoaded', () => {
+  const inputBusqueda = document.getElementById('input-buscar-marca-modelo');
+  if (inputBusqueda) {
+    inputBusqueda.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        buscarPorMarcaModelo();
+      }
+    });
+    
+    // También buscar mientras se escribe (búsqueda en tiempo real)
+    inputBusqueda.addEventListener('input', () => {
+      buscarPorMarcaModelo();
+    });
   }
 });
 </script>

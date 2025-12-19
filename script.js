@@ -8327,6 +8327,536 @@ async function adminGuardarNuevaFlota() {
         cargarFlotasDelClienteAdmin(adminSelectedClientId);
     }
 }
+
+// ============================================================
+// CARGA MASIVA DE FLOTAS (ADMIN)
+// ============================================================
+
+// Abrir modal de selección de tipo de carga
+function abrirModalSeleccionCargaFlota() {
+    if (!adminSelectedClientId) {
+        alert("Seleccione un cliente primero");
+        return;
+    }
+    
+    const modal = document.getElementById('modal-admin-seleccion-carga');
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.setAttribute('aria-hidden', 'false');
+        
+        // Limpiar campos
+        const fileInput = document.getElementById('fileInput-admin');
+        const fileName = document.getElementById('fileName-admin');
+        if (fileInput) fileInput.value = '';
+        if (fileName) fileName.textContent = '';
+        
+        // Limpiar botón extra si existe
+        const btnExtra = document.getElementById('btn-cargar-flota-excel-admin');
+        if (btnExtra) btnExtra.remove();
+    }
+}
+
+function cerrarModalSeleccionCargaFlota() {
+    const modal = document.getElementById('modal-admin-seleccion-carga');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+    }
+}
+
+// Seleccionar carga manual -> abrir modal de crear flota
+async function seleccionarCargaManual() {
+    cerrarModalSeleccionCargaFlota();
+    await adminAbrirModalNuevaFlota();
+}
+
+// Descargar plantilla para admin
+function descargarPlantillaAdmin() {
+    alert("⚠️ ATENCIÓN:\n\nNo modifique ni altere el nombre del archivo 'plantilla_flota_inteligente.xlsx' para subir la flota.\n\nEl sistema admite copias numéricas generadas por su PC (ej: 'plantilla_flota_inteligente (1).xlsx'), pero el contenido debe ser el original.");
+    
+    const link = document.createElement('a');
+    link.href = '../datos de flota/plantilla_flota_inteligente.xlsx';
+    link.download = 'plantilla_flota_inteligente.xlsx';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Procesar Excel para admin
+async function procesarExcelFlotaAdmin(file) {
+    // Asegurar que la cascada esté cargada para normalización inteligente
+    try {
+        if ((!window.GLOBAL_DB_CASCADA || Object.keys(window.GLOBAL_DB_CASCADA || {}).length === 0) && typeof cargarCascadaVehiculos === 'function') {
+            await cargarCascadaVehiculos();
+        }
+    } catch (e) {
+        console.warn('No se pudo recargar la cascada de vehículos antes de procesar:', e);
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rawData = XLSX.utils.sheet_to_json(firstSheet, { defval: "" });
+
+            if (!Array.isArray(rawData) || rawData.length === 0) {
+                alert('El archivo Excel está vacío o no tiene columnas válidas.');
+                return;
+            }
+
+            // Helper de columnas tolerante, igual al usado en cliente
+            const getValue = (row, ...keys) => {
+                const rowKeys = Object.keys(row);
+                const normalizedRowKeys = rowKeys.reduce((acc, k) => {
+                    acc[k.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')] = k;
+                    return acc;
+                }, {});
+                for (let key of keys) {
+                    const searchKey = String(key).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    const realKey = normalizedRowKeys[searchKey];
+                    if (realKey && row[realKey] !== undefined && row[realKey] !== '') return row[realKey];
+                }
+                return null;
+            };
+
+            const vehiculos = [];
+            const ts = Date.now();
+
+            rawData.forEach((row, idx) => {
+                const tipo = getValue(row, 'Tipo de vehiculo', 'Tipo de vehículo', 'Tipo', 'Type');
+                const marcaRaw = getValue(row, 'Marca', 'Brand');
+                const modeloRaw = getValue(row, 'Modelo', 'Model');
+                const anio = getValue(row, 'Anio', 'Año', 'Year');
+                const patente = getValue(row, 'Patente', 'License Plate');
+                const motor = getValue(row, 'Motor', 'Engine');
+
+                if (tipo && marcaRaw && modeloRaw && anio && patente) {
+                    // Normalización inteligente como en cliente
+                    let marca = String(marcaRaw);
+                    let modelo = String(modeloRaw);
+                    if (typeof normalizarMarcaModelo === 'function') {
+                        const res = normalizarMarcaModelo(tipo, marcaRaw, modeloRaw);
+                        marca = res.marca;
+                        modelo = res.modelo;
+                    }
+
+                    // Imagen inteligente por modelo/tipo
+                    let imagenInteligente = "../vehiculosexpertos/default.png";
+                    if (typeof rutaModelo === 'function') {
+                        try { imagenInteligente = rutaModelo(tipo, marca, modelo); } catch (_) {}
+                    }
+
+                    vehiculos.push({
+                        id: `veh_${ts}_${idx}`,
+                        tipo: String(tipo).trim(),
+                        marca: String(marca).trim(),
+                        modelo: String(modelo).trim(),
+                        anio: String(anio),
+                        motor: motor ? String(motor) : "",
+                        patente: String(patente).trim(),
+                        conductor: "",
+                        imagen: imagenInteligente
+                    });
+                }
+            });
+
+            if (vehiculos.length === 0) {
+                alert("El archivo no contiene filas válidas. Revisa las columnas: Tipo de vehículo, Marca, Modelo, Año, Patente.");
+                return;
+            }
+
+            // Guardar temporal y abrir modal de nombre
+            window.datosFlotaExcelAdmin = vehiculos;
+            cerrarModalSeleccionCargaFlota();
+
+            const modalNombrar = document.getElementById('modal-admin-nombrar-flota');
+            if (modalNombrar) {
+                modalNombrar.style.display = 'flex';
+                modalNombrar.setAttribute('aria-hidden', 'false');
+                const inputNombre = document.getElementById('admin-input-nombre-flota-excel');
+                if (inputNombre) {
+                    const sugerido = (file && file.name ? file.name.replace('.xlsx', '') : `Flota importada ${new Date().toLocaleDateString('es-CL')}`);
+                    inputNombre.value = sugerido;
+                    inputNombre.select();
+                }
+            }
+
+        } catch (error) {
+            console.error('Error procesando Excel (admin):', error);
+            alert('Error al leer el archivo. Verifica el formato.');
+        }
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+function cerrarModalNombrarFlotaAdmin() {
+    const modal = document.getElementById('modal-admin-nombrar-flota');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+    }
+}
+
+// Confirmar y guardar flota importada
+async function confirmarImportacionFlotaAdmin() {
+    const inputNombre = document.getElementById('admin-input-nombre-flota-excel');
+    const nombreFlota = inputNombre?.value?.trim();
+
+    if (!nombreFlota) {
+        alert('Por favor ingresa un nombre para la flota.');
+        return;
+    }
+
+    const vehiculos = window.datosFlotaExcelAdmin;
+    if (!vehiculos || vehiculos.length === 0) {
+        alert('No hay vehículos para guardar.');
+        return;
+    }
+
+    if (!adminSelectedClientId) {
+        alert('No se ha seleccionado un cliente.');
+        return;
+    }
+
+    // Cerrar modal de nombrar
+    cerrarModalNombrarFlotaAdmin();
+
+    try {
+        // Enviar con el MISMO formato que el cliente (FormData con archivo JSON)
+        const fd = new FormData();
+        fd.append('nombreFlota', nombreFlota);
+        fd.append('userId', adminSelectedClientId);
+
+        const flotaJSON = {
+            id: `flota_${Date.now()}`,
+            nombre: nombreFlota,
+            vehiculos: vehiculos,
+            createdAt: new Date().toISOString()
+        };
+        const blob = new Blob([JSON.stringify(flotaJSON)], { type: 'application/json' });
+        fd.append('file', blob, 'flota_payload.json');
+
+        const res = await fetch('/api/upload-flota', {
+            method: 'POST',
+            body: fd
+        });
+
+        const body = await res.json().catch(()=>({}));
+
+        if (res.ok && (body.ok || body.id || body.entry)) {
+            alert('✅ Flota importada correctamente');
+            await cargarFlotasDelClienteAdmin(adminSelectedClientId);
+            window.datosFlotaExcelAdmin = null;
+        } else {
+            console.error('Respuesta servidor upload-flota (admin):', body);
+            alert('Error al guardar la flota');
+        }
+    } catch (error) {
+        console.error('Error al guardar flota:', error);
+        alert('Error de conexión al guardar la flota');
+    }
+}
+
+// Inicializar dropzone para admin
+(function initDropzoneAdmin() {
+    const dropzone = document.getElementById('dropzone-admin');
+    const fileInput = document.getElementById('fileInput-admin');
+    const fileName = document.getElementById('fileName-admin');
+    
+    if (!dropzone || !fileInput || !fileName) return;
+    
+    const validarExtension = (file) => file.name.split('.').pop().toLowerCase() === 'xlsx';
+    const regexNombre = /^plantilla_flota_inteligente(?:\s*\(\d+\))?\.xlsx$/i;
+    
+    const mostrarArchivo = (file) => {
+        if (validarExtension(file)) {
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            fileInput.files = dt.files;
+            fileName.textContent = file.name;
+            
+            if (regexNombre.test(file.name)) {
+                // Mostrar botón para cargar
+                mostrarBotonCargaAdmin(file);
+            } else {
+                alert("Archivo incorrecto. Por favor, usa la 'plantilla_flota_inteligente.xlsx' original o sus copias numeradas.");
+                fileInput.value = '';
+                fileName.textContent = '';
+            }
+        } else {
+            alert('Solo se permiten archivos .xlsx');
+            fileInput.value = '';
+            fileName.textContent = '';
+        }
+    };
+    
+    const mostrarBotonCargaAdmin = (file) => {
+        // Eliminar botón anterior si existe
+        const btnAnterior = document.getElementById('btn-cargar-flota-excel-admin');
+        if (btnAnterior) btnAnterior.remove();
+        
+        const btn = document.createElement('button');
+        btn.id = 'btn-cargar-flota-excel-admin';
+        btn.className = 'btn-primary';
+        btn.innerHTML = `Cargar flota <img src="../img/Signo más.svg" style="width:16px; margin-left:8px">`;
+        btn.style.marginTop = '15px';
+        btn.style.width = '100%';
+        btn.style.display = 'flex';
+        btn.style.alignItems = 'center';
+        btn.style.justifyContent = 'center';
+        btn.style.cursor = 'pointer';
+        
+        dropzone.parentNode.insertBefore(btn, dropzone.nextSibling);
+        
+        btn.onclick = async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            // Guardia: asegurar que XLSX esté disponible
+            if (typeof XLSX === 'undefined') {
+                alert('Falta la librería de Excel (XLSX). Recarga la página e inténtalo nuevamente.');
+                return;
+            }
+            await procesarExcelFlotaAdmin(file);
+        };
+    };
+    
+    // Eventos
+    dropzone.addEventListener('click', () => fileInput.click());
+    
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) mostrarArchivo(file);
+    });
+    
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('active');
+    });
+    
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('active');
+    });
+    
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('active');
+        const file = e.dataTransfer.files[0];
+        if (file) mostrarArchivo(file);
+    });
+})();
+
+// Event listener para el botón de confirmar importación
+document.addEventListener('DOMContentLoaded', () => {
+    const btnConfirmar = document.getElementById('btn-confirmar-importacion-admin');
+    if (btnConfirmar) {
+        btnConfirmar.addEventListener('click', confirmarImportacionFlotaAdmin);
+    }
+});
+
+// ============================================================
+// AGREGAR VEHÍCULOS A FLOTA EXISTENTE (ADMIN)
+// ============================================================
+
+function abrirModalSeleccionAgregarVehiculo() {
+    if (!adminIdFlotaSeleccionada) {
+        alert('Seleccione una flota primero');
+        return;
+    }
+    const modal = document.getElementById('modal-admin-seleccion-agregar');
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.setAttribute('aria-hidden', 'false');
+        const fileInput = document.getElementById('fileInput-admin-agregar');
+        const fileName = document.getElementById('fileName-admin-agregar');
+        if (fileInput) fileInput.value = '';
+        if (fileName) fileName.textContent = '';
+        const btnExtra = document.getElementById('btn-cargar-flota-excel-admin-agregar');
+        if (btnExtra) btnExtra.remove();
+    }
+}
+
+function cerrarModalSeleccionAgregarVehiculo() {
+    const modal = document.getElementById('modal-admin-seleccion-agregar');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+    }
+}
+
+async function seleccionarAgregarManual() {
+    cerrarModalSeleccionAgregarVehiculo();
+    await adminAbrirModalAgregarVehiculo();
+}
+
+function descargarPlantillaAdminAgregar() {
+    alert("⚠️ ATENCIÓN:\n\nNo modifique el nombre del archivo 'plantilla_flota_inteligente.xlsx'.\n\nSe admiten copias numeradas por su PC (ej: 'plantilla_flota_inteligente (1).xlsx').");
+    const link = document.createElement('a');
+    link.href = '../datos de flota/plantilla_flota_inteligente.xlsx';
+    link.download = 'plantilla_flota_inteligente.xlsx';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+async function procesarExcelAgregarVehiculosAdmin(file) {
+    try {
+        if ((!window.GLOBAL_DB_CASCADA || Object.keys(window.GLOBAL_DB_CASCADA || {}).length === 0) && typeof cargarCascadaVehiculos === 'function') {
+            await cargarCascadaVehiculos();
+        }
+    } catch(e) {}
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rawData = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
+
+            const getValue = (row, ...keys) => {
+                const rowKeys = Object.keys(row);
+                const normalized = rowKeys.reduce((acc, k) => {
+                    acc[k.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')] = k;
+                    return acc;
+                }, {});
+                for (let key of keys) {
+                    const searchKey = String(key).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    const realKey = normalized[searchKey];
+                    if (realKey && row[realKey] !== undefined && row[realKey] !== '') return row[realKey];
+                }
+                return null;
+            };
+
+            const vehiculos = [];
+            const ts = Date.now();
+            rawData.forEach((row, idx) => {
+                const tipo = getValue(row, 'Tipo de vehiculo', 'Tipo de vehículo', 'Tipo', 'Type');
+                const marcaRaw = getValue(row, 'Marca', 'Brand');
+                const modeloRaw = getValue(row, 'Modelo', 'Model');
+                const anio = getValue(row, 'Anio', 'Año', 'Year');
+                const patente = getValue(row, 'Patente', 'License Plate');
+                const motor = getValue(row, 'Motor', 'Engine');
+
+                if (tipo && marcaRaw && modeloRaw && anio && patente) {
+                    let marca = String(marcaRaw);
+                    let modelo = String(modeloRaw);
+                    if (typeof normalizarMarcaModelo === 'function') {
+                        const res = normalizarMarcaModelo(tipo, marcaRaw, modeloRaw);
+                        marca = res.marca;
+                        modelo = res.modelo;
+                    }
+                    let imagenInteligente = '../vehiculosexpertos/default.png';
+                    if (typeof rutaModelo === 'function') {
+                        try { imagenInteligente = rutaModelo(tipo, marca, modelo); } catch(_) {}
+                    }
+                    vehiculos.push({
+                        id: `veh_${ts}_${idx}`,
+                        tipo: String(tipo).trim(),
+                        marca: String(marca).trim(),
+                        modelo: String(modelo).trim(),
+                        anio: String(anio),
+                        motor: motor ? String(motor) : '',
+                        patente: String(patente).trim(),
+                        conductor: '',
+                        imagen: imagenInteligente
+                    });
+                }
+            });
+
+            if (vehiculos.length === 0) {
+                alert('El archivo no contiene filas válidas. Revisa las columnas: Tipo de vehículo, Marca, Modelo, Año, Patente.');
+                return;
+            }
+
+            // Agregar a la flota seleccionada y guardar
+            if (!adminDatosFlotaActual || !Array.isArray(adminDatosFlotaActual.vehiculos)) {
+                alert('No hay datos de la flota seleccionada.');
+                return;
+            }
+            adminDatosFlotaActual.vehiculos = [...adminDatosFlotaActual.vehiculos, ...vehiculos];
+
+            // Cerrar selección
+            cerrarModalSeleccionAgregarVehiculo();
+
+            // Guardar en servidor
+            const res = await fetch(`/api/flota/${adminIdFlotaSeleccionada}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ vehiculos: adminDatosFlotaActual.vehiculos })
+            });
+
+            if (res.ok) {
+                alert(`✅ ${vehiculos.length} vehículo(s) agregado(s) a la flota`);
+                renderizarTablaFlotaAdmin(adminDatosFlotaActual.vehiculos);
+            } else {
+                alert('Error al guardar vehículos agregados');
+            }
+
+        } catch (error) {
+            console.error('Error procesando Excel (admin agregar):', error);
+            alert('Error al leer el archivo. Verifica el formato.');
+        }
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+// Inicializar dropzone para agregar vehículos
+(function initDropzoneAdminAgregar() {
+    const dropzone = document.getElementById('dropzone-admin-agregar');
+    const fileInput = document.getElementById('fileInput-admin-agregar');
+    const fileName = document.getElementById('fileName-admin-agregar');
+    if (!dropzone || !fileInput || !fileName) return;
+
+    const validarExtension = (file) => file.name.split('.').pop().toLowerCase() === 'xlsx';
+    const regexNombre = /^plantilla_flota_inteligente(?:\s*\(\d+\))?\.xlsx$/i;
+
+    const mostrarArchivo = (file) => {
+        if (validarExtension(file)) {
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            fileInput.files = dt.files;
+            fileName.textContent = file.name;
+
+            if (regexNombre.test(file.name)) {
+                const btnAnterior = document.getElementById('btn-cargar-flota-excel-admin-agregar');
+                if (btnAnterior) btnAnterior.remove();
+                const btn = document.createElement('button');
+                btn.id = 'btn-cargar-flota-excel-admin-agregar';
+                btn.className = 'btn-primary';
+                btn.innerHTML = `Agregar vehículos <img src="../img/Signo más.svg" style="width:16px; margin-left:8px">`;
+                btn.style.marginTop = '15px';
+                btn.style.width = '100%';
+                btn.style.display = 'flex';
+                btn.style.alignItems = 'center';
+                btn.style.justifyContent = 'center';
+                btn.style.cursor = 'pointer';
+                dropzone.parentNode.insertBefore(btn, dropzone.nextSibling);
+                btn.onclick = async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof XLSX === 'undefined') { alert('Falta librería XLSX'); return; }
+                    await procesarExcelAgregarVehiculosAdmin(file);
+                };
+            } else {
+                alert("Archivo incorrecto. Usa 'plantilla_flota_inteligente.xlsx' o una copia numerada.");
+                fileInput.value = '';
+                fileName.textContent = '';
+            }
+        } else {
+            alert('Solo se permiten archivos .xlsx');
+            fileInput.value = '';
+            fileName.textContent = '';
+        }
+    };
+
+    dropzone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => { const file = e.target.files[0]; if (file) mostrarArchivo(file); });
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('active'); });
+    dropzone.addEventListener('dragleave', () => { dropzone.classList.remove('active'); });
+    dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('active'); const file = e.dataTransfer.files[0]; if (file) mostrarArchivo(file); });
+})();
 // --- EDITAR VEHÍCULO (ADMIN) ---
 async function adminAbrirModalEditar(index) {
     // ✅ VALIDACIÓN DE ÍNDICE
@@ -9979,9 +10509,9 @@ async function agregarProductosSeleccionados() {
                     </div>
                 </td>
                 <td style="text-align:center;">
-                    <button class="btn-ficha-tecnica" onclick="abrirModalFichaTecnicaFila(this)" style="padding: 6px 10px; font-size: 12px; background: #BF1823; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <button class="btn-ficha-tecnica" onclick="abrirModalFichaTecnicaFila(this)" style="padding: 6px 10px; font-size: 12px; background: ${(producto.fichaTecnica || producto.referenciaCruzada || producto.oem) ? '#28a745' : '#BF1823'}; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
                         <img src="../img/fichatecnica.svg" alt="Ficha Técnica" style="width: 14px; height: 14px; filter: brightness(0) invert(1);">
-                        Agregar
+                        ${(producto.fichaTecnica || producto.referenciaCruzada || producto.oem) ? 'Ver' : 'Agregar'}
                     </button>
                 </td>
                 <td style="text-align:center;">

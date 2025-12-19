@@ -20,7 +20,7 @@
         <h1>Administrador Star</h1>
       </div>
       <ul class="nav-menu-horizontal">
-        <li><a href="#flotas" class="active">Mis flotas</a></li>
+        <li><a href="#flotas" class="active">Flotas del cliente</a></li>
         <li><a href="#repuestos">Lista de repuestos</a></li>
         <li><a href="#ofertas">Ofertas exclusivas</a></li>
         <li><a href="#cuenta">Estado de cuenta</a></li>
@@ -147,12 +147,12 @@
 
   <section id="flotas" class="admin-section">
   <div class="section-header-row">
-    <h2 class="section-title">Mis Flotas</h2>
+    <h2 class="section-title">Flotas del cliente</h2>
     <div style="display: flex; gap: 12px;">
-      <button class="btn-primary" onclick="adminAbrirModalNuevaFlota()">
+      <button class="btn-primary" onclick="abrirModalSeleccionCargaFlota()">
         <span style="font-size: 18px; margin-right: 5px;">+</span> Nueva flota cliente
       </button>
-      <button class="btn-secondary" onclick="adminAbrirModalAgregarVehiculo()" id="btn-agregar-vehiculo-flota" style="display: none;">
+      <button class="btn-secondary" onclick="abrirModalSeleccionAgregarVehiculo()" id="btn-agregar-vehiculo-flota" style="display: none;">
         <span style="font-size: 18px; margin-right: 5px;">+</span> Agregar vehículo a la flota
       </button>
     </div>
@@ -183,6 +183,37 @@
     </div>
   </div>
 
+<!-- MODAL SELECCIÓN AGREGAR VEHÍCULOS (ADMIN) -->
+<div id="modal-admin-seleccion-agregar" class="overlay-flota" aria-hidden="true" style="z-index: 1000; display:none;">
+  <div class="modal-flota">
+    <div class="modal-flota-header">
+      <span class="modal-flota-title">Agregar vehículos</span>
+      <button class="close-flota-btn" onclick="cerrarModalSeleccionAgregarVehiculo()">&times;</button>
+    </div>
+    <div class="modal-flota-body">
+      <div class="section">
+        <h3>Carga manual (uno a uno)</h3>
+        <button class="btn-secondary" onclick="seleccionarAgregarManual()" style="width: 100%;">Agregar vehículos</button>
+      </div>
+      <div class="section">
+        <h3>Carga masiva (subir excel)</h3>
+        <button class="btn-primary btn-white-svg" onclick="descargarPlantillaAdminAgregar()" style="width: 100%;">
+          Descargar plantilla
+          <img src="../img/descargarrr.svg" alt="descargar">
+        </button>
+      </div>
+      <div class="section">
+        <div id="dropzone-admin-agregar" class="dropzone">
+          <img src="../img/Subir plantilla.svg" alt="Subir plantilla">
+          <p>Arrastrar o subir el archivo</p>
+        </div>
+        <p id="fileName-admin-agregar" class="nf-file-name"></p>
+        <input id="fileInput-admin-agregar" type="file" accept=".xlsx" hidden>
+      </div>
+    </div>
+  </div>
+  
+</div>
   <div class="table-responsive" style="margin-top: 20px;">
     <table class="sc-table" id="tabla-flotas-admin">
       <thead>
@@ -535,7 +566,7 @@
         <!-- Nueva sección de búsqueda rápida -->
         <div style="background: #f0f8ff; border: 2px solid #4a90e2; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
           <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-            <span style="font-size: 20px;">🔍</span>
+            <img src="../img/Buscar.svg" alt="Buscar" style="width: 20px; height: 20px;">
             <h4 style="margin: 0; color: #2c5aa0;">Búsqueda Rápida de Productos</h4>
           </div>
           <p style="margin: 0 0 12px 32px; font-size: 13px; color: #555;">
@@ -662,6 +693,63 @@
       <p id="img-preview-name" style="color: white; text-align: center; margin-top: 10px;"></p>
     </div>
   </div>
+
+<!-- MODAL SELECCIÓN DE TIPO DE CARGA (ADMIN) -->
+<div id="modal-admin-seleccion-carga" class="overlay-flota" aria-hidden="true" style="z-index: 1000;">
+  <div class="modal-flota">
+    
+    <!-- HEADER -->
+    <div class="modal-flota-header">
+      <span class="modal-flota-title">Nueva flota</span>
+      <button class="close-flota-btn" onclick="cerrarModalSeleccionCargaFlota()">&times;</button>
+    </div>
+
+    <!-- BODY -->
+    <div class="modal-flota-body">
+      <div class="section">
+        <h3>Carga manual (uno a uno)</h3>
+        <button class="btn-secondary" onclick="seleccionarCargaManual()" style="width: 100%;">
+          Agregar vehículos
+        </button>
+      </div>
+
+      <div class="section">
+        <h3>Carga masiva (subir excel)</h3>
+        <button class="btn-primary btn-white-svg" onclick="descargarPlantillaAdmin()" style="width: 100%;">
+          Descargar plantilla
+          <img src="../img/descargarrr.svg" alt="descargar">
+        </button>
+      </div>
+
+      <div class="section">
+        <div id="dropzone-admin" class="dropzone">
+          <img src="../img/Subir plantilla.svg" alt="Subir plantilla">
+          <p>Arrastrar o subir el archivo</p>
+        </div>
+        <p id="fileName-admin" class="nf-file-name"></p>
+        <input id="fileInput-admin" type="file" accept=".xlsx" hidden>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL NOMBRAR FLOTA IMPORTADA (ADMIN) -->
+<div id="modal-admin-nombrar-flota" class="overlay-flota" aria-hidden="true" style="z-index: 1001;">
+  <div class="modal-flota-small">
+    <div class="modal-flota-header">
+      <span>Nombra la flota del cliente</span>
+      <button class="close-flota-btn" onclick="cerrarModalNombrarFlotaAdmin()">&times;</button>
+    </div>
+    <div class="modal-flota-body">
+      <p class="flota-modal-text" style="text-align: center; margin-bottom: 16px; font-size: 14px; color: #333;">
+        Ingresa un nombre para identificar la flota que acabas de subir.
+      </p>
+      <input type="text" id="admin-input-nombre-flota-excel" placeholder="Ej: Flota Zona Sur" class="flota-input-text" />
+      <button id="btn-confirmar-importacion-admin" class="btn-primary" style="margin-top:15px; width: 100%;">Guardar Flota</button>
+    </div>
+  </div>
+</div>
 
  <div id="modal-admin-crear-flota" class="sc-modal-overlay">
   <div class="sc-modal-container" style="max-width: 900px; width: 95%;">
@@ -1372,7 +1460,7 @@
   <div id="modal-ver-productos-guardados" class="sc-modal-overlay">
     <div class="sc-modal-container" style="max-width: 1400px; max-height: 90vh;">
       <div class="sc-modal-header">
-        <h3>📦 Productos Guardados en la Plataforma</h3>
+        <h3 style="display: flex; align-items: center; gap: 10px;"><img src="../img/Productos.svg" alt="Productos" style="width: 24px; height: 24px; filter: invert(100%) brightness(0.34);"> Productos Guardados en la Plataforma</h3>
         <button class="btn-close-modal" onclick="cerrarModalVerProductosGuardados()">×</button>
       </div>
       <div class="sc-modal-body" style="max-height: calc(90vh - 180px); overflow-y: auto;">
@@ -1418,145 +1506,111 @@
   <!-- ============================================================ -->
   <!-- MODAL AGREGAR PRODUCTO A BD -->
   <!-- ============================================================ -->
-  <div id="modal-agregar-producto-bd" class="sc-modal-overlay">
-    <div class="sc-modal-container" style="max-width: 800px;">
-      <div class="sc-modal-header">
-        <h3>➕ Agregar Nuevo Producto a Base de Datos</h3>
-        <button class="btn-close-modal" onclick="cerrarModalAgregarProductoBD()">×</button>
-      </div>
-      <div class="sc-modal-body" style="max-height: calc(90vh - 180px); overflow-y: auto;">
-        <form id="form-agregar-producto-bd" enctype="multipart/form-data">
-          <div style="display: grid; gap: 16px;">
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Código StarClutch (SKU) *</label>
-              <input type="text" id="nuevo-producto-sku" name="nuevo-producto-sku" class="sc-input" placeholder="Ej: KITTOY400DR" required>
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Código Cliente (Opcional)</label>
-              <input type="text" id="nuevo-producto-cod-cliente" name="nuevo-producto-cod-cliente" class="sc-input" placeholder="Código interno del cliente">
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Repuesto *</label>
-              <input type="text" id="nuevo-producto-repuesto" name="nuevo-producto-repuesto" class="sc-input" placeholder="Ej: Kit de embrague" required>
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Marca *</label>
-              <input type="text" id="nuevo-producto-marca" name="nuevo-producto-marca" class="sc-input" placeholder="Ej: EXEDY" required>
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Línea</label>
-              <input type="text" id="nuevo-producto-linea" name="nuevo-producto-linea" class="sc-input" placeholder="Ej: Liviano, Pesado">
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Stock</label>
-              <input type="number" id="nuevo-producto-stock" name="nuevo-producto-stock" class="sc-input" placeholder="0" min="0" value="0">
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Ficha Técnica</label>
-              <textarea id="nuevo-producto-ficha" name="nuevo-producto-ficha" class="sc-input" rows="4" placeholder="Especificaciones técnicas del producto..."></textarea>
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Referencia Cruzada</label>
-              <textarea id="nuevo-producto-referencia" name="nuevo-producto-referencia" class="sc-input" rows="3" placeholder="Referencias cruzadas con otros códigos..."></textarea>
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">OEM</label>
-              <textarea id="nuevo-producto-oem" name="nuevo-producto-oem" class="sc-input" rows="3" placeholder="Códigos OEM..."></textarea>
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Imágenes del Producto</label>
-              <input type="file" id="nuevo-producto-imagenes" name="nuevo-producto-imagenes" class="sc-input" multiple accept="image/*" style="padding: 8px;">
-              <small style="color: #666; font-size: 12px; margin-top: 4px; display: block;">Puedes seleccionar múltiples imágenes (JPG, PNG, etc.)</small>
-              <div id="preview-imagenes-nuevas" style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;"></div>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="sc-modal-footer">
-        <button class="btn-secondary" onclick="cerrarModalAgregarProductoBD()">Cancelar</button>
-        <button class="btn-primary" onclick="guardarNuevoProductoBD()">Guardar producto</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
   <!-- MODAL AGREGAR PRODUCTO A BD -->
   <!-- ============================================================ -->
   <div id="modal-agregar-producto-bd" class="sc-modal-overlay">
-    <div class="sc-modal-container" style="max-width: 800px;">
+    <div class="sc-modal-container" style="max-width: 1400px;">
       <div class="sc-modal-header">
-        <h3>➕ Agregar Nuevo Producto a Base de Datos</h3>
+        <h3><img src="../img/Signo más.svg" alt="Agregar" style="width: 24px; height: 24px; filter: brightness(0) saturate(100%) invert(27%) sepia(72%) saturate(1600%) hue-rotate(340deg) brightness(100%) contrast(102%); margin-right: 8px; display: inline-block; vertical-align: middle;"> Agregar Productos a Base de Datos Global</h3>
         <button class="btn-close-modal" onclick="cerrarModalAgregarProductoBD()">×</button>
       </div>
-      <div class="sc-modal-body" style="max-height: calc(90vh - 180px); overflow-y: auto;">
-        <form id="form-agregar-producto-bd" enctype="multipart/form-data">
-          <div style="display: grid; gap: 16px;">
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Código StarClutch (SKU) *</label>
-              <input type="text" id="nuevo-producto-sku" name="nuevo-producto-sku" class="sc-input" placeholder="Ej: KITTOY400DR" required>
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Código Cliente (Opcional)</label>
-              <input type="text" id="nuevo-producto-cod-cliente" name="nuevo-producto-cod-cliente" class="sc-input" placeholder="Código interno del cliente">
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Repuesto *</label>
-              <input type="text" id="nuevo-producto-repuesto" name="nuevo-producto-repuesto" class="sc-input" placeholder="Ej: Kit de embrague" required>
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Marca *</label>
-              <input type="text" id="nuevo-producto-marca" name="nuevo-producto-marca" class="sc-input" placeholder="Ej: EXEDY" required>
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Línea</label>
-              <input type="text" id="nuevo-producto-linea" name="nuevo-producto-linea" class="sc-input" placeholder="Ej: Liviano, Pesado">
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Stock</label>
-              <input type="number" id="nuevo-producto-stock" name="nuevo-producto-stock" class="sc-input" placeholder="0" min="0" value="0">
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Ficha Técnica</label>
-              <textarea id="nuevo-producto-ficha" name="nuevo-producto-ficha" class="sc-input" rows="4" placeholder="Especificaciones técnicas del producto..."></textarea>
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Referencia Cruzada</label>
-              <textarea id="nuevo-producto-referencia" name="nuevo-producto-referencia" class="sc-input" rows="3" placeholder="Referencias cruzadas con otros códigos..."></textarea>
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">OEM</label>
-              <textarea id="nuevo-producto-oem" name="nuevo-producto-oem" class="sc-input" rows="3" placeholder="Códigos OEM..."></textarea>
-            </div>
-
-            <div class="sc-input-wrapper">
-              <label class="sc-label">Imágenes del Producto</label>
-              <input type="file" id="nuevo-producto-imagenes" name="nuevo-producto-imagenes" class="sc-input" multiple accept="image/*" style="padding: 8px;">
-              <small style="color: #666; font-size: 12px; margin-top: 4px; display: block;">Puedes seleccionar múltiples imágenes (JPG, PNG, etc.)</small>
-              <div id="preview-imagenes-nuevas" style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;"></div>
-            </div>
+      
+      <div class="sc-modal-body">
+        <div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+            <img src="../img/info_471662-01 1.svg" alt="Info" style="width: 20px; height: 20px; filter: brightness(0) saturate(100%) invert(27%) sepia(72%) saturate(1600%) hue-rotate(340deg) brightness(100%) contrast(102%); flex-shrink: 0;">
+            <h4 style="margin: 0; color: #856404;">Importante: Base de Datos Global</h4>
           </div>
-        </form>
+          <p style="margin: 0 0 0 32px; font-size: 13px; color: #555;">
+            Los productos aquí agregados se guardan en la base de datos global <strong>sin precio</strong>. 
+            El precio solo se asigna al subirlos a la lista de repuestos del cliente.
+          </p>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="sc-table upload-table" id="tabla-productos-bd">
+            <thead>
+              <tr>
+                <th>Cod. Cliente (Opc)</th>
+                <th>Repuesto *</th>
+                <th>Marca *</th>
+                <th>Línea (Auto)</th>
+                <th>Cód. StarClutch *</th>
+                <th>Stock</th>
+                <th style="width: 220px;">Imágenes</th>
+                <th style="width: 100px; text-align: center;">Ficha Técnica</th>
+                <th style="width: 50px;"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Tabla vacía inicialmente - usar botón "+ Agregar producto" para agregar filas -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="modal-actions-row">
+            <button class="btn-text" onclick="agregarFilaBD()">
+                <span style="font-size:18px; margin-right:5px;">+</span> Agregar producto
+            </button>
+        </div>
+
+        <datalist id="lista-repuestos-bd">
+            <option value="Kit de embrague">
+            <option value="Kit de embrague + Volante">
+            <option value="Volantes">
+            <option value="Discos de embrague">
+            <option value="Rodamiento">
+            <option value="Prensa">
+            <option value="Servo">
+            <option value="Componente AMT.V">
+            <option value="Caliper y kit">
+            <option value="Pastillas de freno">
+            <option value="Disco de freno">
+            <option value="Tambor de freno">
+            <option value="Patines">
+            <option value="Balatas">
+            <option value="Pulmón de freno">
+            <option value="Mazas">
+            <option value="Freno motor">
+            <option value="Chicharras">
+            <option value="Pulmón de suspensión">
+            <option value="Pulmón de levante">
+            <option value="Fuelle">
+            <option value="Filtro de aceite">
+            <option value="Filtro de aire">
+            <option value="Filtro de cabina">
+            <option value="Filtro de combustible">
+            <option value="Filtro separador">
+            <option value="Filtro hidráulico">
+            <option value="Válvula">
+            <option value="Secador">
+            <option value="Compresor">
+            <option value="Correa">
+            <option value="Barra de dirección">
+            <option value="Barra estabilizadora">
+            <option value="Barra tensora">
+            <option value="Barras en V">
+            <option value="Terminales de dirección">
+            <option value="Soporte">
+        </datalist>
+
+        <datalist id="lista-marcas-bd">
+            <option value="ACE"><option value="AIRTECH"><option value="AKROL">
+            <option value="ALLIANCE"><option value="AUTIMPEX"><option value="CASTERTECH">
+            <option value="CRB"><option value="EATON"><option value="EXEDY">
+            <option value="FAG"><option value="FERSA"><option value="FLEETGUARD">
+            <option value="FLYTECH"><option value="FRASLE"><option value="HTECH">
+            <option value="JOST"><option value="KNORR BREMSE"><option value="LEMFORDER">
+            <option value="LUK"><option value="MASTER"><option value="MERITOR">
+            <option value="SAB"><option value="SACHS"><option value="SUSPENSYS">
+            <option value="VALEO"><option value="WABCO">
+        </datalist>
+
       </div>
+
       <div class="sc-modal-footer">
         <button class="btn-secondary" onclick="cerrarModalAgregarProductoBD()">Cancelar</button>
-        <button class="btn-primary" onclick="guardarNuevoProductoBD()">Guardar producto</button>
+        <button class="btn-primary" onclick="guardarProductosBD()">Guardar productos</button>
       </div>
     </div>
   </div>
@@ -1565,59 +1619,72 @@
   <!-- MODAL EDITAR PRODUCTO GUARDADO -->
   <!-- ============================================================ -->
   <div id="modal-editar-producto-guardado" class="sc-modal-overlay">
-    <div class="sc-modal-container" style="max-width: 800px;">
+    <div class="sc-modal-container" style="max-width: 1000px;">
       <div class="sc-modal-header">
-        <h3>✏️ Editar Producto</h3>
+        <h3 style="display: flex; align-items: center; gap: 10px;"><img src="../img/Editar flota.svg" alt="Editar" style="width: 24px; height: 24px;"> Editar Producto</h3>
         <button class="btn-close-modal" onclick="cerrarModalEditarProductoGuardado()">×</button>
       </div>
-      <div class="sc-modal-body" style="max-height: calc(90vh - 180px); overflow-y: auto;">
+      <div class="sc-modal-body" style="max-height: calc(90vh - 180px); overflow-y: auto; padding: 24px;">
         <input type="hidden" id="edit-producto-sku-original">
         
-        <div style="display: grid; gap: 16px;">
+        <!-- Fila 1: SKU y Código Cliente -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
           <div class="sc-input-wrapper">
-            <label class="sc-label">Código StarClutch (SKU) *</label>
-            <input type="text" id="edit-producto-sku" class="sc-input" placeholder="Ej: KITTOY400DR">
+            <label class="sc-label" style="font-weight: 600; margin-bottom: 8px;">Código StarClutch (SKU) *</label>
+            <input type="text" id="edit-producto-sku" class="sc-input-small" placeholder="Ej: KITTOY400DR" style="width: 100%;" required>
           </div>
 
           <div class="sc-input-wrapper">
-            <label class="sc-label">Código Cliente (Opcional)</label>
-            <input type="text" id="edit-producto-cod-cliente" class="sc-input" placeholder="Código interno del cliente">
+            <label class="sc-label" style="font-weight: 600; margin-bottom: 8px;">Código Cliente (Opcional)</label>
+            <input type="text" id="edit-producto-cod-cliente" class="sc-input-small" placeholder="Código interno del cliente" style="width: 100%;">
+          </div>
+        </div>
+
+        <!-- Fila 2: Repuesto y Marca -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px;">
+          <div class="sc-input-wrapper">
+            <label class="sc-label" style="font-weight: 600; margin-bottom: 8px;">Repuesto *</label>
+            <input list="lista-repuestos-editar" type="text" id="edit-producto-repuesto" class="sc-input-small input-repuesto" placeholder="Escribe..." style="width: 100%;" required>
           </div>
 
           <div class="sc-input-wrapper">
-            <label class="sc-label">Repuesto *</label>
-            <input type="text" id="edit-producto-repuesto" class="sc-input" placeholder="Ej: Kit de embrague">
+            <label class="sc-label" style="font-weight: 600; margin-bottom: 8px;">Marca *</label>
+            <input list="lista-marcas-editar" type="text" id="edit-producto-marca" class="sc-input-small input-repuesto" placeholder="Escribe..." style="width: 100%;" required>
+          </div>
+        </div>
+
+        <!-- Fila 3: Línea y Stock -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px;">
+          <div class="sc-input-wrapper">
+            <label class="sc-label" style="font-weight: 600; margin-bottom: 8px;">Línea *</label>
+            <input list="lista-lineas-editar" type="text" id="edit-producto-linea" class="sc-input-small input-repuesto" placeholder="Ej: Liviano, Pesado" style="width: 100%;" required>
           </div>
 
           <div class="sc-input-wrapper">
-            <label class="sc-label">Marca *</label>
-            <input type="text" id="edit-producto-marca" class="sc-input" placeholder="Ej: EXEDY">
+            <label class="sc-label" style="font-weight: 600; margin-bottom: 8px;">Stock *</label>
+            <input type="number" id="edit-producto-stock" class="sc-input-small" placeholder="0" min="0" style="width: 100%;" required>
           </div>
+        </div>
 
-          <div class="sc-input-wrapper">
-            <label class="sc-label">Línea</label>
-            <input type="text" id="edit-producto-linea" class="sc-input" placeholder="Ej: Liviano, Pesado">
-          </div>
+        <!-- Separador visual -->
+        <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 24px 0;">
 
-          <div class="sc-input-wrapper">
-            <label class="sc-label">Stock</label>
-            <input type="number" id="edit-producto-stock" class="sc-input" placeholder="0" min="0">
-          </div>
+        <!-- Fila 4: Ficha Técnica (ancho completo) -->
+        <div class="sc-input-wrapper" style="margin-bottom: 24px;">
+          <label class="sc-label" style="font-weight: 600; margin-bottom: 8px;">Ficha Técnica</label>
+          <textarea id="edit-producto-ficha" class="sc-input-small" rows="3" placeholder="Especificaciones técnicas del producto..." style="width: 100%; font-family: 'Poppins', sans-serif; padding: 10px; border-radius: 6px; border: 1px solid #ddd; resize: vertical;"></textarea>
+        </div>
 
-          <div class="sc-input-wrapper">
-            <label class="sc-label">Ficha Técnica</label>
-            <textarea id="edit-producto-ficha" class="sc-input" rows="4" placeholder="Especificaciones técnicas del producto..."></textarea>
-          </div>
+        <!-- Fila 5: Referencia Cruzada (ancho completo) -->
+        <div class="sc-input-wrapper" style="margin-bottom: 24px;">
+          <label class="sc-label" style="font-weight: 600; margin-bottom: 8px;">Referencia Cruzada</label>
+          <textarea id="edit-producto-referencia" class="sc-input-small" rows="2" placeholder="Referencias cruzadas con otros códigos..." style="width: 100%; font-family: 'Poppins', sans-serif; padding: 10px; border-radius: 6px; border: 1px solid #ddd; resize: vertical;"></textarea>
+        </div>
 
-          <div class="sc-input-wrapper">
-            <label class="sc-label">Referencia Cruzada</label>
-            <textarea id="edit-producto-referencia" class="sc-input" rows="3" placeholder="Referencias cruzadas con otros códigos..."></textarea>
-          </div>
-
-          <div class="sc-input-wrapper">
-            <label class="sc-label">OEM</label>
-            <textarea id="edit-producto-oem" class="sc-input" rows="3" placeholder="Códigos OEM..."></textarea>
-          </div>
+        <!-- Fila 6: OEM (ancho completo) -->
+        <div class="sc-input-wrapper">
+          <label class="sc-label" style="font-weight: 600; margin-bottom: 8px;">OEM</label>
+          <textarea id="edit-producto-oem" class="sc-input-small" rows="2" placeholder="Códigos OEM..." style="width: 100%; font-family: 'Poppins', sans-serif; padding: 10px; border-radius: 6px; border: 1px solid #ddd; resize: vertical;"></textarea>
         </div>
       </div>
       <div class="sc-modal-footer">
@@ -1625,8 +1692,60 @@
         <button class="btn-primary" onclick="guardarEdicionProductoGuardado()">Guardar cambios</button>
       </div>
     </div>
+
+    <!-- Datalists para el modal de editar producto -->
+    <datalist id="lista-repuestos-editar">
+      <option value="Kit de embrague">
+      <option value="Kit de embrague + Volante">
+      <option value="Volantes">
+      <option value="Discos de embrague">
+      <option value="Rodamiento">
+      <option value="Prensa">
+      <option value="Servo">
+      <option value="Componente AMT.V">
+      <option value="Caliper y kit">
+      <option value="Pastillas de freno">
+      <option value="Disco de freno">
+      <option value="Tambor de freno">
+      <option value="Patines">
+      <option value="Balatas">
+      <option value="Pulmón de freno">
+      <option value="Mazas">
+      <option value="Freno motor">
+      <option value="Chicharras">
+      <option value="Pulmón de suspensión">
+      <option value="Pulmón de levante">
+      <option value="Fuelle">
+      <option value="Filtro de aceite">
+      <option value="Filtro de aire">
+      <option value="Filtro de cabina">
+      <option value="Filtro de combustible">
+      <option value="Filtro separador">
+      <option value="Filtro hidráulico">
+      <option value="Válvula">
+      <option value="Secador">
+      <option value="Compresor">
+      <option value="Correa">
+      <option value="Barra de dirección">
+      <option value="Barra estabilizadora">
+      <option value="Barra tensora">
+      <option value="Barras en V">
+      <option value="Terminales de dirección">
+      <option value="Soporte">
+    </datalist>
+
+    <datalist id="lista-marcas-editar">
+    </datalist>
+
+    <datalist id="lista-lineas-editar">
+      <option value="Liviano">
+      <option value="Pesado">
+      <option value="Medio">
+    </datalist>
   </div>
 
+  <!-- Librería XLSX para lectura de Excel -->
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="../script.js"></script>
   <script src="../productos_guardados.js"></script>
   

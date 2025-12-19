@@ -11,7 +11,7 @@
     "oem": "Disco: 31250-0K280 \nPrensa: 31210-0K280 \nRodamiento: 31230-71050",
     "imagenes": [],
     "fechaCreacion": "2025-12-11T02:17:05.976Z",
-    "fechaModificacion": "2025-12-18T18:19:53.538Z"
+    "fechaModificacion": "2025-12-19T13:54:51.364Z"
   },
   {
     "codSC": "KITTOY400AR",
@@ -1219,5 +1219,21 @@
     "imagenes": [],
     "fechaCreacion": "2025-12-11T03:32:48.154Z",
     "fechaModificacion": "2025-12-18T18:11:52.671Z"
+  },
+  {
+    "codSC": "prueba para ver",
+    "repuesto": "Servo",
+    "marca": "AUTIMPEX",
+    "linea": "Embragues",
+    "codCliente": "sadasdasd",
+    "stock": 4,
+    "fichaTecnica": "sadas",
+    "referenciaCruzada": "dasda",
+    "oem": "sdasda",
+    "imagenes": [
+      "/uploads/productos/prod-1766150067634-48821105.png"
+    ],
+    "fechaCreacion": "2025-12-19T13:14:27.635Z",
+    "fechaModificacion": "2025-12-19T13:14:27.635Z"
   }
 ]
