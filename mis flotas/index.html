@@ -1,0 +1,3178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Starclutch - Mis Flotas</title>
+  <link rel="stylesheet" href="../styles.css">
+
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Estilos para el modal de filtros lateral */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9998;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .overlay--visible {
+      opacity: 1;
+    }
+    
+    .filtros-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 400px;
+      max-width: 90%;
+      height: 100%;
+      background: white;
+      box-shadow: -2px 0 15px rgba(0, 0, 0, 0.2);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      z-index: 9999;
+    }
+    
+    .panel--open {
+      transform: translateX(0);
+    }
+    
+    .filtros-header-container {
+      border-bottom: 1px solid #e0e0e0;
+      padding: 20px 24px;
+      flex-shrink: 0;
+    }
+    
+    .filtros-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .filtros-header h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+    
+    .close-filtros {
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #666;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    
+    .close-filtros:hover {
+      background: #f5f5f5;
+      color: #BF1823;
+    }
+    
+    .filtros-main {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .filtros-tags {
+      padding: 16px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 1px solid #e0e0e0;
+      min-height: 56px;
+    }
+    
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #BF1823;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    
+    .tag button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0;
+      margin-left: 4px;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    
+    .tag button:hover {
+      opacity: 1;
+    }
+    
+    .filtros-content {
+      padding: 16px 24px;
+      flex: 1;
+    }
+    
+    .filtros-section {
+      margin-bottom: 20px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .section-toggle {
+      width: 100%;
+      background: #f8f9fa;
+      border: none;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 600;
+      color: #333;
+      transition: background 0.2s;
+    }
+    
+    .section-toggle:hover {
+      background: #e9ecef;
+    }
+    
+    .section-toggle .arrow {
+      transition: transform 0.3s;
+      font-size: 14px;
+    }
+    
+    .section-toggle[aria-expanded="false"] .arrow {
+      transform: rotate(-90deg);
+    }
+    
+    .section-content {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 1000px;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+    
+    .section-content.collapsed {
+      max-height: 0;
+      padding: 0 16px;
+    }
+    
+    .section-content.filtros-scroll {
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    
+    .section-content label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 6px 0;
+      font-size: 14px;
+      color: #333;
+    }
+    
+    .section-content label:hover {
+      color: #BF1823;
+    }
+    
+    .section-content input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #BF1823;
+    }
+    
+    .section-content select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    .filtros-footer-container {
+      padding: 20px 24px;
+      border-top: 1px solid #e0e0e0;
+      flex-shrink: 0;
+    }
+    
+    .aplicar-filtros {
+      width: 100%;
+      padding: 12px;
+      background: #BF1823;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .aplicar-filtros:hover {
+      background: #a01620;
+    }
+    
+    .limpiar-filtros:hover {
+      background: #e0e0e0 !important;
+    }
+
+    /* ===== ESTILOS PARA CARRUSEL DE MARCA/MODELO ===== */
+    .main-grouped-section {
+      padding: 20px;
+    }
+
+    /* ===== TARJETAS DE GRUPO (MARCA/MODELO) ===== */
+    .vehicle-group-card {
+      background: #FFFFFF;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .vehicle-group-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .group-image-container {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .group-model-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 16px;
+    }
+
+    .vehicle-count-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #BF1823;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .group-info {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .group-brand-logo {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      margin-bottom: 12px;
+    }
+
+    .group-title {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .group-count {
+      margin: 0;
+      font-size: 13px;
+      color: #999;
+    }
+
+    /* ===== VISTA TABLA POR GRUPO ===== */
+    #vista-tabla-grupo {
+      display: none;
+      padding: 10px 20px 30px 20px;
+    }
+
+    .tabla-grupo-header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    #tabla-grupo-titulo {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    #tabla-grupo-subtitulo {
+      margin: 0;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .tabla-grupo-wrapper {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+
+    table.tabla-grupo {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    table.tabla-grupo thead {
+      background: #f7f7f7;
+    }
+
+    table.tabla-grupo th, table.tabla-grupo td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid #eaeaea;
+      color: #333;
+    }
+
+    table.tabla-grupo th {
+      font-weight: 700;
+      font-size: 13px;
+      color: #555;
+    }
+
+    table.tabla-grupo tr:hover td {
+      background: #fafafa;
+    }
+
+    .tabla-grupo-empty {
+      text-align: center;
+      padding: 16px;
+      color: #777;
+    }
+
+    .vehicle-brand-card {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .vehicle-brand-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      border-color: #BF1823;
+    }
+
+    .brand-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      width: 100%;
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .brand-name {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .model-name {
+      font-size: 11px;
+      color: #999;
+    }
+
+    .brand-card-logo {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      margin: 16px 0;
+    }
+
+    .brand-card-model-img {
+      width: 100px;
+      height: 60px;
+      object-fit: contain;
+      margin-bottom: 12px;
+    }
+
+    .brand-card-count {
+      background: #BF1823;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+
+    /* ===== MODAL CARRUSEL MODELO ===== */
+    .modal-carousel-modelo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+
+    .modal-carousel-content {
+      background: white;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 1000px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .close-modal-carousel {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 32px;
+      color: #666;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .close-modal-carousel:hover {
+      color: #BF1823;
+    }
+
+    .modal-carousel-header {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 24px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .modal-logo {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+    }
+
+    .modal-info h3 {
+      margin: 0 0 8px 0;
+      font-size: 24px;
+      color: #333;
+    }
+
+    .modal-info p {
+      margin: 0;
+      font-size: 14px;
+      color: #999;
+    }
+
+    .modal-carousel-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 24px;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .modal-carousel-wrapper .carousel-btn {
+      background: none;
+      border: 1px solid #e0e0e0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      color: #333;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .modal-carousel-wrapper .carousel-btn:hover {
+      background: #f5f5f5;
+      border-color: #BF1823;
+      color: #BF1823;
+    }
+
+    .modal-carousel-wrapper .carousel-viewport {
+      flex: 1;
+      overflow: hidden;
+      height: 300px;
+    }
+
+    #modal-carousel-track {
+      display: flex;
+      gap: 16px;
+      transition: transform 0.3s ease;
+    }
+
+    .modal-carousel-track .vehicle-card {
+      flex: 0 0 calc(100% / 3);
+      min-width: 240px;
+    }
+
+    @media (max-width: 768px) {
+      .vehicles-grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+        padding: 0 12px;
+      }
+
+      .vehicle-group-card {
+        min-height: 280px;
+      }
+
+      .group-image-container {
+        height: 160px;
+      }
+
+      .vehicle-brand-card {
+        padding: 16px;
+      }
+
+      .modal-carousel-content {
+        width: 95%;
+        max-height: 80vh;
+      }
+
+      .modal-carousel-header {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .modal-carousel-wrapper {
+        padding: 16px;
+      }
+
+      .modal-carousel-wrapper .carousel-viewport {
+        height: 250px;
+      }
+
+      .modal-carousel-track .vehicle-card {
+        flex: 0 0 calc(100% / 2);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .vehicles-grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 12px;
+        padding: 0 8px;
+      }
+
+      .vehicle-group-card {
+        min-height: 240px;
+      }
+
+      .group-image-container {
+        height: 120px;
+      }
+
+      .group-brand-logo {
+        width: 50px;
+        height: 50px;
+      }
+
+      .group-title {
+        font-size: 14px;
+      }
+
+      .vehicle-brand-card {
+        padding: 12px;
+      }
+
+      .brand-card-logo {
+        width: 60px;
+        height: 60px;
+      }
+
+      .brand-card-model-img {
+        width: 80px;
+        height: 50px;
+      }
+
+      .modal-carousel-track .vehicle-card {
+        flex: 0 0 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAV LATERAL -->
+  <nav class="sidebar">
+    <div class="logo">
+      <img src="../img/Logo starclutch web.svg" alt="Logo Starclutch">
+    </div>
+
+    <div class="user-info">
+      <a href="../perfildeusuario/index.html">
+        <span class="nav-icon"><img src="../img/Usuario.svg" alt="Usuario"></span>
+        <span class="nav-text">Hola, <strong class="nav-username"></strong></span>
+      </a>
+    </div>
+
+   <div class="search-general">
+  <input type="text" placeholder="Búsqueda general" class="input-general">
+  <button class="btn-search-general">
+    <img src="../img/Buscar.svg" alt="Buscar">
+  </button>
+</div>
+
+
+
+
+    <ul class="menu main-nav">
+      <li>
+        <a href="../mis flotas/index.html">
+          <span class="nav-icon"><img src="../img/Agregar flota.svg" alt="Ver mi flotas"></span>
+          <span class="nav-text">Mis flotas</span>
+        </a>
+      </li>
+      <li>
+        <a href="../lista de repuestos/index.html">
+          <span class="nav-icon"><img src="../img/Productos.svg" alt="Lista de repuestos"></span>
+          <span class="nav-text">Lista de repuestos</span>
+        </a>
+      </li>
+      <li>
+        <a href="../ofertas exclusivas/index.html">
+          <span class="nav-icon"><img src="../img/Descuento.svg" alt="Ofertas"></span>
+          <span class="nav-text">Ofertas exclusivas</span>
+        </a>
+      </li>
+      <li>
+        <a href="../estado de la cuenta/index.html">
+          <span class="nav-icon"><img src="../img/bill-01 1.svg" alt="Ver mis repuestos"></span>
+          <span class="nav-text">Estado de cuenta</span>
+        </a>
+      </li>
+      <li>
+        <a href="../mis compras/index.html.html">
+          <span class="nav-icon"><img src="../img/miscompras.svg" alt="Ver mis compras"></span>
+          <span class="nav-text">Mis compras</span>
+        </a>
+      </li>
+    </ul>
+
+    <footer class="sidebar-footer">
+  <a href="https://starclutch.cl/repuestos" 
+     target="_blank" 
+     rel="noopener noreferrer"
+     class="btn-text footer-link">
+     <span class="icon-left"><img src="../img/Logo SC.svg" alt="Ver mis repuestos"></span> Nosotros
+  </a>
+  <p>Starclutch S.p.A<br>© Todos los derechos reservados 2025</p>
+</footer>
+
+
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-content">
+    <div class="page-container">
+
+      <!-- HEADER -->
+<header class="main-header">
+  <!-- Bloque IZQUIERDO -->
+  <div class="header-left">
+    <img src="../img/Agregar flota.svg" alt="Icono Mis Flotas" class="icono-header">
+    <h1>Mis flotas</h1>
+    <button class="btn-primary" onclick="abrirModalMantenimiento()">
+      Mantenimiento de la flota <img src="../img/mantención.svg" alt="Mantenimiento" style="filter: brightness(0) invert(1);">
+    </button>
+  </div>
+
+  <!-- Bloque DERECHO -->
+  <div class="header-actions">
+
+    <button class="btn-text">
+      <span class="icon-left"><img src="../img/info_471662-01 1.svg" alt="Ayuda"></span> Ayuda
+    </button>
+
+    <button class="btn-text" onclick="toggleCarrito()" style="position: relative;">
+      <span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/carrito.svg" alt="Carrito"><span class="cart-badge" id="cart-badge-count">0</span></span> Carrito
+    </button>
+
+    <button class="btn-text" id="btn-notificaciones" onclick="toggleNotificaciones()" style="position: relative;">
+      <span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/Alerta.svg" alt="Notificaciones"><span class="notif-badge" id="notif-badge-count">0</span></span> Notificaciones
+    </button>
+  </div>
+</header>
+
+       <!-- FLEET: carrusel con 2 filas y 5 visibles por página -->
+    
+
+
+        <div class="section-header">
+          <h2>Todos los vehículos</h2>
+          <div class="section-actions">
+           <select id="select-flota">
+  <option value="">Seleccionar flota</option>
+</select>
+            <button class="btn-primary" id="btn-nueva-flota">
+  Nueva flota <img src="../img/Signo más.svg" alt="Nueva flota">
+</button>
+
+
+
+
+<!-- OVERLAY NUEVA FLOTA (VERSIÓN RENOMBRADA) -->
+<div id="overlay-nueva-flota" class="overlay-flota" aria-hidden="true">
+  <div class="modal-flota">
+    
+    <!-- HEADER -->
+    <div class="modal-flota-header">
+      <span class="modal-flota-title">Nueva flota</span>
+      <button id="btnCerrar" class="close-flota-btn">✕</button>
+    </div>
+
+    <!-- BODY -->
+    <div class="modal-flota-body">
+      <div class="section">
+        <h3>Carga manual (uno a uno)</h3>
+        <a href="nueva flota.html" class="btn-secondary">
+  Agregar vehículos
+</a>
+
+      </div>
+
+      <div class="section">
+        <h3>Carga masiva (subir excel)</h3>
+       <button class="btn-primary btn-white-svg">
+  Descargar plantilla
+  <img src="../img/descargarrr.svg" alt="descargar">
+</button>
+      </div>
+
+      <div class="section">
+        <div id="dropzone" class="dropzone">
+          <img src="../img/Subir plantilla.svg" alt="Subir plantilla">
+          <p>Arrastrar o subir el archivo</p>
+        </div>
+        <p id="fileName" class="nf-file-name"></p>
+        <input id="fileInput" type="file" hidden>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+           <a id="btn-editar-flota" class="btn-secondary">
+  Editar flota 
+  <img src="../img/Editar flota.svg" alt="Editar flota">
+</a>
+
+            
+            
+  <!-- 🔍 Buscador de patente -->
+<!-- Buscador patente -->
+<div class="search-patente">
+  <input type="text" placeholder="Buscar patente" class="input-patente">
+  <button class="btn-search-patente">
+    <img src="../img/Buscar.svg" alt="Buscar">
+  </button>
+  
+</div>
+
+
+
+<button id="btn-filtrar-vehiculos" class="btn-text">
+  Filtrar <img src="../img/Filtros.svg" alt="Filtros">
+</button>
+
+
+          </div>
+        </div>
+
+        <!-- SECCIÓN DE TARJETAS AGRUPADAS POR MARCA/MODELO -->
+        <section class="main-grouped-section">
+          <div class="carousel carousel-grupos" data-rows="2" data-cols="5">
+            <button class="carousel-btn prev" aria-label="Anterior">‹</button>
+            <div class="carousel-viewport">
+              <div class="carousel-track" id="track-grupos-flotas">
+                <!-- Las tarjetas de marca/modelo se renderizan aquí -->
+              </div>
+            </div>
+            <button class="carousel-btn next" aria-label="Siguiente">›</button>
+            <ul class="carousel-indicators"></ul>
+          </div>
+
+          <!-- MODAL PARA VER CARRUSEL DE VEHÍCULOS DE UNA MARCA/MODELO -->
+          <div id="modal-carousel-modelo" class="modal-carousel-modelo" style="display: none;">
+            <div class="modal-carousel-content">
+              <button class="close-modal-carousel" onclick="cerrarModalCarruselModelo()">×</button>
+              
+              <div class="modal-carousel-header">
+                <img id="modal-logo-marca" src="" alt="Logo marca" class="modal-logo">
+                <div class="modal-info">
+                  <h3 id="modal-titulo-marca">Marca</h3>
+                  <p id="modal-info-modelo">Modelo</p>
+                </div>
+              </div>
+
+              <div class="modal-carousel-wrapper">
+                <button class="carousel-btn prev" aria-label="Anterior">‹</button>
+                <div class="carousel-viewport">
+                  <div class="carousel-track" id="modal-carousel-track">
+                    <!-- Vehículos del carrusel -->
+                  </div>
+                </div>
+                <button class="carousel-btn next" aria-label="Siguiente">›</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VISTA TABLA POR GRUPO (se muestra al clickear una tarjeta) -->
+        <section id="vista-tabla-grupo">
+          <div class="tabla-grupo-header">
+            <div>
+              <h2 id="tabla-grupo-titulo">Grupo</h2>
+              <p id="tabla-grupo-subtitulo">0 vehículos</p>
+            </div>
+            <button class="btn-primary" id="btn-volver-grid">← Volver atrás</button>
+          </div>
+          <div class="tabla-grupo-wrapper">
+            <table class="tabla-grupo">
+              <thead>
+                <tr>
+                  <th>Patente</th>
+                  <th>Marca</th>
+                  <th>Modelo/Tipo</th>
+                  <th>Año</th>
+                  <th>Conductor</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-grupo-tbody">
+                <tr><td colspan="5" class="tabla-grupo-empty">Selecciona una tarjeta para ver sus vehículos</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="favorites-section">
+          <div class="section-header"><h2>Vehículos favoritos</h2></div>
+  <div class="carousel" data-rows="1" data-cols="4">
+    <button class="carousel-btn prev" aria-label="Anterior favorito">‹</button>
+    <div class="carousel-viewport">
+     <div class="carousel-track" id="track-favoritos-global">
+       
+      </div>
+    </div>
+    <button class="carousel-btn next" aria-label="Siguiente favorito">›</button>
+    <ul class="carousel-indicators"></ul>
+  </div>
+</section>
+
+<!-- Modal Mantenimiento -->
+<div id="modal-mantenimiento" class="flota-modal" style="display: none; z-index: 99999;">
+  <div class="flota-modal-content">
+    <div class="flota-modal-header">
+      <span class="modal-flota-title">Mantenimiento de Flota</span>
+      <span class="close-flota-btn" onclick="cerrarModalMantenimiento()" style="cursor:pointer;">&times;</span>
+    </div>
+    <div class="flota-modal-body">
+      <p style="text-align: center; margin-bottom: 24px; font-size: 14px; color: #333;">
+        Gestiona el mantenimiento de tus vehículos
+      </p>
+      <div style="display: flex; gap: 12px;">
+        <button class="btn-primary" style="flex: 1; width: auto; max-width: none; padding: 10px 16px; font-size: 14px; white-space: nowrap;" onclick="verMantenimientos()">
+          Mis mantenimientos
+        </button>
+        <button class="btn-secondary" style="flex: 1; width: auto; max-width: none; padding: 10px 16px; font-size: 14px; white-space: nowrap;" onclick="agendarMantenimiento()">
+          Agendar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Selección de Vehículos para Mantenimiento -->
+<div id="modal-seleccion-vehiculos" class="flota-modal" style="display: none; z-index: 99999;">
+  <div class="flota-modal-content" style="max-width: 900px; width: 90%;">
+    <div class="flota-modal-header">
+      <span class="modal-flota-title" id="titulo-modal-vehiculos">Buscar vehículos (Nombre de la flota)</span>
+      <span class="close-flota-btn" onclick="cerrarModalSeleccionVehiculos()" style="cursor:pointer;">&times;</span>
+    </div>
+    <div class="flota-modal-body" style="padding: 20px;">
+      <!-- Fila con Checkbox y Buscador -->
+      <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+        <!-- Checkbox Seleccionar Todos a la izquierda -->
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; flex: 1;">
+          <input type="checkbox" id="seleccionar-todos-vehiculos" onchange="toggleSeleccionarTodosVehiculos()" style="width: 18px; height: 18px; cursor: pointer; accent-color: #BF1823;">
+          <span style="font-size: 14px; font-weight: 500; color: #333;">Seleccionar todos los vehículos de esta flota</span>
+        </label>
+
+        <!-- Buscador a la derecha -->
+        <div class="search-patente" style="width: 280px; flex-shrink: 0;">
+          <input 
+            type="text" 
+            id="buscador-vehiculos-mantenimiento" 
+            placeholder="Buscador" 
+            class="input-patente"
+            oninput="filtrarVehiculosMantenimiento()"
+          >
+          <button class="btn-search-patente" type="button">
+            <img src="../img/Buscar.svg" alt="Buscar">
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabla de Vehículos -->
+      <div class="table-responsive" style="max-height: 400px; overflow-y: auto; border-radius: 8px; margin-bottom: 0;">
+        <table class="sc-table" style="margin: 0;">
+          <thead>
+            <tr>
+              <th style="width: 40px; text-align: center;"></th>
+              <th>Marca</th>
+              <th>Modelo</th>
+              <th>Patente</th>
+              <th>Conductor</th>
+              <th>Motor</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-vehiculos-mantenimiento">
+            <!-- Los vehículos se cargan dinámicamente -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Indicador de Selección -->
+      <div style="margin-top: 16px; padding: 12px; background: #f8f8f8; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: 14px; color: #666;">
+          <strong id="contador-vehiculos-seleccionados" style="color: #BF1823;">0</strong> de <strong id="total-vehiculos">0</strong> Vehículos seleccionados
+        </span>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div style="margin-top: 20px; display: flex; gap: 12px; justify-content: flex-end;">
+        <button class="btn-secondary" style="padding: 10px 24px; font-size: 14px;" onclick="cerrarModalSeleccionVehiculos()">
+          Cancelar
+        </button>
+        <button class="btn-primary" style="padding: 10px 24px; font-size: 14px;" onclick="siguienteMantenimiento()">
+          Siguiente
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Programación de Mantenimiento -->
+<div id="modal-programacion-mantenimiento" class="flota-modal" style="display: none; z-index: 99999;">
+  <div class="flota-modal-content" style="max-width: 1100px; width: 95%; max-height: 90vh; overflow: hidden;">
+    <div class="flota-modal-header" style="background: #4a4a4a; color: white; padding: 16px 24px;">
+      <span class="modal-flota-title" style="color: white; font-size: 18px;">Programar Mantenimiento</span>
+      <span class="close-flota-btn" onclick="cerrarModalProgramacion()" style="cursor:pointer; color: white; font-size: 28px;">&times;</span>
+    </div>
+    <div class="flota-modal-body" style="padding: 0; display: flex; flex-direction: row; height: calc(90vh - 70px); overflow: hidden;">
+      
+      <!-- Columna Izquierda: Tarjeta del Vehículo -->
+      <div style="flex: 0 0 45%; background: #f5f5f5; display: flex; flex-direction: column; padding: 30px; border-right: 1px solid #ddd; overflow-y: auto;">
+        
+        <!-- Tarjeta del vehículo -->
+        <div id="tarjeta-vehiculo-mantenimiento" class="vehiculo-card" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #E0E0E0; padding: 20px; width: 100%; max-width: 400px; margin: 0 auto;">
+          <!-- El contenido se carga dinámicamente -->
+        </div>
+        
+        <!-- Navegación de vehículos en la parte inferior -->
+        <div style="display: flex; align-items: center; justify-content: center; gap: 24px; margin-top: 30px;">
+          <button id="btn-vehiculo-anterior" onclick="navegarVehiculo(-1)" style="background: none; border: none; cursor: pointer; font-size: 32px; color: #666; padding: 8px 16px; border-radius: 4px; transition: all 0.2s;">
+            ‹
+          </button>
+          <p style="margin: 0; font-size: 16px; font-weight: 500; color: #666;">
+            <span id="indice-vehiculo-actual">1</span> / <span id="total-vehiculos-prog">1</span>
+          </p>
+          <button id="btn-vehiculo-siguiente" onclick="navegarVehiculo(1)" style="background: none; border: none; cursor: pointer; font-size: 32px; color: #666; padding: 8px 16px; border-radius: 4px; transition: all 0.2s;">
+            ›
+          </button>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Formulario -->
+      <div style="flex: 1; padding: 24px 30px; overflow-y: auto; display: flex; flex-direction: column;">
+        
+        <!-- Seleccionar Sistemas -->
+        <div style="margin-bottom: 20px; position: relative;">
+          <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #333; font-size: 13px;">Seleccionar Sistemas</label>
+          <div id="dropdown-sistemas" onclick="toggleDropdownSistemas()" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 50px; font-size: 13px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center; min-height: 40px; font-family: 'Poppins', sans-serif; transition: border-color 0.2s ease;">
+            <span id="texto-sistemas-seleccionados" style="color: #999; font-size: 13px;">Seleccionar sistemas</span>
+            <span style="font-size: 11px; color: #666;">▼</span>
+          </div>
+          
+          <!-- Lista desplegable de sistemas -->
+          <div id="lista-sistemas-dropdown" style="display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: white; border: 1px solid #ccc; border-radius: 12px; max-height: 250px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+            <!-- Las opciones se cargan dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Seleccionar fecha -->
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #666; font-size: 14px;">Seleccionar fecha</label>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <input type="checkbox" id="mantener-fecha-todos" style="width: 18px; height: 18px; cursor: pointer; accent-color: #BF1823;">
+            <label for="mantener-fecha-todos" style="font-size: 14px; color: #666; cursor: pointer;">Repetir mantenimiento el mismo día de cada mes</label>
+            <svg class="info-icon-recurrencia" width="16" height="16" viewBox="0 0 24 24" style="cursor: help; margin-left: 4px; flex-shrink: 0; position: relative; top: 2px;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+              <circle cx="12" cy="12" r="10" fill="none" stroke="#BF1823" stroke-width="2"/>
+              <text x="12" y="16" font-size="14" font-weight="bold" text-anchor="middle" fill="#BF1823">i</text>
+              <title>Se programarán recordatorios 7 días antes y el mismo día, repitiendo por 12 meses.</title>
+            </svg>
+          </div>
+          <input type="date" id="fecha-mantenimiento" style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
+        </div>
+
+        <!-- Área de Productos -->
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #666; font-size: 14px;">Productos para mantenimiento</label>
+          <div id="lista-productos-mantenimiento" style="max-height: 300px; min-height: 250px; border: 1px solid #ccc; border-radius: 4px; padding: 16px; background: #fafafa; overflow-y: auto;">
+            <p style="text-align: center; color: #999; font-size: 14px; margin-top: 80px;">Selecciona sistemas para ver los productos</p>
+          </div>
+        </div>
+
+        <!-- Botón Programar -->
+        <div style="margin-top: auto; padding-top: 20px;">
+          <button class="btn-primary" onclick="guardarMantenimiento()" style="width: 100%; padding: 14px 24px; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <img src="../img/calendario.svg" alt="" style="width: 18px; height: 18px; filter: brightness(0) invert(1);">
+            Programar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="flota-modal-index" class="flota-modal" style="display: none; z-index: 99999;">
+  <div class="flota-modal-content">
+    <div class="flota-modal-header">
+      <span>Nombra tu flota importada</span>
+      <span id="flota-close-index" class="flota-close-btn" style="cursor:pointer;">&times;</span>
+    </div>
+    <div class="flota-modal-body">
+      <p class="flota-modal-text" style="text-align: center; margin-bottom: 16px; font-size: 14px; color: #333;">
+        Ingresa un nombre para identificar la flota que acabas de subir.
+      </p>
+      <input type="text" id="input-nombre-flota-index" placeholder="Ej: Flota Zona Sur" class="flota-input-text" />
+      <button id="btn-confirmar-importacion" class="btn-primary" style="margin-top:15px;">Guardar Flota</button>
+    </div>
+  </div>
+</div>
+
+  
+  </main>
+  
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+<script src="../script.js"></script>
+<script src="../mobile-nav.js"></script>
+
+<!-- Panel de Carrito -->
+<div class="cart-overlay" id="cart-overlay" onclick="cerrarCarrito()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-header">
+    <h3><img src="../img/carrito.svg" alt="" style="width:20px;height:20px;filter:brightness(0) invert(1);margin-right:8px;">Carrito</h3>
+    <button class="cart-close" onclick="cerrarCarrito()">&times;</button>
+  </div>
+  <div class="cart-body">
+    <div class="cart-empty" id="cart-empty">
+      <img src="../img/carrito.svg" alt="Carrito vacío" />
+      <p>Tu carrito está vacío</p>
+    </div>
+    <ul class="cart-list" id="cart-list"></ul>
+  </div>
+  <div class="cart-footer" id="cart-footer" style="display:none;">
+    <p class="cart-total"><strong>Total:</strong> $0</p>
+    <div class="cart-actions">
+      <button class="cart-btn-primary" onclick="generarOrdenCompraDesdeOtroHTML()">Generar OC</button>
+      <button class="cart-btn-secondary" onclick="cotizarDesdeOtroHTML()">Cotizar</button>
+    </div>
+    <a href="carrito.html" class="cart-link">Ver resumen del carrito</a>
+  </div>
+</div>
+
+<!-- Panel de Notificaciones -->
+<div class="notif-overlay" id="notif-overlay" onclick="cerrarNotificaciones()"></div>
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">
+    <h3>
+      Todas las notificaciones
+      <button class="notif-close" onclick="cerrarNotificaciones()">&times;</button>
+    </h3>
+  </div>
+  
+  <div class="notif-tabs">
+    <div class="notif-tabs-left">
+      <button class="notif-tab active" data-filter="todas">Todas</button>
+      <button class="notif-tab" data-filter="sin-leer">Sin leer <span class="notif-tab-count"></span></button>
+    </div>
+    <button id="marcar-todas-vistas">Marcar como vistas</button>
+  </div>
+  
+  <div class="notif-body">
+    <!-- Lista de notificaciones (se llenará dinámicamente) -->
+    <div id="notif-list" style="display: none;"></div>
+    
+    <!-- Estado vacío -->
+    <div class="notif-empty" id="notif-empty">
+      <div class="notif-empty-icon">
+        <img src="../img/Alerta.svg" alt="Sin notificaciones">
+      </div>
+      <h4>No hay notificaciones</h4>
+      <p>Cuando tengas novedades sobre productos, ofertas o actualizaciones, aparecerán aquí.</p>
+    </div>
+  </div>
+</div>
+
+<script src="../notificaciones.js"></script>
+<script>
+// Funciones del panel de notificaciones
+function toggleNotificaciones() {
+  const panel = document.getElementById('notif-panel');
+  const overlay = document.getElementById('notif-overlay');
+  
+  if (panel.classList.contains('open')) {
+    cerrarNotificaciones();
+  } else {
+    panel.classList.add('open');
+    overlay.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function cerrarNotificaciones() {
+  const panel = document.getElementById('notif-panel');
+  const overlay = document.getElementById('notif-overlay');
+  
+  panel.classList.remove('open');
+  overlay.classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+// Cerrar con tecla Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const panel = document.getElementById('notif-panel');
+    if (panel && panel.classList.contains('open')) {
+      cerrarNotificaciones();
+    }
+    const cartPanel = document.getElementById('cart-panel');
+    if (cartPanel && cartPanel.classList.contains('open')) {
+      cerrarCarrito();
+    }
+  }
+});
+
+// Funciones del panel de carrito
+async function toggleCarrito() {
+  const panel = document.getElementById('cart-panel');
+  const overlay = document.getElementById('cart-overlay');
+  
+  if (panel.classList.contains('open')) {
+    cerrarCarrito();
+  } else {
+    // Sincronizar con servidor y actualizar UI del carrito antes de mostrar
+    if (typeof CarritoGlobal !== 'undefined') {
+      await CarritoGlobal.sincronizar();
+      CarritoGlobal.iniciarPolling(); // Iniciar actualización en tiempo real
+    }
+    panel.classList.add('open');
+    overlay.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function cerrarCarrito() {
+  const panel = document.getElementById('cart-panel');
+  const overlay = document.getElementById('cart-overlay');
+  
+  // Detener polling al cerrar
+  if (typeof CarritoGlobal !== 'undefined') {
+    CarritoGlobal.detenerPolling();
+  }
+  
+  panel.classList.remove('open');
+  overlay.classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+// Funciones para el modal de mantenimiento
+function abrirModalMantenimiento() {
+  const modal = document.getElementById('modal-mantenimiento');
+  modal.style.display = 'flex';
+  modal.style.position = 'fixed';
+  modal.style.top = '0';
+  modal.style.left = '0';
+  modal.style.width = '100%';
+  modal.style.height = '100%';
+  modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+  modal.style.justifyContent = 'center';
+  modal.style.alignItems = 'center';
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarModalMantenimiento() {
+  const modal = document.getElementById('modal-mantenimiento');
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function verMantenimientos() {
+  // Aquí puedes agregar la lógica para ver mantenimientos
+  console.log('Ver mantenimientos');
+  cerrarModalMantenimiento();
+  abrirModalMisMantenimientos();
+}
+
+function agendarMantenimiento() {
+  cerrarModalMantenimiento();
+  abrirModalSeleccionVehiculos();
+}
+
+// Funciones para el modal de selección de vehículos
+let vehiculosSeleccionados = new Set();
+
+function abrirModalSeleccionVehiculos() {
+  const modal = document.getElementById('modal-seleccion-vehiculos');
+  modal.style.display = 'flex';
+  modal.style.position = 'fixed';
+  modal.style.top = '0';
+  modal.style.left = '0';
+  modal.style.width = '100%';
+  modal.style.height = '100%';
+  modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+  modal.style.justifyContent = 'center';
+  modal.style.alignItems = 'center';
+  document.body.style.overflow = 'hidden';
+  
+  // Limpiar selección anterior
+  vehiculosSeleccionados.clear();
+  actualizarContadorVehiculos();
+  
+  cargarVehiculosMantenimiento();
+}
+
+function cerrarModalSeleccionVehiculos() {
+  const modal = document.getElementById('modal-seleccion-vehiculos');
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+  vehiculosSeleccionados.clear();
+  actualizarContadorVehiculos();
+  
+  // Desmarcar el checkbox de seleccionar todos
+  const checkboxTodos = document.getElementById('seleccionar-todos-vehiculos');
+  if (checkboxTodos) {
+    checkboxTodos.checked = false;
+    checkboxTodos.indeterminate = false;
+  }
+}
+
+async function cargarVehiculosMantenimiento() {
+  try {
+    const response = await fetch('/datos de flota/flotas.json');
+    const flotas = await response.json();
+    
+    // Obtener el usuario de localStorage (como en el resto de la aplicación)
+    const usuarioId = localStorage.getItem('usuarioID');
+    
+    if (!usuarioId) {
+      console.error('No hay usuario logueado');
+      document.getElementById('tabla-vehiculos-mantenimiento').innerHTML = 
+        '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">No hay usuario logueado</td></tr>';
+      return;
+    }
+
+    // Obtener la flota seleccionada del select
+    const selectFlota = document.getElementById('select-flota');
+    const flotaSeleccionadaId = selectFlota.value;
+    
+    if (!flotaSeleccionadaId) {
+      document.getElementById('tabla-vehiculos-mantenimiento').innerHTML = 
+        '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">Por favor, selecciona una flota primero</td></tr>';
+      document.getElementById('total-vehiculos').textContent = '0';
+      return;
+    }
+
+    // flotas.json es un array, buscar la flota por id
+    const flotaSeleccionada = flotas.find(f => f.id === flotaSeleccionadaId && f.userId === usuarioId);
+    
+    if (!flotaSeleccionada) {
+      console.error('Flota no encontrada. ID buscado:', flotaSeleccionadaId, 'Usuario:', usuarioId);
+      document.getElementById('tabla-vehiculos-mantenimiento').innerHTML = 
+        '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">No se encontró la flota seleccionada</td></tr>';
+      document.getElementById('total-vehiculos').textContent = '0';
+      return;
+    }
+
+    // Actualizar el título del modal con el nombre de la flota
+    document.getElementById('titulo-modal-vehiculos').textContent = 
+      `Buscar vehículos (${flotaSeleccionada.nombre || 'Flota'})`;
+    
+    // Obtener vehículos de la flota seleccionada
+    const vehiculosFlota = flotaSeleccionada.vehiculos || [];
+    
+    if (vehiculosFlota.length === 0) {
+      document.getElementById('tabla-vehiculos-mantenimiento').innerHTML = 
+        '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">Esta flota no tiene vehículos</td></tr>';
+      document.getElementById('total-vehiculos').textContent = '0';
+      return;
+    }
+    
+    mostrarVehiculosEnTabla(vehiculosFlota);
+    document.getElementById('total-vehiculos').textContent = vehiculosFlota.length;
+    
+  } catch (error) {
+    console.error('Error al cargar vehículos:', error);
+    document.getElementById('tabla-vehiculos-mantenimiento').innerHTML = 
+      '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">Error al cargar los vehículos</td></tr>';
+  }
+}
+
+function mostrarVehiculosEnTabla(vehiculos) {
+  const tbody = document.getElementById('tabla-vehiculos-mantenimiento');
+  
+  if (!vehiculos || vehiculos.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">No hay vehículos disponibles</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = vehiculos.map((vehiculo, index) => `
+    <tr data-vehiculo-index="${index}" style="cursor: pointer;">
+      <td style="text-align: center;">
+        <input 
+          type="checkbox" 
+          class="checkbox-vehiculo" 
+          data-vehiculo-id="${index}"
+          style="width: 18px; height: 18px; cursor: pointer; accent-color: #BF1823;"
+        >
+      </td>
+      <td><strong>${vehiculo.marca || 'N/A'}</strong></td>
+      <td>${vehiculo.modelo || 'N/A'}</td>
+      <td>${vehiculo.patente || 'N/A'}</td>
+      <td>${vehiculo.conductor || 'N/A'}</td>
+      <td>${vehiculo.motor || 'No registrado'}</td>
+    </tr>
+  `).join('');
+  
+  // Guardar referencia a los vehículos
+  window.vehiculosMantenimiento = vehiculos;
+  
+  // Agregar event listeners a todos los checkboxes
+  document.querySelectorAll('.checkbox-vehiculo').forEach(checkbox => {
+    checkbox.addEventListener('change', function(e) {
+      e.stopPropagation(); // Evitar que se dispare el evento de la fila
+      const vehiculoId = this.getAttribute('data-vehiculo-id');
+      toggleVehiculoSeleccion(vehiculoId);
+    });
+  });
+  
+  // Agregar event listeners a todas las filas
+  document.querySelectorAll('#tabla-vehiculos-mantenimiento tr[data-vehiculo-index]').forEach(fila => {
+    fila.addEventListener('click', function(e) {
+      // Si el clic fue directamente en el checkbox, no hacer nada (ya lo maneja el checkbox)
+      if (e.target.type === 'checkbox') {
+        return;
+      }
+      
+      // Encontrar el checkbox de esta fila y togglearlo
+      const checkbox = this.querySelector('.checkbox-vehiculo');
+      if (checkbox) {
+        checkbox.checked = !checkbox.checked;
+        const vehiculoId = checkbox.getAttribute('data-vehiculo-id');
+        toggleVehiculoSeleccion(vehiculoId);
+      }
+    });
+  });
+}
+
+function toggleVehiculoSeleccion(vehiculoId) {
+  if (vehiculosSeleccionados.has(vehiculoId)) {
+    vehiculosSeleccionados.delete(vehiculoId);
+  } else {
+    vehiculosSeleccionados.add(vehiculoId);
+  }
+  console.log('Vehículos seleccionados:', vehiculosSeleccionados.size, Array.from(vehiculosSeleccionados));
+  actualizarContadorVehiculos();
+  actualizarCheckboxSeleccionarTodos();
+}
+
+function toggleSeleccionarTodosVehiculos() {
+  const checkbox = document.getElementById('seleccionar-todos-vehiculos');
+  const checkboxes = document.querySelectorAll('.checkbox-vehiculo');
+  
+  // Limpiar el Set primero
+  vehiculosSeleccionados.clear();
+  
+  checkboxes.forEach(cb => {
+    cb.checked = checkbox.checked;
+    const vehiculoId = cb.getAttribute('data-vehiculo-id');
+    if (checkbox.checked) {
+      vehiculosSeleccionados.add(vehiculoId);
+    }
+  });
+  
+  console.log('Seleccionar todos:', checkbox.checked, 'Total:', vehiculosSeleccionados.size);
+  actualizarContadorVehiculos();
+}
+
+function actualizarCheckboxSeleccionarTodos() {
+  const checkboxes = document.querySelectorAll('.checkbox-vehiculo');
+  const checkbox = document.getElementById('seleccionar-todos-vehiculos');
+  
+  const todosSeleccionados = Array.from(checkboxes).every(cb => cb.checked);
+  const algunoSeleccionado = Array.from(checkboxes).some(cb => cb.checked);
+  
+  checkbox.checked = todosSeleccionados;
+  checkbox.indeterminate = algunoSeleccionado && !todosSeleccionados;
+}
+
+function actualizarContadorVehiculos() {
+  const contador = document.getElementById('contador-vehiculos-seleccionados');
+  if (contador) {
+    contador.textContent = vehiculosSeleccionados.size;
+  }
+}
+
+function filtrarVehiculosMantenimiento() {
+  const busqueda = document.getElementById('buscador-vehiculos-mantenimiento').value.toLowerCase();
+  const filas = document.querySelectorAll('#tabla-vehiculos-mantenimiento tr');
+  
+  filas.forEach(fila => {
+    const texto = fila.textContent.toLowerCase();
+    fila.style.display = texto.includes(busqueda) ? '' : 'none';
+  });
+}
+
+function siguienteMantenimiento() {
+  if (vehiculosSeleccionados.size === 0) {
+    alert('Por favor, selecciona al menos un vehículo');
+    return;
+  }
+  
+  console.log('Vehículos seleccionados:', Array.from(vehiculosSeleccionados));
+  
+  // Preparar datos de vehículos para programación
+  window.vehiculosParaMantenimiento = Array.from(vehiculosSeleccionados).map(id => {
+    return window.vehiculosMantenimiento[parseInt(id)];
+  });
+  
+  // Cerrar modal de selección y abrir modal de programación
+  cerrarModalSeleccionVehiculos();
+  abrirModalProgramacion();
+}
+
+// ============================================================
+//  MODAL DE PROGRAMACIÓN DE MANTENIMIENTO
+// ============================================================
+
+let indiceVehiculoActual = 0;
+let datosMantenimientoPorVehiculo = {}; // Almacena productos y fecha por vehículo
+let productosDisponiblesPorVehiculo = {}; // Cache de productos por vehículo
+
+function abrirModalProgramacion() {
+  const modal = document.getElementById('modal-programacion-mantenimiento');
+  modal.style.display = 'flex';
+  modal.style.position = 'fixed';
+  modal.style.top = '0';
+  modal.style.left = '0';
+  modal.style.width = '100%';
+  modal.style.height = '100%';
+  modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+  modal.style.justifyContent = 'center';
+  modal.style.alignItems = 'center';
+  document.body.style.overflow = 'hidden';
+  
+  // Inicializar datos
+  indiceVehiculoActual = 0;
+  datosMantenimientoPorVehiculo = {};
+  productosDisponiblesPorVehiculo = {};
+  
+  // Establecer fecha mínima (hoy)
+  const hoy = new Date().toISOString().split('T')[0];
+  document.getElementById('fecha-mantenimiento').setAttribute('min', hoy);
+  
+  // Cargar primer vehículo
+  cargarVehiculoActual();
+}
+
+function cerrarModalProgramacion() {
+  const modal = document.getElementById('modal-programacion-mantenimiento');
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+  
+  // Limpiar datos
+  indiceVehiculoActual = 0;
+  datosMantenimientoPorVehiculo = {};
+  productosDisponiblesPorVehiculo = {};
+}
+
+function navegarVehiculo(direccion) {
+  // Guardar datos del vehículo actual antes de navegar
+  guardarDatosVehiculoActual();
+  
+  // Calcular nuevo índice
+  const nuevoIndice = indiceVehiculoActual + direccion;
+  
+  if (nuevoIndice >= 0 && nuevoIndice < window.vehiculosParaMantenimiento.length) {
+    indiceVehiculoActual = nuevoIndice;
+    cargarVehiculoActual();
+  }
+}
+
+async function cargarVehiculoActual() {
+  const vehiculo = window.vehiculosParaMantenimiento[indiceVehiculoActual];
+  const totalVehiculos = window.vehiculosParaMantenimiento.length;
+  
+  // Actualizar contador
+  document.getElementById('indice-vehiculo-actual').textContent = indiceVehiculoActual + 1;
+  document.getElementById('total-vehiculos-prog').textContent = totalVehiculos;
+  
+  // Renderizar tarjeta del vehículo
+  const tarjetaContainer = document.getElementById('tarjeta-vehiculo-mantenimiento');
+  
+  // Obtener rutas de imágenes usando las funciones de script.js
+  const imgLogo = window.rutaMarca ? window.rutaMarca(vehiculo.marca) : `../logosvehiculos/${normalizarTexto(vehiculo.marca)}.png`;
+  const imgVehiculo = typeof rutaModelo === 'function' ? rutaModelo(vehiculo.tipo, vehiculo.marca, vehiculo.modelo) : `../vehiculosexpertos/${normalizarTexto(vehiculo.marca)}_${normalizarTexto(vehiculo.modelo)}.png`;
+  
+  // Crear HTML de la tarjeta (mismo estilo que en el carrusel principal)
+  tarjetaContainer.innerHTML = `
+    <div style="position: relative; width: 100%;">
+      <!-- Logo de la marca (esquina superior izquierda) -->
+      <div style="position: absolute; top: -10px; left: -10px; z-index: 10;">
+        <img src="${imgLogo}" 
+             alt="${vehiculo.marca}" 
+             onerror="this.src='../img/Logo SC.svg'"
+             style="width: 56px; height: 56px; object-fit: contain; background: white; border-radius: 8px; padding: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+      </div>
+      
+      <!-- Imagen del vehículo -->
+      <div style="width: 100%; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; margin: 20px 0;">
+        <img src="${imgVehiculo}" 
+             alt="${vehiculo.marca} ${vehiculo.modelo}" 
+             onerror="this.src='../img/Logo SC.svg'"
+             style="width: 100%; height: 100%; object-fit: contain;">
+      </div>
+      
+      <!-- Información del vehículo -->
+      <div style="text-align: center; margin-top: 16px;">
+        <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #252425; line-height: 1.3;">
+          ${vehiculo.marca} ${vehiculo.modelo}
+        </h3>
+        <div style="font-size: 14px; color: #666; line-height: 1.5;">
+          ${vehiculo.patente ? `<div><strong style="font-weight: 600;">${vehiculo.patente}</strong></div>` : ''}
+          ${vehiculo.conductor ? `<div>${vehiculo.conductor}</div>` : '<div style="color: #999;">Sin conductor</div>'}
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Actualizar botones de navegación
+  document.getElementById('btn-vehiculo-anterior').disabled = indiceVehiculoActual === 0;
+  document.getElementById('btn-vehiculo-siguiente').disabled = indiceVehiculoActual === totalVehiculos - 1;
+  
+  // Estilos para botones deshabilitados
+  if (indiceVehiculoActual === 0) {
+    document.getElementById('btn-vehiculo-anterior').style.opacity = '0.3';
+    document.getElementById('btn-vehiculo-anterior').style.cursor = 'not-allowed';
+  } else {
+    document.getElementById('btn-vehiculo-anterior').style.opacity = '1';
+    document.getElementById('btn-vehiculo-anterior').style.cursor = 'pointer';
+  }
+  
+  if (indiceVehiculoActual === totalVehiculos - 1) {
+    document.getElementById('btn-vehiculo-siguiente').style.opacity = '0.3';
+    document.getElementById('btn-vehiculo-siguiente').style.cursor = 'not-allowed';
+  } else {
+    document.getElementById('btn-vehiculo-siguiente').style.opacity = '1';
+    document.getElementById('btn-vehiculo-siguiente').style.cursor = 'pointer';
+  }
+  
+  // Cargar categorías disponibles del vehículo con preselección guardada
+  const vehiculoKey = `vehiculo_${indiceVehiculoActual}`; // Usar índice para garantizar unicidad
+  const sistemasGuardados = datosMantenimientoPorVehiculo[vehiculoKey]?.sistemas || [];
+  await cargarCategoriasVehiculo(vehiculo, sistemasGuardados);
+  
+  // Restaurar datos guardados si existen
+  restaurarDatosVehiculo(vehiculo);
+}
+
+function normalizarTexto(texto) {
+  if (!texto) return '';
+  return texto
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[-_\s]/g, '')
+    .trim();
+}
+
+async function cargarCategoriasVehiculo(vehiculo, preseleccion = []) {
+  try {
+    const response = await fetch('../datosproductos/cruces_vehiculos.json');
+    const data = await response.json();
+    
+    const marcaNorm = normalizarTexto(vehiculo.marca);
+    const modeloNorm = normalizarTexto(vehiculo.modelo);
+    
+    // Buscar el cruce del vehículo
+    const cruce = data.cruces.find(c => {
+      return normalizarTexto(c.marca) === marcaNorm && normalizarTexto(c.modelo) === modeloNorm;
+    });
+    
+    const listaDropdown = document.getElementById('lista-sistemas-dropdown');
+    listaDropdown.innerHTML = '';
+    
+    if (!cruce || !cruce.categorias) {
+      listaDropdown.innerHTML = '<div style="padding: 16px; color: #999; text-align: center; font-size: 13px;">No hay sistemas disponibles para este vehículo</div>';
+      return;
+    }
+    
+    // Cargar productos_db para verificar disponibilidad
+    const productosResponse = await fetch('../datosproductos/productos_db.json');
+    const productosData = await productosResponse.json();
+    const skusValidos = new Set(
+      productosData.map(p => normalizarTexto(p.codSC || p.sku || '')).filter(s => s)
+    );
+    
+    // Mapeo de categorías
+    const categoriasDisplay = {
+      'embragues': 'Embragues',
+      'frenos': 'Frenos',
+      'suspension': 'Suspensión',
+      'filtros y diferenciales': 'Filtros y diferenciales',
+      'filtrosydiferenciales': 'Filtros y diferenciales',
+      'sistema de aire': 'Sistema de aire',
+      'sistemadeaire': 'Sistema de aire',
+      'sistema de direccion': 'Sistema de dirección',
+      'sistemadedireccion': 'Sistema de dirección'
+    };
+    
+    // Agregar opciones solo para categorías con productos válidos
+    const categoriasDisponibles = [];
+    for (const [catKey, catData] of Object.entries(cruce.categorias)) {
+      const catNorm = normalizarTexto(catKey);
+      
+      // Verificar que tenga productos válidos
+      let tieneProductos = false;
+      if (Array.isArray(catData)) {
+        tieneProductos = catData.some(prod => skusValidos.has(normalizarTexto(prod.sku)));
+      } else if (catData.sku) {
+        tieneProductos = skusValidos.has(normalizarTexto(catData.sku));
+      }
+      
+      if (tieneProductos) {
+        const displayName = categoriasDisplay[catNorm] || catKey;
+        categoriasDisponibles.push({ key: catNorm, display: displayName, data: catData });
+      }
+    }
+    
+    // Ordenar alfabéticamente
+    categoriasDisponibles.sort((a, b) => a.display.localeCompare(b.display));
+    
+    // Mapear preselección normalizada para re-aplicar selección
+    const preSelSet = new Set((preseleccion || []).map(k => normalizarTexto(k)));
+
+    // Agregar checkboxes al dropdown
+    categoriasDisponibles.forEach(cat => {
+      const item = document.createElement('div');
+      item.style.cssText = 'padding: 12px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.2s; border-bottom: 1px solid #f0f0f0; font-size: 13px;';
+      item.onmouseover = function() { this.style.background = '#f9f9f9'; };
+      item.onmouseout = function() { this.style.background = 'white'; };
+      
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.value = cat.key;
+      checkbox.id = `sistema-${cat.key}`;
+      checkbox.style.cssText = 'width: 16px; height: 16px; cursor: pointer; accent-color: #BF1823; flex-shrink: 0;';
+      // Reaplicar selección si corresponde
+      checkbox.checked = preSelSet.has(cat.key);
+      checkbox.onchange = function(e) {
+        e.stopPropagation();
+        actualizarSistemasSeleccionados();
+      };
+      
+      const label = document.createElement('label');
+      label.htmlFor = `sistema-${cat.key}`;
+      label.textContent = cat.display;
+      label.style.cssText = 'cursor: pointer; flex: 1; font-size: 13px; color: #333; font-weight: 500;';
+      
+      item.onclick = function(e) {
+        if (e.target === checkbox) return;
+        if (e.target && e.target.tagName && e.target.tagName.toLowerCase() === 'label') return; // deja que el label maneje el toggle
+        checkbox.checked = !checkbox.checked;
+        actualizarSistemasSeleccionados();
+      };
+      
+      item.appendChild(checkbox);
+      item.appendChild(label);
+      listaDropdown.appendChild(item);
+    });
+    
+    // Guardar productos disponibles en cache con clave única por índice
+    productosDisponiblesPorVehiculo[`vehiculo_${indiceVehiculoActual}`] = {
+      cruce: cruce,
+      productos: productosData
+    };
+    
+  } catch (error) {
+    console.error('Error cargando categorías:', error);
+    document.getElementById('lista-sistemas-dropdown').innerHTML = '<div style="padding: 16px; color: #999; text-align: center; font-size: 13px;">Error al cargar sistemas</div>';
+  }
+}
+
+function toggleDropdownSistemas() {
+  const dropdown = document.getElementById('lista-sistemas-dropdown');
+  const isVisible = dropdown.style.display === 'block';
+
+  if (isVisible) {
+    dropdown.style.display = 'none';
+    return;
+  }
+
+  // Al abrir, recargar categorías desde cruces para reflejar cambios del admin
+  try {
+    const vehiculo = window.vehiculosParaMantenimiento?.[indiceVehiculoActual];
+    if (!vehiculo) {
+      dropdown.style.display = 'block';
+      return;
+    }
+
+    // Usar los sistemas guardados del vehículo actual (no lo que hay en el DOM)
+    const vehiculoKey = `vehiculo_${indiceVehiculoActual}`; // Usar índice para garantizar unicidad
+    const sistemasGuardados = datosMantenimientoPorVehiculo[vehiculoKey]?.sistemas || [];
+
+    // Recargar y re-aplicar selección desde datos guardados
+    cargarCategoriasVehiculo(vehiculo, sistemasGuardados).then(() => {
+      dropdown.style.display = 'block';
+      // Actualizar el texto del chip del dropdown para reflejar estado
+      actualizarSistemasSeleccionados();
+    }).catch(() => {
+      dropdown.style.display = 'block';
+    });
+  } catch (e) {
+    console.error('Error al abrir dropdown de sistemas:', e);
+    dropdown.style.display = 'block';
+  }
+}
+
+function actualizarSistemasSeleccionados() {
+  const checkboxes = document.querySelectorAll('#lista-sistemas-dropdown input[type="checkbox"]:checked');
+  const sistemasSeleccionados = Array.from(checkboxes).map(cb => {
+    const label = document.querySelector(`label[for="${cb.id}"]`);
+    return label ? label.textContent : cb.value;
+  });
+  
+  // GUARDAR los sistemas seleccionados (incluye desmarques)
+  const vehiculoKey = `vehiculo_${indiceVehiculoActual}`;
+  if (!datosMantenimientoPorVehiculo[vehiculoKey]) {
+    datosMantenimientoPorVehiculo[vehiculoKey] = {};
+  }
+  // Guardar solo los valores normalizados de los checkboxes (claves)
+  const sistemasValues = Array.from(checkboxes).map(cb => cb.value);
+  datosMantenimientoPorVehiculo[vehiculoKey].sistemas = sistemasValues;
+  
+  const textoSpan = document.getElementById('texto-sistemas-seleccionados');
+  if (sistemasSeleccionados.length === 0) {
+    textoSpan.textContent = 'Seleccionar sistemas';
+    textoSpan.style.color = '#999';
+  } else if (sistemasSeleccionados.length === 1) {
+    textoSpan.textContent = sistemasSeleccionados[0];
+    textoSpan.style.color = '#333';
+  } else {
+    textoSpan.textContent = `${sistemasSeleccionados.length} sistemas seleccionados`;
+    textoSpan.style.color = '#333';
+  }
+  
+  // Cargar productos de los sistemas seleccionados
+  cargarProductosSeleccionados();
+}
+
+async function cargarProductosSeleccionados() {
+  const vehiculo = window.vehiculosParaMantenimiento[indiceVehiculoActual];
+  const vehiculoKey = `vehiculo_${indiceVehiculoActual}`; // Usar índice para garantizar unicidad
+  const checkboxes = document.querySelectorAll('#lista-sistemas-dropdown input[type="checkbox"]:checked');
+  const selectedOptions = Array.from(checkboxes).map(cb => cb.value);
+  
+  if (selectedOptions.length === 0) {
+    // Si no hay sistemas seleccionados, limpiar productos
+    const vehiculoKey = vehiculo.patente || vehiculo.modelo;
+    if (datosMantenimientoPorVehiculo[vehiculoKey]) {
+      datosMantenimientoPorVehiculo[vehiculoKey].productos = [];
+    }
+    document.getElementById('lista-productos-mantenimiento').innerHTML = 
+      '<p style="text-align: center; color: #999; font-size: 14px; margin-top: 80px;">Selecciona sistemas para ver los productos</p>';
+    return;
+  }
+  
+  const cache = productosDisponiblesPorVehiculo[`vehiculo_${indiceVehiculoActual}`];
+  if (!cache) return;
+  
+  const { cruce, productos } = cache;
+  
+  // Recopilar todos los SKUs de las categorías seleccionadas
+  const skusParaCargar = [];
+  selectedOptions.forEach(catNorm => {
+    for (const [catKey, catData] of Object.entries(cruce.categorias)) {
+      if (normalizarTexto(catKey) === catNorm) {
+        if (Array.isArray(catData)) {
+          catData.forEach(prod => skusParaCargar.push(normalizarTexto(prod.sku)));
+        } else if (catData.sku) {
+          skusParaCargar.push(normalizarTexto(catData.sku));
+        }
+      }
+    }
+  });
+  
+  // Buscar productos en productos_db (solo de las categorías seleccionadas)
+  const productosEncontrados = productos.filter(p => 
+    skusParaCargar.includes(normalizarTexto(p.codSC || p.sku || ''))
+  );
+  
+  // Actualizar productos sin combinar con guardados (reemplazar completamente)
+  // Ya tenemos vehiculoKey definida arriba como `vehiculo_${indiceVehiculoActual}`
+  if (!datosMantenimientoPorVehiculo[vehiculoKey]) {
+    datosMantenimientoPorVehiculo[vehiculoKey] = {};
+  }
+  datosMantenimientoPorVehiculo[vehiculoKey].productos = productosEncontrados;
+  
+  // Renderizar productos
+  renderizarProductosMantenimiento(productosEncontrados, vehiculo, true);
+}
+
+function renderizarProductosMantenimiento(productos, vehiculo, reemplazar = false) {
+  const container = document.getElementById('lista-productos-mantenimiento');
+  
+  if (productos.length === 0) {
+    container.innerHTML = '<p style="text-align: center; color: #999; font-size: 14px; margin-top: 80px;">No se encontraron productos</p>';
+    return;
+  }
+  
+  const vehiculoKey = `vehiculo_${indiceVehiculoActual}`; // Usar índice para garantizar unicidad
+  
+  // Si reemplazar es true, usar solo los productos nuevos
+  // Si reemplazar es false, combinar con guardados (para restaurar datos)
+  let productosAMostrar;
+  if (reemplazar) {
+    productosAMostrar = productos;
+  } else {
+    const productosGuardados = datosMantenimientoPorVehiculo[vehiculoKey]?.productos || [];
+    
+    if (productosGuardados.length > 0) {
+      // Crear un Set de SKUs guardados
+      const skusGuardados = new Set(productosGuardados.map(p => p.codSC || p.sku));
+      // Agregar productos nuevos que no estén guardados
+      const productosNuevos = productos.filter(p => !skusGuardados.has(p.codSC || p.sku));
+      productosAMostrar = [...productosGuardados, ...productosNuevos];
+    } else {
+      productosAMostrar = productos;
+    }
+  }
+  
+  container.innerHTML = productosAMostrar.map(prod => {
+    const imagen = prod.imagen || prod.imagenes?.[0] || '/img/Logo SC.svg';
+    const precio = prod.precioFinal || prod.precio || 0;
+    
+    return `
+      <div class="producto-mantenimiento-item" data-sku="${prod.codSC || prod.sku}" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: white; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e0e0e0;">
+        <img src="${imagen}" alt="${prod.repuesto || prod.nombre}" style="width: 60px; height: 60px; object-fit: contain; border-radius: 4px;">
+        <div style="flex: 1;">
+          <h5 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 600; color: #333;">${prod.repuesto || prod.nombre}</h5>
+          <p style="margin: 0; font-size: 12px; color: #666;">${prod.marca} - ${prod.codSC || prod.sku}</p>
+          <p style="margin: 4px 0 0 0; font-size: 14px; font-weight: 600; color: #BF1823;">$${precio.toLocaleString('es-CL')}</p>
+        </div>
+        <button onclick="eliminarProductoMantenimiento('${prod.codSC || prod.sku}')" class="btn-text" style="color: #BF1823; padding: 8px; min-width: auto;">
+          <span style="font-size: 20px; font-weight: bold;">&times;</span>
+        </button>
+      </div>
+    `;
+  }).join('');
+  
+  // Guardar productos actuales
+  if (!datosMantenimientoPorVehiculo[vehiculoKey]) {
+    datosMantenimientoPorVehiculo[vehiculoKey] = {};
+  }
+  datosMantenimientoPorVehiculo[vehiculoKey].productos = productosAMostrar;
+}
+
+function eliminarProductoMantenimiento(sku) {
+  const vehiculo = window.vehiculosParaMantenimiento[indiceVehiculoActual];
+  const vehiculoKey = `vehiculo_${indiceVehiculoActual}`; // Usar índice para garantizar unicidad
+  
+  if (datosMantenimientoPorVehiculo[vehiculoKey]?.productos) {
+    datosMantenimientoPorVehiculo[vehiculoKey].productos = 
+      datosMantenimientoPorVehiculo[vehiculoKey].productos.filter(p => (p.codSC || p.sku) !== sku);
+    
+    // Re-renderizar
+    renderizarProductosMantenimiento(datosMantenimientoPorVehiculo[vehiculoKey].productos, vehiculo);
+  }
+}
+
+function guardarDatosVehiculoActual() {
+  const vehiculo = window.vehiculosParaMantenimiento[indiceVehiculoActual];
+  const vehiculoKey = `vehiculo_${indiceVehiculoActual}`; // Usar índice para garantizar unicidad
+  
+  if (!datosMantenimientoPorVehiculo[vehiculoKey]) {
+    datosMantenimientoPorVehiculo[vehiculoKey] = {};
+  }
+  
+  // Guardar fecha si está seleccionada
+  const fecha = document.getElementById('fecha-mantenimiento').value;
+  if (fecha) {
+    datosMantenimientoPorVehiculo[vehiculoKey].fecha = fecha;
+  }
+
+  // Guardar recurrencia mensual (checkbox per-vehículo)
+  const repetirMensualCheck = document.getElementById('mantener-fecha-todos');
+  if (repetirMensualCheck) {
+    datosMantenimientoPorVehiculo[vehiculoKey].repetirMensual = !!repetirMensualCheck.checked;
+  }
+  
+  // Guardar sistemas seleccionados
+  const checkboxes = document.querySelectorAll('#lista-sistemas-dropdown input[type="checkbox"]:checked');
+  const sistemasSeleccionados = Array.from(checkboxes).map(cb => cb.value);
+  datosMantenimientoPorVehiculo[vehiculoKey].sistemas = sistemasSeleccionados;
+}
+
+function restaurarDatosVehiculo(vehiculo) {
+  // IMPORTANTE: usar índice, no patente/modelo, para evitar compartir datos
+  const vehiculoKey = `vehiculo_${indiceVehiculoActual}`;
+  const datosGuardados = datosMantenimientoPorVehiculo[vehiculoKey];
+  
+  if (datosGuardados) {
+    // Restaurar fecha
+    if (datosGuardados.fecha) {
+      document.getElementById('fecha-mantenimiento').value = datosGuardados.fecha;
+    } else {
+      document.getElementById('fecha-mantenimiento').value = '';
+    }
+
+    // Restaurar recurrencia mensual
+    const repetirMensualCheck = document.getElementById('mantener-fecha-todos');
+    if (repetirMensualCheck) {
+      repetirMensualCheck.checked = !!datosGuardados.repetirMensual;
+    }
+    
+    // Los sistemas ya se restauraron en cargarCategoriasVehiculo() con preselección
+    // Aquí solo actualizamos el texto del chip y productos
+    if (datosGuardados.sistemas && datosGuardados.sistemas.length > 0) {
+      actualizarSistemasSeleccionados();
+      // Restaurar productos si existen
+      if (datosGuardados.productos && datosGuardados.productos.length > 0) {
+        renderizarProductosMantenimiento(datosGuardados.productos, vehiculo);
+      }
+    } else {
+      // Si no hay sistemas guardados, limpiar productos y dropdown
+      document.querySelectorAll('#lista-sistemas-dropdown input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+      });
+      document.getElementById('texto-sistemas-seleccionados').textContent = 'Seleccionar sistemas';
+      document.getElementById('texto-sistemas-seleccionados').style.color = '#999';
+      document.getElementById('lista-productos-mantenimiento').innerHTML = 
+        '<p style="text-align: center; color: #999; font-size: 14px; margin-top: 80px;">Selecciona sistemas para ver los productos</p>';
+    }
+  } else {
+    // Limpiar campos (vehículo sin datos guardados) - IMPORTANTE: desmarcar todos los checkboxes
+    document.getElementById('fecha-mantenimiento').value = '';
+    const repetirMensualCheck = document.getElementById('mantener-fecha-todos');
+    if (repetirMensualCheck) repetirMensualCheck.checked = false;
+    
+    // CRÍTICO: desmarcar TODOS los checkboxes del dropdown para no cargar estado del vehículo anterior
+    document.querySelectorAll('#lista-sistemas-dropdown input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+    });
+    
+    document.getElementById('texto-sistemas-seleccionados').textContent = 'Seleccionar sistemas';
+    document.getElementById('texto-sistemas-seleccionados').style.color = '#999';
+    document.getElementById('lista-productos-mantenimiento').innerHTML = 
+      '<p style="text-align: center; color: #999; font-size: 14px; margin-top: 80px;">Selecciona sistemas para ver los productos</p>';
+  }
+}
+
+async function guardarMantenimiento() {
+  // Guardar datos del vehículo actual
+  guardarDatosVehiculoActual();
+  
+  // Verificar que todos los vehículos tengan fecha y productos
+  // recurrencia es por vehículo (no global)
+  const fechaGlobal = document.getElementById('fecha-mantenimiento').value;
+  
+  const errores = [];
+  
+  window.vehiculosParaMantenimiento.forEach((vehiculo, index) => {
+    const vehiculoKey = `vehiculo_${index}`;
+    const datos = datosMantenimientoPorVehiculo[vehiculoKey];
+    
+    if (!datos) {
+      errores.push(`${vehiculo.marca} ${vehiculo.modelo}: No se ha configurado`);
+      return;
+    }
+    
+    // Nota: El checkbox ahora indica recurrencia mensual, no aplica fecha global
+    
+    if (!datos.fecha) {
+      errores.push(`${vehiculo.marca} ${vehiculo.modelo}: Falta seleccionar fecha`);
+    }
+    
+    if (!datos.productos || datos.productos.length === 0) {
+      errores.push(`${vehiculo.marca} ${vehiculo.modelo}: No tiene productos seleccionados`);
+    }
+  });
+  
+  if (errores.length > 0) {
+    alert('Por favor completa la siguiente información:\n\n' + errores.join('\n'));
+    return;
+  }
+  
+  // Crear mantenimientos programados
+  const mantenimientos = window.vehiculosParaMantenimiento.map((vehiculo, index) => {
+    const vehiculoKey = `vehiculo_${index}`;
+    const datos = datosMantenimientoPorVehiculo[vehiculoKey];
+    
+    return {
+      id: `mant_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      vehiculo: vehiculo,
+      fecha: datos.fecha,
+      productos: datos.productos,
+      sistemas: datos.sistemas,
+      repetirMensual: !!datos.repetirMensual,
+      creado: new Date().toISOString(),
+      notificaciones: {
+        sieteDias: false,
+        diaMantenimiento: false
+      }
+    };
+  });
+  
+  // Enviar al backend para correos y notificaciones agrupadas
+  try {
+    const usuarioId = localStorage.getItem('usuarioID');
+    await fetch('/api/mantenimientos/programar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usuarioId, mantenimientos })
+    });
+  } catch (e) {
+    console.error('Error enviando programación al servidor:', e);
+  }
+  
+  // Mostrar confirmación
+  const vehiculosTexto = mantenimientos.map(m => `${m.vehiculo.marca} ${m.vehiculo.modelo}`).join(', ');
+  const msgRecurrencia = (mantenimientos[0]?.repetirMensual) ? "\nSe repetirá automáticamente el mismo día de cada mes (12 meses)." : "";
+  alert(`✓ Mantenimiento programado exitosamente para:\n${vehiculosTexto}\n\nRecibirás notificaciones 7 días antes y el día del mantenimiento.${msgRecurrencia}`);
+  
+  // Cerrar modal
+  cerrarModalProgramacion();
+}
+
+async function programarNotificacionesMantenimiento(mantenimientos) {
+  const usuarioId = localStorage.getItem('usuarioID');
+  
+  for (const mant of mantenimientos) {
+    const fechaBase = new Date(mant.fecha);
+    const vehiculoNombre = `${mant.vehiculo.marca} ${mant.vehiculo.modelo} (${mant.vehiculo.patente || 'S/P'})`;
+
+    // helper: sumar meses manteniendo el "día" (si no existe, usa el último día del mes)
+    const addMonthsKeepingDay = (date, months) => {
+      const d = new Date(date);
+      const targetMonth = d.getMonth() + months;
+      const year = d.getFullYear() + Math.floor(targetMonth / 12);
+      const month = ((targetMonth % 12) + 12) % 12;
+      const day = d.getDate();
+      const lastDay = new Date(year, month + 1, 0).getDate();
+      const newDay = Math.min(day, lastDay);
+      return new Date(year, month, newDay, d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds());
+    };
+
+    // cuántos meses programar por adelantado si es recurrente
+    const mesesAdelante = mant.repetirMensual ? 12 : 1;
+
+    const keyNotif = `notificaciones_programadas_${usuarioId}`;
+    const notifsExistentes = JSON.parse(localStorage.getItem(keyNotif) || '[]');
+
+    for (let i = 0; i < mesesAdelante; i++) {
+      const fechaMant = i === 0 ? new Date(fechaBase) : addMonthsKeepingDay(fechaBase, i);
+      const fechaSieteDias = new Date(fechaMant);
+      fechaSieteDias.setDate(fechaSieteDias.getDate() - 7);
+
+      notifsExistentes.push(
+        {
+          id: `notif_${Date.now()}_${i}_${Math.random().toString(36).substr(2, 9)}`,
+          userId: usuarioId,
+          tipo: 'mantenimiento_7dias',
+          titulo: 'Recordatorio de Mantenimiento',
+          mensaje: `Quedan 7 días para el mantenimiento de: ${vehiculoNombre}`,
+          datos: {
+            mantenimientoId: mant.id,
+            vehiculo: vehiculoNombre,
+            fecha: fechaMant.toISOString(),
+            productos: mant.productos,
+            diasRestantes: 7
+          },
+          leida: false,
+          fecha: fechaSieteDias.toISOString(),
+          fechaProgramada: fechaSieteDias.toISOString(),
+          accion: 'ver_productos'
+        },
+        {
+          id: `notif_${Date.now() + 1}_${i}_${Math.random().toString(36).substr(2, 9)}`,
+          userId: usuarioId,
+          tipo: 'mantenimiento_hoy',
+          titulo: '¡Hoy es el día del mantenimiento!',
+          mensaje: `Hoy es el día de mantenimiento de: ${vehiculoNombre}. Si aún no te has abastecido, hazlo ahora.`,
+          datos: {
+            mantenimientoId: mant.id,
+            vehiculo: vehiculoNombre,
+            fecha: fechaMant.toISOString(),
+            productos: mant.productos
+          },
+          leida: false,
+          fecha: fechaMant.toISOString(),
+          fechaProgramada: fechaMant.toISOString(),
+          accion: 'agregar_carrito'
+        }
+      );
+    }
+
+    localStorage.setItem(keyNotif, JSON.stringify(notifsExistentes));
+  }
+  
+  // Iniciar verificación de notificaciones
+  verificarNotificacionesProgramadas();
+}
+
+// Cerrar modal al hacer clic fuera de él
+document.addEventListener('click', function(event) {
+  const modal = document.getElementById('modal-mantenimiento');
+  if (event.target === modal) {
+    cerrarModalMantenimiento();
+  }
+  
+  const modalSeleccion = document.getElementById('modal-seleccion-vehiculos');
+  if (event.target === modalSeleccion) {
+    cerrarModalSeleccionVehiculos();
+  }
+  
+  const modalProgramacion = document.getElementById('modal-programacion-mantenimiento');
+  if (event.target === modalProgramacion) {
+    cerrarModalProgramacion();
+  }
+});
+
+// Cerrar dropdown de sistemas al hacer clic fuera
+document.addEventListener('click', function(event) {
+  const dropdown = document.getElementById('dropdown-sistemas');
+  const lista = document.getElementById('lista-sistemas-dropdown');
+  
+  if (dropdown && lista && !dropdown.contains(event.target) && !lista.contains(event.target)) {
+    lista.style.display = 'none';
+  }
+});
+
+// ============================================================
+//  VERIFICACIÓN DE NOTIFICACIONES PROGRAMADAS
+// ============================================================
+
+function verificarNotificacionesProgramadas() {
+  const usuarioId = localStorage.getItem('usuarioID');
+  if (!usuarioId) return;
+  
+  const keyNotif = `notificaciones_programadas_${usuarioId}`;
+  const notifsProgramadas = JSON.parse(localStorage.getItem(keyNotif) || '[]');
+  
+  const ahora = new Date();
+  const notificacionesParaEnviar = [];
+  const notificacionesRestantes = [];
+  
+  notifsProgramadas.forEach(notif => {
+    const fechaProgramada = new Date(notif.fechaProgramada);
+    
+    // Si la fecha programada ya pasó o es hoy, enviar la notificación
+    if (fechaProgramada <= ahora) {
+      notificacionesParaEnviar.push(notif);
+    } else {
+      notificacionesRestantes.push(notif);
+    }
+  });
+  
+  // Enviar notificaciones que corresponden
+  if (notificacionesParaEnviar.length > 0) {
+    enviarNotificacionesMantenimiento(notificacionesParaEnviar);
+    
+    // Actualizar lista de notificaciones programadas
+    localStorage.setItem(keyNotif, JSON.stringify(notificacionesRestantes));
+  }
+}
+
+async function enviarNotificacionesMantenimiento(notificaciones) {
+  for (const notif of notificaciones) {
+    try {
+      // Intentar enviar al servidor
+      await fetch('/api/notificaciones', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(notif)
+      });
+    } catch (error) {
+      console.error('Error enviando notificación:', error);
+      // Si falla el servidor, guardar en localStorage como respaldo
+      const usuarioId = localStorage.getItem('usuarioID');
+      const keyNotifLocal = `notificaciones_${usuarioId}`;
+      const notifsLocales = JSON.parse(localStorage.getItem(keyNotifLocal) || '[]');
+      notifsLocales.unshift(notif);
+      localStorage.setItem(keyNotifLocal, JSON.stringify(notifsLocales));
+    }
+  }
+  
+  // Recargar notificaciones si el manager existe
+  if (window.notificacionesManager) {
+    window.notificacionesManager.cargarNotificaciones();
+  }
+}
+
+// Verificar notificaciones cada hora
+setInterval(verificarNotificacionesProgramadas, 60 * 60 * 1000);
+
+// Verificar al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+  verificarNotificacionesProgramadas();
+});
+</script>
+
+<!-- Modal: Mis Mantenimientos -->
+<div id="modal-mis-mantenimientos" class="flota-modal" style="display: none;" onclick="if(event.target.id === 'modal-mis-mantenimientos') cerrarModalMisMantenimientos()">
+  <div class="flota-modal-content" style="width: 95%; max-width: 1400px; max-height: 90vh; display: flex; flex-direction: column;">
+    <div class="flota-modal-header">
+      <span class="modal-flota-title">Mis Mantenimientos</span>
+      <span class="close-flota-btn" onclick="cerrarModalMisMantenimientos()" style="cursor:pointer;">&times;</span>
+    </div>
+    <div class="flota-modal-body" style="padding: 24px; flex: 1; overflow: hidden; display: flex; flex-direction: column;">
+      <p style="color:#666;margin:0 0 16px 0;font-size:14px;">Revisa y gestiona tus mantenimientos programados, pasados y cancelados.</p>
+
+      <div class="tabs" style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+        <button class="btn-primary" id="tab-proximos" onclick="cambiarTabMantenimientos('proximos')" style="position:relative;padding-right:32px;">
+          Próximos
+          <span id="count-proximos" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.3);border-radius:12px;padding:2px 8px;font-size:12px;font-weight:700;">0</span>
+        </button>
+        <button class="btn-secondary" id="tab-pasados" onclick="cambiarTabMantenimientos('pasados')" style="position:relative;padding-right:32px;">
+          Pasados
+          <span id="count-pasados" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.1);border-radius:12px;padding:2px 8px;font-size:12px;font-weight:600;">0</span>
+        </button>
+        <button class="btn-secondary" id="tab-cancelados" onclick="cambiarTabMantenimientos('cancelados')" style="position:relative;padding-right:32px;">
+          Cancelados
+          <span id="count-cancelados" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.1);border-radius:12px;padding:2px 8px;font-size:12px;font-weight:600;">0</span>
+        </button>
+      </div>
+
+      <div id="lista-mantenimientos" style="flex:1;overflow-y:auto;overflow-x:auto;padding-right:8px;"></div>
+    </div>
+    <div class="flota-modal-footer" style="display:flex;justify-content:flex-end;gap:8px;padding: 12px 24px;border-top:1px solid #eee;flex-shrink:0;">
+      <button class="btn-secondary" onclick="cerrarModalMisMantenimientos()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Edición de Mantenimiento -->
+<div id="modal-editar-mantenimiento" class="flota-modal" style="display: none;" onclick="if(event.target.id === 'modal-editar-mantenimiento') cerrarModalEditarMantenimiento()">
+  <div class="flota-modal-content" style="width: 95%; max-width: 700px; max-height: 90vh; display: flex; flex-direction: column;">
+    <div class="flota-modal-header">
+      <span class="modal-flota-title">Editar Mantenimiento</span>
+      <span class="close-flota-btn" onclick="cerrarModalEditarMantenimiento()" style="cursor:pointer;">&times;</span>
+    </div>
+    <div class="flota-modal-body" style="padding: 24px; flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
+      
+      <!-- Información del vehículo -->
+      <div id="info-vehiculo-edit" style="background:#f8f9fa;padding:16px;border-radius:12px;margin-bottom:24px;border-left:4px solid #BF1823;">
+        <div style="font-weight:600;color:#252425;font-size:15px;margin-bottom:4px;" id="vehiculo-edit-nombre"></div>
+        <div style="color:#666;font-size:13px;" id="vehiculo-edit-patente"></div>
+      </div>
+
+      <!-- Selector de Fecha -->
+      <div style="margin-bottom:24px;">
+        <label style="display:block;font-weight:600;color:#252425;margin-bottom:8px;font-size:14px;">📅 Fecha de Mantenimiento</label>
+        <input type="date" id="fecha-edit-input" style="width:100%;padding:12px;border:1px solid #dee2e6;border-radius:8px;font-size:14px;font-family:inherit;" />
+        <div style="font-size:12px;color:#666;margin-top:6px;">Selecciona la fecha para el mantenimiento</div>
+      </div>
+
+      <!-- Sistemas -->
+      <div style="margin-bottom:24px;">
+        <label style="display:block;font-weight:600;color:#252425;margin-bottom:12px;font-size:14px;">⚙️ Sistemas</label>
+        <div id="sistemas-edit-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;"></div>
+      </div>
+
+      <!-- Productos -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <label style="font-weight:600;color:#252425;font-size:14px;">📦 Productos</label>
+          <button onclick="abrirAgregarProductos()" style="background:#BF1823;color:white;border:none;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">+ Agregar</button>
+        </div>
+        <div id="productos-edit-container" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
+    </div>
+    <div class="flota-modal-footer" style="display:flex;justify-content:flex-end;gap:8px;padding: 12px 24px;border-top:1px solid #eee;flex-shrink:0;">
+      <button class="btn-secondary" onclick="cerrarModalEditarMantenimiento()">Cancelar</button>
+      <button class="btn-primary" onclick="guardarCambiosMantenimiento()">💾 Guardar Cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Agregar Productos -->
+<div id="modal-agregar-productos" class="flota-modal" style="display: none;" onclick="if(event.target.id === 'modal-agregar-productos') cerrarAgregarProductos()">
+  <div class="flota-modal-content" style="width: 95%; max-width: 600px; max-height: 85vh; display: flex; flex-direction: column;">
+    <div class="flota-modal-header">
+      <span class="modal-flota-title">Agregar Productos</span>
+      <span class="close-flota-btn" onclick="cerrarAgregarProductos()" style="cursor:pointer;">&times;</span>
+    </div>
+    <div class="flota-modal-body" style="padding: 24px; flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
+      <p style="color:#666;margin:0 0 16px 0;font-size:14px;">Selecciona los productos disponibles para este vehículo</p>
+      <div id="productos-disponibles-container" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+    <div class="flota-modal-footer" style="display:flex;justify-content:flex-end;gap:8px;padding: 12px 24px;border-top:1px solid #eee;flex-shrink:0;">
+      <button class="btn-secondary" onclick="cerrarAgregarProductos()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Agregar Sistemas -->
+<div id="modal-agregar-sistemas" class="flota-modal" style="display: none;" onclick="if(event.target.id === 'modal-agregar-sistemas') cerrarAgregarSistemas()">
+  <div class="flota-modal-content" style="width: 95%; max-width: 600px; max-height: 85vh; display: flex; flex-direction: column;">
+    <div class="flota-modal-header">
+      <span class="modal-flota-title">Agregar Sistema</span>
+      <span class="close-flota-btn" onclick="cerrarAgregarSistemas()" style="cursor:pointer;">&times;</span>
+    </div>
+    <div class="flota-modal-body" style="padding: 24px; flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
+      <p style="color:#666;margin:0 0 16px 0;font-size:14px;">Selecciona un sistema disponible para este vehículo</p>
+      <div id="sistemas-disponibles-container" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+    <div class="flota-modal-footer" style="display:flex;justify-content:flex-end;gap:8px;padding: 12px 24px;border-top:1px solid #eee;flex-shrink:0;">
+      <button class="btn-secondary" onclick="cerrarAgregarSistemas()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let estadoTabMantenimientos = 'proximos';
+let mantenimientoEnEdicion = null;
+let productosEnEdicion = [];
+let sistemasEnEdicion = [];
+
+function abrirModalMisMantenimientos() {
+  const modal = document.getElementById('modal-mis-mantenimientos');
+  if (!modal) return; modal.style.display = 'flex';
+  cargarMisMantenimientos();
+}
+function cerrarModalMisMantenimientos() {
+  const modal = document.getElementById('modal-mis-mantenimientos');
+  if (!modal) return; modal.style.display = 'none';
+}
+function cambiarTabMantenimientos(tab) {
+  estadoTabMantenimientos = tab;
+  // Resetear todos a secundario
+  document.getElementById('tab-proximos').className = 'btn-secondary';
+  document.getElementById('tab-pasados').className = 'btn-secondary';
+  document.getElementById('tab-cancelados').className = 'btn-secondary';
+  // Activar el seleccionado como primario
+  if (tab === 'proximos') document.getElementById('tab-proximos').className = 'btn-primary';
+  if (tab === 'pasados') document.getElementById('tab-pasados').className = 'btn-primary';
+  if (tab === 'cancelados') document.getElementById('tab-cancelados').className = 'btn-primary';
+  
+  // Actualizar estilos de los badges
+  const badges = document.querySelectorAll('.tabs span');
+  badges.forEach(badge => {
+    const isActive = badge.parentElement.className === 'btn-primary';
+    badge.style.background = isActive ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.1)';
+  });
+  
+  cargarMisMantenimientos();
+}
+
+async function cargarMisMantenimientos() {
+  try {
+    const userStr = localStorage.getItem('starclutch_user');
+    if (!userStr) return; const user = JSON.parse(userStr);
+    const res = await fetch(`/api/mantenimientos?userId=${encodeURIComponent(user.id)}`);
+    const data = await res.json();
+    if (!data.ok) throw new Error('Error listando mantenimientos');
+
+    const items = data.items || [];
+    // Clasificar por estado y fecha
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const proximos = items.filter(i => i.status==='programado' && new Date(i.fecha) >= hoy);
+    const pasados = items.filter(i => i.status==='programado' && new Date(i.fecha) < hoy);
+    const cancelados = items.filter(i => i.status==='cancelado');
+
+    // Actualizar contadores
+    document.getElementById('count-proximos').textContent = proximos.length;
+    document.getElementById('count-pasados').textContent = pasados.length;
+    document.getElementById('count-cancelados').textContent = cancelados.length;
+
+    const cont = document.getElementById('lista-mantenimientos');
+    if (!cont) return;
+    let lista = [];
+    if (estadoTabMantenimientos==='proximos') lista = proximos;
+    else if (estadoTabMantenimientos==='pasados') lista = pasados;
+    else lista = cancelados;
+
+    if (lista.length===0) {
+      cont.style.display = 'flex';
+      cont.innerHTML = '<div style="padding:60px 20px;text-align:center;color:#999;width:100%;"><img src="../img/Repara.svg" alt="Sin mantenimientos" style="width:64px;height:64px;margin:0 auto 16px;opacity:0.6;"><div style="font-size:16px;font-weight:500;margin-bottom:8px;">No hay mantenimientos aquí</div><div style="font-size:14px;color:#aaa;">Los mantenimientos ' + (estadoTabMantenimientos==='proximos'?'programados':'de esta categoría') + ' aparecerán en esta sección.</div></div>';
+      return;
+    }
+
+    cont.style.display = 'block';
+    cont.innerHTML = `
+      <table style="width:100%;border-collapse:separate;border-spacing:0;font-size:14px;">
+        <thead>
+          <tr style="background:linear-gradient(135deg,#f8f9fa,#ffffff);border-bottom:2px solid #dee2e6;">
+            <th style="padding:14px 16px;text-align:left;font-weight:600;color:#495057;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #dee2e6;">Vehículo</th>
+            <th style="padding:14px 16px;text-align:left;font-weight:600;color:#495057;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #dee2e6;white-space:nowrap;">Fecha</th>
+            <th style="padding:14px 16px;text-align:left;font-weight:600;color:#495057;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #dee2e6;">Sistemas</th>
+            <th style="padding:14px 16px;text-align:left;font-weight:600;color:#495057;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #dee2e6;">Productos</th>
+            <th style="padding:14px 16px;text-align:center;font-weight:600;color:#495057;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #dee2e6;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${lista.map((item, index) => renderFilaMantenimiento(item, index)).join('')}
+        </tbody>
+      </table>
+    `;
+  } catch (e) {
+    console.error('Error cargando mis mantenimientos', e);
+  }
+}
+
+function renderFilaMantenimiento(i, index) {
+  const vehiculo = `${i.vehiculo?.marca||''} ${i.vehiculo?.modelo||''}`.trim();
+  const patente = i.vehiculo?.patente || 'Sin especificar';
+  
+  const productosHTML = (i.productos||[]).map(p => {
+    const nombre = p.nombre || p.repuesto || '';
+    const marca = p.marca ? ` (${p.marca})` : '';
+    const codigo = p.codSC || p.sku || '';
+    return `<div style="margin-bottom:4px;"><strong>${nombre}</strong>${marca}${codigo ? `<br><span style="color:#999;font-size:12px;">${codigo}</span>` : ''}</div>`;
+  }).join('');
+  
+  const sistemasHTML = (i.sistemas||[]).map(s => 
+    `<span style="display:inline-block;background:linear-gradient(135deg,#f8f9fa,#e9ecef);border:1px solid #dee2e6;border-radius:4px;padding:3px 8px;margin:2px;font-size:11px;font-weight:500;color:#495057;">${s}</span>`
+  ).join('');
+  
+  const fecha = new Date(i.fecha);
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  const diffDias = Math.ceil((fecha - hoy) / (1000 * 60 * 60 * 24));
+  
+  let fechaEstilo = 'background:#f5f5f5;color:#666;';
+  let fechaTexto = fecha.toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' });
+  let fechaIcono = '📅';
+  
+  if (i.status === 'programado') {
+    if (diffDias === 0) {
+      fechaEstilo = 'background:#BF1823;color:white;';
+      fechaTexto = 'Hoy';
+      fechaIcono = '🔔';
+    } else if (diffDias > 0 && diffDias <= 7) {
+      fechaEstilo = 'background:#FF9800;color:white;';
+      fechaTexto = `En ${diffDias} día${diffDias>1?'s':''}`;
+      fechaIcono = '⚠️';
+    } else if (diffDias > 7) {
+      fechaEstilo = 'background:#4CAF50;color:white;';
+      fechaIcono = '✓';
+    }
+  }
+  
+  const puedeEditar = i.status==='programado' && new Date(i.fecha) >= hoy;
+  const puedeCancelar = i.status==='programado' && new Date(i.fecha) >= hoy;
+  const puedeEliminar = i.status==='cancelado';
+  
+  const rowBg = index % 2 === 0 ? '#ffffff' : '#f8f9fa';
+  const borderColor = i.status==='cancelado' ? '#ffcdd2' : '#e9ecef';
+  
+  return `
+    <tr style="background:${rowBg};border-bottom:1px solid ${borderColor};transition:background 0.2s;" onmouseover="this.style.background='#f0f7ff'" onmouseout="this.style.background='${rowBg}'">
+      <td style="padding:16px;border-bottom:1px solid ${borderColor};vertical-align:top;">
+        <div style="font-weight:600;color:#252425;margin-bottom:4px;font-size:15px;">${vehiculo}</div>
+        <div style="color:#666;font-size:13px;">${patente}</div>
+        ${i.status==='cancelado' ? `<div style="margin-top:6px;"><span style="background:#d32f2f;color:white;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;text-transform:uppercase;">Cancelado</span></div>${i.motivoCancelacion ? `<div style="margin-top:8px;padding:8px;background:#ffebee;border-left:3px solid #d32f2f;border-radius:4px;"><div style="font-size:11px;text-transform:uppercase;color:#c62828;font-weight:600;margin-bottom:4px;">Motivo:</div><div style="font-size:13px;color:#666;line-height:1.4;">${i.motivoCancelacion}</div></div>` : ''}` : ''}
+      </td>
+      <td style="padding:16px;border-bottom:1px solid ${borderColor};vertical-align:top;white-space:nowrap;">
+        <div style="${fechaEstilo}padding:8px 12px;border-radius:6px;display:inline-block;font-weight:600;font-size:13px;white-space:nowrap;">
+          ${fechaIcono} ${fechaTexto}
+        </div>
+        <div style="color:#666;font-size:12px;margin-top:6px;">${fecha.toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+      </td>
+      <td style="padding:16px;border-bottom:1px solid ${borderColor};vertical-align:top;">
+        ${sistemasHTML || '<span style="color:#999;font-size:13px;">Sin especificar</span>'}
+      </td>
+      <td style="padding:16px;border-bottom:1px solid ${borderColor};vertical-align:top;max-width:400px;">
+        ${productosHTML || '<span style="color:#999;font-size:13px;">Sin productos</span>'}
+      </td>
+      <td style="padding:16px;border-bottom:1px solid ${borderColor};vertical-align:middle;text-align:center;">
+        <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;">
+          ${puedeEditar ? `<button class="btn-primary" onclick="abrirEditarMantenimiento('${i.id}')" style="font-size:12px;padding:6px 12px;white-space:nowrap;display:flex;align-items:center;gap:6px;">
+            <img src="../img/Editar flota.svg" alt="Editar" style="width:14px;height:14px;filter:brightness(0) invert(1);">
+            Editar
+          </button>` : ''}
+          ${puedeCancelar ? `<button class="btn-secondary" onclick="cancelarMantenimiento('${i.id}')" style="font-size:12px;padding:6px 12px;white-space:nowrap;">Cancelar</button>` : ''}
+          ${puedeEliminar ? `<button onclick="eliminarMantenimiento('${i.id}')" style="background:transparent;border:1px solid #e0e0e0;border-radius:6px;cursor:pointer;padding:6px 10px;transition:all 0.2s;" onmouseover="this.style.background='#ffebee';this.style.borderColor='#ef5350';" onmouseout="this.style.background='transparent';this.style.borderColor='#e0e0e0';"><img src="../img/Delete.svg" alt="Eliminar" style="width:16px;height:16px;vertical-align:middle;"></button>` : ''}
+        </div>
+      </td>
+    </tr>
+  `;
+}
+
+function renderCardMantenimiento(i) {
+  const vehiculo = `${i.vehiculo?.marca||''} ${i.vehiculo?.modelo||''}`.trim();
+  const patente = i.vehiculo?.patente || 'Sin especificar';
+  const productosHTML = (i.productos||[]).map(p => {
+    const nombre = p.nombre || p.repuesto || '';
+    const marca = p.marca ? ` (${p.marca})` : '';
+    const codigo = p.codSC || p.sku || '';
+    return `<div style="display:flex;align-items:start;gap:8px;margin-bottom:6px;">
+      <div style="width:4px;height:4px;background:#BF1823;border-radius:50%;margin-top:8px;flex-shrink:0;"></div>
+      <div style="flex:1;font-size:13px;line-height:1.5;">
+        <span style="color:#252425;font-weight:500;">${nombre}</span>
+        ${marca ? `<span style="color:#888;">${marca}</span>` : ''}
+        ${codigo ? `<div style="color:#999;font-size:12px;margin-top:2px;">${codigo}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+  
+  const sistemasHTML = (i.sistemas||[]).map(s => 
+    `<span style="display:inline-block;background:linear-gradient(135deg,#f8f9fa,#e9ecef);border:1px solid #dee2e6;border-radius:6px;padding:4px 12px;margin:3px 3px 3px 0;font-size:12px;font-weight:500;color:#495057;">${s}</span>`
+  ).join('');
+  
+  const fecha = new Date(i.fecha);
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  const diffDias = Math.ceil((fecha - hoy) / (1000 * 60 * 60 * 24));
+  
+  let fechaEstilo = '';
+  let fechaTexto = fecha.toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' });
+  
+  if (i.status === 'programado') {
+    if (diffDias === 0) {
+      fechaEstilo = 'background:#BF1823;color:white;';
+      fechaTexto = '🔔 Hoy - ' + fechaTexto;
+    } else if (diffDias > 0 && diffDias <= 7) {
+      fechaEstilo = 'background:#FF9800;color:white;';
+      fechaTexto = `⚠️ En ${diffDias} día${diffDias>1?'s':''} - ${fechaTexto}`;
+    } else if (diffDias > 7) {
+      fechaEstilo = 'background:#4CAF50;color:white;';
+    }
+  }
+  
+  const puedeEditar = i.status==='programado' && new Date(i.fecha) >= hoy;
+  const puedeCancelar = i.status==='programado' && new Date(i.fecha) >= hoy;
+  const puedeEliminar = i.status==='cancelado';
+  
+  return `
+    <div style="background:white;border:1px solid ${i.status==='cancelado'?'#ffcdd2':'#e0e0e0'};border-radius:12px;padding:0;overflow:visible;box-shadow:0 2px 8px rgba(0,0,0,0.06);transition:all 0.2s;height:auto;min-height:fit-content;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.12)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'">
+      
+      <!-- Header de la tarjeta -->
+      <div style="background:${i.status==='cancelado'?'#ffebee':'linear-gradient(135deg,#f8f9fa,#ffffff)'};padding:14px 16px;border-bottom:1px solid ${i.status==='cancelado'?'#ffcdd2':'#eee'};">
+        <div style="display:flex;justify-content:space-between;align-items:start;gap:12px;">
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:16px;font-weight:600;color:#252425;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${vehiculo}</div>
+            <div style="font-size:13px;color:#666;font-weight:500;">${patente}</div>
+          </div>
+          ${i.status==='cancelado' ? '<div style="background:#d32f2f;color:white;padding:4px 12px;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase;">Cancelado</div>' : ''}
+        </div>
+      </div>
+      
+      <!-- Fecha -->
+      <div style="padding:12px 16px;${fechaEstilo}${!fechaEstilo?'background:#f5f5f5;color:#666;':''};font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;">
+        ${!fechaEstilo?'📅':''}
+        ${fechaTexto}
+      </div>
+      
+      <!-- Contenido -->
+      <div style="padding:16px;">
+        ${sistemasHTML ? `
+        <div style="margin-bottom:14px;">
+          <div style="font-size:11px;text-transform:uppercase;font-weight:600;color:#888;letter-spacing:0.5px;margin-bottom:8px;">Sistemas</div>
+          <div style="line-height:1.4;">${sistemasHTML}</div>
+        </div>` : ''}
+        
+        ${productosHTML ? `
+        <div>
+          <div style="font-size:11px;text-transform:uppercase;font-weight:600;color:#888;letter-spacing:0.5px;margin-bottom:8px;">Productos</div>
+          <div>${productosHTML}</div>
+        </div>` : ''}
+        
+        ${!productosHTML && !sistemasHTML ? '<div style="color:#999;font-size:13px;text-align:center;padding:20px;">Sin detalles especificados</div>' : ''}
+      </div>
+      
+      <!-- Footer con botones -->
+      ${puedeEditar || puedeCancelar || puedeEliminar ? `
+      <div style="padding:12px 16px;border-top:1px solid #eee;background:#fafafa;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
+        ${puedeEditar ? `<button class="btn-primary" onclick="abrirEditarMantenimiento('${i.id}')" style="font-size:13px;padding:8px 16px;display:flex;align-items:center;gap:8px;">
+          <img src="../img/Editar flota.svg" alt="Editar" style="width:16px;height:16px;filter:brightness(0) invert(1);">
+          Editar
+        </button>` : ''}
+        ${puedeCancelar ? `<button class="btn-secondary" onclick="cancelarMantenimiento('${i.id}')" style="font-size:13px;padding:8px 16px;">Cancelar</button>` : ''}
+        ${puedeEliminar ? `<button onclick="eliminarMantenimiento('${i.id}')" style="background:transparent;border:1px solid #e0e0e0;border-radius:8px;cursor:pointer;padding:8px 12px;transition:all 0.2s;" onmouseover="this.style.background='#ffebee';this.style.borderColor='#ef5350';" onmouseout="this.style.background='transparent';this.style.borderColor='#e0e0e0';"><img src="../img/Delete.svg" alt="Eliminar" style="width:18px;height:18px;vertical-align:middle;"></button>` : ''}
+      </div>` : ''}
+    </div>
+  `;
+}
+
+function abrirEditarMantenimiento(id) {
+  const userStr = localStorage.getItem('starclutch_user');
+  if (!userStr) return;
+  const user = JSON.parse(userStr);
+  
+  fetch(`/api/mantenimientos?userId=${encodeURIComponent(user.id)}`)
+    .then(r => r.json())
+    .then(data => {
+      const mantenimiento = data.items?.find(i => i.id === id);
+      if (!mantenimiento) {
+        alert('Mantenimiento no encontrado');
+        return;
+      }
+      
+      mantenimientoEnEdicion = mantenimiento;
+      productosEnEdicion = JSON.parse(JSON.stringify(mantenimiento.productos || []));
+      sistemasEnEdicion = JSON.parse(JSON.stringify(mantenimiento.sistemas || []));
+      
+      // Llenar información del vehículo
+      const vehiculo = mantenimiento.vehiculo || {};
+      document.getElementById('vehiculo-edit-nombre').textContent = `${vehiculo.marca || ''} ${vehiculo.modelo || ''}`.trim();
+      document.getElementById('vehiculo-edit-patente').textContent = vehiculo.patente || 'Sin especificar';
+      
+      // Llenar fecha
+      document.getElementById('fecha-edit-input').value = mantenimiento.fecha || '';
+      document.getElementById('fecha-edit-input').setAttribute('min', new Date().toISOString().split('T')[0]);
+      
+      // Cargar sistemas disponibles
+      cargarSistemasDisponiblesEdit(vehiculo);
+      
+      // Mostrar productos actuales
+      renderProductosEnEdicion();
+      
+      // Abrir modal
+      document.getElementById('modal-editar-mantenimiento').style.display = 'flex';
+    })
+    .catch(e => console.error('Error cargando mantenimiento:', e));
+}
+
+function cargarSistemasDisponiblesEdit(vehiculo) {
+  fetch('../datosproductos/cruces_vehiculos.json')
+    .then(r => r.json())
+    .then(data => {
+      const marcaNorm = normalizarTexto(vehiculo.marca || '');
+      const modeloNorm = normalizarTexto(vehiculo.modelo || '');
+      
+      const cruce = data.cruces.find(c => 
+        normalizarTexto(c.marca) === marcaNorm && normalizarTexto(c.modelo) === modeloNorm
+      );
+      
+      // Guardar referencia completa al cruce del vehículo
+      window.cruceVehiculoActual = cruce || {};
+      
+      // Renderizar solo los sistemas seleccionados
+      renderSistemasEnEdicion();
+    })
+    .catch(e => console.error('Error cargando sistemas:', e));
+}
+
+function renderSistemasEnEdicion() {
+  const container = document.getElementById('sistemas-edit-container');
+  
+  let html = '';
+  
+  // Mostrar sistemas seleccionados
+  if (sistemasEnEdicion && sistemasEnEdicion.length > 0) {
+    html += sistemasEnEdicion.map((sistema, idx) => `
+      <div style="background:linear-gradient(135deg,#f8f9fa,#ffffff);border:1px solid #BF1823;border-radius:8px;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;transition:all 0.2s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(191,24,35,0.2)'" onmouseout="this.style.boxShadow='none'">
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:600;color:#252425;font-size:14px;">⚙️ ${sistema}</div>
+        </div>
+        <button onclick="eliminarSistemaEdit(${idx})" style="background:transparent;border:1px solid #e0e0e0;border-radius:6px;padding:6px 10px;cursor:pointer;transition:all 0.2s;color:#d32f2f;flex-shrink:0;" onmouseover="this.style.background='#ffebee';this.style.borderColor='#ef5350';" onmouseout="this.style.background='transparent';this.style.borderColor='#e0e0e0';font-weight:600;">✕</button>
+      </div>
+    `).join('');
+  }
+  
+  // Botón + para agregar sistemas disponibles
+  const sistemasDisponibles = Object.keys(window.cruceVehiculoActual?.categorias || {});
+  const sistemasNoAgreagados = sistemasDisponibles.filter(s => !sistemasEnEdicion?.includes(s));
+  
+  if (sistemasNoAgreagados.length > 0) {
+    html += `
+      <button onclick="abrirAgregarSistemas()" style="background:transparent;border:2px dashed #BF1823;border-radius:8px;padding:12px;cursor:pointer;color:#BF1823;font-weight:600;font-size:14px;transition:all 0.2s;" onmouseover="this.style.background='#fff5f5';" onmouseout="this.style.background='transparent';">+ Agregar sistema</button>
+    `;
+  } else if (!sistemasEnEdicion || sistemasEnEdicion.length === 0) {
+    html = '<div style="padding:16px;text-align:center;color:#999;background:#f8f9fa;border-radius:6px;border:1px dashed #dee2e6;font-size:13px;grid-column:1/-1;">No hay sistemas disponibles</div>';
+  }
+  
+  container.innerHTML = html;
+}
+
+function eliminarSistemaEdit(idx) {
+  const sistemaAEliminar = sistemasEnEdicion[idx];
+  const skusDelSistema = window.cruceVehiculoActual?.categorias?.[sistemaAEliminar] || [];
+  const skusDelSistemaSet = new Set(skusDelSistema.map(s => s.sku));
+  
+  // Buscar productos relacionados al sistema por SKU
+  const productosRelacionados = productosEnEdicion.filter(p => 
+    skusDelSistemaSet.has(p.codSC || p.sku)
+  );
+  
+  // Calcular cuántos productos quedarían después de eliminar
+  const productosRestantes = productosEnEdicion.filter(p => !skusDelSistemaSet.has(p.codSC || p.sku));
+  
+  let mensaje = `🗑️ Eliminar sistema: "${sistemaAEliminar}"?`;
+  
+  if (productosRelacionados.length > 0) {
+    mensaje += `\n\n📦 Se eliminarán ${productosRelacionados.length} producto${productosRelacionados.length > 1 ? 's' : ''}:\n`;
+    mensaje += productosRelacionados.map(p => `  • ${p.nombre || p.repuesto}`).join('\n');
+  }
+  
+  // Si no hay productos restantes, avisar que se eliminará todo
+  if (productosRestantes.length === 0) {
+    mensaje += `\n\n⚠️ ATENCIÓN: Al eliminar este sistema, no habrá productos en el mantenimiento.\n\n`;
+    mensaje += `❌ Se eliminará COMPLETAMENTE el mantenimiento de este vehículo\n`;
+    mensaje += `   porque no tendrá ningún producto asociado.\n\n`;
+    mensaje += `¿Continuar?`;
+  }
+  
+  if (confirm(mensaje)) {
+    // Eliminar el sistema
+    sistemasEnEdicion.splice(idx, 1);
+    
+    // Eliminar productos relacionados
+    if (productosRelacionados.length > 0) {
+      productosEnEdicion = productosEnEdicion.filter(p => !productosRelacionados.includes(p));
+      renderProductosEnEdicion();
+    }
+    
+    renderSistemasEnEdicion();
+  }
+}
+
+function renderProductosEnEdicion() {
+  const container = document.getElementById('productos-edit-container');
+  
+  if (!productosEnEdicion || productosEnEdicion.length === 0) {
+    container.innerHTML = '<div style="padding:16px;text-align:center;color:#999;background:#f8f9fa;border-radius:6px;border:1px dashed #dee2e6;font-size:13px;">No hay productos agregados</div>';
+    return;
+  }
+  
+  container.innerHTML = productosEnEdicion.map((p, idx) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f8f9fa;border-radius:8px;border:1px solid #dee2e6;">
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:600;color:#252425;font-size:14px;">${p.nombre || p.repuesto || 'Sin nombre'}</div>
+        <div style="font-size:12px;color:#666;margin-top:2px;">${p.marca ? `${p.marca} - ` : ''}${p.codSC || p.sku || ''}</div>
+      </div>
+      <button onclick="quitarProductoEdit(${idx})" style="background:transparent;border:1px solid #e0e0e0;border-radius:6px;padding:6px 10px;cursor:pointer;transition:all 0.2s;color:#d32f2f;" onmouseover="this.style.background='#ffebee';this.style.borderColor='#ef5350';" onmouseout="this.style.background='transparent';this.style.borderColor='#e0e0e0';">✕</button>
+    </div>
+  `).join('');
+}
+
+function quitarProductoEdit(idx) {
+  productosEnEdicion.splice(idx, 1);
+  renderProductosEnEdicion();
+}
+
+function abrirAgregarProductos() {
+  const vehiculo = mantenimientoEnEdicion.vehiculo || {};
+  
+  fetch('../datosproductos/cruces_vehiculos.json')
+    .then(r => r.json())
+    .then(data => {
+      const marcaNorm = normalizarTexto(vehiculo.marca || '');
+      const modeloNorm = normalizarTexto(vehiculo.modelo || '');
+      
+      const cruce = data.cruces.find(c => 
+        normalizarTexto(c.marca) === marcaNorm && normalizarTexto(c.modelo) === modeloNorm
+      );
+      
+      if (!cruce || !cruce.productos) {
+        alert('No hay productos disponibles para este vehículo');
+        return;
+      }
+      
+      const container = document.getElementById('productos-disponibles-container');
+      container.innerHTML = cruce.productos.map(p => {
+        const isSelected = productosEnEdicion.some(ep => (ep.codSC || ep.sku) === (p.codSC || p.sku));
+        return `
+          <label style="display:flex;align-items:start;gap:12px;padding:12px;background:${isSelected ? '#f0f7ff' : '#f8f9fa'};border-radius:8px;border:1px solid ${isSelected ? '#BF1823' : '#dee2e6'};cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='#f0f7ff'" onmouseout="this.style.background='${isSelected ? '#f0f7ff' : '#f8f9fa'}'">
+            <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="actualizarProductosSeleccionados(this, ${JSON.stringify(p).replace(/"/g, '&quot;')})" style="width:18px;height:18px;margin-top:2px;cursor:pointer;accent-color:#BF1823;" />
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:600;color:#252425;font-size:14px;">${p.nombre || p.repuesto}</div>
+              <div style="font-size:12px;color:#666;margin-top:4px;">${p.marca || ''}${p.marca && (p.codSC || p.sku) ? ' - ' : ''}${p.codSC || p.sku || ''}</div>
+            </div>
+          </label>
+        `;
+      }).join('');
+      
+      document.getElementById('modal-agregar-productos').style.display = 'flex';
+    })
+    .catch(e => console.error('Error cargando productos:', e));
+}
+
+function actualizarProductosSeleccionados(checkbox, producto) {
+  if (checkbox.checked) {
+    if (!productosEnEdicion.some(p => (p.codSC || p.sku) === (producto.codSC || producto.sku))) {
+      productosEnEdicion.push(producto);
+    }
+  } else {
+    productosEnEdicion = productosEnEdicion.filter(p => (p.codSC || p.sku) !== (producto.codSC || producto.sku));
+  }
+  renderProductosEnEdicion();
+}
+
+function cerrarAgregarProductos() {
+  document.getElementById('modal-agregar-productos').style.display = 'none';
+}
+
+function abrirAgregarSistemas() {
+  const sistemasDisponibles = Object.keys(window.cruceVehiculoActual?.categorias || {});
+  const sistemasNoAgregados = sistemasDisponibles.filter(s => !sistemasEnEdicion?.includes(s));
+  
+  const container = document.getElementById('sistemas-disponibles-container');
+  container.innerHTML = sistemasNoAgregados.map(sistema => {
+    // Obtener los SKUs del sistema
+    const skusDelSistema = window.cruceVehiculoActual?.categorias?.[sistema] || [];
+    
+    return `
+      <button onclick="agregarSistemaEdit('${sistema}')" style="background:#f8f9fa;border:1px solid #dee2e6;border-radius:8px;padding:12px;cursor:pointer;transition:all 0.2s;text-align:left;font-weight:600;color:#252425;font-size:14px;" onmouseover="this.style.background='#f0f7ff';this.style.borderColor='#BF1823';" onmouseout="this.style.background='#f8f9fa';this.style.borderColor='#dee2e6';">
+        ⚙️ ${sistema} <span style="display:block;font-size:12px;font-weight:400;color:#666;margin-top:4px;">${skusDelSistema.length} producto${skusDelSistema.length > 1 ? 's' : ''}</span>
+      </button>
+    `;
+  }).join('');
+  
+  document.getElementById('modal-agregar-sistemas').style.display = 'flex';
+}
+
+function cerrarAgregarSistemas() {
+  document.getElementById('modal-agregar-sistemas').style.display = 'none';
+}
+
+function agregarSistemaEdit(nombreSistema) {
+  // Agregar el sistema a sistemasEnEdicion
+  if (!sistemasEnEdicion.includes(nombreSistema)) {
+    sistemasEnEdicion.push(nombreSistema);
+  }
+  
+  // Obtener los SKUs del sistema
+  const skusDelSistema = window.cruceVehiculoActual?.categorias?.[nombreSistema] || [];
+  const skusSet = new Set(skusDelSistema.map(s => s.sku));
+  
+  // Cargar la base de datos de productos
+  fetch('../datosproductos/productos_db.json')
+    .then(r => r.json())
+    .then(productosDb => {
+      // Encontrar todos los productos que coincidan con los SKUs del sistema
+      const productosDelSistema = productosDb.filter(p => skusSet.has(p.codSC || p.sku));
+      
+      // Agregar los productos que no estén ya en productosEnEdicion
+      productosDelSistema.forEach(p => {
+        if (!productosEnEdicion.some(ep => (ep.codSC || ep.sku) === (p.codSC || p.sku))) {
+          productosEnEdicion.push(p);
+        }
+      });
+      
+      // Actualizar las vistas
+      renderSistemasEnEdicion();
+      renderProductosEnEdicion();
+      
+      // Cerrar la modal
+      cerrarAgregarSistemas();
+    })
+    .catch(e => {
+      console.error('Error cargando productos:', e);
+      // Aun así, mostrar el sistema agregado aunque no se encuentren los productos
+      renderSistemasEnEdicion();
+      renderProductosEnEdicion();
+      cerrarAgregarSistemas();
+    });
+}
+
+function guardarCambiosMantenimiento() {
+  if (!mantenimientoEnEdicion) return;
+  
+  const nuevaFecha = document.getElementById('fecha-edit-input').value;
+  if (!nuevaFecha) {
+    alert('Por favor selecciona una fecha');
+    return;
+  }
+  
+  if (productosEnEdicion.length === 0) {
+    alert('Debes agregar al menos un producto');
+    return;
+  }
+  
+  fetch(`/api/mantenimientos/${encodeURIComponent(mantenimientoEnEdicion.id)}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      fecha: nuevaFecha,
+      productos: productosEnEdicion,
+      sistemas: sistemasEnEdicion
+    })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.ok) {
+      alert('✓ Mantenimiento actualizado correctamente');
+      cerrarModalEditarMantenimiento();
+      cargarMisMantenimientos();
+    } else {
+      alert('Error actualizando mantenimiento');
+    }
+  })
+  .catch(e => {
+    console.error('Error:', e);
+    alert('Error al guardar los cambios');
+  });
+}
+
+function cerrarModalEditarMantenimiento() {
+  document.getElementById('modal-editar-mantenimiento').style.display = 'none';
+  mantenimientoEnEdicion = null;
+  productosEnEdicion = [];
+  sistemasEnEdicion = [];
+}
+
+function cancelarMantenimiento(id) {
+  const motivo = prompt('Motivo de cancelación (opcional):') || '';
+  fetch(`/api/mantenimientos/${encodeURIComponent(id)}/cancel`, {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ motivo })
+  }).then(r=>r.json()).then(d=>{
+    if (d.ok) { 
+      alert('Mantenimiento cancelado'); 
+      cambiarTabMantenimientos('cancelados');
+    }
+    else { alert('Error cancelando mantenimiento'); }
+  }).catch(e=>console.error('Error cancelando', e));
+}
+
+function eliminarMantenimiento(id) {
+  if (!confirm('¿Estás seguro de eliminar permanentemente este mantenimiento cancelado?')) return;
+  fetch(`/api/mantenimientos/${encodeURIComponent(id)}`, {
+    method:'DELETE'
+  }).then(r=>r.json()).then(d=>{
+    if (d.ok) { alert('Mantenimiento eliminado'); cargarMisMantenimientos(); }
+    else { alert('Error eliminando mantenimiento'); }
+  }).catch(e=>console.error('Error eliminando', e));
+}
+
+// ========================================
+// FUNCIONES PARA MODAL DE CARRUSEL POR MARCA/MODELO
+// ========================================
+
+let estadoCarruselModal = {
+  indice: 0,
+  vehiculos: [],
+  carouselWrapper: null
+};
+
+function abrirModalCarruselModelo(grupo, imgMarca, imgModelo) {
+  const modal = document.getElementById('modal-carousel-modelo');
+  if (!modal) return;
+
+  // Configurar datos del modal
+  document.getElementById('modal-logo-marca').src = imgMarca;
+  document.getElementById('modal-titulo-marca').textContent = grupo.marca;
+  document.getElementById('modal-info-modelo').textContent = `${grupo.modelo} (${grupo.vehiculos.length} vehículos)`;
+
+  // Preparar vehículos con datos de imagen
+  const vehiculosConImagenes = grupo.vehiculos.map(v => {
+    const imgModelo = typeof rutaModelo === 'function' ? rutaModelo(v.tipo, v.marca, v.modelo) : "../vehiculosexpertos/default.png";
+    const imgMarca = obtenerLogoMarcaInteligente(v.marca);
+    return { ...v, imagen: imgModelo, logo: imgMarca };
+  });
+
+  estadoCarruselModal.vehiculos = vehiculosConImagenes;
+  estadoCarruselModal.indice = 0;
+  estadoCarruselModal.carouselWrapper = null;
+
+  // Renderizar carrusel
+  renderizarCarruselModal();
+
+  // Mostrar modal
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  // Inicializar controles
+  inicializarControlesCarruselModal();
+}
+
+function renderizarCarruselModal() {
+  const track = document.getElementById('modal-carousel-track');
+  if (!track) return;
+
+  track.innerHTML = '';
+
+  estadoCarruselModal.vehiculos.forEach((v, idx) => {
+    const card = document.createElement('div');
+    card.className = 'vehicle-card';
+    card.dataset.vehiculoId = v.id;
+
+    card.innerHTML = `
+      <div class="vehicle-header">
+        <p class="vehicle-model">${v.modelo || v.tipo || ''}</p>
+        <img src="${v.logo}" alt="${v.marca || ''}" class="vehicle-brand">
+      </div>
+      <img src="${v.imagen}" alt="Vehículo" class="vehicle-img">
+      <p class="model">
+        <span class="patente-text">${v.patente || ''}</span>
+        <span class="conductor-text">${v.conductor ? `(${v.conductor})` : ""}</span>
+      </p>
+    `;
+
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', async () => {
+      const datosParaDetalle = {
+        ...v,
+        imagen: v.imagen,
+        logoUrl: v.logo
+      };
+      await saveVehiculoDetalleForCurrentUser(datosParaDetalle);
+      window.location.href = `producto.html?id=${encodeURIComponent(v.id)}`;
+    });
+
+    track.appendChild(card);
+  });
+
+  // Aplicar transformación
+  actualizarPosicionCarruselModal();
+}
+
+function inicializarControlesCarruselModal() {
+  const modal = document.getElementById('modal-carousel-modelo');
+  const btns = modal.querySelectorAll('.carousel-btn');
+  
+  btns.forEach((btn, idx) => {
+    btn.removeEventListener('click', null);
+    if (idx === 0) {
+      btn.addEventListener('click', () => moverCarruselModal(-1));
+    } else {
+      btn.addEventListener('click', () => moverCarruselModal(1));
+    }
+  });
+}
+
+function moverCarruselModal(direccion) {
+  const cantidad = estadoCarruselModal.vehiculos.length;
+  if (cantidad === 0) return;
+
+  estadoCarruselModal.indice = (estadoCarruselModal.indice + direccion + cantidad) % cantidad;
+  actualizarPosicionCarruselModal();
+}
+
+function actualizarPosicionCarruselModal() {
+  const track = document.getElementById('modal-carousel-track');
+  if (!track) return;
+
+  const cards = track.querySelectorAll('.vehicle-card');
+  const cardWidth = cards[0]?.offsetWidth || 240;
+  const gapSize = 16;
+  const desplazamiento = -(estadoCarruselModal.indice * (cardWidth + gapSize));
+
+  track.style.transform = `translateX(${desplazamiento}px)`;
+}
+
+function cerrarModalCarruselModelo() {
+  const modal = document.getElementById('modal-carousel-modelo');
+  if (modal) {
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    estadoCarruselModal = { indice: 0, vehiculos: [], carouselWrapper: null };
+  }
+}
+
+// Cerrar modal al hacer click en el fondo
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('modal-carousel-modelo');
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        cerrarModalCarruselModelo();
+      }
+    });
+  }
+});
+
+// Cerrar con tecla ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    cerrarModalCarruselModelo();
+  }
+});
+</script>
+
+</body>
+</html>
+
+
