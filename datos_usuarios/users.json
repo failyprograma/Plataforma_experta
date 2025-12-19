@@ -220,11 +220,98 @@
           "descuento": 22,
           "cantidad": 1,
           "stock": 1
+        },
+        {
+          "id": "prod_1765419610363_qz6tbh6y5",
+          "sku": "KITTOY400AR",
+          "skuCliente": "",
+          "nombre": "Kit de embrague",
+          "marca": "ALLIANCE",
+          "imagen": "/uploads/productos/prod-1765419610299-523187208.png",
+          "precio": 105042,
+          "precioOriginal": 105042,
+          "descuento": 0,
+          "cantidad": 1,
+          "stock": 12
+        },
+        {
+          "id": "prod_1765419610363_q3528yidl",
+          "sku": "PT5280HT",
+          "skuCliente": "",
+          "nombre": "Pastillas de freno",
+          "marca": "HTECH",
+          "imagen": "/uploads/productos/prod-1765419610324-992056578.png",
+          "precio": 9916,
+          "precioOriginal": 9916,
+          "descuento": 0,
+          "cantidad": 1,
+          "stock": 1
+        },
+        {
+          "id": "prod_1765420203665_ncymbdv41",
+          "sku": "FR5280HT",
+          "skuCliente": "",
+          "nombre": "Disco de freno",
+          "marca": "FRASLE",
+          "imagen": "/uploads/productos/prod-1765420203631-819973523.png",
+          "precio": 18067,
+          "precioOriginal": 18067,
+          "descuento": 0,
+          "cantidad": 1,
+          "stock": 1
+        },
+        {
+          "id": "prod_1765420389030_dc1gw6u2k",
+          "sku": "PAT327T",
+          "skuCliente": "",
+          "nombre": "Patines",
+          "marca": "FRASLE",
+          "imagen": "/uploads/productos/prod-1765420389008-607421544.png",
+          "precio": 11261,
+          "precioOriginal": 11261,
+          "descuento": 0,
+          "cantidad": 1,
+          "stock": 1
+        },
+        {
+          "id": "prod_1765420773242_yg3nqny3z",
+          "sku": "TAM-327F",
+          "skuCliente": "",
+          "nombre": "Tambor de freno",
+          "marca": "FRASLE",
+          "imagen": "/uploads/productos/prod-1765420773237-184101770.png",
+          "precio": 26471,
+          "precioOriginal": 26471,
+          "descuento": 0,
+          "cantidad": 1,
+          "stock": 1
+        },
+        {
+          "id": "prod_1765420956576_ixym4emub",
+          "sku": "TF3270HT",
+          "skuCliente": "",
+          "nombre": "Tambor de freno",
+          "marca": "HTECH",
+          "imagen": "/uploads/productos/prod-1765420956473-940705435.png",
+          "precio": 22983,
+          "precioOriginal": 22983,
+          "descuento": 0,
+          "cantidad": 1,
+          "stock": 1
         }
       ],
-      "ultimaActualizacion": "2025-12-18T17:08:13.560Z"
+      "ultimaActualizacion": "2025-12-19T18:39:49.018Z"
     },
     "ordenesCompraEnviadas": 1,
-    "cotizacionesEnviadas": 13
+    "cotizacionesEnviadas": 14,
+    "cotizacionSkus": [
+      "PAS2379",
+      "KITTOY400AR",
+      "PT5280HT",
+      "FR5280HT",
+      "PAT327T",
+      "TAM-327F",
+      "TF3270HT"
+    ]
   }
 ]

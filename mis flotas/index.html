@@ -847,13 +847,61 @@
 
 
 
-<button id="btn-filtrar-vehiculos" class="btn-text">
+<button id="btn-filtrar-grupos" class="btn-text">
   Filtrar <img src="../img/Filtros.svg" alt="Filtros">
 </button>
 
 
           </div>
         </div>
+
+        <!-- PANEL LATERAL DE FILTROS -->
+        <div id="overlay-filtros" class="overlay" aria-hidden="true"></div>
+        <aside id="panel-filtros" class="filtros-panel" aria-hidden="true" role="dialog" aria-label="Filtros de vehículos">
+          <div class="filtros-header-container">
+            <div class="filtros-header">
+              <h2>Filtros</h2>
+              <button class="close-filtros" id="btn-cerrar-filtros" aria-label="Cerrar filtros">×</button>
+            </div>
+          </div>
+
+          <div class="filtros-main">
+            <div id="filtros-tags" class="filtros-tags" aria-live="polite"></div>
+
+            <div class="filtros-content">
+              <!-- Tipo de vehículo -->
+              <div class="filtros-section">
+                <button class="section-toggle" type="button" aria-expanded="true">
+                  Tipo de vehículo <span class="arrow">▾</span>
+                </button>
+                <div class="section-content filtros-scroll" id="contenedor-filtro-tipo"></div>
+              </div>
+
+              <!-- Marca -->
+              <div class="filtros-section">
+                <button class="section-toggle" type="button" aria-expanded="true">
+                  Marca <span class="arrow">▾</span>
+                </button>
+                <div class="section-content filtros-scroll" id="contenedor-filtro-marca"></div>
+              </div>
+
+              <!-- Modelo -->
+              <div class="filtros-section">
+                <button class="section-toggle" type="button" aria-expanded="true">
+                  Modelo <span class="arrow">▾</span>
+                </button>
+                <div class="section-content filtros-scroll" id="contenedor-filtro-modelo"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filtros-footer-container">
+            <div style="display:flex; gap:8px;">
+              <button id="btn-limpiar-filtros" class="aplicar-filtros" style="background:#f1f1f1; color:#333;">Limpiar</button>
+              <button id="btn-aplicar-filtros" class="aplicar-filtros">Aplicar filtros</button>
+            </div>
+          </div>
+        </aside>
 
         <!-- SECCIÓN DE TARJETAS AGRUPADAS POR MARCA/MODELO -->
         <section class="main-grouped-section">
@@ -934,6 +982,19 @@
     <ul class="carousel-indicators"></ul>
   </div>
 </section>
+
+ <!-- CARRUSEL: REPUESTOS SEGÚN TUS COTIZACIONES -->
+ <section class="seccion-recomendados-detalle seccion-cotizados" style="margin-top: 24px;">
+   <h3>Repuestos según tus cotizaciones</h3>
+   <div class="carrusel-contenedor-detalle">
+     <button class="btn-nav-detalle prev" aria-label="Anterior">‹</button>
+     <div class="viewport-detalle">
+       <div class="track-detalle" id="track-cotizados"></div>
+     </div>
+     <button class="btn-nav-detalle next" aria-label="Siguiente">›</button>
+   </div>
+   <div id="cotizados-empty" style="display:none; padding: 40px; text-align:center; color:#666; background:#f8f9fa; border-radius:12px;">Aún no cotizas productos</div>
+ </section>
 
 <!-- Modal Mantenimiento -->
 <div id="modal-mantenimiento" class="flota-modal" style="display: none; z-index: 99999;">
@@ -1229,6 +1290,244 @@ document.addEventListener('keydown', (e) => {
     }
   }
 });
+
+// ========================================
+// CARRUSEL: REPUESTOS SEGÚN TUS COTIZACIONES
+// ========================================
+document.addEventListener('DOMContentLoaded', () => {
+  const trackCot = document.getElementById('track-cotizados');
+  if (!trackCot) return;
+
+  initCarruselCotizados();
+});
+
+async function initCarruselCotizados() {
+  const contenedor = document.querySelector('.seccion-cotizados .carrusel-contenedor-detalle');
+  const emptyState = document.getElementById('cotizados-empty');
+  const track = document.getElementById('track-cotizados');
+  const prevBtn = document.querySelector('.seccion-cotizados .btn-nav-detalle.prev');
+  const nextBtn = document.querySelector('.seccion-cotizados .btn-nav-detalle.next');
+  const viewport = document.querySelector('.seccion-cotizados .viewport-detalle');
+
+  if (!contenedor || !emptyState || !track || !viewport) return;
+
+  const userId = obtenerUserIdLocal();
+  if (!userId) {
+    contenedor.style.display = 'none';
+    emptyState.style.display = 'block';
+    return;
+  }
+
+  try {
+    const [respUser, respProductos] = await Promise.all([
+      fetch(`/api/obtener-usuario?userId=${encodeURIComponent(userId)}`),
+      fetch('../datosproductos/productos_db.json')
+    ]);
+
+    let cotSkus = [];
+    if (respUser.ok) {
+      const jUser = await respUser.json();
+      if (jUser && jUser.ok && jUser.user) {
+        const listaSkus = Array.isArray(jUser.user.cotizacionSkus) ? jUser.user.cotizacionSkus : [];
+        cotSkus = listaSkus.map(s => normalizarClave(s));
+      }
+    }
+
+    if (cotSkus.length === 0) {
+      contenedor.style.display = 'none';
+      emptyState.style.display = 'block';
+      return;
+    }
+
+    const productosData = await respProductos.json();
+
+    // Mapear SKUs a productos_db.json
+    const mapaPorSku = new Map();
+    (productosData || []).forEach(p => {
+      const claves = [p.codSC, p.codStarClutch, p.sku, p.codCliente].filter(Boolean).map(normalizarClave);
+      claves.forEach(k => { if (k) mapaPorSku.set(k, p); });
+    });
+
+    // Deduplicar según orden en cotSkus y ordenar por frecuencia si existe conteo
+    const conteos = obtenerConteosCotizacion(respUser);
+    const unicos = [];
+    const seen = new Set();
+    cotSkus.forEach(k => {
+      if (!seen.has(k)) { seen.add(k); unicos.push(k); }
+    });
+
+    // Construir lista de productos existentes
+    let productosCotizados = unicos
+      .map(k => mapaPorSku.get(k))
+      .filter(Boolean);
+
+    // Ordenar por conteo descendente si existe, sino por orden de aparición
+    if (conteos) {
+      productosCotizados.sort((a, b) => {
+        const ka = normalizarClave(a.codSC || a.codStarClutch || a.sku || a.codCliente || '');
+        const kb = normalizarClave(b.codSC || b.codStarClutch || b.sku || b.codCliente || '');
+        const ca = conteos[ka] || 0;
+        const cb = conteos[kb] || 0;
+        return cb - ca;
+      });
+    }
+
+    // Limitar a máximo 20 productos más cotizados
+    productosCotizados = productosCotizados.slice(0, 20);
+
+    if (productosCotizados.length === 0) {
+      contenedor.style.display = 'none';
+      emptyState.style.display = 'block';
+      return;
+    }
+
+    // Renderizar tarjetas en páginas (4 por página en desktop, 1 en mobile)
+    renderizarCotizadosCards(productosCotizados, track);
+    inicializarNavegacionCotizados(track, viewport, prevBtn, nextBtn);
+  } catch (e) {
+    console.error('Error cargando cotizados:', e);
+    contenedor.style.display = 'none';
+    emptyState.style.display = 'block';
+  }
+}
+
+function obtenerUserIdLocal() {
+  try {
+    const currentUser = JSON.parse(localStorage.getItem('starclutch_user') || 'null');
+    return currentUser && currentUser.id ? currentUser.id : null;
+  } catch { return null; }
+}
+
+function normalizarClave(t) {
+  return (t || '').toString().toLowerCase().trim();
+}
+
+function obtenerConteosCotizacion(respUser) {
+  try {
+    // Si el backend expone conteos (p.ej. user.cotizacionSkuCounts), úsalos
+    if (respUser && respUser.ok) {
+      // Nota: respUser aquí es Response; no tenemos json en esta función
+      // Esta función es invocada con el objeto Response original para evitar dependencias, retornar null por defecto
+      return null;
+    }
+  } catch {}
+  return null;
+}
+
+function renderizarCotizadosCards(productos, track) {
+  track.innerHTML = '';
+  
+  productos.forEach(producto => {
+    const card = crearCardProductoDetalle(producto);
+    track.appendChild(card);
+  });
+}
+
+function renderizarPaginaCotizados(pagina, track) {
+  // Esta función ya no se usa - se eliminará
+}
+
+function crearCardProductoDetalle(producto) {
+  const tieneDescuento = producto.descuento && producto.descuento > 0;
+  const precioBruto = parseFloat(producto.precio || 0);
+  const precioOriginalNeto = precioBruto > 0 ? Math.round(precioBruto / 1.19) : 0;
+  const precioFinalNeto = tieneDescuento ? Math.round(precioOriginalNeto * (1 - (producto.descuento / 100))) : precioOriginalNeto;
+  const marca = (producto.marca || '').toUpperCase();
+  const marcaLogo = `../marcasproductos/${marca}.png`;
+  const tieneImagen = producto.imagenes && producto.imagenes.length > 0;
+  const primeraImagen = tieneImagen ? producto.imagenes[0] : null;
+  const codCliente = producto.codCliente || '';
+  const codSC = producto.codSC || producto.codStarClutch || producto.sku || '';
+  const skuVisible = codCliente ? codCliente : codSC;
+  const skuInvisible = codCliente ? codSC : '';
+
+  const card = document.createElement('div');
+  card.className = 'card-producto-detalle';
+  card.style.cursor = 'pointer';
+  card.innerHTML = `
+    <div class="header-producto-detalle">
+        <h4>${producto.repuesto || 'Producto sin nombre'}</h4>
+        <span class="sku-visible">SKU: ${skuVisible}</span>
+        ${skuInvisible ? `<span class="sku-invisible">${skuInvisible}</span>` : ''}
+        ${tieneDescuento ? '<span class="badge-oferta">Oferta</span>' : ''}
+    </div>
+    <div class="body-producto-detalle" data-sku="${codSC}">
+        ${tieneImagen ? `<img src="${primeraImagen}" alt="${producto.repuesto}" class="carousel-image">` : `<div class="placeholder-sin-imagen"><img src="../img/Logo SC.svg" alt="StarClutch"><p>No hay imagen</p></div>`}
+    </div>
+    <div class="footer-producto-detalle">
+        <div class="logo-marca-detalle">
+            <img src="${marcaLogo}" alt="${marca}" onerror="this.src='../img/placeholder-logo-marca.svg'">
+        </div>
+          <div class="precio-container-detalle">
+            ${tieneDescuento ? `<span class="precio-anterior-detalle">$${precioOriginalNeto.toLocaleString('es-CL')}</span>` : ''}
+            <span class="precio-actual-detalle">$${precioFinalNeto.toLocaleString('es-CL')}</span>
+          </div>
+    </div>`;
+
+  card.addEventListener('click', () => {
+    try {
+      sessionStorage.setItem('productoDetalle', JSON.stringify({
+        ...producto,
+        fichaTecnica: producto.fichaTecnica || '',
+        referenciaCruzada: producto.referenciaCruzada || '',
+        oem: producto.oem || '',
+        stock: producto.stock || 0
+      }));
+      window.location.href = 'detalleproducto.html';
+    } catch(e) {
+      console.warn('No se pudo abrir detalle de producto:', e);
+    }
+  });
+
+  return card;
+}
+
+function inicializarNavegacionCotizados(track, viewport, prevBtn, nextBtn) {
+  const TARJETAS_POR_PAGINA = 4;
+  let paginaActual = 0;
+  const totalProductos = track.children.length;
+  const totalPaginas = Math.ceil(totalProductos / TARJETAS_POR_PAGINA);
+
+  function actualizarCarrusel() {
+    if (totalProductos === 0) return;
+    
+    // Obtener el ancho de una tarjeta
+    const primeraCard = track.children[0];
+    if (!primeraCard) return;
+    
+    const anchodeTarjeta = primeraCard.offsetWidth;
+    const gap = 24; // gap definido en CSS
+    const desplazamientoPorPagina = (anchodeTarjeta + gap) * TARJETAS_POR_PAGINA;
+    
+    // Desplazar el track
+    const desplazamientoPx = paginaActual * desplazamientoPorPagina;
+    track.style.transform = `translateX(-${desplazamientoPx}px)`;
+    
+    if (prevBtn) prevBtn.disabled = paginaActual === 0;
+    if (nextBtn) nextBtn.disabled = paginaActual >= totalPaginas - 1;
+  }
+
+  if (prevBtn) {
+    prevBtn.onclick = () => {
+      if (paginaActual > 0) {
+        paginaActual--;
+        actualizarCarrusel();
+      }
+    };
+  }
+
+  if (nextBtn) {
+    nextBtn.onclick = () => {
+      if (paginaActual < totalPaginas - 1) {
+        paginaActual++;
+        actualizarCarrusel();
+      }
+    };
+  }
+
+  actualizarCarrusel();
+  window.addEventListener('resize', actualizarCarrusel);
+}
 
 // Funciones del panel de carrito
 async function toggleCarrito() {
@@ -3323,6 +3622,175 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// ========================================
+// FILTRO LATERAL (Marca, Modelo, Tipo)
+// ========================================
+(function(){
+  const overlay = document.getElementById('overlay-filtros');
+  const panel = document.getElementById('panel-filtros');
+  const btnAbrir = document.getElementById('btn-filtrar-grupos');
+  const btnCerrar = document.getElementById('btn-cerrar-filtros');
+  const btnAplicar = document.getElementById('btn-aplicar-filtros');
+  const btnLimpiar = document.getElementById('btn-limpiar-filtros');
+  const contTipo = document.getElementById('contenedor-filtro-tipo');
+  const contMarca = document.getElementById('contenedor-filtro-marca');
+  const contModelo = document.getElementById('contenedor-filtro-modelo');
+  const contTags = document.getElementById('filtros-tags');
+
+  if (!overlay || !panel || !btnAbrir) return;
+
+  const estado = {
+    tipo: new Set(),
+    marca: new Set(),
+    modelo: new Set()
+  };
+
+  function abrirPanel() {
+    overlay.style.display = 'block';
+    requestAnimationFrame(() => overlay.classList.add('overlay--visible'));
+    panel.classList.add('panel--open');
+    overlay.setAttribute('aria-hidden','false');
+    panel.setAttribute('aria-hidden','false');
+  }
+
+  function cerrarPanel() {
+    overlay.classList.remove('overlay--visible');
+    panel.classList.remove('panel--open');
+    overlay.setAttribute('aria-hidden','true');
+    panel.setAttribute('aria-hidden','true');
+    setTimeout(()=>{ overlay.style.display='none'; }, 250);
+  }
+
+  function normalizar(v){ return (v||'').toString().trim(); }
+
+  function crearCheckbox(nombre, valor, grupo) {
+    const id = `${grupo}-${valor.toLowerCase().replace(/[^a-z0-9]+/g,'-')}`;
+    const label = document.createElement('label');
+    label.setAttribute('for', id);
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.id = id;
+    input.value = valor;
+    input.dataset.grupo = grupo; // tipo | marca | modelo
+    input.checked = estado[grupo].has(valor.toLowerCase());
+    input.addEventListener('change', onCambioCheckbox);
+    label.appendChild(input);
+    const span = document.createElement('span');
+    span.textContent = nombre;
+    label.appendChild(span);
+    return label;
+  }
+
+  function poblarOpciones() {
+    const base = Array.isArray(window.VEHICULOS_CURRENT) ? window.VEHICULOS_CURRENT : [];
+    const tipos = new Set();
+    const marcas = new Set();
+    const modelos = new Set();
+    base.forEach(v => {
+      if (v && (v.tipo||v.marca||v.modelo)) {
+        const t = normalizar(v.tipo).toLowerCase();
+        const m = normalizar(v.marca).toLowerCase();
+        const mo = normalizar(v.modelo || v.tipo).toLowerCase();
+        if (t) tipos.add(t);
+        if (m) marcas.add(m);
+        if (mo) modelos.add(mo);
+      }
+    });
+
+    contTipo.innerHTML = '';
+    contMarca.innerHTML = '';
+    contModelo.innerHTML = '';
+
+    [...tipos].sort().forEach(t => contTipo.appendChild(crearCheckbox(t.toUpperCase(), t, 'tipo')));
+    [...marcas].sort().forEach(m => contMarca.appendChild(crearCheckbox(m.toUpperCase(), m, 'marca')));
+    [...modelos].sort().forEach(mo => contModelo.appendChild(crearCheckbox(mo.toUpperCase(), mo, 'modelo')));
+  }
+
+  function renderTags() {
+    contTags.innerHTML = '';
+    const agregarTag = (grupo, valor) => {
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.textContent = valor;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.setAttribute('aria-label', `Quitar ${valor}`);
+      btn.textContent = '×';
+      btn.addEventListener('click', () => {
+        estado[grupo].delete(valor.toLowerCase());
+        // desmarcar checkbox
+        const cb = panel.querySelector(`input[data-grupo="${grupo}"][value="${valor}"]`) || panel.querySelector(`#${grupo}-${valor.toLowerCase().replace(/[^a-z0-9]+/g,'-')}`);
+        if (cb) cb.checked = false;
+        renderTags();
+      });
+      tag.appendChild(btn);
+      contTags.appendChild(tag);
+    };
+
+    ['tipo','marca','modelo'].forEach(g => {
+      estado[g].forEach(val => agregarTag(g, val.toUpperCase()))
+    });
+  }
+
+  function onCambioCheckbox(e) {
+    const cb = e.target; const grupo = cb.dataset.grupo; const val = cb.value.toLowerCase();
+    if (!grupo) return;
+    if (cb.checked) estado[grupo].add(val); else estado[grupo].delete(val);
+    renderTags();
+  }
+
+  function aplicarFiltros() {
+    const base = Array.isArray(window.VEHICULOS_CURRENT) ? window.VEHICULOS_CURRENT : [];
+    const hayTipo = estado.tipo.size>0, hayMarca = estado.marca.size>0, hayModelo = estado.modelo.size>0;
+    const filtrados = base.filter(v => {
+      const vTipo = normalizar(v.tipo).toLowerCase();
+      const vMarca = normalizar(v.marca).toLowerCase();
+      const vModelo = normalizar(v.modelo || v.tipo).toLowerCase();
+      if (hayTipo && !estado.tipo.has(vTipo)) return false;
+      if (hayMarca && !estado.marca.has(vMarca)) return false;
+      if (hayModelo && !estado.modelo.has(vModelo)) return false;
+      return true;
+    });
+    if (typeof renderizarGruposFiltrados === 'function') {
+      renderizarGruposFiltrados(filtrados);
+    }
+    cerrarPanel();
+  }
+
+  function limpiarFiltros() {
+    estado.tipo.clear();
+    estado.marca.clear();
+    estado.modelo.clear();
+    // desmarcar todos
+    panel.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+    renderTags();
+    // restaurar vista completa
+    if (typeof renderizarFlotaEnGridMarcasModelos === 'function') {
+      renderizarFlotaEnGridMarcasModelos();
+      setTimeout(() => { if (typeof initCarruselesGenericos === 'function') initCarruselesGenericos(); }, 100);
+    }
+  }
+
+  function inicializarToggles() {
+    panel.querySelectorAll('.section-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!expanded));
+        const contenido = btn.nextElementSibling;
+        if (!contenido) return;
+        contenido.classList.toggle('collapsed', expanded);
+      });
+    });
+  }
+
+  // Eventos de apertura/cierre
+  btnAbrir.addEventListener('click', () => { poblarOpciones(); renderTags(); inicializarToggles(); abrirPanel(); });
+  if (btnCerrar) btnCerrar.addEventListener('click', cerrarPanel);
+  overlay.addEventListener('click', cerrarPanel);
+  if (btnAplicar) btnAplicar.addEventListener('click', aplicarFiltros);
+  if (btnLimpiar) btnLimpiar.addEventListener('click', limpiarFiltros);
+})();
 </script>
 
 </body>
