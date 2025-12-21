@@ -1653,6 +1653,28 @@
         "notificacionId": "notif_1766354414922_lucnoh9uj"
       },
       "fecha": "2025-12-21T22:07:35.999Z"
+    },
+    {
+      "id": "evt_1766360272097_k6aguom7m",
+      "campanaId": "campaña",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766360211827_6shatkkhl"
+      },
+      "fecha": "2025-12-21T23:37:52.097Z"
+    },
+    {
+      "id": "evt_1766360291474_ket8qcoh2",
+      "campanaId": "campaña",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766360211827_6shatkkhl"
+      },
+      "fecha": "2025-12-21T23:38:11.474Z"
     }
   ]
 }

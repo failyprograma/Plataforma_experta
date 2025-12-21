@@ -71,12 +71,17 @@ function obtenerProductosCampanaDetallado(campanas) {
                         precioTrasDescuentoProducto && skuObj.descuento
                             ? Math.round(precioTrasDescuentoProducto * (1 - skuObj.descuento / 100))
                             : precioTrasDescuentoProducto;
+                    
+                    // Calcular descuento TOTAL (producto + campaña)
+                    const descuentoTotal = precioBase && precioCampana
+                        ? Math.round(((precioBase - precioCampana) / precioBase) * 100)
+                        : (skuObj.descuento || 0);
 
                     if (!mapa.has(claveSku)) {
                         mapa.set(claveSku, {
                             sku: claveSku,
                             nombre: productoDb?.repuesto || productoDb?.nombre || claveSku,
-                            descuentoCampana: skuObj.descuento || 0,
+                            descuentoCampana: descuentoTotal,
                             descuentoProducto: descuentoProducto || 0,
                             precioBase: precioBase,
                             precioProducto: precioTrasDescuentoProducto,
@@ -87,7 +92,7 @@ function obtenerProductosCampanaDetallado(campanas) {
                         const existente = mapa.get(claveSku);
                         existente.descuentoCampana = Math.max(
                             existente.descuentoCampana,
-                            skuObj.descuento || 0
+                            descuentoTotal
                         );
                         existente.campanas.add(campana.nombre);
                         if (precioBase && !existente.precioBase) existente.precioBase = precioBase;
@@ -132,9 +137,9 @@ async function enviarEmailCampanasActualizadas(userId, campanaNueva) {
         console.log('📧 ¿Hay descuentos?', hayDescuentos);
 
         // Vigencia de la campaña actual
-        const vigenciaHasta = campanaNueva?.vigencia?.hasta ? new Date(campanaNueva.vigencia.hasta) : null;
+        const vigenciaHasta = campanaNueva?.vigencia?.hasta || null;
         const vigenciaTexto = vigenciaHasta
-            ? `Vigencia de oferta hasta el ${vigenciaHasta.toISOString().split('T')[0]}`
+            ? `Vigencia de oferta hasta el ${vigenciaHasta}`
             : 'Sin vigencia definida';
 
         const subject = hayDescuentos
@@ -145,8 +150,8 @@ async function enviarEmailCampanasActualizadas(userId, campanaNueva) {
 
     const filas = productos
         .map((p) => {
-            const precioBaseTxt = p.precioProducto || p.precioBase
-                ? `$${(p.precioProducto || p.precioBase).toLocaleString('es-CL')}`
+            const precioBaseTxt = p.precioBase
+                ? `$${(p.precioBase).toLocaleString('es-CL')}`
                 : '—';
             const precioCampanaTxt = p.precioCampana
                 ? `$${p.precioCampana.toLocaleString('es-CL')}`
@@ -170,11 +175,11 @@ async function enviarEmailCampanasActualizadas(userId, campanaNueva) {
     const html = `
     <div style="font-family:Poppins,Arial,sans-serif;max-width:640px;margin:0 auto;background:#ffffff;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.08);overflow:hidden;">
       <div style="background:#BF1823;color:#fff;padding:22px 26px;">
-        <h2 style="margin:0;font-size:20px;font-weight:700;">Ofertas Exclusivas Actualizadas</h2>
+        <h2 style="margin:0;font-size:20px;font-weight:700;">Nuevas Ofertas Exclusivas</h2>
         <p style="margin:6px 0 0 0;font-size:13px;opacity:0.9;">StarClutch Plataforma Experta</p>
       </div>
             <div style="padding:22px 26px;color:#333;">
-                <p style="margin:0 0 12px 0;font-size:14px;font-weight:700;">Actualizamos tus ofertas exclusivas.</p>
+                <p style="margin:0 0 12px 0;font-size:14px;font-weight:700;">Nuevas ofertas exclusivas.</p>
                 <p style="margin:0 0 12px 0;font-size:13px;color:#555;">${vigenciaTexto}.</p>
         ${productos.length > 0 ? `
         <table style="width:100%;border-collapse:collapse;">
@@ -3461,6 +3466,19 @@ app.post("/api/campanas-ofertas", uploadBanners.any(), async (req, res) => {
         // Guardar en la base de datos
         const bannersData = readJSONObject(BANNERS_DB);
         
+        // DETECTAR CAMPAÑAS NUEVAS Y ELIMINADAS ANTES de guardar
+        const campanasAnteriores = bannersData[userId]?.campanas || [];
+        const campanasEliminadas = campanasAnteriores.filter(
+            campanasAnt => !campanasConUrls.find(campanaNew => campanaNew.id === campanasAnt.id)
+        );
+        const campanasNuevas = campanasConUrls.filter(
+            campanaNew => !campanasAnteriores.find(campanaAnt => campanaAnt.id === campanaNew.id)
+        );
+        
+        console.log(`📊 Análisis de cambios: ${campanasNuevas.length} nueva(s), ${campanasEliminadas.length} eliminada(s)`);
+        console.log('[DEBUG] Campañas anteriores:', campanasAnteriores.map(c => c.id + ':' + c.nombre));
+        console.log('[DEBUG] Campañas nuevas:', campanasConUrls.map(c => c.id + ':' + c.nombre));
+        
         console.log('[DEBUG ANTES DE GUARDAR] campanasConUrls:');
         campanasConUrls.forEach((c, idx) => {
             console.log(`  [${idx}] ${c.nombre}: vigencia=${JSON.stringify(c.vigencia)}`);
@@ -3481,6 +3499,59 @@ app.post("/api/campanas-ofertas", uploadBanners.any(), async (req, res) => {
         });
         
         console.log(`✓ Campañas V2 guardadas para usuario: ${userId}`);
+        
+        if (campanasEliminadas.length > 0 && noEnviarCorreo) {
+            console.log(`🗑️ Se detectaron ${campanasEliminadas.length} campaña(s) eliminada(s)`);
+            try {
+                let notificaciones = readJSON(NOTIFICACIONES_DB);
+                
+                // Para cada campaña eliminada, crear notificaciones para sus usuarios destino
+                campanasEliminadas.forEach(campaña => {
+                    const usuariosDestino = Array.isArray(campaña.targetUsers) ? campaña.targetUsers : [userId];
+                    
+                    usuariosDestino.forEach(usuarioId => {
+                        // Extraer SKUs de la campaña eliminada
+                        const skusList = new Set();
+                        ['principal', 'secundario'].forEach(tipo => {
+                            (campaña[tipo]?.slides || []).forEach(slide => {
+                                (slide.skus || []).forEach(skuData => {
+                                    const sku = typeof skuData === 'object' ? skuData.sku : skuData;
+                                    if (sku) skusList.add(sku);
+                                });
+                            });
+                        });
+                        
+                        if (skusList.size > 0) {
+                            const skusArray = Array.from(skusList).slice(0, 5);
+                            const masSkus = skusList.size > 5 ? ` y ${skusList.size - 5} más` : '';
+                            const skusTexto = skusArray.join(', ');
+                            
+                            const notif = {
+                                id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                                userId: usuarioId,
+                                tipo: 'campana_eliminada',
+                                titulo: '🔚 Ofertas finalizadas',
+                                mensaje: `La campaña "${campaña.nombre}" ha finalizado. Los productos ${skusTexto}${masSkus} ya no tienen oferta.`,
+                                datos: { 
+                                    campaña: campaña.nombre,
+                                    skus: Array.from(skusList)
+                                },
+                                leida: false,
+                                fecha: new Date().toISOString()
+                            };
+                            
+                            notificaciones.push(notif);
+                            console.log(`✓ Notificación de eliminación creada para usuario: ${usuarioId}`);
+                        }
+                    });
+                });
+                
+                writeJSON(NOTIFICACIONES_DB, notificaciones);
+                console.log('✓ Notificaciones de campañas eliminadas guardadas en BD');
+            } catch (notifError) {
+                console.error('Error guardando notificación de eliminación:', notifError);
+            }
+        }
         
         // Crear notificación
         const users = readJSON(USERS_DB);
@@ -3646,23 +3717,25 @@ app.post("/api/campanas-ofertas", uploadBanners.any(), async (req, res) => {
             console.error('❌ Error aplicando descuentos:', descuentoError);
         }
         
-        // Enviar correo DESPUÉS de aplicar descuentos (solo UNA vez)
-        if (!noEnviarCorreo) {
-            console.log('📧 Enviando correo de campañas actualizadas...');
+        // Enviar correo DESPUÉS de aplicar descuentos (SOLO para CAMPAÑAS NUEVAS)
+        if (!noEnviarCorreo && campanasNuevas.length > 0) {
+            console.log(`📧 Enviando correos para ${campanasNuevas.length} campaña(s) nueva(s)...`);
             try {
-                // Enviar correo para cada campaña que está activa y en vigencia
-                for (const campana of campanasConUrls) {
+                // Enviar correo SOLO para campaña nuevas que están activas y en vigencia
+                for (const campana of campanasNuevas) {
                     if (estaCampanaEnVigencia(campana)) {
                         await enviarEmailCampanasActualizadas(userId, campana);
                     }
                 }
-                console.log('✓ Correo enviado exitosamente');
+                console.log('✓ Correo(s) de nueva(s) campaña(s) enviado(s)');
             } catch (emailError) {
                 console.error('❌ Error enviando correo:', emailError);
                 console.error('Stack:', emailError.stack);
             }
+        } else if (noEnviarCorreo) {
+            console.log('ℹ️ Correos omitidos (silenciarCorreo = true - eliminación o cambio de estado)');
         } else {
-            console.log('ℹ️ Correo de campaña omitido (cambio de estado activa/inactiva)');
+            console.log('ℹ️ No hay campañas nuevas para enviar correos');
         }
         
         res.json({ ok: true, msg: "Campañas guardadas correctamente" });

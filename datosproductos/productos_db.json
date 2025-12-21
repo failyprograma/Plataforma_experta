@@ -7,8 +7,8 @@
     "marca": "EXEDY",
     "linea": "Embragues",
     "codSC": "KITTOY400DR",
-    "precio": 179400,
-    "descuento": 2,
+    "precio": 150756,
+    "descuento": 22,
     "stock": 12,
     "fichaTecnica": "Diámetro Disco: 275 mm\nN° Estrías: 21\nDiámetro Núcleo: 145 mm\nAgujero Piloto: 29.5 mm",
     "referenciaCruzada": "TOYOTA: 31210-0K280\nEXEDY: CKT-508AA-Lb",
@@ -17,7 +17,7 @@
       "/uploads/productos/prod-1765419425972-599986316.png"
     ],
     "fechaCreacion": "2025-12-11T02:17:05.976Z",
-    "fechaModificacion": "2025-12-18T12:59:19.209Z"
+    "fechaModificacion": "2025-12-21T23:16:38.609Z"
   },
   {
     "id": "prod_1765419610363_qz6tbh6y5",
@@ -28,7 +28,7 @@
     "linea": "Embragues",
     "codSC": "KITTOY400AR",
     "precio": 125000,
-    "descuento": 2,
+    "descuento": 33,
     "stock": 12,
     "fichaTecnica": "N° Estrías: 21\nAlto: 120 mm\nDiámetro Disco: 275 mm\nDiámetro Núcleo: 165 mm\nAgujero Piloto: 29.5 mm\nPeso: 10 Kg",
     "referenciaCruzada": "",
@@ -236,7 +236,7 @@
     "linea": "Embragues",
     "codSC": "KITMIT240LRV",
     "precio": 429900,
-    "descuento": 22,
+    "descuento": 0,
     "stock": 11,
     "fichaTecnica": "N° Estrías: 23\nAlto: 120 mm\nDiámetro Disco: 270 mm\nDiámetro Núcleo: 143 mm\nAgujero Piloto: 26 mm\nPeso: 10 Kg",
     "referenciaCruzada": "MITSUBISHI: 2300A074\nMITSUBISHI: 2324A080\nMITSUBISHI: 2324A015\nMITSUBISHI: 2300A060\nMITSUBISHI: 2324A072\nMITSUBISHI: 2324A077\nMITSUBISHI: 2324A081\nMITSUBISHI: 2324A078\nPEUGEOT / CITROËN: 204190\nPEUGEOT / CITROËN: 1607678680\nPEUGEOT / CITROËN: 1611284280\nPEUGEOT / CITROËN: 2041A6\nFIAT: 6000611041\nFIAT: 6000608653\nPEUGEOT: 1608258580",

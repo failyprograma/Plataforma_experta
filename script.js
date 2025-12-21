@@ -16898,30 +16898,48 @@ async function cargarProductosCampanas() {
     console.log('Cargando productos para campañas...');
     console.log('clienteProductosCache actual:', clienteProductosCache?.length || 0, 'productos');
 
-    // 1) Usar cache si existe
+    // 1) Si ya tenemos cache con descuentos (incluye cambios recientes en UI), usarla primero
     if (clienteProductosCache && clienteProductosCache.length > 0) {
         productosClienteOpciones = clienteProductosCache.map(p => ({
             sku: p.codSC || p.codStarClutch || p.sku || '',
-            nombre: p.repuesto || p.nombre || 'Sin nombre'
+            nombre: p.repuesto || p.nombre || 'Sin nombre',
+            descuento: Number(p.descuento ?? p.descuentoCampana ?? p.descuentoAutorizado ?? 0),
+            descuentoCampana: Number(p.descuentoCampana ?? 0)
         })).filter(p => p.sku);
         console.log('Productos cargados desde cache para campañas:', productosClienteOpciones.length);
         return productosClienteOpciones;
     }
 
-    // 2) Si no hay cache, intentar con el usuario seleccionado (modo admin)
+    // 2) Si no hay cache, intentar datos frescos del servidor
     if (userId) {
         try {
             const resp = await fetch(`/api/obtener-productos?userId=${encodeURIComponent(userId)}`);
             const productos = await resp.json();
             productosClienteOpciones = (productos || []).map(p => ({
                 sku: p.codSC || p.codStarClutch || p.sku || '',
-                nombre: p.repuesto || p.nombre || 'Sin nombre'
+                nombre: p.repuesto || p.nombre || 'Sin nombre',
+                descuento: Number(p.descuento ?? p.descuentoCampana ?? p.descuentoAutorizado ?? 0),
+                descuentoCampana: Number(p.descuentoCampana ?? 0)
             })).filter(p => p.sku);
+            // Guardar cache para reutilizar en vistas V2
+            clienteProductosCache = productosClienteOpciones.map(p => ({ ...p }));
             console.log('Productos cargados desde API para campañas:', productosClienteOpciones.length);
             return productosClienteOpciones;
         } catch (e) {
             console.error('Error cargando productos para campañas:', e);
         }
+    }
+
+    // Si falla, usar cache como respaldo
+    if (clienteProductosCache && clienteProductosCache.length > 0) {
+        productosClienteOpciones = clienteProductosCache.map(p => ({
+            sku: p.codSC || p.codStarClutch || p.sku || '',
+            nombre: p.repuesto || p.nombre || 'Sin nombre',
+            descuento: Number(p.descuento ?? p.descuentoCampana ?? p.descuentoAutorizado ?? 0),
+            descuentoCampana: Number(p.descuentoCampana ?? 0)
+        })).filter(p => p.sku);
+        console.log('Productos cargados desde cache para campañas (respaldo):', productosClienteOpciones.length);
+        return productosClienteOpciones;
     }
 
     console.warn('Sin productos para campañas (sin cache y sin userId).');
@@ -17406,7 +17424,6 @@ async function confirmarLanzamientoCampana() {
     // DEBUG: Verificar estado ANTES de guardar
     console.log('[DEBUG PRE-SAVE] campanasState completo:', JSON.stringify(campanasState, null, 2));
     console.log('[DEBUG PRE-SAVE] campanaFinal que se va a guardar:', JSON.stringify(campanaFinal, null, 2));
-    alert(`[DEBUG] Guardando campaña: ${campanaFinal.nombre}\nUsuarios: ${campanaFinal.targetUsers.join(',')}\nVigencia: ${JSON.stringify(campanaFinal.vigencia)}`);
 
     mostrarLoadingCampana('Procesando campaña...');
     try {
@@ -17545,8 +17562,15 @@ function renderizarSlidesModal() {
           <div class="slide-skus-list" id="slide-skus-${index}">
                         ${slide.skus.map((skuData, skuIndex) => {
                             const skuCode = typeof skuData === 'object' ? skuData.sku : skuData;
-                            const descuento = typeof skuData === 'object' ? (Number(skuData.descuento) || 0) : 0;
                             const producto = productosClienteOpciones.find(p => p.sku === skuCode);
+                            const descuentoProducto = obtenerDescuentoProducto(skuCode);
+                            // Preferir el descuento guardado si existe; si es 0 pero el producto tiene otro, usar el del producto
+                            const descuentoGuardado = (typeof skuData === 'object' && skuData.hasOwnProperty('descuento'))
+                                ? Number(skuData.descuento) || 0
+                                : null;
+                            const descuento = (descuentoGuardado === null || descuentoGuardado === 0) && descuentoProducto > 0
+                                ? descuentoProducto
+                                : (descuentoGuardado !== null ? descuentoGuardado : descuentoProducto);
                             const nombreProducto = producto ? producto.nombre : 'Producto no encontrado';
                             return `
                                 <div class="slide-sku-item">
@@ -17689,7 +17713,14 @@ function renderizarOpcionesDropdown(slideIndex, filtro = '') {
   
   if (!seleccionTemporal[slideIndex]) {
         const tipo = tipoActualModal;
-        seleccionTemporal[slideIndex] = normalizarSkusArray(campanaTemporal[tipo].slides[slideIndex]?.skus || []);
+        // Normalizar skus y completar descuento faltante con el descuento vigente del producto
+        seleccionTemporal[slideIndex] = normalizarSkusArray(campanaTemporal[tipo].slides[slideIndex]?.skus || [])
+            .map(item => ({
+                sku: item.sku,
+                descuento: (item.hasOwnProperty('descuento') && Number(item.descuento) > 0)
+                    ? Number(item.descuento)
+                    : obtenerDescuentoProducto(item.sku)
+            }));
   }
   
   let productosFiltrados = productosClienteOpciones;
@@ -17707,24 +17738,27 @@ function renderizarOpcionesDropdown(slideIndex, filtro = '') {
     return;
   }
   
-  container.innerHTML = productosFiltrados.map(producto => {
-    const isChecked = (seleccionTemporal[slideIndex] || []).some(item => item.sku === producto.sku);
-    return `
-      <label class="sc-multiselect-option">
-        <input 
-          type="checkbox" 
-          value="${producto.sku}"
-          ${isChecked ? 'checked' : ''}
-          onchange="toggleProductoSeleccion(${slideIndex}, '${producto.sku.replace(/'/g, "\\'")}')"
-          onclick="event.stopPropagation()"
-        >
-        <div class="sc-option-content">
-          <span class="sc-option-sku">${producto.sku}</span>
-          <span class="sc-option-nombre">${producto.nombre}</span>
-        </div>
-      </label>
-    `;
-  }).join('');
+    container.innerHTML = productosFiltrados.map(producto => {
+        const isChecked = (seleccionTemporal[slideIndex] || []).some(item => item.sku === producto.sku);
+        const descProd = obtenerDescuentoProducto(producto.sku);
+        const badgeDesc = descProd > 0 ? `<span class="sc-option-badge">${descProd}% desc</span>` : '<span class="sc-option-badge muted">0% desc</span>';
+        return `
+            <label class="sc-multiselect-option">
+                <input 
+                    type="checkbox" 
+                    value="${producto.sku}"
+                    ${isChecked ? 'checked' : ''}
+                    onchange="toggleProductoSeleccion(${slideIndex}, '${producto.sku.replace(/'/g, "\\'")}')"
+                    onclick="event.stopPropagation()"
+                >
+                <div class="sc-option-content">
+                    <span class="sc-option-sku">${producto.sku}</span>
+                    <span class="sc-option-nombre">${producto.nombre}</span>
+                    <span class="sc-option-desc">${badgeDesc}</span>
+                </div>
+            </label>
+        `;
+    }).join('');
 }
 
 function toggleProductoSeleccion(slideIndex, sku) {
@@ -17739,9 +17773,21 @@ function toggleProductoSeleccion(slideIndex, sku) {
         const tipo = tipoActualModal;
         const slide = campanaTemporal[tipo]?.slides?.[slideIndex];
         const existente = (slide?.skus || []).find(item => (item?.sku || item) === sku);
-        const descuento = existente ? Number(existente.descuento) || 0 : 0;
+        // Si ya existe, mantener su descuento; si no, usar el descuento del producto
+        const descuentoProducto = obtenerDescuentoProducto(sku);
+        const descuentoGuardado = (existente && existente.hasOwnProperty('descuento')) ? Number(existente.descuento) : null;
+        const descuento = (descuentoGuardado === null || descuentoGuardado === 0) && descuentoProducto > 0
+            ? descuentoProducto
+            : (descuentoGuardado !== null ? Number(descuentoGuardado) || 0 : descuentoProducto);
         seleccionTemporal[slideIndex].push({ sku, descuento });
     }
+}
+
+// Obtiene el descuento vigente de un SKU (base de repuestos del cliente)
+function obtenerDescuentoProducto(sku) {
+    const producto = productosClienteOpciones.find(p => p.sku === sku);
+    const descuento = Number(producto?.descuento ?? producto?.descuentoCampana ?? producto?.descuentoAutorizado ?? 0);
+    return Number.isFinite(descuento) ? descuento : 0;
 }
 
 async function recargarProductosDropdown(slideIndex, clientId) {
@@ -17838,11 +17884,9 @@ function renderizarListaCampanas() {
     const totalSlidesSecundario = campana.secundario?.slides?.length || 0;
     const totalSlides = totalSlidesPrincipal + totalSlidesSecundario;
         const activaVigente = evaluarActivaPorVigencia(campana);
-        const vigenciaTexto = campana.vigencia?.desde
-                ? `${campana.vigencia.desde} → ${campana.vigencia.hasta || 'Sin fecha fin'}`
-                : (campana.vigencia?.hasta
-                    ? `Hasta ${campana.vigencia.hasta}`
-                    : 'Sin vigencia definida');
+        const vigenciaTexto = campana.vigencia?.hasta
+                ? `Hasta ${campana.vigencia.hasta}`
+                : 'Sin vigencia definida';
         const audienciaTexto = Array.isArray(campana.targetUsers) && campana.targetUsers.length
             ? `${campana.targetUsers.length} usuario${campana.targetUsers.length === 1 ? '' : 's'}`
             : 'No asignada';
@@ -17905,11 +17949,12 @@ function renderizarListaCampanas() {
 async function eliminarCampana(index) {
   if (!confirm(`¿Eliminar la campaña "${campanasState[index].nombre}"?`)) return;
   
+  const campanEliminada = campanasState[index];
   campanasState.splice(index, 1);
   renderizarListaCampanas();
   
-  // Guardar cambios en el servidor
-    await guardarCampanasParaUsuarios([obtenerUsuarioActual()], { silenciarAlertas: true });
+  // Guardar cambios en el servidor - SIN enviar correos de campaña
+    await guardarCampanasParaUsuarios([obtenerUsuarioActual()], { silenciarAlertas: true, silenciarCorreo: true });
 }
 
 // ============================================================
@@ -17954,8 +17999,6 @@ async function guardarTodasLasCampanas(customUserId, silenciarAlertas = false, s
     return;
   }
 
-  alert(`[guardarTodasLasCampanas] llamado con userId=${userId}, ${campanasState.length} campañas`);
-  
   try {
     const formData = new FormData();
     formData.append('userId', userId);
@@ -18040,7 +18083,6 @@ async function guardarTodasLasCampanas(customUserId, silenciarAlertas = false, s
     
     formData.append('campanas', JSON.stringify(campanasParaEnviar));
     
-    alert(`[ENVIANDO] ${campanasParaEnviar.length} campañas a servidor para userId=${userId}`);
     console.log('📤 Enviando campañas al servidor:', JSON.stringify(campanasParaEnviar, null, 2));
     
     const response = await fetch('/api/campanas-ofertas', {

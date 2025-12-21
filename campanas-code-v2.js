@@ -209,13 +209,13 @@ async function guardarCampanaModal() {
     vigencia: campanaTemporal.vigencia || null
   };
 
-  // Abrir modal de programación/lanzamiento en lugar de cerrar
-  if (typeof abrirModalLanzarCampana === 'function') {
+  // Si es nueva campaña y existe el flujo avanzado, abrir Programar/Lanzar
+  if (editandoIndex === null && typeof abrirModalLanzarCampana === 'function') {
     campanaPendienteLanzamiento = campana;
     campanaPendienteIndex = editandoIndex;
     abrirModalLanzarCampana(campana);
   } else {
-    // Fallback: guardar directamente si no existe el flujo avanzado
+    // En edición o sin flujo avanzado: guardar directo sin cambiar vigencias
     if (editandoIndex !== null) {
       campanasState[editandoIndex] = campana;
     } else {
@@ -361,8 +361,12 @@ function renderizarSlidesModal() {
           <div class="slide-skus-list" id="slide-skus-${index}">
             ${slide.skus.map((skuData, skuIndex) => {
               const skuCode = typeof skuData === 'object' ? skuData.sku : skuData;
-              const descuento = typeof skuData === 'object' ? (Number(skuData.descuento) || 0) : 0;
               const producto = productosClienteOpciones.find(p => p.sku === skuCode);
+              const descuentoProducto = (typeof obtenerDescuentoProducto === 'function') ? obtenerDescuentoProducto(skuCode) : Number(producto?.descuento || 0);
+              const descuentoGuardado = (typeof skuData === 'object' && skuData.hasOwnProperty('descuento')) ? Number(skuData.descuento) || 0 : null;
+              const descuento = (descuentoGuardado === null || descuentoGuardado === 0) && descuentoProducto > 0
+                ? descuentoProducto
+                : (descuentoGuardado !== null ? descuentoGuardado : descuentoProducto);
               const nombreProducto = producto ? producto.nombre : 'Producto no encontrado';
               return `
                 <div class="slide-sku-item">
@@ -518,7 +522,16 @@ function renderizarOpcionesDropdown(slideIndex, filtro = '') {
   if (!seleccionTemporal[slideIndex]) {
     const tipo = tipoActualModal;
     const actuales = campanaTemporal[tipo].slides[slideIndex]?.skus || [];
-    seleccionTemporal[slideIndex] = actuales.map(x => (typeof x === 'object' ? x.sku : x)).filter(Boolean);
+    // Normalizar a objetos e inyectar descuento existente o del producto
+    seleccionTemporal[slideIndex] = actuales
+      .map(x => (typeof x === 'object' ? x : { sku: x, descuento: 0 }))
+      .filter(item => !!item.sku)
+      .map(item => ({
+        sku: item.sku,
+        descuento: (item.hasOwnProperty('descuento') && Number(item.descuento) > 0)
+          ? Number(item.descuento)
+          : (typeof obtenerDescuentoProducto === 'function' ? obtenerDescuentoProducto(item.sku) : 0)
+      }));
   }
   
   // Filtrar productos
@@ -538,7 +551,9 @@ function renderizarOpcionesDropdown(slideIndex, filtro = '') {
   }
   
   container.innerHTML = productosFiltrados.map(producto => {
-    const isChecked = seleccionTemporal[slideIndex]?.includes(producto.sku);
+    const isChecked = (seleccionTemporal[slideIndex] || []).some(item => item.sku === producto.sku);
+    const descProd = (typeof obtenerDescuentoProducto === 'function') ? obtenerDescuentoProducto(producto.sku) : Number(producto.descuento || 0);
+    const badgeDesc = descProd > 0 ? `<span class="sc-option-badge">${descProd}% desc</span>` : '<span class="sc-option-badge muted">0% desc</span>';
     return `
       <label class="sc-multiselect-option">
         <input 
@@ -551,6 +566,7 @@ function renderizarOpcionesDropdown(slideIndex, filtro = '') {
         <div class="sc-option-content">
           <span class="sc-option-sku">${producto.sku}</span>
           <span class="sc-option-nombre">${producto.nombre}</span>
+          <span class="sc-option-desc">${badgeDesc}</span>
         </div>
       </label>
     `;
@@ -562,11 +578,12 @@ function toggleProductoSeleccion(slideIndex, sku) {
     seleccionTemporal[slideIndex] = [];
   }
   
-  const index = seleccionTemporal[slideIndex].indexOf(sku);
+  const index = seleccionTemporal[slideIndex].findIndex(item => item.sku === sku);
   if (index > -1) {
     seleccionTemporal[slideIndex].splice(index, 1);
   } else {
-    seleccionTemporal[slideIndex].push(sku);
+    const descProd = (typeof obtenerDescuentoProducto === 'function') ? obtenerDescuentoProducto(sku) : 0;
+    seleccionTemporal[slideIndex].push({ sku, descuento: descProd });
   }
   
   console.log('Selección temporal slide', slideIndex, ':', seleccionTemporal[slideIndex]);
@@ -583,7 +600,11 @@ function aplicarSeleccionSlide(slideIndex) {
   const tipo = tipoActualModal;
   
   // Aplicar la selección temporal al slide
-  campanaTemporal[tipo].slides[slideIndex].skus = (seleccionTemporal[slideIndex] || []).map(s => ({ sku: s, descuento: 0 }));
+  campanaTemporal[tipo].slides[slideIndex].skus = normalizarSkusArray(seleccionTemporal[slideIndex] || []).map(item => ({
+    sku: item.sku,
+    descuento: (item.hasOwnProperty('descuento') ? Number(item.descuento) || 0 : 0) ||
+               ((typeof obtenerDescuentoProducto === 'function') ? obtenerDescuentoProducto(item.sku) : 0)
+  }));
   
   // Cerrar dropdown
   toggleDropdownSlide(slideIndex);
@@ -918,8 +939,10 @@ async function eliminarCampana(index) {
 // ============================================================
 // GUARDAR Y CARGAR DESDE EL SERVIDOR
 // ============================================================
-
-async function guardarTodasLasCampanas() {
+// NOTA: Esta función está deshabilitada - usar la de script.js que incluye vigencia
+// ============================================================
+/*
+async function guardarTodasLasCampanas_DEPRECATED() {
   const clientSelect = document.getElementById('client-select');
   const userId = adminSelectedClientId || clientSelect?.value;
   
@@ -1029,8 +1052,9 @@ async function guardarTodasLasCampanas() {
     alert('Error al guardar campañas');
   }
 }
-
-async function cargarCampanasCliente(userId) {
+*/
+/*
+async function cargarCampanasCliente_DEPRECATED(userId) {
   try {
     const response = await fetch(`/api/campanas-ofertas?userId=${userId}`);
     const result = await response.json();
@@ -1048,18 +1072,36 @@ async function cargarCampanasCliente(userId) {
     renderizarListaCampanas();
   }
 }
+*/
 
 async function cargarProductosCliente(userId) {
   try {
     console.log('Cargando productos para userId:', userId);
+    // 1) Usar cache si existe (incluye posibles descuentos que el usuario ve en otras vistas)
+    if (clienteProductosCache && clienteProductosCache.length > 0) {
+      productosClienteOpciones = clienteProductosCache.map(p => ({
+        sku: p.codSC || p.codStarClutch || p.sku || '',
+        nombre: p.repuesto || p.nombre || 'Sin nombre',
+        descuento: Number(p.descuento ?? p.descuentoCampana ?? p.descuentoAutorizado ?? 0),
+        descuentoCampana: Number(p.descuentoCampana ?? 0)
+      })).filter(p => p.sku);
+      console.log('Productos cargados desde cache para campañas V2:', productosClienteOpciones.length);
+      return productosClienteOpciones;
+    }
+
+    // 2) Fallback a datos frescos del servidor
     const response = await fetch(`/api/obtener-productos?userId=${userId}`);
     const productos = await response.json();
     console.log('Productos recibidos:', productos.length);
     
     productosClienteOpciones = productos.map(p => ({
       sku: p.codSC,
-      nombre: p.repuesto
-    }));
+      nombre: p.repuesto,
+      descuento: Number(p.descuento ?? p.descuentoCampana ?? p.descuentoAutorizado ?? 0),
+      descuentoCampana: Number(p.descuentoCampana ?? 0)
+    })).filter(p => p.sku);
+    // Mantener cache alineada con respuesta del servidor
+    clienteProductosCache = productosClienteOpciones.map(p => ({ ...p }));
     
     console.log('Productos procesados:', productosClienteOpciones.length);
     
