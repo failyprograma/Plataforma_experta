@@ -42,6 +42,8 @@
     .aplicar-filtros:hover { background: #a01620; }
     .limpiar-filtros:hover { background: #e0e0e0 !important; }
   </style>
+  <script src="../campanas-tracking-client.js"></script>
+  <script src="../campanas-tracking-integration.js"></script>
 </head>
 <body>
 
@@ -176,6 +178,7 @@
     const categoryName = urlParams.get('categoria');
     const campanaParam = urlParams.get('campana'); // principal | secundario
     const esMantenimiento = urlParams.get('mantenimiento') === '1';
+    const campanaCacheStr = sessionStorage.getItem('campana_productos_cache');
     
     console.log('🔍 DEBUG - Iniciando carga de categoría:', categoryName);
     
@@ -254,6 +257,25 @@
 
       // Si viene desde campaña (ofertas exclusivas), priorizar SKUs de la campaña
       const campanaSkusStr = localStorage.getItem('campana_skus');
+
+      // Fallback cuando se vuelve con botón Atrás y ya no existe campana_skus
+      if (campanaParam && !campanaSkusStr && campanaCacheStr) {
+        try {
+          const productosCache = JSON.parse(campanaCacheStr) || [];
+          if (Array.isArray(productosCache) && productosCache.length > 0) {
+            const headerH1 = document.querySelector('.header-left h1');
+            if (headerH1) headerH1.textContent = 'Ofertas de campaña';
+            renderizarProductosCruzados(productosCache, {}, 'Campaña');
+            actualizarPaginacion();
+            hideLoader();
+            return;
+          }
+        } catch (e) {
+          console.error('Error usando cache de campaña:', e);
+        }
+        // Si no hay cache útil seguimos flujo normal (caerá a vehículo o sin productos)
+      }
+
       if (campanaParam && campanaSkusStr) {
         try {
           const skus = JSON.parse(campanaSkusStr) || [];
@@ -276,6 +298,8 @@
             if (productosEncontrados.length > 0) {
               renderizarProductosCruzados(productosEncontrados, {}, 'Campaña');
               actualizarPaginacion();
+              // Guardar cache para navegación atrás/adelante
+              sessionStorage.setItem('campana_productos_cache', JSON.stringify(productosEncontrados));
             } else {
               mostrarMensajeSinProductos();
             }
@@ -286,7 +310,7 @@
           console.error('Error mostrando productos de campaña en categorías:', e);
           hideLoader();
         } finally {
-          // Evitar estado obsoleto en recargas posteriores
+          // Evitar estado obsoleto en recargas posteriores, pero mantener cache en sessionStorage
           localStorage.removeItem('campana_skus');
         }
         return; // No seguir con flujo de cruce estándar
@@ -599,11 +623,14 @@
           }
         } else {
           console.log('⚠️ Fallback: no hay vehículo seleccionado');
-          sessionStorage.setItem('productosCarrusel', JSON.stringify(productos));
+          // Usar los productos ya cargados en la grilla para el carrusel de recomendados
+          const productosParaCarrusel = todosLosProductos.length ? todosLosProductos : [producto];
+          sessionStorage.setItem('productosCarrusel', JSON.stringify(productosParaCarrusel));
         }
       } catch (error) {
         console.error('❌ Error obteniendo productos del cruce:', error);
-        sessionStorage.setItem('productosCarrusel', JSON.stringify(productos));
+        const productosParaCarrusel = todosLosProductos.length ? todosLosProductos : [producto];
+        sessionStorage.setItem('productosCarrusel', JSON.stringify(productosParaCarrusel));
       }
       
       sessionStorage.setItem('origenCarrusel', 'cruce');
@@ -666,6 +693,7 @@
       const tieneDescuento = producto.descuento && producto.descuento > 0;
       const precioNeto = Math.round(producto.precio || 0);
       const precioNetoConDescuento = tieneDescuento ? Math.round(precioNeto * (1 - (parseFloat(producto.descuento) / 100))) : precioNeto;
+      const esNuevo = (typeof esProductoNuevo === 'function') ? esProductoNuevo(producto.fechaCreacion) : false;
       
       // Logo de marca - PRIORIDAD: marca del cruce > marca del producto
       const skuNorm = normalizarTexto(producto.codSC);
@@ -708,6 +736,7 @@
             <span class="sku-visible">SKU: ${producto.codCliente ? producto.codCliente : (producto.codSC || 'N/A')}</span>
             ${producto.codCliente ? `<span class="sku-invisible" style="display:none;">${producto.codSC || ''}</span>` : ''}
           </div>
+          ${esNuevo ? '<span class="badge-nuevo-ribbon">Nuevo</span>' : ''}
           
           ${tieneDescuento ? '<div class="badge-offer">OFERTA</div>' : ''}
 
@@ -775,7 +804,7 @@
         
         // DEBUG: Verificar sessionStorage ANTES de la función
         const vehiculoCheck = sessionStorage.getItem('vehiculo-seleccionado');
-        console.log('🔍 ANTES de irADetalleProducto - vehiculo-seleccionado existe:', !!vehiculoCheck);
+        console.log('� ANTES de irADetalleProducto - vehiculo-seleccionado existe:', !!vehiculoCheck);
         if (vehiculoCheck) {
           console.log('   Contenido:', JSON.parse(vehiculoCheck));
         }

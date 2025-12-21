@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="../campanas-tracking-client.js"></script>
+  <script src="../campanas-tracking-integration.js"></script>
 </head>
 <body>
 
@@ -292,6 +294,9 @@
 
       localStorage.setItem(key, JSON.stringify(tracking));
       console.log(`Vista registrada: ${sku} (${tracking.visitas[sku]} veces) en ${key}`);
+      
+      // Registrar tracking de campaña si aplica
+      registrarEventoCampanaProducto(sku, 'vista_producto');
     } catch (error) {
       console.error('Error registrando vista:', error);
     }
@@ -309,8 +314,55 @@
 
       localStorage.setItem(key, JSON.stringify(tracking));
       console.log(`Carrito registrado: ${sku} (${tracking.carritos[sku]} veces) en ${key}`);
+      
+      // Registrar tracking de campaña si aplica
+      registrarEventoCampanaProducto(sku, 'carrito');
     } catch (error) {
       console.error('Error registrando carrito:', error);
+    }
+  }
+
+  // Función para registrar eventos de campaña relacionados con productos
+  async function registrarEventoCampanaProducto(sku, tipo) {
+    const loggedUser = localStorage.getItem('starclutch_user');
+    if (!loggedUser) return;
+    
+    try {
+      const userData = JSON.parse(loggedUser);
+      
+      // Obtener campañas activas del usuario
+      const response = await fetch(`/api/campanas-ofertas?userId=${encodeURIComponent(userData.id)}`);
+      const result = await response.json();
+      
+      if (!result.ok || !result.campanas) return;
+      
+      // Buscar si este producto está en alguna campaña activa
+      for (const campana of result.campanas) {
+        if (!campana.activa || !campana.skus) continue;
+        
+        const skuNormalizado = normalizarTexto(sku);
+        const skuEnCampana = campana.skus.find(s => normalizarTexto(s) === skuNormalizado);
+        
+        if (skuEnCampana) {
+          // Este producto está en una campaña activa, registrar evento
+          await fetch('/api/campanas-tracking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              campanaId: campana.id,
+              userId: userData.id,
+              tipo: tipo, // vista_producto o carrito
+              datos: { 
+                sku: sku,
+                nombre: campana.nombre
+              }
+            })
+          });
+          break; // Solo registrar en la primera campaña que lo contenga
+        }
+      }
+    } catch (error) {
+      console.error('Error registrando evento de campaña:', error);
     }
   }
 
@@ -1236,6 +1288,7 @@
       const precioBruto = parseFloat(producto.precio || 0);
       const precioOriginalNeto = precioBruto > 0 ? Math.round(precioBruto / 1.19) : 0;
       const precioFinalNeto = tieneDescuento ? Math.round(precioOriginalNeto * (1 - (producto.descuento / 100))) : precioOriginalNeto;
+      const esNuevo = (typeof esProductoNuevo === 'function') ? esProductoNuevo(producto.fechaCreacion) : false;
       
       const marca = (producto.marca || '').toUpperCase();
       const marcaLogo = `../marcasproductos/${marca}.png`;
@@ -1253,6 +1306,7 @@
       card.style.cursor = 'pointer';
       
       card.innerHTML = `
+        ${esNuevo ? '<span class="badge-nuevo-ribbon">Nuevo</span>' : ''}
         <div class="header-producto-detalle">
           <h4>${producto.repuesto || 'Producto sin nombre'}</h4>
           <span class="sku-visible">SKU: ${skuVisible}</span>

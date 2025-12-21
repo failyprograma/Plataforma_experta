@@ -2,12 +2,12 @@
 // SISTEMA DE CAMPAÑAS V2 - MÚLTIPLES SLIDES POR CAMPAÑA
 // ============================================================
 
-// Estado global de campañas
-let campanasState = [];
-let campanaTemporal = null;
-let editandoIndex = null;
-let productosClienteOpciones = [];
-let tipoActualModal = 'principal'; // principal | secundario
+// Estado global de campañas (TODAS las variables ya declaradas en script.js)
+// let campanasState = [];
+// let campanaTemporal = null;
+// let editandoIndex = null;
+// let productosClienteOpciones = [];
+// let tipoActualModal = 'principal'; // principal | secundario
 
 // Inicializar sistema de campañas
 document.addEventListener('DOMContentLoaded', () => {
@@ -59,66 +59,83 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================================
 
 async function abrirModalNuevaCampana() {
-  // Recargar productos del cliente seleccionado
   const clientSelect = document.getElementById('client-select');
   if (clientSelect && clientSelect.value) {
     await cargarProductosCliente(clientSelect.value);
-    console.log('Productos recargados para modal:', productosClienteOpciones.length);
-  } else {
-    console.warn('No hay cliente seleccionado');
   }
-  
+  // Asegurar lista de usuarios y preselección del actual
+  if (typeof cargarUsuariosPlataforma === 'function') {
+    await cargarUsuariosPlataforma();
+  }
+  if (typeof asegurarUsuarioActualPreseleccionado === 'function') {
+    usuariosSeleccionadosCampana = [];
+    asegurarUsuarioActualPreseleccionado();
+  }
+
   editandoIndex = null;
   tipoActualModal = 'principal';
-  
-  // Nueva estructura: una campaña puede tener AMBOS tipos, cada uno con múltiples slides
+
   campanaTemporal = {
     nombre: '',
-    principal: {
-      slides: [] // Array de { bannerDesktop, bannerMobile, skus: [] }
-    },
-    secundario: {
-      slides: []
-    },
-    activa: true
+    principal: { slides: [] },
+    secundario: { slides: [] },
+    activa: true,
+    targetUsers: Array.isArray(usuariosSeleccionadosCampana) ? [...usuariosSeleccionadosCampana] : [],
+    vigencia: null
   };
-  
+
   document.getElementById('modal-campana-title').textContent = 'Nueva Campaña';
   document.getElementById('campana-nombre').value = '';
   document.getElementById('campana-activa').checked = true;
-  
-  // Activar tab principal
+  if (typeof actualizarPlaceholderUsuariosCampana === 'function') {
+    actualizarPlaceholderUsuariosCampana();
+  }
+
   cambiarTabModal('principal');
-  
-  // Limpiar slides
   renderizarSlidesModal();
-  
   document.getElementById('modal-campana').style.display = 'flex';
 }
 
 async function abrirModalEditarCampana(index) {
-  // Recargar productos del cliente seleccionado
   const clientSelect = document.getElementById('client-select');
   if (clientSelect && clientSelect.value) {
     await cargarProductosCliente(clientSelect.value);
-    console.log('Productos recargados para modal:', productosClienteOpciones.length);
   }
-  
+  if (typeof cargarUsuariosPlataforma === 'function') {
+    await cargarUsuariosPlataforma();
+  }
+
   editandoIndex = index;
   const campana = campanasState[index];
-  campanaTemporal = JSON.parse(JSON.stringify(campana)); // Copia profunda
+  campanaTemporal = JSON.parse(JSON.stringify(campana));
+
+  // Normalizar estructura adicional
+  const normalizarSlides = (slides = []) => (slides || []).map(slide => ({
+    ...slide,
+    skus: (Array.isArray(slide.skus) ? slide.skus : []).map(s => typeof s === 'object' ? s : { sku: s, descuento: 0 })
+  }));
+  campanaTemporal.principal.slides = normalizarSlides(campanaTemporal.principal?.slides || []);
+  campanaTemporal.secundario.slides = normalizarSlides(campanaTemporal.secundario?.slides || []);
+  campanaTemporal.targetUsers = Array.isArray(campana.targetUsers) ? [...campana.targetUsers] : [];
+  campanaTemporal.vigencia = campana.vigencia || null;
   tipoActualModal = 'principal';
-  
+
   document.getElementById('modal-campana-title').textContent = 'Editar Campaña';
   document.getElementById('campana-nombre').value = campana.nombre;
   document.getElementById('campana-activa').checked = campana.activa;
-  
-  // Activar tab principal
+
+  if (typeof asegurarUsuarioActualPreseleccionado === 'function') {
+    usuariosSeleccionadosCampana = campanaTemporal.targetUsers && campanaTemporal.targetUsers.length
+      ? [...campanaTemporal.targetUsers]
+      : usuariosSeleccionadosCampana;
+    asegurarUsuarioActualPreseleccionado();
+  }
+  if (typeof actualizarPlaceholderUsuariosCampana === 'function') {
+    actualizarPlaceholderUsuariosCampana();
+  }
+
   cambiarTabModal('principal');
-  
-  // Renderizar slides
   renderizarSlidesModal();
-  
   document.getElementById('modal-campana').style.display = 'flex';
 }
 
@@ -174,28 +191,40 @@ async function guardarCampanaModal() {
   if (tienePrincipal && !validarSlides(campanaTemporal.principal.slides, 'Principal')) return;
   if (tieneSecundario && !validarSlides(campanaTemporal.secundario.slides, 'Secundario')) return;
   
-  // Crear objeto campaña
+  // Normalizar SKUs a estructura con descuento si aplica
+  const normalizarSlides = (slides = []) => (slides || []).map(slide => ({
+    ...slide,
+    skus: (Array.isArray(slide.skus) ? slide.skus : []).map(s => typeof s === 'object' ? s : { sku: s, descuento: 0 })
+  }));
+  campanaTemporal.principal.slides = normalizarSlides(campanaTemporal.principal.slides);
+  campanaTemporal.secundario.slides = normalizarSlides(campanaTemporal.secundario.slides);
+
   const campana = {
     id: editandoIndex !== null ? campanasState[editandoIndex].id : `camp_${Date.now()}`,
     nombre,
     principal: campanaTemporal.principal,
     secundario: campanaTemporal.secundario,
-    activa
+    activa,
+    targetUsers: Array.isArray(usuariosSeleccionadosCampana) ? [...usuariosSeleccionadosCampana] : [],
+    vigencia: campanaTemporal.vigencia || null
   };
-  
-  if (editandoIndex !== null) {
-    campanasState[editandoIndex] = campana;
+
+  // Abrir modal de programación/lanzamiento en lugar de cerrar
+  if (typeof abrirModalLanzarCampana === 'function') {
+    campanaPendienteLanzamiento = campana;
+    campanaPendienteIndex = editandoIndex;
+    abrirModalLanzarCampana(campana);
   } else {
-    campanasState.push(campana);
+    // Fallback: guardar directamente si no existe el flujo avanzado
+    if (editandoIndex !== null) {
+      campanasState[editandoIndex] = campana;
+    } else {
+      campanasState.push(campana);
+    }
+    await guardarTodasLasCampanas();
+    renderizarListaCampanas();
+    cerrarModalCampana();
   }
-  
-  console.log('Campaña guardada en estado local:', campana);
-  
-  // Guardar en el servidor
-  await guardarTodasLasCampanas();
-  
-  renderizarListaCampanas();
-  cerrarModalCampana();
 }
 
 // ============================================================
@@ -330,16 +359,26 @@ function renderizarSlidesModal() {
           
           <!-- SKUs ya agregados -->
           <div class="slide-skus-list" id="slide-skus-${index}">
-            ${slide.skus.map((sku, skuIndex) => {
-              const producto = productosClienteOpciones.find(p => p.sku === sku);
+            ${slide.skus.map((skuData, skuIndex) => {
+              const skuCode = typeof skuData === 'object' ? skuData.sku : skuData;
+              const descuento = typeof skuData === 'object' ? (Number(skuData.descuento) || 0) : 0;
+              const producto = productosClienteOpciones.find(p => p.sku === skuCode);
               const nombreProducto = producto ? producto.nombre : 'Producto no encontrado';
               return `
                 <div class="slide-sku-item">
                   <div class="slide-sku-info">
-                    <span class="slide-sku-code">${sku}</span>
+                    <span class="slide-sku-code">${skuCode}</span>
                     <span class="slide-sku-nombre">${nombreProducto}</span>
                   </div>
-                  <button type="button" class="btn-remove-sku" onclick="removeSlideSKU(${index}, ${skuIndex})×</button>
+                  <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+                    <label style="font-size:11px; color:#666; display:flex; align-items:center; gap:4px;">
+                      % Desc.
+                      <input type="number" min="0" max="100" step="0.01" value="${descuento}"
+                        class="sc-input" style="width:90px; padding:6px 8px; font-size:12px;"
+                        onchange="actualizarDescuentoSlide(${index}, ${skuIndex}, this.value)">
+                    </label>
+                    <button type="button" class="btn-remove-sku" onclick="removeSlideSKU(${index}, ${skuIndex})">×</button>
+                  </div>
                 </div>
               `;
             }).join('')}
@@ -415,7 +454,7 @@ function removeSlideMobile(slideIndex) {
 // ============================================================
 
 // Almacenar selección temporal por slide
-const seleccionTemporal = {};
+// const seleccionTemporal = {}; // Ya declarado en script.js
 
 function toggleDropdownSlide(slideIndex) {
   const dropdown = document.getElementById(`dropdown-${slideIndex}`);
@@ -437,9 +476,10 @@ function toggleDropdownSlide(slideIndex) {
     dropdown.style.display = 'block';
     trigger.classList.add('active');
     
-    // Inicializar selección temporal con SKUs actuales del slide
+    // Inicializar selección temporal con SKUs actuales del slide (solo códigos)
     const tipo = tipoActualModal;
-    seleccionTemporal[slideIndex] = [...(campanaTemporal[tipo].slides[slideIndex]?.skus || [])];
+    const actuales = campanaTemporal[tipo].slides[slideIndex]?.skus || [];
+    seleccionTemporal[slideIndex] = actuales.map(x => (typeof x === 'object' ? x.sku : x)).filter(Boolean);
     
     // Renderizar opciones
     renderizarOpcionesDropdown(slideIndex, '');
@@ -477,7 +517,8 @@ function renderizarOpcionesDropdown(slideIndex, filtro = '') {
   // Inicializar selección temporal si no existe
   if (!seleccionTemporal[slideIndex]) {
     const tipo = tipoActualModal;
-    seleccionTemporal[slideIndex] = [...(campanaTemporal[tipo].slides[slideIndex]?.skus || [])];
+    const actuales = campanaTemporal[tipo].slides[slideIndex]?.skus || [];
+    seleccionTemporal[slideIndex] = actuales.map(x => (typeof x === 'object' ? x.sku : x)).filter(Boolean);
   }
   
   // Filtrar productos
@@ -542,7 +583,7 @@ function aplicarSeleccionSlide(slideIndex) {
   const tipo = tipoActualModal;
   
   // Aplicar la selección temporal al slide
-  campanaTemporal[tipo].slides[slideIndex].skus = [...(seleccionTemporal[slideIndex] || [])];
+  campanaTemporal[tipo].slides[slideIndex].skus = (seleccionTemporal[slideIndex] || []).map(s => ({ sku: s, descuento: 0 }));
   
   // Cerrar dropdown
   toggleDropdownSlide(slideIndex);
@@ -565,6 +606,26 @@ function renderizarListaCampanas() {
   const container = document.getElementById('campanas-list');
   const emptyState = document.getElementById('campanas-empty-state');
   
+  console.log('[DEBUG V2] renderizarListaCampanas - campanasState:', campanasState.length, 'campañas');
+  
+  // Actualizar contadores ANTES de renderizar
+  const countPrincipal = campanasState.filter(c => {
+      const activa = (typeof c.activaVigente !== 'undefined') ? c.activaVigente : (typeof evaluarActivaPorVigencia === 'function' ? evaluarActivaPorVigencia(c) : !!c.activa);
+      return activa && (c.principal?.slides?.length > 0);
+  }).length;
+  const countSecundario = campanasState.filter(c => {
+      const activa = (typeof c.activaVigente !== 'undefined') ? c.activaVigente : (typeof evaluarActivaPorVigencia === 'function' ? evaluarActivaPorVigencia(c) : !!c.activa);
+      return activa && (c.secundario?.slides?.length > 0);
+  }).length;
+  
+  console.log('[DEBUG V2] Contadores: principal=', countPrincipal, 'secundario=', countSecundario);
+  
+  const countPrincipalEl = document.getElementById('count-principal');
+  const countSecundarioEl = document.getElementById('count-secundario');
+  
+  if (countPrincipalEl) countPrincipalEl.textContent = countPrincipal;
+  if (countSecundarioEl) countSecundarioEl.textContent = countSecundario;
+  
   if (campanasState.length === 0) {
     container.innerHTML = '';
     emptyState.style.display = 'block';
@@ -578,20 +639,27 @@ function renderizarListaCampanas() {
     const totalSlidesPrincipal = campana.principal?.slides?.length || 0;
     const totalSlidesSecundario = campana.secundario?.slides?.length || 0;
     const totalSlides = totalSlidesPrincipal + totalSlidesSecundario;
+    const activaVigente = typeof evaluarActivaPorVigencia === 'function' ? evaluarActivaPorVigencia(campana) : !!campana.activa;
+    const vigenciaTexto = campana.vigencia?.desde
+      ? `${campana.vigencia.desde} → ${campana.vigencia.hasta || 'Sin fecha fin'}`
+      : (campana.vigencia?.hasta ? `Hasta ${campana.vigencia.hasta}` : 'Sin vigencia definida');
+    const audienciaTexto = Array.isArray(campana.targetUsers) && campana.targetUsers.length
+      ? `${campana.targetUsers.length} usuario${campana.targetUsers.length === 1 ? '' : 's'}`
+      : 'No asignada';
     
     return `
       <div class="campana-card-compact">
         <div class="campana-card-header">
           <div class="campana-card-title">
             <span class="campana-nombre">${campana.nombre}</span>
-            ${campana.activa ? '<span class="badge-activa">Activa</span>' : '<span class="badge-inactiva">Inactiva</span>'}
+            ${activaVigente ? '<span class="badge-activa">Activa</span>' : '<span class="badge-inactiva">Inactiva</span>'}
           </div>
           <div class="campana-card-actions">
             <button type="button" class="btn-icon-edit" onclick="abrirModalEditarCampana(${index})" title="Editar">
-              ✏️
+              <img src="../img/Editar flota.svg" alt="Editar" style="width: 20px; height: 20px;">
             </button>
             <button type="button" class="btn-icon-delete" onclick="eliminarCampana(${index})" title="Eliminar">
-              🗑️
+              <img src="../img/Delete.svg" alt="Eliminar" style="width: 20px; height: 20px;">
             </button>
           </div>
         </div>
@@ -613,10 +681,228 @@ function renderizarListaCampanas() {
               <span class="stat-value">${totalSlidesSecundario} slide${totalSlidesSecundario !== 1 ? 's' : ''}</span>
             </div>
           ` : ''}
+          <div class="stat-item">
+            <span class="stat-label">Vigencia:</span>
+            <span class="stat-value">${vigenciaTexto}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Usuarios:</span>
+            <span class="stat-value">${audienciaTexto}</span>
+          </div>
+          <div class="stat-item" style="border-top: 1px solid #e0e0e0; padding-top: 8px; margin-top: 8px;">
+            <button type="button" class="btn-primary" onclick="verDatosCampana('${campana.nombre}')" title="Ver datos de campaña" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <img src="../img/info_471662-01 1.svg" alt="Métricas" style="width: 16px; height: 16px; filter: brightness(0) saturate(100%) invert(100%);">
+              Métricas de la campaña
+            </button>
+          </div>
         </div>
       </div>
     `;
   }).join('');
+}
+
+// ============================================================
+// ANALYTICS DE CAMPAÑAS
+// ============================================================
+
+async function verDatosCampana(campanaId) {
+  console.log('[verDatosCampana] INICIADO con campanaId:', campanaId);
+  
+  // Limpiar intervalo anterior PRIMERO
+  if (window.__campanaAnalyticsTimer) {
+    clearInterval(window.__campanaAnalyticsTimer);
+    window.__campanaAnalyticsTimer = null;
+    console.log('[verDatosCampana] Intervalo previo cancelado');
+  }
+  
+  const clientSelect = document.getElementById('client-select');
+  const userId = adminSelectedClientId || clientSelect?.value;
+  
+  console.log('[verDatosCampana] userId final:', userId);
+  
+  if (!userId) {
+    console.error('[verDatosCampana] ❌ NO HAY USUARIO SELECCIONADO');
+    alert('Selecciona un cliente primero');
+    return;
+  }
+  
+  // Abrir modal y cargar datos
+  const modalElement = document.getElementById('modal-analytics-campana');
+  const titleElement = document.getElementById('analytics-campana-title');
+  
+  if (!modalElement || !titleElement) {
+    console.error('[verDatosCampana] ❌ NO SE ENCONTRARON ELEMENTOS DEL MODAL');
+    return;
+  }
+  
+  titleElement.textContent = `Datos de Campaña: ${campanaId}`;
+  modalElement.style.display = 'flex';
+  
+  console.log('[verDatosCampana] ✅ Modal abierto. Cargando analytics...');
+  
+  // Cargar analytics inicial
+  await cargarAnalyticsCampana(campanaId, userId);
+  
+  // Auto-refresh cada 10s (en lugar de 5s para evitar sobrecarga)
+  window.__campanaAnalyticsTimer = setInterval(async () => {
+    // Verificar que el modal sigue abierto
+    if (modalElement.style.display === 'flex') {
+      await cargarAnalyticsCampana(campanaId, userId);
+    } else {
+      clearInterval(window.__campanaAnalyticsTimer);
+      window.__campanaAnalyticsTimer = null;
+    }
+  }, 10000);
+  
+  console.log('[verDatosCampana] ✅ COMPLETADO');
+}
+
+function cerrarModalAnalyticsCampana() {
+  document.getElementById('modal-analytics-campana').style.display = 'none';
+  if (window.__campanaAnalyticsTimer) {
+    clearInterval(window.__campanaAnalyticsTimer);
+    window.__campanaAnalyticsTimer = null;
+  }
+}
+
+async function cargarAnalyticsCampana(campanaId, userId) {
+  try {
+    const url = `/api/campanas-analytics?campanaId=${encodeURIComponent(campanaId)}&userId=${encodeURIComponent(userId)}`;
+    
+    const response = await fetch(url);
+    const result = await response.json();
+    
+    if (result.ok && result.analytics) {
+      // Verificar que renderizarAnalytics existe
+      if (typeof renderizarAnalytics !== 'function') {
+        console.error('[cargarAnalyticsCampana] ❌ renderizarAnalytics NO ES UNA FUNCIÓN');
+        return;
+      }
+      
+      renderizarAnalytics(result.analytics);
+    } else {
+      console.warn('[cargarAnalyticsCampana] ⚠️ Respuesta no OK:', result);
+    }
+  } catch (error) {
+    console.error('[cargarAnalyticsCampana] ❌ Error:', error.message);
+  }
+}
+
+function renderizarAnalytics(analytics) {
+  try {
+    // Métricas principales
+    document.getElementById('analytics-vistas-banner').textContent = analytics.vistas || 0;
+
+    // Click en notificación (fallback a clicks si backend aún no envía clicksNotificacion)
+    const clicksNotif = (analytics.clicksNotificacion ?? analytics.clicks ?? 0);
+    document.getElementById('analytics-clicks-notif').textContent = clicksNotif;
+    document.getElementById('analytics-vistas-productos').textContent = analytics.productosVistos || 0;
+    document.getElementById('analytics-carrito').textContent = analytics.carrito || 0;
+    document.getElementById('analytics-cotizaciones').textContent = analytics.cotizaciones || 0;
+    document.getElementById('analytics-ordenes').textContent = analytics.ordenes || 0;
+
+    // CTR y conversiones
+    const baseVistas = analytics.vistasNotificacion ?? analytics.vistas ?? 0;
+    const ctr = baseVistas > 0 ? ((clicksNotif / baseVistas) * 100).toFixed(1) : 0;
+    document.getElementById('analytics-clicks-tasa').textContent = `${ctr}% CTR notif.`;
+
+    const convCarrito = clicksNotif > 0 ? ((analytics.carrito / clicksNotif) * 100).toFixed(1) : 0;
+    document.getElementById('analytics-carrito-tasa').textContent = `${convCarrito}% conv.`;
+
+    const montoFormateado = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(analytics.montoOrdenes || 0);
+    document.getElementById('analytics-ordenes-monto').textContent = montoFormateado;
+
+    // Embudo de conversión
+    const maxVistas = analytics.vistas || 1;
+    document.getElementById('funnel-vistas').textContent = analytics.vistas || 0;
+    document.getElementById('funnel-clicks').textContent = clicksNotif;
+    document.getElementById('funnel-productos').textContent = analytics.productosVistos || 0;
+    document.getElementById('funnel-carrito').textContent = analytics.carrito || 0;
+    document.getElementById('funnel-cotizaciones').textContent = analytics.cotizaciones || 0;
+    document.getElementById('funnel-ordenes').textContent = analytics.ordenes || 0;
+
+    document.getElementById('funnel-pct-1').textContent = (analytics.vistas || 0) > 0 ? '100%' : '0%';
+    document.getElementById('funnel-pct-2').textContent = maxVistas > 0 ? `${((clicksNotif / maxVistas) * 100).toFixed(1)}%` : '0%';
+    document.getElementById('funnel-pct-3').textContent = maxVistas > 0 ? `${((analytics.productosVistos / maxVistas) * 100).toFixed(1)}%` : '0%';
+    document.getElementById('funnel-pct-4').textContent = maxVistas > 0 ? `${((analytics.carrito / maxVistas) * 100).toFixed(1)}%` : '0%';
+    document.getElementById('funnel-pct-5').textContent = maxVistas > 0 ? `${((analytics.cotizaciones / maxVistas) * 100).toFixed(1)}%` : '0%';
+    document.getElementById('funnel-pct-6').textContent = maxVistas > 0 ? `${((analytics.ordenes / maxVistas) * 100).toFixed(1)}%` : '0%';
+
+    document.getElementById('funnel-bar-1').style.width = (analytics.vistas || 0) > 0 ? '100%' : '0%';
+    document.getElementById('funnel-bar-2').style.width = maxVistas > 0 ? `${(clicksNotif / maxVistas) * 100}%` : '0%';
+    document.getElementById('funnel-bar-3').style.width = maxVistas > 0 ? `${(analytics.productosVistos / maxVistas) * 100}%` : '0%';
+    document.getElementById('funnel-bar-4').style.width = maxVistas > 0 ? `${(analytics.carrito / maxVistas) * 100}%` : '0%';
+    document.getElementById('funnel-bar-5').style.width = maxVistas > 0 ? `${(analytics.cotizaciones / maxVistas) * 100}%` : '0%';
+    document.getElementById('funnel-bar-6').style.width = maxVistas > 0 ? `${((analytics.ordenes / maxVistas) * 100)}%` : '0%';
+
+    // Top productos vistos
+    const topVistosContainer = document.getElementById('analytics-top-vistos');
+    if (analytics.topProductosVistos && analytics.topProductosVistos.length > 0) {
+      topVistosContainer.innerHTML = analytics.topProductosVistos.slice(0, 5).map(p => `
+        <div class="analytics-product-item">
+          <div>
+            <div class="analytics-product-name">${p.nombre || 'Producto'}</div>
+            <div class="analytics-product-sku">${p.sku}</div>
+          </div>
+          <div class="analytics-product-count">${p.count}</div>
+        </div>
+      `).join('');
+    } else {
+      topVistosContainer.innerHTML = '<div style="color: #999; font-size: 13px; padding: 20px; text-align: center;">Sin datos</div>';
+    }
+
+    // Top productos en carrito
+    const topCarritoContainer = document.getElementById('analytics-top-carrito');
+    if (analytics.topProductosCarrito && analytics.topProductosCarrito.length > 0) {
+      topCarritoContainer.innerHTML = analytics.topProductosCarrito.slice(0, 5).map(p => `
+        <div class="analytics-product-item">
+          <div>
+            <div class="analytics-product-name">${p.nombre || 'Producto'}</div>
+            <div class="analytics-product-sku">${p.sku}</div>
+          </div>
+          <div class="analytics-product-count">${p.count}</div>
+        </div>
+      `).join('');
+    } else {
+      topCarritoContainer.innerHTML = '<div style="color: #999; font-size: 13px; padding: 20px; text-align: center;">Sin datos</div>';
+    }
+
+    // Timeline de actividad
+    const timelineContainer = document.getElementById('analytics-timeline');
+    if (analytics.timeline && analytics.timeline.length > 0) {
+      timelineContainer.innerHTML = analytics.timeline.map(evento => `
+        <div class="analytics-timeline-item">
+          <div class="analytics-timeline-icon">${evento.icono || '•'}</div>
+          <div class="analytics-timeline-content">
+            <div class="analytics-timeline-text">${evento.texto}</div>
+            <div class="analytics-timeline-time">${evento.tiempo}</div>
+          </div>
+        </div>
+      `).join('');
+    } else {
+      timelineContainer.innerHTML = '<div style="color: #999; font-size: 13px; padding: 20px; text-align: center;">Sin actividad registrada</div>';
+    }
+
+    // Usuarios activos
+    const usuariosContainer = document.getElementById('analytics-usuarios');
+    if (analytics.usuarios && analytics.usuarios.length > 0) {
+      usuariosContainer.innerHTML = analytics.usuarios.map(usuario => `
+        <div class="analytics-usuario-item">
+          <div class="analytics-usuario-avatar">${usuario.inicial || 'U'}</div>
+          <div class="analytics-usuario-info">
+            <div class="analytics-usuario-nombre">${usuario.nombre || 'Usuario'}</div>
+            <div class="analytics-usuario-email">${usuario.email || ''}</div>
+          </div>
+          <div class="analytics-usuario-actividad">${usuario.actividad || 'Activo'}</div>
+        </div>
+      `).join('');
+    } else {
+      usuariosContainer.innerHTML = '<div style="color: #999; font-size: 13px; padding: 20px; text-align: center;">Sin usuarios activos</div>';
+    }
+    
+  } catch (error) {
+    console.error('[renderizarAnalytics] ❌ Error:', error.message);
+  }
 }
 
 async function eliminarCampana(index) {
@@ -792,8 +1078,8 @@ async function cargarProductosCliente(userId) {
 }
 
 // Sistema de polling para detectar cambios en productos
-let pollingProductosInterval = null;
-let ultimoCountProductos = 0;
+// let pollingProductosInterval = null; // Ya declarado en script.js
+// let ultimoCountProductos = 0; // Ya declarado en script.js
 
 function iniciarMonitoreoProductos(userId) {
   // Limpiar intervalo anterior si existe

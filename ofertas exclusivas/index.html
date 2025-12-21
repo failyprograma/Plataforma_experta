@@ -222,6 +222,7 @@
 
 <script src="../script.js"></script>
 <script src="../mobile-nav.js"></script>
+<script src="../campanas-tracking-client.js"></script>
 
 <script>
 // ============================================
@@ -323,6 +324,9 @@ async function cargarBannersUsuario() {
       renderCarruselPrincipal();
       renderCarruselSecundario();
       
+      // Registrar vista de banners de campañas activas
+      registrarVistaBanners();
+      
       if (!carouselsInitialized) {
         initCarousels();
         carouselsInitialized = true;
@@ -333,6 +337,89 @@ async function cargarBannersUsuario() {
   } catch (error) {
     console.error('Error cargando banners:', error);
     mostrarMensajeSinBanners();
+  }
+}
+
+// Registrar tracking de vistas de banner
+async function registrarVistaBanners() {
+  console.log('[registrarVistaBanners] Iniciando...');
+  console.log('[registrarVistaBanners] campanasData:', campanasData);
+  
+  if (!campanasData) {
+    console.warn('[registrarVistaBanners] No hay campanasData');
+    return;
+  }
+  
+  const loggedUser = localStorage.getItem('starclutch_user');
+  if (!loggedUser) {
+    console.warn('[registrarVistaBanners] No hay usuario logueado');
+    return;
+  }
+  
+  try {
+    const userData = JSON.parse(loggedUser);
+    console.log('[registrarVistaBanners] Usuario:', userData.id);
+    console.log('[registrarVistaBanners] CampanasTracking disponible:', typeof CampanasTracking !== 'undefined');
+    
+    // Inicializar sistema de tracking si aún no está inicializado
+    if (typeof CampanasTracking !== 'undefined' && !CampanasTracking.userId) {
+      console.log('[registrarVistaBanners] Inicializando CampanasTracking...');
+      CampanasTracking.init(userData.id);
+      
+      // Registrar campañas activas en el sistema de tracking
+      const campanasActivas = [];
+      
+      // Buscar en principal
+      console.log('[registrarVistaBanners] Principal:', campanasData.principal);
+      if (campanasData.principal && campanasData.principal.activa) {
+        const campanaId = campanasData.principal.nombre || campanasData.principal.id;
+        console.log('[registrarVistaBanners] Agregando campaña principal:', campanaId);
+        campanasActivas.push({
+          nombre: campanaId,
+          activa: true,
+          principal: campanasData.principal.principal,
+          secundario: campanasData.principal.secundario
+        });
+      }
+      
+      // Buscar en secundario
+      console.log('[registrarVistaBanners] Secundario:', campanasData.secundario);
+      if (campanasData.secundario && campanasData.secundario.activa) {
+        const campanaId = campanasData.secundario.nombre || campanasData.secundario.id;
+        console.log('[registrarVistaBanners] Agregando campaña secundario:', campanaId);
+        campanasActivas.push({
+          nombre: campanaId,
+          activa: true,
+          principal: campanasData.secundario.principal,
+          secundario: campanasData.secundario.secundario
+        });
+      }
+      
+      console.log('[registrarVistaBanners] Campañas activas a registrar:', campanasActivas);
+      CampanasTracking.registrarCampanasActivas(campanasActivas);
+    } else {
+      console.log('[registrarVistaBanners] CampanasTracking ya inicializado');
+    }
+    
+    // Registrar vista del banner principal si hay campaña activa
+    if (campanasData.principal && campanasData.principal.activa) {
+      const campanaId = campanasData.principal.nombre || campanasData.principal.id;
+      console.log('[registrarVistaBanners] Registrando vista banner principal:', campanaId);
+      if (typeof CampanasTracking !== 'undefined') {
+        CampanasTracking.registrarVistaBanner(campanaId, { tipoCarrusel: 'principal' });
+      }
+    }
+    
+    // Registrar vista del banner secundario si hay campaña activa
+    if (campanasData.secundario && campanasData.secundario.activa) {
+      const campanaId = campanasData.secundario.nombre || campanasData.secundario.id;
+      console.log('[registrarVistaBanners] Registrando vista banner secundario:', campanaId);
+      if (typeof CampanasTracking !== 'undefined') {
+        CampanasTracking.registrarVistaBanner(campanaId, { tipoCarrusel: 'secundario' });
+      }
+    }
+  } catch (error) {
+    console.error('Error registrando vista de banners:', error);
   }
 }
 
@@ -591,6 +678,9 @@ function manejarClickBannerPrincipal(index) {
     return; // No hacer nada si no hay campaña activa
   }
   
+  // Registrar click en el banner
+  registrarClickBanner(campanasData.principal.id, 'principal', index);
+  
   let skus = [];
   if (Array.isArray(slidesPrincipal) && slidesPrincipal[index] && Array.isArray(slidesPrincipal[index].skus)) {
     skus = slidesPrincipal[index].skus;
@@ -617,6 +707,9 @@ function manejarClickBannerSecundario(index) {
     return; // No hacer nada si no hay campaña activa
   }
   
+  // Registrar click en el banner
+  registrarClickBanner(campanasData.secundario.id, 'secundario', index);
+  
   let skus = [];
   if (Array.isArray(slidesSecundario) && slidesSecundario[index] && Array.isArray(slidesSecundario[index].skus)) {
     skus = slidesSecundario[index].skus;
@@ -635,6 +728,21 @@ function manejarClickBannerSecundario(index) {
     // Múltiples productos: ir a categorías con filtro
     localStorage.setItem('campana_skus', JSON.stringify(skus));
     window.location.href = `../mis flotas/categorias.html?campana=secundario`;
+  }
+}
+
+// Función para registrar click en banner
+async function registrarClickBanner(campanaId, posicion, slideIndex) {
+  const loggedUser = localStorage.getItem('starclutch_user');
+  if (!loggedUser) return;
+  
+  try {
+    const userData = JSON.parse(loggedUser);
+    if (typeof CampanasTracking !== 'undefined') {
+      CampanasTracking.registrarClickBanner(campanaId, { tipoCarrusel: posicion, posicion: slideIndex });
+    }
+  } catch (error) {
+    console.error('Error registrando click de banner:', error);
   }
 }
 </script>

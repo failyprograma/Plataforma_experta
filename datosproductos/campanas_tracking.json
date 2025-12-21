@@ -1,0 +1,1658 @@
+{
+  "eventos": [
+    {
+      "id": "evt_1766342578711_jg20ckw3q",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T18:42:58.711Z"
+    },
+    {
+      "id": "evt_1766342580709_gr5b8vcwt",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T18:43:00.709Z"
+    },
+    {
+      "id": "evt_1766343414238_a5kuibxbe",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T18:56:54.238Z"
+    },
+    {
+      "id": "evt_1766344517164_r2ap8eca3",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T19:15:17.164Z"
+    },
+    {
+      "id": "evt_1766344519165_1ru5surs5",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T19:15:19.165Z"
+    },
+    {
+      "id": "evt_1766344906981_lnjxynlvz",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_producto",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno"
+      },
+      "fecha": "2025-12-21T19:21:46.981Z"
+    },
+    {
+      "id": "evt_1766344912973_ejt0ng45o",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_producto",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines"
+      },
+      "fecha": "2025-12-21T19:21:52.973Z"
+    },
+    {
+      "id": "evt_1766344951289_1w32igk9l",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_producto",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno"
+      },
+      "fecha": "2025-12-21T19:22:31.289Z"
+    },
+    {
+      "id": "evt_1766344954782_2n0wzuhnz",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_producto",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines"
+      },
+      "fecha": "2025-12-21T19:22:34.782Z"
+    },
+    {
+      "id": "evt_1766344957078_km7smnjdw",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_producto",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno"
+      },
+      "fecha": "2025-12-21T19:22:37.078Z"
+    },
+    {
+      "id": "evt_1766344971084_at87i78mv",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T19:22:51.084Z"
+    },
+    {
+      "id": "evt_1766345234171_3mbh62l25",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:27:14.171Z"
+    },
+    {
+      "id": "evt_1766345234179_jrc2kr48o",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:27:14.179Z"
+    },
+    {
+      "id": "evt_1766345387062_pbj51csjx",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:29:47.062Z"
+    },
+    {
+      "id": "evt_1766345387078_l96hmfcl1",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:29:47.078Z"
+    },
+    {
+      "id": "evt_1766345420146_snja2l0d2",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:30:20.146Z"
+    },
+    {
+      "id": "evt_1766345420151_3jt6jyump",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:30:20.151Z"
+    },
+    {
+      "id": "evt_1766345440186_53do1l376",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:30:40.186Z"
+    },
+    {
+      "id": "evt_1766345440191_bz11j13av",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:30:40.191Z"
+    },
+    {
+      "id": "evt_1766345683080_j6ljekd43",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:34:43.080Z"
+    },
+    {
+      "id": "evt_1766345683085_zx6nyn558",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:34:43.085Z"
+    },
+    {
+      "id": "evt_1766345696763_shig62qo5",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:34:56.763Z"
+    },
+    {
+      "id": "evt_1766345696767_ok7yt99vs",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:34:56.767Z"
+    },
+    {
+      "id": "evt_1766345869564_tqpb0q0rg",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:37:49.564Z"
+    },
+    {
+      "id": "evt_1766345869579_d0rfffh3w",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:37:49.579Z"
+    },
+    {
+      "id": "evt_1766345872051_y2tddb98u",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:37:52.052Z"
+    },
+    {
+      "id": "evt_1766345872062_dhnmop814",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:37:52.062Z"
+    },
+    {
+      "id": "evt_1766345886305_ss9f0be6w",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:38:06.305Z"
+    },
+    {
+      "id": "evt_1766345886316_y5oyr5h4n",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:38:06.316Z"
+    },
+    {
+      "id": "evt_1766345956194_m4356vds2",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:39:16.194Z"
+    },
+    {
+      "id": "evt_1766345956206_07du2w9iw",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:39:16.206Z"
+    },
+    {
+      "id": "evt_1766346097245_um07hmrtk",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:41:37.245Z"
+    },
+    {
+      "id": "evt_1766346097264_2sfp7gieo",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:41:37.264Z"
+    },
+    {
+      "id": "evt_1766346104315_ucb0oeqk8",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T19:41:44.315Z"
+    },
+    {
+      "id": "evt_1766346107186_r5j5hnbjc",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:41:47.186Z"
+    },
+    {
+      "id": "evt_1766346107189_wwo0gistr",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:41:47.189Z"
+    },
+    {
+      "id": "evt_1766346153199_8tmlpajgz",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:42:33.199Z"
+    },
+    {
+      "id": "evt_1766346153216_cta5s4weg",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:42:33.216Z"
+    },
+    {
+      "id": "evt_1766346159183_p8x0yh69j",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:42:39.183Z"
+    },
+    {
+      "id": "evt_1766346159189_vp1bhrij5",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:42:39.189Z"
+    },
+    {
+      "id": "evt_1766346217414_9pp8dww3v",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:43:37.414Z"
+    },
+    {
+      "id": "evt_1766346217422_a7bsbg71o",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:43:37.422Z"
+    },
+    {
+      "id": "evt_1766346222187_v5jijw176",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:43:42.187Z"
+    },
+    {
+      "id": "evt_1766346222195_pqi8q77ln",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:43:42.195Z"
+    },
+    {
+      "id": "evt_1766346230191_k0pqguqi3",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:43:50.191Z"
+    },
+    {
+      "id": "evt_1766346230199_x7892ez1m",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:43:50.199Z"
+    },
+    {
+      "id": "evt_1766346281324_rwucqhymo",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T19:44:41.324Z"
+    },
+    {
+      "id": "evt_1766346283759_94a1qku0i",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:44:43.759Z"
+    },
+    {
+      "id": "evt_1766346283782_oj8naer8g",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:44:43.782Z"
+    },
+    {
+      "id": "evt_1766346311885_h5uh8n62e",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:45:11.885Z"
+    },
+    {
+      "id": "evt_1766346311891_0mstowf5o",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:45:11.891Z"
+    },
+    {
+      "id": "evt_1766346311968_qdcxgj36m",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346075471_mlcfikp45"
+      },
+      "fecha": "2025-12-21T19:45:11.968Z"
+    },
+    {
+      "id": "evt_1766346315185_dmf88n7xh",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:45:15.185Z"
+    },
+    {
+      "id": "evt_1766346315194_i95en91ew",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:45:15.194Z"
+    },
+    {
+      "id": "evt_1766346324550_po1k62sg8",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:45:24.550Z"
+    },
+    {
+      "id": "evt_1766346324556_h0g7hxlvh",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:45:24.556Z"
+    },
+    {
+      "id": "evt_1766346325528_f86zfqyyv",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346075471_mlcfikp45"
+      },
+      "fecha": "2025-12-21T19:45:25.528Z"
+    },
+    {
+      "id": "evt_1766346327832_33gepxf7j",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T19:45:27.832Z"
+    },
+    {
+      "id": "evt_1766346327844_jukr3yl1y",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T19:45:27.844Z"
+    },
+    {
+      "id": "evt_1766346447118_kc93kah8a",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T19:47:27.118Z"
+    },
+    {
+      "id": "evt_1766346450086_4m1zrxe7f",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T19:47:30.086Z"
+    },
+    {
+      "id": "evt_1766346452078_1q2wai5wp",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T19:47:32.079Z"
+    },
+    {
+      "id": "evt_1766346814929_02kedwhg0",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T19:53:34.929Z"
+    },
+    {
+      "id": "evt_1766346820136_7untf557o",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T19:53:40.136Z"
+    },
+    {
+      "id": "evt_1766346822131_hfvmuhqzy",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T19:53:42.131Z"
+    },
+    {
+      "id": "evt_1766348278939_erx6545xl",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T20:17:58.939Z"
+    },
+    {
+      "id": "evt_1766348284249_4ou60b34k",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T20:18:04.249Z"
+    },
+    {
+      "id": "evt_1766348297926_86bnplcbd",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "cotizacion",
+      "datos": {
+        "skus": [
+          "TAM-327F",
+          "PAT327T"
+        ],
+        "cantidad": 2,
+        "monto": 44003.82
+      },
+      "fecha": "2025-12-21T20:18:17.926Z"
+    },
+    {
+      "id": "evt_1766348420999_gybmejzvq",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T20:20:20.999Z"
+    },
+    {
+      "id": "evt_1766348424291_va4mm763g",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T20:20:24.291Z"
+    },
+    {
+      "id": "evt_1766348426292_l3yeabj7n",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T20:20:26.292Z"
+    },
+    {
+      "id": "evt_1766348438878_hspil2apy",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "cotizacion",
+      "datos": {
+        "skus": [
+          "PAT327T",
+          "TAM-327F"
+        ],
+        "cantidad": 2,
+        "monto": 44003.82
+      },
+      "fecha": "2025-12-21T20:20:38.878Z"
+    },
+    {
+      "id": "evt_1766348554127_nvht75t0y",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T20:22:34.127Z"
+    },
+    {
+      "id": "evt_1766348554137_6a5gda32b",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T20:22:34.137Z"
+    },
+    {
+      "id": "evt_1766348557691_7vtp0to49",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T20:22:37.691Z"
+    },
+    {
+      "id": "evt_1766348559685_4en7i657m",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T20:22:39.685Z"
+    },
+    {
+      "id": "evt_1766349127545_0hgbqnrx8",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "vista_producto",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "prueba 2"
+      },
+      "fecha": "2025-12-21T20:32:07.545Z"
+    },
+    {
+      "id": "evt_1766350025568_uv2q1odab",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T20:47:05.568Z"
+    },
+    {
+      "id": "evt_1766350028191_3ionj2dy9",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T20:47:08.191Z"
+    },
+    {
+      "id": "evt_1766350028197_szvph9s9n",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T20:47:08.197Z"
+    },
+    {
+      "id": "evt_1766350033695_seonpkrux",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T20:47:13.695Z"
+    },
+    {
+      "id": "evt_1766350033702_0bwjel5ve",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T20:47:13.702Z"
+    },
+    {
+      "id": "evt_1766350040811_xn08skrr4",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "vista_producto",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "prueba 2"
+      },
+      "fecha": "2025-12-21T20:47:20.811Z"
+    },
+    {
+      "id": "evt_1766350044577_a42d3jfzh",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T20:47:24.578Z"
+    },
+    {
+      "id": "evt_1766350044581_wslgk8t1c",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T20:47:24.581Z"
+    },
+    {
+      "id": "evt_1766350045486_wxi3c4ab0",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T20:47:25.486Z"
+    },
+    {
+      "id": "evt_1766350300838_pomeosrl7",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T20:51:40.838Z"
+    },
+    {
+      "id": "evt_1766350303459_vjiys1yut",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "vista_producto",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "prueba 2"
+      },
+      "fecha": "2025-12-21T20:51:43.459Z"
+    },
+    {
+      "id": "evt_1766350431874_g2m9m0tyd",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T20:53:51.874Z"
+    },
+    {
+      "id": "evt_1766350434079_yutcvn78l",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "vista_producto",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "prueba 2"
+      },
+      "fecha": "2025-12-21T20:53:54.079Z"
+    },
+    {
+      "id": "evt_1766350635217_viev2zbn8",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "cotizacion",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "monto": 44003.82
+      },
+      "fecha": "2025-12-21T20:57:15.217Z"
+    },
+    {
+      "id": "evt_1766350635221_c83zruivp",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "cotizacion",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines",
+        "monto": 44003.82
+      },
+      "fecha": "2025-12-21T20:57:15.221Z"
+    },
+    {
+      "id": "evt_1766350820816_8jml6bti6",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T21:00:20.816Z"
+    },
+    {
+      "id": "evt_1766350823199_8mgevc96z",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-21T21:00:23.199Z"
+    },
+    {
+      "id": "evt_1766350823217_ttzsgdc8m",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-21T21:00:23.217Z"
+    },
+    {
+      "id": "evt_1766350830571_75kn2npc7",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T21:00:30.571Z"
+    },
+    {
+      "id": "evt_1766350833211_hhqcf1ah9",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T21:00:33.211Z"
+    },
+    {
+      "id": "evt_1766350854649_25tjlqzd8",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "cotizacion",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "monto": 44003.82
+      },
+      "fecha": "2025-12-21T21:00:54.649Z"
+    },
+    {
+      "id": "evt_1766350854657_c1ffs9xw3",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "cotizacion",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines",
+        "monto": 44003.82
+      },
+      "fecha": "2025-12-21T21:00:54.657Z"
+    },
+    {
+      "id": "evt_1766350919546_54iz0zh7m",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T21:01:59.546Z"
+    },
+    {
+      "id": "evt_1766350924642_9ype68612",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T21:02:04.642Z"
+    },
+    {
+      "id": "evt_1766350924647_c2ui2l2nn",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T21:02:04.647Z"
+    },
+    {
+      "id": "evt_1766351024367_cc6eir4ia",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "cotizacion",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "monto": 44003.82
+      },
+      "fecha": "2025-12-21T21:03:44.367Z"
+    },
+    {
+      "id": "evt_1766351024372_6weyyfqj6",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "cotizacion",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines",
+        "monto": 44003.82
+      },
+      "fecha": "2025-12-21T21:03:44.372Z"
+    },
+    {
+      "id": "evt_1766351253214_ow4pguwd9",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T21:07:33.214Z"
+    },
+    {
+      "id": "evt_1766351256343_0dz2xg3w0",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T21:07:36.343Z"
+    },
+    {
+      "id": "evt_1766351346248_ol7kk5h5m",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "cotizacion",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "monto": 44003.82
+      },
+      "fecha": "2025-12-21T21:09:06.248Z"
+    },
+    {
+      "id": "evt_1766351346253_c91024gn1",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "cotizacion",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines",
+        "monto": 44003.82
+      },
+      "fecha": "2025-12-21T21:09:06.253Z"
+    },
+    {
+      "id": "evt_1766351410905_ezixal1l4",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T21:10:10.905Z"
+    },
+    {
+      "id": "evt_1766351414022_mckivgxzv",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T21:10:14.022Z"
+    },
+    {
+      "id": "evt_1766351416015_w7pb6n58y",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T21:10:16.015Z"
+    },
+    {
+      "id": "evt_1766351566877_nydl4ifr6",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T21:12:46.877Z"
+    },
+    {
+      "id": "evt_1766351569657_8rm210s2d",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T21:12:49.657Z"
+    },
+    {
+      "id": "evt_1766351569667_nvgiqrwy7",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T21:12:49.667Z"
+    },
+    {
+      "id": "evt_1766351795972_29avjpnbu",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T21:16:35.972Z"
+    },
+    {
+      "id": "evt_1766351889409_pxct9l5y8",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T21:18:09.409Z"
+    },
+    {
+      "id": "evt_1766352120646_ztz62m0b9",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T21:22:00.646Z"
+    },
+    {
+      "id": "evt_1766352125196_o2xciifvn",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_producto",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines"
+      },
+      "fecha": "2025-12-21T21:22:05.196Z"
+    },
+    {
+      "id": "evt_1766352139813_kty86br1x",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T21:22:19.813Z"
+    },
+    {
+      "id": "evt_1766352141819_1nxj8tbg8",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "PAT327T",
+        "nombre": "Patines",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T21:22:21.819Z"
+    },
+    {
+      "id": "evt_1766352149545_z2hsi4wik",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "cotizacion",
+      "datos": {
+        "skus": [
+          "TAM-327F",
+          "PAT327T"
+        ],
+        "cantidad": 2,
+        "monto": 44003.82
+      },
+      "fecha": "2025-12-21T21:22:29.545Z"
+    },
+    {
+      "id": "evt_1766352430634_45naj3427",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "orden",
+      "datos": {
+        "skus": [
+          "PAT327T",
+          "TAM-327F"
+        ],
+        "cantidad": 2,
+        "monto": 44003.82
+      },
+      "fecha": "2025-12-21T21:27:10.634Z"
+    },
+    {
+      "id": "evt_1766352675454_116jxemf7",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T21:31:15.454Z"
+    },
+    {
+      "id": "evt_1766352680509_xc5y3xfxz",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_producto",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno"
+      },
+      "fecha": "2025-12-21T21:31:20.509Z"
+    },
+    {
+      "id": "evt_1766352733241_ii09jo6ek",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "cotizacion",
+      "datos": {
+        "skus": [
+          "TAM-327F"
+        ],
+        "cantidad": 1,
+        "monto": 30870.98
+      },
+      "fecha": "2025-12-21T21:32:13.241Z"
+    },
+    {
+      "id": "evt_1766352745027_gcesh0lhw",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "orden",
+      "datos": {
+        "skus_relacionados": [
+          "TAM-327F"
+        ],
+        "total_productos": 1,
+        "monto": 30870.98,
+        "numeroOC": 21
+      },
+      "fecha": "2025-12-21T21:32:25.027Z"
+    },
+    {
+      "id": "evt_1766352767406_nd7qhox0a",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_producto",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno"
+      },
+      "fecha": "2025-12-21T21:32:47.407Z"
+    },
+    {
+      "id": "evt_1766352787412_ducold71a",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "TAM-327F",
+        "nombre": "Tambor de freno",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-21T21:33:07.412Z"
+    },
+    {
+      "id": "evt_1766352794603_73thbwhg5",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "cotizacion",
+      "datos": {
+        "skus": [
+          "TAM-327F"
+        ],
+        "cantidad": 1,
+        "monto": 30870.98
+      },
+      "fecha": "2025-12-21T21:33:14.603Z"
+    },
+    {
+      "id": "evt_1766352806423_mc0bej0bk",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "orden",
+      "datos": {
+        "skus": [
+          "TAM-327F"
+        ],
+        "cantidad": 1,
+        "monto": 30870.98
+      },
+      "fecha": "2025-12-21T21:33:26.423Z"
+    },
+    {
+      "id": "evt_1766352880156_x6fckzjbf",
+      "campanaId": "camp_1766334088944",
+      "userId": "ecousuario",
+      "tipo": "cotizacion",
+      "datos": {
+        "skus": [
+          "PAT327T"
+        ],
+        "cantidad": 1,
+        "monto": 13132.84
+      },
+      "fecha": "2025-12-21T21:34:40.156Z"
+    },
+    {
+      "id": "evt_1766353003224_m3g03scag",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "orden",
+      "datos": {
+        "skus_relacionados": [
+          "PAT327T"
+        ],
+        "total_productos": 1,
+        "monto": 13132.84,
+        "numeroOC": 23
+      },
+      "fecha": "2025-12-21T21:36:43.224Z"
+    },
+    {
+      "id": "evt_1766353024592_euu17g5kv",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T21:37:04.592Z"
+    },
+    {
+      "id": "evt_1766353679098_2aukojv3c",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T21:47:59.098Z"
+    },
+    {
+      "id": "evt_1766354445685_hafx9buo4",
+      "campanaId": "campaña",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766354414922_lucnoh9uj"
+      },
+      "fecha": "2025-12-21T22:00:45.685Z"
+    },
+    {
+      "id": "evt_1766354586504_4l9aih6wy",
+      "campanaId": "campaña",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766354410547_bahbra9ps"
+      },
+      "fecha": "2025-12-21T22:03:06.504Z"
+    },
+    {
+      "id": "evt_1766354593974_3o0o84hdn",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766346084173_6yo3f9spe"
+      },
+      "fecha": "2025-12-21T22:03:13.974Z"
+    },
+    {
+      "id": "evt_1766354733270_w5zetx2ul",
+      "campanaId": "campaña",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766354414922_lucnoh9uj"
+      },
+      "fecha": "2025-12-21T22:05:33.270Z"
+    },
+    {
+      "id": "evt_1766354855999_pzu7zxox9",
+      "campanaId": "campaña",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766354414922_lucnoh9uj"
+      },
+      "fecha": "2025-12-21T22:07:35.999Z"
+    }
+  ]
+}

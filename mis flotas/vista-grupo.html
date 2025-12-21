@@ -1104,6 +1104,7 @@
         const precioBruto = parseFloat(producto.precio || 0);
         const precioOriginalNeto = precioBruto > 0 ? Math.round(precioBruto / 1.19) : 0;
         const precioFinalNeto = tieneDescuento ? Math.round(precioOriginalNeto * (1 - (producto.descuento / 100))) : precioOriginalNeto;
+        const esNuevo = (typeof esProductoNuevo === 'function') ? esProductoNuevo(producto.fechaCreacion) : false;
         const marca = (producto.marca || '').toUpperCase();
         const marcaLogo = `../marcasproductos/${marca}.png`;
         const tieneImagen = producto.imagenes && producto.imagenes.length > 0;
@@ -1117,6 +1118,7 @@
         card.className = 'card-producto-detalle';
         card.style.cursor = 'pointer';
         card.innerHTML = `
+          ${esNuevo ? '<span class="badge-nuevo-ribbon">Nuevo</span>' : ''}
           <div class="header-producto-detalle">
               <h4>${producto.repuesto || 'Producto sin nombre'}</h4>
               <span class="sku-visible">SKU: ${skuVisible}</span>

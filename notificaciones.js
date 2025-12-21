@@ -196,6 +196,8 @@ class NotificacionesManager {
         // Icono especial para notificaciones de mantenimiento
         if (notif.tipo === 'mantenimiento_7dias' || notif.tipo === 'mantenimiento_hoy') {
             icono = '<img src="../img/mantención.svg" alt="Mantenimiento" style="width: 48px; height: 48px; opacity: 0.7; filter: brightness(0.4);">';
+        } else if (notif.tipo === 'campanas_activadas' || notif.tipo === 'campanas_desactivadas') {
+            icono = '<img src="../img/Descuento.svg" alt="Ofertas" style="width: 48px; height: 48px; opacity: 0.7; filter: brightness(0.4);">';
         } else if (notif.datos && notif.datos.imagen) {
             icono = `<img src="${notif.datos.imagen}" alt="${notif.datos.productoNombre || 'Producto'}" style="width: 48px; height: 48px; object-fit: contain;">`;
         }
@@ -203,7 +205,10 @@ class NotificacionesManager {
         // Construir URL y botón de acción según el tipo
         let linkHTML = '';
         
-        if (notif.tipo === 'mantenimiento_7dias') {
+        if (notif.tipo === 'campanas_activadas' || notif.tipo === 'campanas_desactivadas') {
+            // Botón para ir a ofertas exclusivas con tracking de click
+            linkHTML = `<a href="#" class="notif-link" onclick="clickNotificacionCampana('${notif.id}'); return false;">Ver ofertas exclusivas</a>`;
+        } else if (notif.tipo === 'mantenimiento_7dias') {
             // Botón para ver productos en categorías (desde datos de la notificación)
             linkHTML = `<a href="#" class="notif-link" onclick="verProductosMantenimientoDesdeNotif('${notif.id}'); return false;">Ver productos</a>`;
         } else if (notif.tipo === 'mantenimiento_hoy') {
@@ -674,5 +679,86 @@ async function agregarProductosMantenimientoDesdeNotif(notifId) {
     } catch (e) {
         console.error('Error agregando productos del mantenimiento al carrito:', e);
         alert('Ocurrió un error al agregar los productos al carrito');
+    }
+}
+
+/**
+ * Click en notificación de campaña - registrar tracking y navegar
+ */
+async function clickNotificacionCampana(notifId) {
+    try {
+        console.log('🖱️ [CLICK NOTIF] Función clickNotificacionCampana ejecutada, notifId:', notifId);
+        
+        const notif = (window.notificacionesManager && Array.isArray(window.notificacionesManager.notificaciones))
+            ? window.notificacionesManager.notificaciones.find(n => n.id === notifId)
+            : null;
+
+        if (!notif || !notif.datos) {
+            console.warn('[CLICK NOTIF] No se encontró la notificación de campaña');
+            window.location.href = '../ofertas exclusivas/index.html';
+            return;
+        }
+
+        // Obtener ID de campaña desde los datos de la notificación
+        const campanaId = notif.datos.campanaId || notif.datos.campanaNombre || 'campaña';
+        
+        console.log('🖱️ [CLICK NOTIF] Click en notificación de campaña:', campanaId);
+        console.log('🔍 [CLICK NOTIF] CampanasTracking disponible:', typeof window.CampanasTracking !== 'undefined');
+        console.log('🔍 [CLICK NOTIF] CampanasTracking.userId:', window.CampanasTracking?.userId);
+        console.log('🔍 [CLICK NOTIF] CampanasTracking.eventosEnCola:', window.CampanasTracking?.eventosEnCola?.length);
+
+        // Obtener usuario logueado
+        const loggedUser = localStorage.getItem('starclutch_user');
+        if (!loggedUser) {
+            console.warn('[CLICK NOTIF] No hay usuario logueado');
+            window.location.href = '../ofertas exclusivas/index.html';
+            return;
+        }
+
+        const userData = JSON.parse(loggedUser);
+        console.log('👤 [CLICK NOTIF] Usuario:', userData.id);
+
+        // Inicializar CampanasTracking si no está inicializado
+        if (typeof window.CampanasTracking !== 'undefined') {
+            if (!window.CampanasTracking.userId) {
+                console.log('[CLICK NOTIF] Inicializando CampanasTracking...');
+                window.CampanasTracking.init(userData.id);
+            }
+
+            // Registrar click en notificación
+            const evento = {
+                campanaId: campanaId,
+                tipo: 'click_notificacion',
+                datos: {
+                    origenClick: 'notificacion',
+                    notificacionId: notifId
+                }
+            };
+            
+            console.log('📝 [CLICK NOTIF] Intentando agregar evento:', evento);
+            window.CampanasTracking.agregarEvento(evento);
+            console.log('✅ [CLICK NOTIF] Evento agregado, cola actual:', window.CampanasTracking.eventosEnCola.length);
+        } else {
+            console.error('❌ [CLICK NOTIF] CampanasTracking no está disponible');
+        }
+
+        // Cerrar panel de notificaciones
+        if (typeof cerrarNotificaciones === 'function') cerrarNotificaciones();
+
+        // IMPORTANTE: Procesar la cola de eventos INMEDIATAMENTE antes de redirigir
+        if (typeof window.CampanasTracking !== 'undefined' && window.CampanasTracking.eventosEnCola.length > 0) {
+            console.log('⏰ [CLICK NOTIF] Procesando cola INMEDIATAMENTE antes de redirigir...');
+            await window.CampanasTracking.procesarColaEventos();
+            console.log('✅ [CLICK NOTIF] Cola procesada, evento enviado al servidor');
+        }
+
+        // Esperar un poco más para asegurar que la petición se envió
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        // Navegar a ofertas exclusivas
+        window.location.href = '../ofertas exclusivas/index.html';
+    } catch (e) {
+        console.error('❌ [CLICK NOTIF] Error procesando click:', e);
+        window.location.href = '../ofertas exclusivas/index.html';
     }
 }

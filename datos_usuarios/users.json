@@ -207,25 +207,11 @@
     ],
     "telefono": "953919607",
     "carrito": {
-      "items": [
-        {
-          "id": "prod_1765419610363_q3528yidl",
-          "sku": "PT5280HT",
-          "skuCliente": "",
-          "nombre": "Pastillas de freno",
-          "marca": "HTECH",
-          "imagen": "/uploads/productos/prod-1765419610324-992056578.png",
-          "precio": 9916,
-          "precioOriginal": 9916,
-          "descuento": 0,
-          "cantidad": 1,
-          "stock": 1
-        }
-      ],
-      "ultimaActualizacion": "2025-12-21T05:05:33.116Z"
+      "items": [],
+      "ultimaActualizacion": "2025-12-21T21:37:19.770Z"
     },
-    "ordenesCompraEnviadas": 15,
-    "cotizacionesEnviadas": 31,
+    "ordenesCompraEnviadas": 24,
+    "cotizacionesEnviadas": 49,
     "cotizacionSkus": [
       "PAS2379",
       "KITTOY400AR",
@@ -239,7 +225,8 @@
       "PAS528",
       "KITMAX280LR",
       "IVMAX280N",
-      "PT1433MHT"
+      "PT1433MHT",
+      "DFTOY528F"
     ]
   }
 ]

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" role="img" aria-labelledby="title desc">
+  <title>Great Wall Logo Placeholder</title>
+  <desc>Simplified placeholder for Great Wall brand</desc>
+  <rect width="200" height="80" fill="#f4f4f4" rx="8" ry="8" />
+  <rect x="6" y="6" width="188" height="68" fill="none" stroke="#c00" stroke-width="4" rx="10" ry="10" />
+  <circle cx="100" cy="40" r="20" fill="none" stroke="#c00" stroke-width="4" />
+  <path d="M85 50 L100 30 L115 50 Z" fill="#c00" />
+  <text x="100" y="72" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#333">Great Wall</text>
+</svg>

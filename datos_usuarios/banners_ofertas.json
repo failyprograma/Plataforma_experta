@@ -1,9 +1,159 @@
 {
   "ecousuario": {
-    "campanas": [],
+    "campanas": [
+      {
+        "id": "camp_1766334088944",
+        "nombre": "prueba 2",
+        "activa": true,
+        "targetUsers": [
+          "ecousuario",
+          "luna"
+        ],
+        "vigencia": {
+          "desde": "2025-12-21",
+          "hasta": "2026-01-23"
+        },
+        "principal": {
+          "slides": [
+            {
+              "id": "slide_1766334066393",
+              "bannerDesktop": "/uploads/banners/banner-1766334094969-712014110.jpg",
+              "bannerMobile": "/uploads/banners/banner-1766334094982-961554119.png",
+              "skus": [
+                {
+                  "sku": "TAM-327F",
+                  "descuento": 2
+                },
+                {
+                  "sku": "PAT327T",
+                  "descuento": 2
+                }
+              ]
+            }
+          ]
+        },
+        "secundario": {
+          "slides": []
+        }
+      },
+      {
+        "id": "camp_1766356858528",
+        "nombre": "asdasasdasdd",
+        "activa": true,
+        "targetUsers": [
+          "ecousuario"
+        ],
+        "vigencia": null,
+        "principal": {
+          "slides": [
+            {
+              "id": "slide_1766356841725",
+              "bannerDesktop": "/uploads/banners/banner-1766356869700-729324371.jpg",
+              "bannerMobile": null,
+              "skus": [
+                {
+                  "sku": "KITTOY400DR",
+                  "descuento": 2
+                },
+                {
+                  "sku": "KITTOY400AR",
+                  "descuento": 2
+                }
+              ]
+            }
+          ]
+        },
+        "secundario": {
+          "slides": []
+        }
+      },
+      {
+        "id": "camp_1766357132477",
+        "nombre": "TEST-ALERTA",
+        "activa": true,
+        "targetUsers": [
+          "ecousuario"
+        ],
+        "vigencia": null,
+        "principal": {
+          "slides": [
+            {
+              "id": "slide_1766357106706",
+              "bannerDesktop": "/uploads/banners/banner-1766357209222-402048052.jpg",
+              "bannerMobile": null,
+              "skus": [
+                {
+                  "sku": "KITMIT240LRV",
+                  "descuento": 22
+                }
+              ]
+            }
+          ]
+        },
+        "secundario": {
+          "slides": []
+        }
+      }
+    ],
     "banners": {
-      "principal-desktop": [],
-      "principal-mobile": [],
+      "principal-desktop": [
+        "/uploads/banners/banner-1766334094969-712014110.jpg",
+        "/uploads/banners/banner-1766356869700-729324371.jpg",
+        "/uploads/banners/banner-1766357209222-402048052.jpg"
+      ],
+      "principal-mobile": [
+        "/uploads/banners/banner-1766334094982-961554119.png"
+      ],
+      "secundario-desktop": [],
+      "secundario-mobile": []
+    }
+  },
+  "luna": {
+    "campanas": [
+      {
+        "id": "camp_1766334088944",
+        "nombre": "prueba 2",
+        "activa": true,
+        "targetUsers": [
+          "ecousuario",
+          "luna"
+        ],
+        "vigencia": {
+          "desde": "2025-12-21",
+          "hasta": "2026-01-23"
+        },
+        "principal": {
+          "slides": [
+            {
+              "id": "slide_1766334066393",
+              "bannerDesktop": "/uploads/banners/banner-1766334094969-712014110.jpg",
+              "bannerMobile": "/uploads/banners/banner-1766334094982-961554119.png",
+              "skus": [
+                {
+                  "sku": "TAM-327F",
+                  "descuento": 2
+                },
+                {
+                  "sku": "PAT327T",
+                  "descuento": 2
+                }
+              ]
+            }
+          ]
+        },
+        "secundario": {
+          "slides": []
+        },
+        "activaVigente": true
+      }
+    ],
+    "banners": {
+      "principal-desktop": [
+        "/uploads/banners/banner-1766334094969-712014110.jpg"
+      ],
+      "principal-mobile": [
+        "/uploads/banners/banner-1766334094982-961554119.png"
+      ],
       "secundario-desktop": [],
       "secundario-mobile": []
     }

@@ -176,6 +176,53 @@ body {
  .oc-total-final { font-weight: 600; color: #252425; font-size: 14px; padding-top: 12px; padding-bottom: 0; }
  .oc-total-final span:last-child { color: #BF1823; font-size: 16px; }
 
+/* Layout especial para la previsualización de cotización + recomendaciones (carrito y mini-carrito) */
+#cotizacion-container-wrapper {
+  display: none;
+  gap: 16px;
+  align-items: stretch;
+  width: 90%;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+#cotizacion-container-wrapper.active { display: flex; }
+#cotizacion-container-wrapper .oc-modal {
+  position: relative;
+  top: 0;
+  left: 0;
+  transform: none;
+  width: 65%;
+  max-height: none;
+  flex-direction: column;
+  display: none;
+}
+#cotizacion-container-wrapper.active .oc-modal { display: flex; }
+#cotizacion-container-wrapper .oc-modal-content {
+  flex: 1;
+  overflow: auto;
+}
+#cotizacion-container-wrapper .oc-recomendaciones-card {
+  flex: 1;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  border: 1px solid #e0e0e0;
+  display: none;
+  flex-direction: column;
+  max-height: 90vh;
+  z-index: 10001;
+}
+#cotizacion-container-wrapper.active .oc-recomendaciones-card { display: flex; }
+#cotizacion-container-wrapper .oc-recomendaciones-body {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+}
+#cotizacion-container-wrapper .oc-recomendaciones-header {
+  padding: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
 /* Sección de información de la orden pendiente (grid superior) */
 .pending-info-section { margin-bottom: 24px; padding: 16px; background: #f9f9f9; border-radius: 12px; border: 1px solid #e0e0e0; }
 .pending-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -227,7 +274,8 @@ body {
 .btn-ficha-tecnica img {
   width: 14px;
   height: 14px;
-  filter: brightness(0) invert(1);
+  /* Tint SVG icon to brand red instead of white */
+  filter: brightness(0) saturate(100%) invert(13%) sepia(89%) saturate(4735%) hue-rotate(351deg) brightness(89%) contrast(96%);
 }
 
 /* Para versión en modal de carrito con clase secundaria */
@@ -1507,11 +1555,6 @@ body {
 .sku-remove:hover { background: #D4646C; }
 .sku-remove:active { background: #881119; }
 
-/* Cada slide ocupa todo el ancho del viewport */
-.banner-slide-single {
-  flex: 0 0 100%;
-}
-
 /* Carrusel principal: contenedor y viewport */
 .banner-carousel-single {
   position: relative;
@@ -1525,16 +1568,25 @@ body {
   border-radius: 16px;
   width: 100%;
   /* Desktop ratio por defecto; en móvil se sobreescribe a 1/1 desde la vista */
-  aspect-ratio: var(--banner-principal-ratio, 21 / 9);
+  aspect-ratio: var(--banner-principal-ratio, 3 / 1);
 }
 
 .banner-track-single {
   display: flex;
+  height: 100%;
   transition: transform 0.45s ease;
   will-change: transform;
 }
 
 /* Imagen del banner */
+.banner-slide-single {
+  flex: 0 0 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .banner-item-single {
   width: 100%;
   height: 100%;
@@ -3770,6 +3822,7 @@ input[type=date]{
     flex-shrink: 0;
     transition: transform 0.2s ease;
     cursor: pointer;
+    overflow: hidden;
 }
 
 .card-producto-detalle:hover {
@@ -3929,6 +3982,7 @@ line-height: 1.3;
     position: relative; /* Necesario para que badge-offer se posicione correctamente */
     border: 1px solid transparent;
     transition: transform 0.2s, box-shadow 0.2s;
+  overflow: hidden;
 }
 
 .sc-card:hover {
@@ -3969,6 +4023,27 @@ line-height: 1.3;
     line-height: 1;
     pointer-events: none;
 }
+
+  .badge-nuevo-ribbon {
+    position: absolute;
+    top: 14px;
+    right: -34px;
+    background: #BF1823;
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 7px 60px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(45deg) translateY(2px);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+  }
+
+  .sc-card .badge-nuevo-ribbon { top: 16px; right: -34px; }
+  .card-producto-detalle .badge-nuevo-ribbon { top: 14px; right: -34px; }
 
 /* Estilo de la imagen dentro del contenedor */
 .sc-card-img img {
@@ -4512,12 +4587,13 @@ line-height: 1.3;
 .detail-right-column {
     flex: 1; 
     min-width: 300px;
-    display: flex; flex-direction: column; 
-    justify-content: space-between;
-    gap: 20px;
+  display: flex; flex-direction: column; 
+  justify-content: space-between;
+  gap: 20px;
+  align-self: stretch;
 }
 
-.specs-panel { border: 1px solid #eee; border-radius: 12px; background: #fff; overflow: hidden; height: 100%; display: flex; flex-direction: column; }
+.specs-panel { border: 1px solid #eee; border-radius: 12px; background: #fff; overflow: hidden; height: 100%; display: flex; flex-direction: column; flex: 1; }
 .specs-tabs { display: flex; border-bottom: 1px solid #eee; background: #fcfcfc; flex-shrink: 0; }
 .tab-btn {
     flex: 1; border: none; background: none; padding: 12px 5px;
@@ -4530,7 +4606,7 @@ line-height: 1.3;
 .spec-label { color: #666; font-weight: 500; }
 .spec-value { color: #333; font-weight: 600; text-align: right; }
 
-.specs-actions-footer { display: flex; justify-content: space-around; padding: 10px 20px; background: #fafafa; border-top: 1px solid #eee; flex-shrink: 0; }
+.specs-actions-footer { display: flex; justify-content: space-around; padding: 10px 20px; background: #fafafa; border-top: 1px solid #eee; flex-shrink: 0; margin-top: auto; }
 .specs-actions-footer img { width: 16px; height: 16px; }
 
 .price-buy-block {
@@ -4779,6 +4855,30 @@ line-height: 1.3;
 }
 .sc-table tr.row-descuento:hover { 
     background-color: #ffe6e6;
+}
+
+/* Filas con productos nuevos */
+.sc-table tr.row-nuevo {
+  background-color: #fff6f7;
+  border-left: 4px solid #BF1823;
+}
+.sc-table tr.row-nuevo:hover {
+  background-color: #ffecee;
+}
+
+.pill-nuevo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 9px;
+  background: #BF1823;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  line-height: 1.2;
 }
 
 /* Celdas Especiales */
@@ -7449,29 +7549,6 @@ line-height: 1.3;
 
 .preview-item .btn-delete-preview:hover {
   background: #BF1823;
-}
-
-.banner-actions-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid #e0e0e0;
-}
-
-.btn-guardar-banners {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
-  font-size: 15px;
-}
-
-.banner-save-status {
-  font-size: 14px;
-  color: #4CAF50;
-  font-weight: 500;
 }
 
 @media (max-width: 900px) {

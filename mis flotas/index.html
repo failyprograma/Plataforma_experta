@@ -9,6 +9,8 @@
  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="../campanas-tracking-client.js"></script>
+  <script src="../campanas-tracking-integration.js"></script>
   
   <style>
     /* Estilos para el modal de filtros lateral */
@@ -1464,11 +1466,13 @@ function crearCardProductoDetalle(producto) {
   const codSC = producto.codSC || producto.codStarClutch || producto.sku || '';
   const skuVisible = codCliente ? codCliente : codSC;
   const skuInvisible = codCliente ? codSC : '';
+  const esNuevo = (typeof esProductoNuevo === 'function') ? esProductoNuevo(producto.fechaCreacion) : false;
 
   const card = document.createElement('div');
   card.className = 'card-producto-detalle';
   card.style.cursor = 'pointer';
   card.innerHTML = `
+    ${esNuevo ? '<span class="badge-nuevo-ribbon">Nuevo</span>' : ''}
     <div class="header-producto-detalle">
         <h4>${producto.repuesto || 'Producto sin nombre'}</h4>
         <span class="sku-visible">SKU: ${skuVisible}</span>

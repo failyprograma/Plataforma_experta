@@ -382,5 +382,1531 @@
     },
     "leida": true,
     "fecha": "2025-12-18T18:19:58.810Z"
+  },
+  {
+    "id": "notif_1766331199051_wgv9brigg",
+    "userId": null,
+    "tipo": "nuevo_producto",
+    "titulo": "Nuevo producto disponible",
+    "mensaje": "Se ha agregado Freno motor de la marca FRASLE a nuestro catálogo.",
+    "datos": {
+      "productoId": "prod_1766331199047_kp1j33mzl",
+      "productoNombre": "Freno motor",
+      "productoMarca": "FRASLE",
+      "precioNuevo": 12000,
+      "descuento": 2
+    },
+    "leida": false,
+    "fecha": "2025-12-21T15:33:19.051Z"
+  },
+  {
+    "id": "notif_1766333650926_7ba7jbcor",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Pastillas de freno (PAS528) con 22% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 22,
+          "descuentoProducto": 0,
+          "precioBase": 12900,
+          "precioProducto": 12900,
+          "precioCampana": 10062,
+          "campanas": [
+            "prueba"
+          ]
+        },
+        {
+          "sku": "KITMIT240LRV",
+          "nombre": "Kit de embrague + Volante",
+          "descuentoCampana": 3,
+          "descuentoProducto": 0,
+          "precioBase": 429900,
+          "precioProducto": 429900,
+          "precioCampana": 417003,
+          "campanas": [
+            "prueba"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:14:10.926Z"
+  },
+  {
+    "id": "notif_1766333652915_d3gdjvnph",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Pastillas de freno (PAS528) con 22% de descuento.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 22,
+          "descuentoProducto": 22,
+          "precioBase": 12900,
+          "precioProducto": 10062,
+          "precioCampana": 7848,
+          "campanas": [
+            "prueba"
+          ]
+        },
+        {
+          "sku": "KITMIT240LRV",
+          "nombre": "Kit de embrague + Volante",
+          "descuentoCampana": 3,
+          "descuentoProducto": 3,
+          "precioBase": 429900,
+          "precioProducto": 417003,
+          "precioCampana": 404493,
+          "campanas": [
+            "prueba"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:14:12.915Z"
+  },
+  {
+    "id": "notif_1766333803515_8tmjjr82a",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Pastillas de freno (PAS528) con 22% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 22,
+          "descuentoProducto": 22,
+          "precioBase": 12900,
+          "precioProducto": 10062,
+          "precioCampana": 7848,
+          "campanas": [
+            "prueba"
+          ]
+        },
+        {
+          "sku": "KITMIT240LRV",
+          "nombre": "Kit de embrague + Volante",
+          "descuentoCampana": 3,
+          "descuentoProducto": 3,
+          "precioBase": 429900,
+          "precioProducto": 417003,
+          "precioCampana": 404493,
+          "campanas": [
+            "prueba"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:16:43.515Z"
+  },
+  {
+    "id": "notif_1766333805194_h3rx94w66",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Pastillas de freno (PAS528) con 22% de descuento.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 22,
+          "descuentoProducto": 22,
+          "precioBase": 12900,
+          "precioProducto": 10062,
+          "precioCampana": 7848,
+          "campanas": [
+            "prueba"
+          ]
+        },
+        {
+          "sku": "KITMIT240LRV",
+          "nombre": "Kit de embrague + Volante",
+          "descuentoCampana": 3,
+          "descuentoProducto": 3,
+          "precioBase": 429900,
+          "precioProducto": 417003,
+          "precioCampana": 404493,
+          "campanas": [
+            "prueba"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:16:45.194Z"
+  },
+  {
+    "id": "notif_1766334029684_9nkoed9qt",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": []
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:20:29.684Z"
+  },
+  {
+    "id": "notif_1766334032971_inyfk9im7",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 0 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": []
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:20:32.971Z"
+  },
+  {
+    "id": "notif_1766334042636_5jnwu2zly",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": []
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:20:42.636Z"
+  },
+  {
+    "id": "notif_1766334044146_tpkrbgqir",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 0 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": []
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:20:44.146Z"
+  },
+  {
+    "id": "notif_1766334094987_7x0pijqbq",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Tambor de freno (TAM-327F) con 2% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 0,
+          "precioBase": 31500,
+          "precioProducto": 31500,
+          "precioCampana": 30870,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 0,
+          "precioBase": 13400,
+          "precioProducto": 13400,
+          "precioCampana": 13132,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:21:34.987Z"
+  },
+  {
+    "id": "notif_1766334096662_j7undxzma",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Tambor de freno (TAM-327F) con 2% de descuento.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:21:36.662Z"
+  },
+  {
+    "id": "notif_1766334526094_0ooq3oeko",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Tambor de freno (TAM-327F) con 2% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:28:46.094Z"
+  },
+  {
+    "id": "notif_1766334527824_ele0rcg65",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Tambor de freno (TAM-327F) con 2% de descuento.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:28:47.824Z"
+  },
+  {
+    "id": "notif_1766335331714_eu29710or",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Tambor de freno (TAM-327F) con 2% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:42:11.714Z"
+  },
+  {
+    "id": "notif_1766335333413_dr862ex92",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Tambor de freno (TAM-327F) con 2% de descuento.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:42:13.413Z"
+  },
+  {
+    "id": "notif_1766335745045_r3cc8qa9x",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": []
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:49:05.045Z"
+  },
+  {
+    "id": "notif_1766335746892_ca461mzj2",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": []
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:49:06.892Z"
+  },
+  {
+    "id": "notif_1766335748161_a7nx77ecc",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Tambor de freno (TAM-327F) con 2% de descuento.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 0,
+          "precioBase": 31500,
+          "precioProducto": 31500,
+          "precioCampana": 30870,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 0,
+          "precioBase": 13400,
+          "precioProducto": 13400,
+          "precioCampana": 13132,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:49:08.161Z"
+  },
+  {
+    "id": "notif_1766335750051_a2arg9g2d",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": []
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:49:10.051Z"
+  },
+  {
+    "id": "notif_1766336032742_j4x7xlcfs",
+    "userId": "ecousuario",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": []
+    },
+    "leida": true,
+    "fecha": "2025-12-21T16:53:52.742Z"
+  },
+  {
+    "id": "notif_1766336032759_e9ktt1wzs",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": []
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:53:52.759Z"
+  },
+  {
+    "id": "notif_1766336318106_5kbytwpx4",
+    "userId": "ecousuario",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T están en oferta!",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 0,
+          "precioBase": 31500,
+          "precioProducto": 31500,
+          "precioCampana": 30870,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 0,
+          "precioBase": 13400,
+          "precioProducto": 13400,
+          "precioCampana": 13132,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T"
+      ]
+    },
+    "leida": true,
+    "fecha": "2025-12-21T16:58:38.106Z"
+  },
+  {
+    "id": "notif_1766336318121_5btvno8ie",
+    "userId": "luna",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T están en oferta!",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:58:38.121Z"
+  },
+  {
+    "id": "notif_1766346075471_mlcfikp45",
+    "userId": "ecousuario",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T están en oferta!",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T"
+      ],
+      "campanaId": "prueba 2",
+      "campanaNombre": "prueba 2"
+    },
+    "leida": false,
+    "fecha": "2025-12-21T19:41:15.471Z"
+  },
+  {
+    "id": "notif_1766346084173_6yo3f9spe",
+    "userId": "ecousuario",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T están en oferta!",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T"
+      ],
+      "campanaId": "prueba 2",
+      "campanaNombre": "prueba 2"
+    },
+    "leida": false,
+    "fecha": "2025-12-21T19:41:24.173Z"
+  },
+  {
+    "id": "notif_1766354410547_bahbra9ps",
+    "userId": "ecousuario",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T, KITTOY400AR están en oferta!",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "Nueva"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITTOY400AR"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T22:00:10.547Z"
+  },
+  {
+    "id": "notif_1766354414922_lucnoh9uj",
+    "userId": "ecousuario",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T, KITTOY400AR están en oferta!",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "Nueva"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITTOY400AR"
+      ]
+    },
+    "leida": true,
+    "fecha": "2025-12-21T22:00:14.922Z"
+  },
+  {
+    "id": "notif_1766356178468_jc28tbg9l",
+    "userId": "ecousuario",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T, KITTOY400AR, TAM-1028, KITDAT810DR están en oferta!",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "Nueva"
+          ]
+        },
+        {
+          "sku": "TAM-1028",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 33,
+          "descuentoProducto": 0,
+          "precioBase": 29900,
+          "precioProducto": 29900,
+          "precioCampana": 20033,
+          "campanas": [
+            "asdasdsa"
+          ]
+        },
+        {
+          "sku": "KITDAT810DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 33,
+          "descuentoProducto": 0,
+          "precioBase": 284900,
+          "precioProducto": 284900,
+          "precioCampana": 190883,
+          "campanas": [
+            "asdasdsa"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITTOY400AR",
+        "TAM-1028",
+        "KITDAT810DR"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T22:29:38.468Z"
+  },
+  {
+    "id": "notif_1766356240342_zxs52d1jg",
+    "userId": "ecousuario",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T, KITTOY400AR están en oferta!",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "Nueva"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITTOY400AR"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T22:30:40.342Z"
+  },
+  {
+    "id": "notif_1766356303787_wgwj8tx44",
+    "userId": "ecousuario",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T, KITTOY400AR, KITMAX900LR, IVMAX280N están en oferta!",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "Nueva"
+          ]
+        },
+        {
+          "sku": "KITMAX900LR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 2,
+          "descuentoProducto": 0,
+          "precioBase": 289900,
+          "precioProducto": 289900,
+          "precioCampana": 284102,
+          "campanas": [
+            "gnjfvhgf"
+          ]
+        },
+        {
+          "sku": "IVMAX280N",
+          "nombre": "Volantes",
+          "descuentoCampana": 2,
+          "descuentoProducto": 0,
+          "precioBase": 302900,
+          "precioProducto": 302900,
+          "precioCampana": 296842,
+          "campanas": [
+            "gnjfvhgf"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITTOY400AR",
+        "KITMAX900LR",
+        "IVMAX280N"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T22:31:43.787Z"
+  },
+  {
+    "id": "notif_1766356308816_jeryb3ftx",
+    "userId": "ecousuario",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T, KITTOY400AR, KITMAX900LR, IVMAX280N están en oferta!",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "Nueva"
+          ]
+        },
+        {
+          "sku": "KITMAX900LR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 289900,
+          "precioProducto": 284102,
+          "precioCampana": 278420,
+          "campanas": [
+            "gnjfvhgf"
+          ]
+        },
+        {
+          "sku": "IVMAX280N",
+          "nombre": "Volantes",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 302900,
+          "precioProducto": 296842,
+          "precioCampana": 290905,
+          "campanas": [
+            "gnjfvhgf"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITTOY400AR",
+        "KITMAX900LR",
+        "IVMAX280N"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T22:31:48.816Z"
+  },
+  {
+    "id": "notif_1766356825176_tpkutsq20",
+    "userId": "ecousuario",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T, KITTOY400AR están en oferta!",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 0,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 125000,
+          "campanas": [
+            "Nueva"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITTOY400AR"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T22:40:25.176Z"
+  },
+  {
+    "id": "notif_1766356826727_u6q5ddk41",
+    "userId": "ecousuario",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T están en oferta!",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T22:40:26.727Z"
+  },
+  {
+    "id": "notif_1766356864368_w3mxaj7ww",
+    "userId": "ecousuario",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T, KITTOY400DR, KITTOY400AR están en oferta!",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 2,
+          "descuentoProducto": 0,
+          "precioBase": 179400,
+          "precioProducto": 179400,
+          "precioCampana": 175812,
+          "campanas": [
+            "asdasasdasdd"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 2,
+          "descuentoProducto": 0,
+          "precioBase": 125000,
+          "precioProducto": 125000,
+          "precioCampana": 122500,
+          "campanas": [
+            "asdasasdasdd"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITTOY400DR",
+        "KITTOY400AR"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T22:41:04.368Z"
+  },
+  {
+    "id": "notif_1766356869721_phytlpee6",
+    "userId": "ecousuario",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T, KITTOY400DR, KITTOY400AR están en oferta!",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 179400,
+          "precioProducto": 175812,
+          "precioCampana": 172296,
+          "campanas": [
+            "asdasasdasdd"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 125000,
+          "precioProducto": 122500,
+          "precioCampana": 120050,
+          "campanas": [
+            "asdasasdasdd"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITTOY400DR",
+        "KITTOY400AR"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T22:41:09.721Z"
+  },
+  {
+    "id": "notif_1766357203192_p2mogr639",
+    "userId": "ecousuario",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T, KITTOY400DR, KITTOY400AR, KITMIT240LRV están en oferta!",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 179400,
+          "precioProducto": 175812,
+          "precioCampana": 172296,
+          "campanas": [
+            "asdasasdasdd"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 125000,
+          "precioProducto": 122500,
+          "precioCampana": 120050,
+          "campanas": [
+            "asdasasdasdd"
+          ]
+        },
+        {
+          "sku": "KITMIT240LRV",
+          "nombre": "Kit de embrague + Volante",
+          "descuentoCampana": 22,
+          "descuentoProducto": 0,
+          "precioBase": 429900,
+          "precioProducto": 429900,
+          "precioCampana": 335322,
+          "campanas": [
+            "TEST-ALERTA"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITTOY400DR",
+        "KITTOY400AR",
+        "KITMIT240LRV"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T22:46:43.192Z"
+  },
+  {
+    "id": "notif_1766357209236_pi6bllicl",
+    "userId": "ecousuario",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T, KITTOY400DR, KITTOY400AR, KITMIT240LRV están en oferta!",
+    "datos": {
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 179400,
+          "precioProducto": 175812,
+          "precioCampana": 172296,
+          "campanas": [
+            "asdasasdasdd"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 125000,
+          "precioProducto": 122500,
+          "precioCampana": 120050,
+          "campanas": [
+            "asdasasdasdd"
+          ]
+        },
+        {
+          "sku": "KITMIT240LRV",
+          "nombre": "Kit de embrague + Volante",
+          "descuentoCampana": 22,
+          "descuentoProducto": 22,
+          "precioBase": 429900,
+          "precioProducto": 335322,
+          "precioCampana": 261551,
+          "campanas": [
+            "TEST-ALERTA"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITTOY400DR",
+        "KITTOY400AR",
+        "KITMIT240LRV"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T22:46:49.236Z"
   }
 ]

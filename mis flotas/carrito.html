@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="../campanas-tracking-client.js"></script>
+  <script src="../campanas-tracking-integration.js"></script>
   
   <style>
     /* Estilos específicos para la página de carrito */
@@ -110,6 +112,11 @@
       font-weight: 600;
       color: #252425;
       margin: 0;
+      transition: color 0.2s ease;
+    }
+    
+    .carrito-producto-nombre:hover {
+      color: #BF1823;
     }
 
     .carrito-producto-aplica,
@@ -1761,6 +1768,12 @@
       const carrito = CarritoGlobal.obtenerLocal();
       const contenedor = document.getElementById('carrito-productos-lista');
       const carritoVacio = document.getElementById('carrito-vacio');
+
+      // Evitar fallos si el contenedor no está en el DOM (p.ej. scripts reusados en otra vista)
+      if (!contenedor || !carritoVacio) {
+        console.warn('cargarProductosCarrito: contenedor o placeholder no encontrado');
+        return;
+      }
       
       if (!carrito.items || carrito.items.length === 0) {
         contenedor.innerHTML = '';
@@ -1809,7 +1822,7 @@
             </div>
             <img src="${item.imagen}" alt="${item.nombre}" class="carrito-producto-img" onerror="this.src='../img/carrito.svg'">
             <div class="carrito-producto-info">
-              <p class="carrito-producto-nombre">${item.nombre} - ${item.marca}</p>
+              <p class="carrito-producto-nombre" onclick="irADetalleProducto('${item.id}', '${skuSC}')" style="cursor: pointer;">${item.nombre} - ${item.marca}</p>
               <p class="carrito-producto-aplica"><span>Aplica:</span> ${vehiculoAplicable}</p>
               <p class="carrito-producto-sku"><span>SKU:</span> ${skuMostrar}</p>
               
@@ -2113,6 +2126,33 @@
           actualizarResumen();
         }, 300);
       }
+    }
+
+    // Ir a detalle del producto desde el nombre
+    function irADetalleProducto(id, sku) {
+      console.log('Navegando a detalle - id:', id, 'sku:', sku);
+      
+      // Usar el ID directamente si es válido
+      if (id && id.startsWith('prod_')) {
+        console.log('Usando ID del producto:', id);
+        window.location.href = `detalleproducto.html?id=${encodeURIComponent(id)}`;
+        return;
+      }
+      
+      // Fallback con SKU
+      if (sku) {
+        const producto = productosDB.find(p => p.codSC === sku);
+        if (producto && producto.id) {
+          console.log('Producto encontrado por SKU:', producto.id);
+          window.location.href = `detalleproducto.html?id=${encodeURIComponent(producto.id)}`;
+          return;
+        }
+        window.location.href = `detalleproducto.html?sku=${encodeURIComponent(sku)}`;
+        return;
+      }
+      
+      // Último recurso
+      window.location.href = `detalleproducto.html?id=${encodeURIComponent(id)}`;
     }
 
     // Ver ficha técnica - obtiene datos desde la tarjeta padre
@@ -2762,6 +2802,9 @@
                 
                 CarritoGlobal.mostrarMensaje(`✅ Orden de Compra Nº ${numeroOC} enviada correctamente`, 'success');
                 
+                // Registrar tracking de orden de compra en campañas
+                registrarOrdenCompraCampanas(pendiente.items, pendiente.total);
+                
                 // Cerrar modal de OC
                 cerrarModalOC();
                 ocModalData = { items: [], recomendaciones: [] };
@@ -3329,6 +3372,9 @@
           // Guardar como orden pendiente
           guardarCotizacionPendiente(cotizacionModalData.items, numeroCot, fecha, subtotal, iva, total);
           
+          // Registrar tracking de cotización en campañas
+          registrarCotizacionCampanas(cotizacionModalData.items, total);
+          
           const link = document.createElement('a');
           link.href = pdfData;
           link.download = `Cotizacion-${numeroCot}.pdf`;
@@ -3697,6 +3743,12 @@
                 }
                 CarritoGlobal.mostrarMensaje(`✅ Orden de Compra Nº ${numeroOC} enviada correctamente`, 'success');
 
+                try {
+                  await registrarOrdenCompraCampanas(pendiente.items, pendiente.total);
+                } catch (e) {
+                  console.warn('Error registrando orden en campañas:', e);
+                }
+
                 // Cambiar estado a enviado
                 let pendientes = [];
                 try {
@@ -4014,6 +4066,148 @@
     // Cargar pendientes al abrir el carrito
     function cargarPendientesAlAbrirCarrito() {
       mostrarPendientesEnCarrito();
+    }
+
+    // ============================================================
+    // TRACKING DE CAMPAÑAS
+    // ============================================================
+    
+    async function registrarCotizacionCampanas(items, monto) {
+      const loggedUser = localStorage.getItem('starclutch_user');
+      if (!loggedUser) return;
+      
+      try {
+        const userData = JSON.parse(loggedUser);
+        
+        // Obtener campañas activas del usuario
+        const response = await fetch(`/api/campanas-ofertas?userId=${encodeURIComponent(userData.id)}`);
+        const result = await response.json();
+        console.log('[Tracking Cotización] Campañas activas:', result);
+        
+        if (!result.ok || !result.campanas) return;
+        
+        // Registrar una única cotización por campaña que contenga al menos un SKU
+        const normalizarSku = (s) => String(s || '').toUpperCase().trim();
+        const skusCotizados = new Set(items.map(i => normalizarSku(i.codSC || i.sku || i.id)).filter(Boolean));
+
+        for (const campana of result.campanas) {
+          if (!campana.activa) continue;
+
+          // Reunir SKUs desde slides de principal y secundario
+          const recolectarSkus = (tipo) => {
+            const slides = (campana[tipo] && Array.isArray(campana[tipo].slides)) ? campana[tipo].slides : [];
+            const lista = [];
+            slides.forEach(slide => {
+              const skusSlide = Array.isArray(slide.skus) ? slide.skus : [];
+              skusSlide.forEach(s => {
+                const code = typeof s === 'string' ? s : (s && s.sku);
+                if (code) lista.push(code);
+              });
+            });
+            return lista;
+          };
+
+          const skusCampana = new Set([
+            ...recolectarSkus('principal').map(normalizarSku),
+            ...recolectarSkus('secundario').map(normalizarSku)
+          ]);
+          const interseccion = Array.from(skusCotizados).filter(s => skusCampana.has(s));
+          if (interseccion.length === 0) continue;
+
+          const payload = {
+            campanaId: campana.id,
+            userId: userData.id,
+            tipo: 'cotizacion',
+            datos: {
+              skus: interseccion,
+              cantidad: items.length,
+              monto: monto
+            }
+          };
+          console.log('[Tracking Cotización] Enviando evento:', payload);
+          try {
+            const resp = await fetch('/api/campanas-tracking', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            const body = await resp.json().catch(() => ({}));
+            console.log('[Tracking Cotización] Respuesta:', resp.status, body);
+          } catch (err) {
+            console.error('[Tracking Cotización] Error enviando evento:', err);
+          }
+        }
+      } catch (error) {
+        console.error('Error registrando cotización de campaña:', error);
+      }
+    }
+    
+    async function registrarOrdenCompraCampanas(items, monto) {
+      const loggedUser = localStorage.getItem('starclutch_user');
+      if (!loggedUser) return;
+      
+      try {
+        const userData = JSON.parse(loggedUser);
+        
+        // Obtener campañas activas del usuario
+        const response = await fetch(`/api/campanas-ofertas?userId=${encodeURIComponent(userData.id)}`);
+        const result = await response.json();
+        console.log('[Tracking Orden] Campañas activas:', result);
+        
+        if (!result.ok || !result.campanas) return;
+        
+        const normalizarSku = (s) => String(s || '').toUpperCase().trim();
+        const skusOrden = new Set(items.map(i => normalizarSku(i.codSC || i.sku || i.id)).filter(Boolean));
+
+        for (const campana of result.campanas) {
+          if (!campana.activa) continue;
+
+          const recolectarSkus = (tipo) => {
+            const slides = (campana[tipo] && Array.isArray(campana[tipo].slides)) ? campana[tipo].slides : [];
+            const lista = [];
+            slides.forEach(slide => {
+              const skusSlide = Array.isArray(slide.skus) ? slide.skus : [];
+              skusSlide.forEach(s => {
+                const code = typeof s === 'string' ? s : (s && s.sku);
+                if (code) lista.push(code);
+              });
+            });
+            return lista;
+          };
+
+          const skusCampana = new Set([
+            ...recolectarSkus('principal').map(normalizarSku),
+            ...recolectarSkus('secundario').map(normalizarSku)
+          ]);
+          const interseccion = Array.from(skusOrden).filter(s => skusCampana.has(s));
+          if (interseccion.length === 0) continue;
+
+          const payload = {
+            campanaId: campana.id,
+            userId: userData.id,
+            tipo: 'orden',
+            datos: {
+              skus: interseccion,
+              cantidad: items.length,
+              monto: monto
+            }
+          };
+          console.log('[Tracking Orden] Enviando evento:', payload);
+          try {
+            const resp = await fetch('/api/campanas-tracking', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            const body = await resp.json().catch(() => ({}));
+            console.log('[Tracking Orden] Respuesta:', resp.status, body);
+          } catch (err) {
+            console.error('[Tracking Orden] Error enviando evento:', err);
+          }
+        }
+      } catch (error) {
+        console.error('Error registrando orden de campaña:', error);
+      }
     }
   </script>
 </body>

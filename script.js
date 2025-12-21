@@ -59,6 +59,30 @@ function initAdminClientSelect() {
                 if (typeof inicializarCampanas === 'function') inicializarCampanas();
                 
                 console.log("✅ Cliente restaurado:", adminSelectedClientId);
+            } else {
+                // Si no hay selección previa, usar el usuario actualmente loggeado como default
+                try {
+                    const sesion = JSON.parse(localStorage.getItem('starclutch_user') || 'null');
+                    if (sesion && sesion.id) {
+                        adminSelectedClientId = sesion.id;
+                        // Asignar en el select si está presente en la lista
+                        const opcionExiste = Array.from(selectCliente.options).some(opt => opt.value === adminSelectedClientId);
+                        if (opcionExiste) {
+                            selectCliente.value = adminSelectedClientId;
+                        }
+                        localStorage.setItem('adminSelectedClient', adminSelectedClientId);
+                        
+                        // Cargar de inmediato la información del cliente activo
+                        if (typeof cargarInfoCliente === 'function') cargarInfoCliente(adminSelectedClientId);
+                        if (typeof cargarListaFlotasAdmin === 'function') cargarListaFlotasAdmin(adminSelectedClientId);
+                        if (typeof cargarRepuestosEnTablaAdmin === 'function') cargarRepuestosEnTablaAdmin(adminSelectedClientId, true);
+                        if (typeof inicializarCampanas === 'function') inicializarCampanas();
+                        
+                        console.log("✅ Cliente por defecto (sesión):", adminSelectedClientId);
+                    }
+                } catch (e) {
+                    // ignorar
+                }
             }
 
             // 3. EVENTO: Cuando el Admin selecciona a alguien de la lista
@@ -163,8 +187,9 @@ function rutaModelo(tipo, marca, modelo) {
 function rutaMarca(marca) {
   // 🔥 RUTA CORREGIDA CON ../
   if (!marca) return "../logosvehiculos/default.png";
-  const limpio = marca.replace(/\s+/g, "").toLowerCase();
-  return `../logosvehiculos/${limpio}.png`;
+    const limpio = marca.replace(/\s+/g, "").toLowerCase();
+    if (limpio === "greatwall" || limpio === "gwm") return "../logosvehiculos/greatwall.png";
+    return `../logosvehiculos/${limpio}.png`;
 }
 
 // ==========================================
@@ -1152,6 +1177,39 @@ if (typeof window.irADetalleProducto !== 'function') {
                 
                 CarritoGlobal.mostrarMensaje(`✅ Orden de Compra Nº ${numeroOC} enviada correctamente`, 'success');
 
+                                // Tracking global de orden de compra para todas las páginas
+                                try {
+                                    // Asegurar CampanasTracking inicializado y con campañas
+                                    if (window.CampanasTracking) {
+                                        const loggedUser = localStorage.getItem('starclutch_user');
+                                        const userObj = loggedUser ? JSON.parse(loggedUser) : null;
+                                        if (userObj && !window.CampanasTracking.userId) {
+                                            window.CampanasTracking.init(userObj.id);
+                                        }
+                                        // Si no hay campañas registradas, intentar cargarlas
+                                        if (window.CampanasTracking && window.CampanasTracking.campanasActivas && window.CampanasTracking.campanasActivas.size === 0 && userObj) {
+                                            try {
+                                                const respCamp = await fetch(`/api/campanas-ofertas?userId=${encodeURIComponent(userObj.id)}`);
+                                                const dataCamp = await respCamp.json().catch(() => ({}));
+                                                if (dataCamp && dataCamp.ok && Array.isArray(dataCamp.campanas)) {
+                                                    window.CampanasTracking.registrarCampanasActivas(dataCamp.campanas);
+                                                }
+                                            } catch (e) {
+                                                console.warn('[Tracking Orden] No se pudo cargar campañas activas:', e);
+                                            }
+                                        }
+
+                                        // Registrar la orden con productos y monto total
+                                        window.CampanasTracking.registrarOrden(pendiente.items, pendiente.total, { numeroOC });
+                                    }
+                                    // Fallback para páginas que no tengan CampanasTracking
+                                    else if (typeof registrarOrdenCompraCampanas === 'function') {
+                                        await registrarOrdenCompraCampanas(pendiente.items, pendiente.total);
+                                    }
+                                } catch (e) {
+                                    console.warn('[Tracking Orden] Error registrando orden de compra:', e);
+                                }
+
                 // Eliminar orden pendiente del localStorage
                 let pendientes = [];
                 try {
@@ -1215,6 +1273,75 @@ if (typeof window.irADetalleProducto !== 'function') {
       fileInput.click();
     }
 
+        // ======== TRACKING DE ÓRDENES (FALLBACK GLOBAL) ========
+        // Para páginas que no cargan `campanas-tracking-client.js`, registramos la orden por campaña usando slides.
+        if (typeof window.registrarOrdenCompraCampanas !== 'function') {
+            window.registrarOrdenCompraCampanas = async function(items, monto) {
+                try {
+                    const loggedUser = localStorage.getItem('starclutch_user');
+                    if (!loggedUser) return;
+                    const userData = JSON.parse(loggedUser);
+
+                    const resp = await fetch(`/api/campanas-ofertas?userId=${encodeURIComponent(userData.id)}`);
+                    const result = await resp.json().catch(() => ({}));
+                    if (!result || !result.ok || !Array.isArray(result.campanas)) return;
+
+                    const normalizarSku = (s) => String(s || '').toUpperCase().trim();
+                    const skusOrden = new Set((items || []).map(i => normalizarSku(i.codSC || i.sku || i.id)).filter(Boolean));
+
+                    for (const campana of result.campanas) {
+                        if (!campana || campana.activa === false) continue;
+
+                        const recolectarSkus = (tipo) => {
+                            const slides = (campana[tipo] && Array.isArray(campana[tipo].slides)) ? campana[tipo].slides : [];
+                            const lista = [];
+                            slides.forEach(slide => {
+                                const skusSlide = Array.isArray(slide.skus) ? slide.skus : [];
+                                skusSlide.forEach(s => {
+                                    const code = typeof s === 'string' ? s : (s && s.sku);
+                                    if (code) lista.push(code);
+                                });
+                            });
+                            return lista;
+                        };
+
+                        const skusCampana = new Set([
+                            ...recolectarSkus('principal').map(normalizarSku),
+                            ...recolectarSkus('secundario').map(normalizarSku)
+                        ]);
+
+                        const interseccion = Array.from(skusOrden).filter(s => skusCampana.has(s));
+                        if (!interseccion.length) continue;
+
+                        const payload = {
+                            campanaId: campana.id,
+                            userId: userData.id,
+                            tipo: 'orden',
+                            datos: {
+                                skus: interseccion,
+                                cantidad: (items || []).length,
+                                monto: monto
+                            }
+                        };
+
+                        try {
+                            const respTrack = await fetch('/api/campanas-tracking', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(payload)
+                            });
+                            const body = await respTrack.json().catch(() => ({}));
+                            console.log('[Tracking Orden Fallback] Respuesta:', respTrack.status, body);
+                        } catch (err) {
+                            console.warn('[Tracking Orden Fallback] Error enviando evento:', err);
+                        }
+                    }
+                } catch (e) {
+                    console.warn('[Tracking Orden Fallback] Error general:', e);
+                }
+            };
+        }
+
     // Galería
     let galeriaImagenes = [];
     let galeriaIndiceActual = 0;
@@ -1232,6 +1359,64 @@ if (typeof window.irADetalleProducto !== 'function') {
         }
         abrirGaleriaImagenesGlobal(sku, imagenes);
     }
+
+        // ======== PANTALLA DE CARGA GLOBAL PARA OC ========
+        // Si no está disponible `cotizacionGenerator`, creamos un loader simple con la misma UI.
+        (function ensureGlobalOcLoader(){
+            if (window.cotizacionGenerator && typeof window.cotizacionGenerator.showModal === 'function') {
+                return; // ya disponible
+            }
+
+            // Insertar modal con misma estructura utilizada por cotizacion-generator
+            function ensureOcLoadingModal() {
+                if (!document.getElementById('cotizacion-loading-modal')) {
+                    const modalHTML = `
+                        <div id="cotizacion-loading-modal" class="pdf-modal-overlay">
+                            <div class="pdf-modal-content">
+                                <div class="pdf-modal-spinner">
+                                    <div class="spinner-ring"></div>
+                                    <img src="../img/Logo SC.svg" alt="StarClutch" class="spinner-logo" onerror="this.src='./img/Logo SC.svg'">
+                                </div>
+                                <h3 class="pdf-modal-title">Enviando OC</h3>
+                                <p class="pdf-modal-text">Preparando orden de compra...</p>
+                                <div class="pdf-progress-container">
+                                    <div class="pdf-progress-bar"></div>
+                                </div>
+                            </div>
+                        </div>`;
+                    document.body.insertAdjacentHTML('beforeend', modalHTML);
+                }
+            }
+
+            ensureOcLoadingModal();
+            const modal = document.getElementById('cotizacion-loading-modal');
+            const titleEl = modal ? modal.querySelector('.pdf-modal-title') : null;
+            const textEl = modal ? modal.querySelector('.pdf-modal-text') : null;
+            const barEl = modal ? modal.querySelector('.pdf-progress-bar') : null;
+
+            const loaderShim = {
+                showModal(title = 'Enviando OC') {
+                    ensureOcLoadingModal();
+                    if (titleEl) titleEl.textContent = title;
+                    if (barEl) barEl.style.width = '0%';
+                    if (textEl) textEl.textContent = 'Preparando orden de compra...';
+                    const m = document.getElementById('cotizacion-loading-modal');
+                    if (m) m.classList.add('active');
+                },
+                updateProgress(percent, text) {
+                    if (barEl) barEl.style.width = `${percent}%`;
+                    if (textEl && text) textEl.textContent = text;
+                },
+                hideModal() {
+                    const m = document.getElementById('cotizacion-loading-modal');
+                    if (m) m.classList.remove('active');
+                    if (titleEl) titleEl.textContent = 'Enviando OC';
+                }
+            };
+
+            // Exponer como cotizacionGenerator para reutilizar las mismas llamadas
+            window.cotizacionGenerator = loaderShim;
+        })();
 
     function abrirGaleriaImagenesGlobal(sku, imagenes){
         console.log('abrirGaleriaImagenesGlobal llamada con:', { sku, imagenes, tipo: typeof imagenes });
@@ -2561,6 +2746,7 @@ function rutaMarcaEditar(marca) {
     limpio = limpio.replace(/^[^a-z]+/,'');
     // eliminar espacios residuales
     limpio = limpio.replace(/\s+/g,'');
+    if (limpio === "greatwall" || limpio === "gwm") return `/logosvehiculos/greatwall.png`;
     return `/logosvehiculos/${limpio}.png`;
 }
 
@@ -2758,20 +2944,218 @@ function renderizarTarjetasEditar(vehiculos) {
 }
 
 // =========================================================
+// Helpers para hidratar los selects del modal de edición
+// =========================================================
+async function hidratarSelectsEditarVehiculo(overlay, vehiculo = {}) {
+    const normalizarVehiculo = (t) => (t || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    const matchListado = (list = [], valor) => {
+        const objetivo = normalizarVehiculo(valor);
+        return (list || []).find(item => normalizarVehiculo(item) === objetivo) || null;
+    };
+    const canonMarca = (m) => {
+        const n = normalizarVehiculo(m);
+        if (!n) return m;
+        if (["greatwall", "great", "greatwallmotor", "greatwallmotors", "gwm", "great_wall"].includes(n)) return "Great Wall";
+        return m;
+    };
+    const limpiarModelo = (modelo, marca) => {
+        if (!modelo) return modelo;
+        const modeloTrim = String(modelo).trim();
+        const marcaNorm = normalizarVehiculo(marca);
+        const modeloNorm = normalizarVehiculo(modeloTrim);
+        // Si el modelo arranca con la marca, la removemos para evitar duplicar marca en modelo
+        if (marcaNorm && modeloNorm.startsWith(marcaNorm)) {
+            const sliceFrom = modeloTrim.toLowerCase().indexOf(String(marca || "").toLowerCase());
+            const resto = modeloTrim.slice(sliceFrom + String(marca || "").length).trim();
+            if (resto) return resto;
+        }
+        // Caso especial: si vino como "Wall ..." normalizamos a solo modelo
+        if (/^wall\s+/i.test(modeloTrim)) return modeloTrim.replace(/^wall\s+/i, "").trim();
+        return modeloTrim;
+    };
+    const findKeyByNorm = (obj = {}, valor) => {
+        const objetivo = normalizarVehiculo(valor);
+        const keys = Object.keys(obj || {});
+        return keys.find(k => normalizarVehiculo(k) === objetivo) || null;
+    };
+    const matchOptionSelect = (selectEl, valor) => {
+        if (!selectEl) return null;
+        const objetivo = normalizarVehiculo(valor);
+        const opt = Array.from(selectEl.options).find(o => normalizarVehiculo(o.value) === objetivo || normalizarVehiculo(o.textContent) === objetivo);
+        return opt ? opt.value : null;
+    };
+    const resolverTipo = (valor) => {
+        const norm = normalizarVehiculo(valor);
+        const mapa = {
+            camion: ["camion", "camion ", "truck"],
+            bus: ["bus", "van", "bus/van", "bus / van"],
+            camioneta: ["camioneta", "pickup", "pick up", "pick-up"],
+            "3/4": ["3/4", "3-4", "camion 3/4", "camion 3-4", "cami 3/4"],
+            rampla: ["rampla", "rampla/semirremolque", "semi", "trailer", "semirremolque"]
+        };
+
+        // Coincidencia exacta con llave
+        const exactKey = Object.keys(GLOBAL_DB_CASCADA || {}).find(k => normalizarVehiculo(k) === norm);
+        if (exactKey) return exactKey;
+
+        // Coincidencia por sinonimia/inclusión
+        for (const [clave, alias] of Object.entries(mapa)) {
+            if (alias.some(a => norm === a || norm.includes(a))) return clave;
+        }
+        return null; // sin fallback para no forzar el primer tipo
+    };
+
+    if (!overlay) return;
+    const tipoSel = overlay.querySelector(".tipo-vehiculo");
+    const marcaSel = overlay.querySelector(".marca");
+    const modeloSel = overlay.querySelector(".modelo");
+    if (!tipoSel || !marcaSel || !modeloSel) return;
+
+    // Normalizar marca a canónica y limpiar modelo si incluye la marca
+    vehiculo = { ...vehiculo, marca: canonMarca(vehiculo.marca) };
+    vehiculo.modelo = limpiarModelo(vehiculo.modelo, vehiculo.marca);
+
+    const ensureOption = (sel, val, label) => {
+        if (!sel || val === undefined || val === null) return;
+        const normVal = normalizarVehiculo(val);
+        const exists = Array.from(sel.options).some(o => normalizarVehiculo(o.value) === normVal || normalizarVehiculo(o.textContent) === normVal);
+        if (!exists) {
+            const opt = document.createElement("option");
+            opt.value = val;
+            opt.textContent = label || val;
+            sel.appendChild(opt);
+        }
+    };
+
+    marcaSel.innerHTML = '<option value="">Seleccionar marca</option>';
+    modeloSel.innerHTML = '<option value="">Seleccionar modelo</option>';
+    marcaSel.disabled = true;
+    modeloSel.disabled = true;
+
+    if (!GLOBAL_DB_CASCADA || Object.keys(GLOBAL_DB_CASCADA).length === 0) {
+        try {
+            await cargarCascadaVehiculos();
+        } catch (e) {
+            console.warn("No se pudo recargar la cascada de vehículos", e);
+        }
+    }
+
+    const tipoClave =
+        matchListado(Object.keys(GLOBAL_DB_CASCADA || {}), vehiculo.tipo) ||
+        matchOptionSelect(tipoSel, vehiculo.tipo) ||
+        resolverTipo(vehiculo.tipo);
+    if (tipoClave) {
+        ensureOption(tipoSel, tipoClave);
+        tipoSel.value = tipoClave;
+    } else if (vehiculo.tipo) {
+        ensureOption(tipoSel, vehiculo.tipo);
+        tipoSel.value = vehiculo.tipo;
+    }
+
+    const tipoFinal = tipoClave || normalizarVehiculo(tipoSel.value);
+    const marcasObj = tipoFinal && GLOBAL_DB_CASCADA[tipoFinal]?.marcas ? GLOBAL_DB_CASCADA[tipoFinal].marcas : null;
+
+    if (!marcasObj) {
+        // Sin cascada para el tipo: solo cargamos la marca/modelo actuales para no vaciar el formulario
+        if (vehiculo.marca) {
+            const optMarca = document.createElement("option");
+            optMarca.value = vehiculo.marca;
+            optMarca.textContent = vehiculo.marca;
+            marcaSel.appendChild(optMarca);
+            marcaSel.disabled = false;
+            marcaSel.value = vehiculo.marca;
+        }
+        if (vehiculo.modelo) {
+            const optModelo = document.createElement("option");
+            optModelo.value = vehiculo.modelo;
+            optModelo.textContent = vehiculo.modelo;
+            modeloSel.appendChild(optModelo);
+            modeloSel.value = vehiculo.modelo;
+            modeloSel.disabled = false;
+        }
+        return;
+    }
+
+    Object.keys(marcasObj).forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m;
+        opt.textContent = m;
+        marcaSel.appendChild(opt);
+    });
+    marcaSel.disabled = false;
+
+    const marcaClave = matchListado(Object.keys(marcasObj), vehiculo.marca) || findKeyByNorm(marcasObj, vehiculo.marca);
+    if (marcaClave) {
+        marcaSel.value = marcaClave;
+    } else if (vehiculo.marca) {
+        const optFallback = document.createElement("option");
+        optFallback.value = vehiculo.marca;
+        optFallback.textContent = vehiculo.marca;
+        marcaSel.appendChild(optFallback);
+        marcaSel.value = vehiculo.marca;
+    }
+
+    const marcaUsada = marcaClave || findKeyByNorm(marcasObj, marcaSel.value) || matchListado(Object.keys(marcasObj), marcaSel.value);
+    // Lista de modelos SOLO de la marca dentro del tipo actual
+    let modelos = [];
+    if (marcaUsada && Array.isArray(marcasObj[marcaUsada])) {
+        modelos = [...marcasObj[marcaUsada]];
+    }
+
+    // Fallback: si no hay modelos en cascada, conservar el modelo actual para no vaciar
+    if (!modelos.length && vehiculo.modelo) {
+        modelos = [vehiculo.modelo];
+    }
+
+    if (modelos.length) {
+        modeloSel.innerHTML = '<option value="">Seleccionar modelo</option>';
+        modelos.forEach(md => {
+            const opt = document.createElement("option");
+            opt.value = md;
+            opt.textContent = md;
+            modeloSel.appendChild(opt);
+        });
+        modeloSel.disabled = false;
+
+        const modeloClave = matchListado(modelos, vehiculo.modelo);
+        if (modeloClave) {
+            modeloSel.value = modeloClave;
+        } else if (vehiculo.modelo) {
+            const optModeloFallback = document.createElement("option");
+            optModeloFallback.value = vehiculo.modelo;
+            optModeloFallback.textContent = vehiculo.modelo;
+            modeloSel.appendChild(optModeloFallback);
+            modeloSel.value = vehiculo.modelo;
+        }
+    } else if (vehiculo.modelo) {
+        const optModeloFallback = document.createElement("option");
+        optModeloFallback.value = vehiculo.modelo;
+        optModeloFallback.textContent = vehiculo.modelo;
+        modeloSel.appendChild(optModeloFallback);
+        modeloSel.value = vehiculo.modelo;
+        modeloSel.disabled = false;
+    }
+}
+
+// =========================================================
 // 2. MODAL CONECTADA AL CEREBRO GLOBAL
 // =========================================================
-function abrirModalEdicion(index) {
+async function abrirModalEdicion(index) {
     EDIT_INDEX = index;
     const veh = window.VEHICULOS_CURRENT[index];
     if (!veh) return;
+
+    const overlay = document.getElementById("overlay-editar-vehiculo");
 
     // 1. Rellenar Inputs del Modal
     const setVal = (sel, val) => { const el = document.querySelector(sel); if(el) el.value = val||""; };
     setVal(".anio", veh.anio); // Ojo con la clase en tu HTML (.anio o .anio-modal)
     setVal(".patente", veh.patente);
     setVal(".motor", veh.motor);
-    setVal(".marca", veh.marca); // Si es select, asegúrate de habilitarlo o agregar option
-    setVal(".modelo", veh.modelo);
+
+    if (overlay) {
+        await hidratarSelectsEditarVehiculo(overlay, veh);
+    }
     
     // Asignar imagen y logo en el modal si existen los elementos
     const imgModal = document.querySelector(".modal-vehiculo-foto-unique");
@@ -2807,7 +3191,6 @@ function abrirModalEdicion(index) {
     }
 
     // 3. Mostrar Modal
-    const overlay = document.getElementById("overlay-editar-vehiculo");
     if (overlay) {
         overlay.style.display = "flex";
         overlay.setAttribute("aria-hidden", "false");
@@ -3102,23 +3485,26 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Abrir modal por índice (se asegura que array exista)
-  function openModalIndex(index) {
-    const idx = Number(index);
-    if (!Number.isFinite(idx)) return console.warn("openModalIndex: index inválido", index);
-    if (!VEHICULOS_CURRENT || VEHICULOS_CURRENT.length === 0) {
-      // recargar si hace falta
-      const id = CURRENT_FLOTA_ID || getFlotaIdFromUrl();
-      if (!id) return console.warn("No hay ID de flota para recargar");
-      fetch(`/api/flota/${id}`).then(r=>r.json()).then(b=>{
-        VEHICULOS_CURRENT = b.vehiculos || [];
-        CURRENT_FLOTA_ID = id;
-        _openWithIndex(idx);
-      }).catch(e=>console.error(e));
-    } else {
-      _openWithIndex(idx);
+    async function openModalIndex(index) {
+        const idx = Number(index);
+        if (!Number.isFinite(idx)) return console.warn("openModalIndex: index inválido", index);
+        if (!VEHICULOS_CURRENT || VEHICULOS_CURRENT.length === 0) {
+            const id = CURRENT_FLOTA_ID || getFlotaIdFromUrl();
+            if (!id) return console.warn("No hay ID de flota para recargar");
+            try {
+                const r = await fetch(`/api/flota/${id}`);
+                const b = await r.json();
+                VEHICULOS_CURRENT = b.vehiculos || [];
+                CURRENT_FLOTA_ID = id;
+                await _openWithIndex(idx);
+            } catch (e) {
+                console.error(e);
+            }
+        } else {
+            await _openWithIndex(idx);
+        }
     }
-  }
-  function _openWithIndex(idx) {
+    async function _openWithIndex(idx) {
     EDIT_INDEX = idx;
     const v = VEHICULOS_CURRENT[idx];
     if (!v) return console.warn("vehículo no encontrado en index", idx);
@@ -3136,12 +3522,8 @@ document.addEventListener("DOMContentLoaded", () => {
     qs(".anio", overlay).value = v.anio || "";
     qs(".motor", overlay).value = v.motor || "";
     qs(".patente", overlay).value = v.patente || "";
-    qs(".tipo-vehiculo", overlay).value = v.tipo || "";
 
-    const marcaSel = qs(".marca", overlay);
-    const modeloSel = qs(".modelo", overlay);
-    if (marcaSel) { marcaSel.innerHTML = `<option value="${v.marca||''}">${v.marca||''}</option>`; marcaSel.disabled=false; }
-    if (modeloSel){ modeloSel.innerHTML = `<option value="${v.modelo||''}">${v.modelo||''}</option>`; modeloSel.disabled=false; }
+    await hidratarSelectsEditarVehiculo(overlay, v);
 
     const foto = qs(".modal-vehiculo-foto-unique", overlay);
     // =======================
@@ -3733,6 +4115,15 @@ function normalizarTexto(t) {
     return (t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
 }
 
+// Flag de "nuevo" para productos: dura 7 días desde la creación
+const NUEVO_PRODUCTO_MS = 7 * 24 * 60 * 60 * 1000;
+function esProductoNuevo(fechaCreacion) {
+    if (!fechaCreacion) return false;
+    const ts = Date.parse(fechaCreacion);
+    if (Number.isNaN(ts)) return false;
+    return (Date.now() - ts) <= NUEVO_PRODUCTO_MS;
+}
+
 // Ejecutar al cargar la página si estamos en la vista de lista de repuestos
 document.addEventListener('DOMContentLoaded', () => {
     if(document.getElementById('tabla-productos')) {
@@ -3787,7 +4178,7 @@ async function initListadoProductos() {
         // Marcar productos con la bandera isAdminRecommended para que el listado y el detalle la propaguen
         const productosConFlag = (productos || []).map(p => {
             const key = normalizarTexto(p.codSC || p.codStarClutch || p.sku || '');
-            return { ...p, isAdminRecommended: adminRecs.includes(key) };
+            return { ...p, isAdminRecommended: adminRecs.includes(key), isNuevo: esProductoNuevo(p.fechaCreacion) };
         });
 
         // Actualizar contador
@@ -3869,6 +4260,12 @@ function renderizarPaginaCliente() {
             tr.classList.add('row-recomendado-invisible');
         }
 
+        const esNuevo = p.isNuevo || esProductoNuevo(p.fechaCreacion);
+        if (esNuevo) {
+            tr.dataset.nuevo = '1';
+            tr.classList.add('row-nuevo');
+        }
+
         const codigoSC = p.codSC || p.codStarClutch || "S/N";
         
         // Calcular precio neto y con descuento (antes venía con IVA)
@@ -3925,6 +4322,13 @@ function renderizarPaginaCliente() {
         // Celda 3: Descripción (repuesto)
         const tdDescripcion = document.createElement('td');
         tdDescripcion.textContent = p.repuesto;
+        if (esNuevo) {
+            const badgeNuevo = document.createElement('span');
+            badgeNuevo.className = 'pill-nuevo';
+            badgeNuevo.textContent = 'Nuevo';
+            tdDescripcion.appendChild(document.createTextNode(' '));
+            tdDescripcion.appendChild(badgeNuevo);
+        }
         tr.appendChild(tdDescripcion);
 
         // Celda 4: Marca
@@ -5867,23 +6271,15 @@ function initEdicionDesdeGrid() {
         await cargarCascadaVehiculos();
         console.log('✅ Cascada recargada al editar vehículo (cliente):', Object.keys(GLOBAL_DB_CASCADA));
 
+        overlay.style.display = "flex";
         overlay.setAttribute("aria-hidden", "false");
 
         // Rellenar los campos del modal
         document.querySelector(".anio").value           = v.anio  || "";
         document.querySelector(".motor").value          = v.motor || "";
         document.querySelector(".patente").value        = v.patente || "";
-        document.querySelector(".tipo-vehiculo").value  = v.tipo || "";
 
-        // Rellenar los selects de marca y modelo
-        const marcaSel  = document.querySelector(".marca");
-        const modeloSel = document.querySelector(".modelo");
-
-        marcaSel.innerHTML  = `<option>${v.marca}</option>`;
-        modeloSel.innerHTML = `<option>${v.modelo}</option>`;
-
-        marcaSel.disabled  = false;
-        modeloSel.disabled = false;
+        await hidratarSelectsEditarVehiculo(overlay, v);
 
         // Rellenar la foto
         const fotoModal = document.querySelector(".modal-vehiculo-foto-unique");
@@ -6382,7 +6778,7 @@ function validarBotonFinal() {
     const VEHICULOS_EDITAR = {
       camion: { marcas: { Volvo: ["FH", "FM", "FMX", "FMX MAX" , "FE" , "FL" , "VM" ,"VMX" , "VMX Max" , "FHE (eléctrico)" , "FME (eléctrico)", "FMXE (eléctrico)" , "FMX Electric"], Scania: ["P", "G", "R", "S", "XT", "V8", "Super"], Mercedes: ["Accelo 1116", "Atego", "Axor", "Actros", "Zetros", "Unimog"], MAN: ["TGX", "TGS", "TGM", "TGL"], Iveco: ["S-Way 480", "S-Way 570", "S-Way GNL 460", "Tector 24-300", "Tector 26-300", "Tector 17-280", "Tector 17-300", "Trakker 6x4", "Trakker 8x4"], DAF: ["XF 480","XF 530","CF 430","CF 480 FAT 6x4","CF FAD 8x4","LF 260"], Freightliner: ["Cascadia","SD 114","Coronado","M2 106","CL 120","Argosy"], International: [ "ProStar", "WorkStar", "TranStar", "HV613", "HV607", "RH", "LT", "DuraStar"], Volkswagen: [ "Constellation 14.190", "Constellation 17.230", "Constellation 17.280", "Constellation 19.360", "Constellation 25.360", "Constellation 26.420", "Constellation 24.280", "Constellation 24.330", "Constellation 33.460", "Constellation 25.460", "Constellation 26.280", "Constellation 31.280", "Constellation 31.330", "Constellation 32.360", "Constellation 32.360 8x4", "Delivery 6.160", "Delivery 9.170", "Delivery 11.180", "Delivery 13.180"], Kenworth: [ "T680", "T880", "T800", "T660", "T460", "T600", "W900", "C500 (Faena)"], Sitrak: [ "C9H 6x2", "G7 Tracto 4x2", "G7 Tracto 6x2", "G7 Tracto 6x4", "G7 Faena 6x4", "G7 Faena 8x4", "HOWO TX 4x2", "HOWO TX 6x4", "TXEV eléctrico"], Mack: ["Anthem", "Granite", "TerraPro", "Pinnacle"], Renault: ["Renault K", "Renault C", "Renault D", "Renault T", "Renault Master"],Hyundai: ["XCIENT GT Tracto","XCIENT GT Faena"]  } },
       bus: { marcas: { Mercedes: ["Sprinter","Vito","LO 916", "OF 1621", "OF 1721", "O 500 U", "O 500 UA", "O 500 R 1830", "O 500 RS", "O 500 RSD"], Volvo: ["B6F", "B6FA", "B6M", "B6", "B6BLE", "B6LE", "B7R", "B7RLE", "B7L", "B7LA", "B8R", "B8RLE", "B8L", "B5LH", "B5RH", "B9R", "B9RLE", "B9S", "B9TL", "B10M", "B10B", "B10BLE", "B10L", "B10TL", "B11R", "B12B", "B12M", "B12BLE", "B13R", "BXXR", "BZL", "BZR"], Scania: ["K 280 UB", "K 310 UB", "K 320 UB", "K 280 EB", "K 310 IB", "K 360 IB", "K 410 IB", "K 410 EB", "K 450 IB", "K 500 IB", "K CB", "N 230UB", "N 270UB", "N 280UB", "N 310UA", "N 230UD", "N 250UD", "N 260UD", "N 270UD", "N 280UD", "N 320UD", "F 310HB", "L IB", "K 280UB 6x2*4"], Yutong: ["E10", "E12", "E9", "E11 PRO", "E18", "T13E", "TCe12 / ICe12", "U11DD", "U12", "U13", "U15", "U18", "IC12E", "ZK6128","ZK6118", "V7", "City Master"], KingLong: ["XMQ6112 AY", "XMQ6127", "XMQ6130Y (KING 15)", "XMQ6130EYWE5 (KING 15 EV)", "XMQ6106G (KL 11)", "XMQ6127G (KL 12)", "XMQ6706DY (KING 7)", "XMQ6901Y", "XMQ6126", "XMQ6800", "XMQ6552", "XMQ6127JGWE", "K06 EV", "City Bus EV"], Foton: ["Auman", "BJ6129", "BJ6946", "H7", "U12 SC", "BJ6129EVCA"], Volkswagen: ["8.180", "9.160 OD", "9.180 S", "10.160 OD", "11.180 R", "11.180 S", "15.210 R", "15.210 S", "17.230 S", "17.260 S", "18.320 SH", "18.320 SL"], Hyundai: ["Universe", "Elec City", "Blue City", "Green City", "Aero", "Aero Town", "Super Aero City", "Space", "County", "County Electric", "Solati H350"], Peugeot: ["Traveler","Partner","Expert","SpaceTourer", "Boxer","e-Boxer (Eléctrico)"], MAN: ["TGE"], Citroen: ["Berlingo 1.6 K9"] } },
-      camioneta: { marcas: { Toyota: ["Hilux 2.4","Hilux 2.8", "Hilux Champ", "Fortuner", "4Runner", "Land Cruiser Prado"], Ford: ["Ranger", "Ranger Raptor", "Maverick", "F-150", "F-150 Raptor", "Lobo"], Chevrolet: ["Colorado", "S10", "Trailblazer", "Silverado", "Cheyenne"], Nissan: ["Frontier", "Navara", "NP 300", "Titan", "X-Trail"], Mitsubishi: ["L-200","L-200 2.4", "Triton", "Montero Sport", "Outlander", "Pajero"], Isuzu: ["D-Max", "D-Max V-Cross", "MU-X", "Elf Pickup", "D-Max Space Cab"], Ssangyong: ["Korando", "Rexton", "Tivoli", "Musso", "Actyon"], Kia: ["Sportage", "Sorento", "Carnival", "Seltos", "Telluride", "Mohave", "Stonic", "Sonet"], Peugeot: ["Landtrek"], Maxus: ["T60 2.0","T60 2.8","T90", "T70", "D90", "Euniq 5", "G10", "G50","E-uniq 6"], Foton: ["Tunland", "Tunland G7", "Tunland E+", "Terracota"], Fiat: ["Fiorino, Doblò, Ducato, Fullback, Toro"],Volkswagen: ["Amarok 2.0"], Great_Wall: ["Poer 2.0"] } }, 
+    camioneta: { marcas: { Toyota: ["Hilux 2.4","Hilux 2.8", "Hilux Champ", "Fortuner", "4Runner", "Land Cruiser Prado"], Ford: ["Ranger", "Ranger Raptor", "Maverick", "F-150", "F-150 Raptor", "Lobo"], Chevrolet: ["Colorado", "S10", "Trailblazer", "Silverado", "Cheyenne"], Nissan: ["Frontier", "Navara", "NP 300", "Titan", "X-Trail"], Mitsubishi: ["L-200","L-200 2.4", "Triton", "Montero Sport", "Outlander", "Pajero"], Isuzu: ["D-Max", "D-Max V-Cross", "MU-X", "Elf Pickup", "D-Max Space Cab"], Ssangyong: ["Korando", "Rexton", "Tivoli", "Musso", "Actyon"], Kia: ["Sportage", "Sorento", "Carnival", "Seltos", "Telluride", "Mohave", "Stonic", "Sonet"], Peugeot: ["Landtrek"], Maxus: ["T60 2.0","T60 2.8","T90", "T70", "D90", "Euniq 5", "G10", "G50","E-uniq 6"], Foton: ["Tunland", "Tunland G7", "Tunland E+", "Terracota"], Fiat: ["Fiorino, Doblò, Ducato, Fullback, Toro"],Volkswagen: ["Amarok 2.0"], "Great Wall": ["Poer 2.0"] } }, 
 "3/4": {
   marcas: {
     Chevrolet: [
@@ -6627,7 +7023,7 @@ function obtenerPaginaVisible() {
 const DB_PARA_MODAL = {
    camion: { marcas: { Volvo: ["FH", "FM", "FMX", "FMX MAX" , "FE" , "FL" , "VM" ,"VMX" , "VMX Max" , "FHE (eléctrico)" , "FME (eléctrico)", "FMXE (eléctrico)" , "FMX Electric"], Scania: ["P", "G", "R", "S", "XT", "V8", "Super"], Mercedes: ["Accelo 1116", "Atego", "Axor", "Actros", "Zetros", "Unimog"], MAN: ["TGX", "TGS", "TGM", "TGL"], Iveco: ["S-Way 480", "S-Way 570", "S-Way GNL 460", "Tector 24-300", "Tector 26-300", "Tector 17-280", "Tector 17-300", "Trakker 6x4", "Trakker 8x4"], DAF: ["XF 480","XF 530","CF 430","CF 480 FAT 6x4","CF FAD 8x4","LF 260"], Freightliner: ["Cascadia","SD 114","Coronado","M2 106","CL 120","Argosy"], International: [ "ProStar", "WorkStar", "TranStar", "HV613", "HV607", "RH", "LT", "DuraStar"], Volkswagen: [ "Constellation 14.190", "Constellation 17.230", "Constellation 17.280", "Constellation 19.360", "Constellation 25.360", "Constellation 26.420", "Constellation 24.280", "Constellation 24.330", "Constellation 33.460", "Constellation 25.460", "Constellation 26.280", "Constellation 31.280", "Constellation 31.330", "Constellation 32.360", "Constellation 32.360 8x4", "Delivery 6.160", "Delivery 9.170", "Delivery 11.180", "Delivery 13.180"], Kenworth: [ "T680", "T880", "T800", "T660", "T460", "T600", "W900", "C500 (Faena)"], Sitrak: [ "C9H 6x2", "G7 Tracto 4x2", "G7 Tracto 6x2", "G7 Tracto 6x4", "G7 Faena 6x4", "G7 Faena 8x4", "HOWO TX 4x2", "HOWO TX 6x4", "TXEV eléctrico"], Mack: ["Anthem", "Granite", "TerraPro", "Pinnacle"], Renault: ["Renault K", "Renault C", "Renault D", "Renault T", "Renault Master"], Hyundai: ["XCIENT GT Tracto", "XCIENT GT Faena"]  } },
       bus: { marcas: { Mercedes: ["Sprinter","Vito","LO 916", "OF 1621", "OF 1721", "O 500 U", "O 500 UA", "O 500 R 1830", "O 500 RS", "O 500 RSD"], Volvo: ["B6F", "B6FA", "B6M", "B6", "B6BLE", "B6LE", "B7R", "B7RLE", "B7L", "B7LA", "B8R", "B8RLE", "B8L", "B5LH", "B5RH", "B9R", "B9RLE", "B9S", "B9TL", "B10M", "B10B", "B10BLE", "B10L", "B10TL", "B11R", "B12B", "B12M", "B12BLE", "B13R", "BXXR", "BZL", "BZR"], Scania: ["K 280 UB", "K 310 UB", "K 320 UB", "K 280 EB", "K 310 IB", "K 360 IB", "K 410 IB", "K 410 EB", "K 450 IB", "K 500 IB", "K CB", "N 230UB", "N 270UB", "N 280UB", "N 310UA", "N 230UD", "N 250UD", "N 260UD", "N 270UD", "N 280UD", "N 320UD", "F 310HB", "L IB", "K 280UB 6x2*4"], Yutong: ["E10", "E12", "E9", "E11 PRO", "E18", "T13E", "TCe12 / ICe12", "U11DD", "U12", "U13", "U15", "U18", "IC12E", "ZK6128","ZK6118", "V7", "City Master"], KingLong: ["XMQ6112 AY", "XMQ6127", "XMQ6130Y (KING 15)", "XMQ6130EYWE5 (KING 15 EV)", "XMQ6106G (KL 11)", "XMQ6127G (KL 12)", "XMQ6706DY (KING 7)", "XMQ6901Y", "XMQ6126", "XMQ6800", "XMQ6552", "XMQ6127JGWE", "K06 EV", "City Bus EV"], Foton: ["Auman", "BJ6129", "BJ6946", "H7", "U12 SC", "BJ6129EVCA"], Volkswagen: ["8.180", "9.160 OD", "9.180 S", "10.160 OD", "11.180 R", "11.180 S", "15.210 R", "15.210 S", "17.230 S", "17.260 S", "18.320 SH", "18.320 SL"], Hyundai: ["Universe", "Elec City", "Blue City", "Green City", "Aero", "Aero Town", "Super Aero City", "Space", "County", "County Electric", "Solati H350"], Peugeot: ["Traveler","Partner","Expert","SpaceTourer", "Boxer","e-Boxer (Eléctrico)"], MAN: ["TGE"], Citroen: ["Berlingo 1.6 K9"] } },
-      camioneta: { marcas: { Toyota: ["Hilux 2.4","Hilux 2.8", "Hilux Champ", "Fortuner", "4Runner", "Land Cruiser Prado"], Ford: ["Ranger", "Ranger Raptor", "Maverick", "F-150", "F-150 Raptor", "Lobo"], Chevrolet: ["Colorado", "S10", "Trailblazer", "Silverado", "Cheyenne"], Nissan: ["Frontier", "Navara", "NP 300", "Titan", "X-Trail"], Mitsubishi: ["L-200","L-200 2.4", "Triton", "Montero Sport", "Outlander", "Pajero"], Isuzu: ["D-Max", "D-Max V-Cross", "MU-X", "Elf Pickup", "D-Max Space Cab"], Ssangyong: ["Korando", "Rexton", "Tivoli", "Musso", "Actyon"], Kia: ["Sportage", "Sorento", "Carnival", "Seltos", "Telluride", "Mohave", "Stonic", "Sonet"], Peugeot: ["Landtrek"], Maxus: ["T60 2.0","T60 2.8","T90", "T70", "D90", "Euniq 5", "G10", "G50","E-uniq 6"], Foton: ["Tunland", "Tunland G7", "Tunland E+", "Terracota"], Fiat: ["Fiorino, Doblò, Ducato, Fullback, Toro"],Volkswagen: ["Amarok 2.0"], Great_Wall: ["Poer 2.0"] } }, 
+    camioneta: { marcas: { Toyota: ["Hilux 2.4","Hilux 2.8", "Hilux Champ", "Fortuner", "4Runner", "Land Cruiser Prado"], Ford: ["Ranger", "Ranger Raptor", "Maverick", "F-150", "F-150 Raptor", "Lobo"], Chevrolet: ["Colorado", "S10", "Trailblazer", "Silverado", "Cheyenne"], Nissan: ["Frontier", "Navara", "NP 300", "Titan", "X-Trail"], Mitsubishi: ["L-200","L-200 2.4", "Triton", "Montero Sport", "Outlander", "Pajero"], Isuzu: ["D-Max", "D-Max V-Cross", "MU-X", "Elf Pickup", "D-Max Space Cab"], Ssangyong: ["Korando", "Rexton", "Tivoli", "Musso", "Actyon"], Kia: ["Sportage", "Sorento", "Carnival", "Seltos", "Telluride", "Mohave", "Stonic", "Sonet"], Peugeot: ["Landtrek"], Maxus: ["T60 2.0","T60 2.8","T90", "T70", "D90", "Euniq 5", "G10", "G50","E-uniq 6"], Foton: ["Tunland", "Tunland G7", "Tunland E+", "Terracota"], Fiat: ["Fiorino, Doblò, Ducato, Fullback, Toro"],Volkswagen: ["Amarok 2.0"], "Great Wall": ["Poer 2.0"] } }, 
 "3/4": {
   marcas: {
     Chevrolet: [
@@ -8304,7 +8700,7 @@ function obtenerLogoMarcaInteligente(marcaInput) {
         { keys: ["citroen", "citron"], file: "citroen.png" },
         { keys: ["schwarz", "muller", "shwarz"], file: "schwarzmuller.png" },
         { keys: ["king", "long"], file: "kinglong.png" },
-        { keys: ["dane", "great"], file: "greatdane.png" },
+        { keys: ["greatdane", "dane"], file: "greatdane.png" },
         { keys: ["volvo", "bolvo"], file: "volvo.png" },
         { keys: ["man"], file: "man.png" },
         { keys: ["daf"], file: "daf.png" },
@@ -8313,6 +8709,7 @@ function obtenerLogoMarcaInteligente(marcaInput) {
         { keys: ["mack", "mak"], file: "mack.png" },
         { keys: ["yutong"], file: "yutong.png" },
         { keys: ["foton"], file: "foton.png" },
+        { keys: ["greatwall", "great_wall", "greatwallmotors", "gwm", "greatwallmotor"], file: "greatwall.png" },
         { keys: ["toyota", "toyotta"], file: "toyota.png" },
         { keys: ["ford"], file: "ford.png" },
         { keys: ["nissan", "nisan"], file: "nissan.png" },
@@ -12788,7 +13185,7 @@ function llenarPrecioYDescuento() {
         }).format(valor);
     };
 
-    if (precio <= 0) {
+    if (precioNeto <= 0) {
         priceStack.innerHTML = '<span style="color:#999; font-style:italic;">Consultar precio</span>';
         return;
     }
@@ -12796,7 +13193,7 @@ function llenarPrecioYDescuento() {
     if (descuento > 0) {
         priceStack.innerHTML = `
             <span class="price-old" style="text-decoration: line-through; color: #999; font-size: 14px;">
-                ${formatoPrecio(precio)}
+                ${formatoPrecio(precioNeto)}
             </span>
             <span class="price-final" style="color: #BF1823; font-weight: bold; font-size: 20px;">
                 ${formatoPrecio(precioConDescuento)}
@@ -12809,7 +13206,7 @@ function llenarPrecioYDescuento() {
     } else {
         priceStack.innerHTML = `
             <span class="price-final" style="font-weight: bold; font-size: 20px;">
-                ${formatoPrecio(precio)}
+                ${formatoPrecio(precioNeto)}
             </span>
             
         `;
@@ -12866,6 +13263,27 @@ function mostrarEstadoStock() {
 document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('.product-detail-container')) {
         initDetalleProducto();
+        // Emitir vista de producto cuando CampanasTracking tenga campañas cargadas
+        (function emitirVistaCuandoListas() {
+            try {
+                const skuDetalle = productoDetalleActual?.codSC || productoDetalleActual?.sku;
+                const nombreDetalle = productoDetalleActual?.repuesto || productoDetalleActual?.nombre || 'Producto';
+                if (!skuDetalle || typeof window.trackVistaProducto !== 'function') return;
+
+                const listo = (typeof window.CampanasTracking !== 'undefined')
+                    && window.CampanasTracking.userId
+                    && window.CampanasTracking.campanasActivas
+                    && window.CampanasTracking.campanasActivas.size > 0;
+
+                if (listo) {
+                    window.trackVistaProducto(String(skuDetalle).toUpperCase().trim(), nombreDetalle);
+                } else {
+                    setTimeout(emitirVistaCuandoListas, 400);
+                }
+            } catch (e) {
+                console.warn('Tracking vista_producto fallo:', e?.message || e);
+            }
+        })();
     }
 });
 
@@ -15512,6 +15930,14 @@ const CarritoGlobal = {
             if (response.ok) {
                 const data = await response.json();
                 const carritoDespues = data.carrito;
+                // Protección: si el servidor devuelve carrito vacío pero hay datos locales, conservar local y re-subir
+                if (carritoAntes && Array.isArray(carritoAntes.items) && carritoAntes.items.length > 0 &&
+                    carritoDespues && Array.isArray(carritoDespues.items) && carritoDespues.items.length === 0) {
+                    console.warn('SincronizarSilencioso: servidor devolvió carrito vacío, se conserva local y se re-sincroniza al servidor');
+                    await this.guardarEnServidor(carritoAntes);
+                    this.actualizarUI();
+                    return { cambios: false };
+                }
                 
                 // Detectar cambios significativos
                 const cambios = this.detectarCambios(carritoAntes, carritoDespues);
@@ -15653,9 +16079,18 @@ const CarritoGlobal = {
             const response = await fetch(`/api/carrito/${encodeURIComponent(userId)}`);
             if (response.ok) {
                 const data = await response.json();
+                const carritoServidor = data.carrito || { items: [] };
+                const carritoLocal = this.obtenerLocal();
+                // Protección: no sobrescribir local con vacío
+                if (Array.isArray(carritoServidor.items) && carritoServidor.items.length === 0 &&
+                    carritoLocal && Array.isArray(carritoLocal.items) && carritoLocal.items.length > 0) {
+                    console.warn('obtenerDelServidor: servidor vacío, devolviendo carrito local y subiendo al servidor');
+                    await this.guardarEnServidor(carritoLocal);
+                    return carritoLocal;
+                }
                 // Guardar copia local para acceso rápido
-                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data.carrito));
-                return data.carrito;
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(carritoServidor));
+                return carritoServidor;
             }
         } catch (e) {
             console.error('Error obteniendo carrito del servidor:', e);
@@ -15939,6 +16374,14 @@ const CarritoGlobal = {
             if (response.ok) {
                 const data = await response.json();
                 const carritoDespues = data.carrito;
+                // Protección: si el servidor devuelve carrito vacío pero hay datos locales, conservar local y re-subir
+                if (carritoAntes && Array.isArray(carritoAntes.items) && carritoAntes.items.length > 0 &&
+                    carritoDespues && Array.isArray(carritoDespues.items) && carritoDespues.items.length === 0) {
+                    console.warn('Sincronizar: servidor devolvió carrito vacío, se conserva local y se re-sincroniza al servidor');
+                    await this.guardarEnServidor(carritoAntes);
+                    this.actualizarUI();
+                    return;
+                }
                 
                 // Detectar cambios significativos
                 const cambios = this.detectarCambios(carritoAntes, carritoDespues);
@@ -16067,11 +16510,11 @@ const CarritoGlobal = {
             basePath = 'mis flotas/';
         }
         
-        // Si el parámetro parece un SKU (contiene letras), usar query "sku"; si no, usar "id"
-        const esSku = /[A-Za-z]/.test(String(id));
-        const param = esSku ? 'sku' : 'id';
+        // Detectar si es un ID de producto (empieza con "prod_") o un SKU
+        const esId = String(id).startsWith('prod_');
+        const param = esId ? 'id' : 'sku';
         const url = `${basePath}detalleproducto.html?${param}=${encodeURIComponent(id)}`;
-        console.log('Navegando a detalle producto:', url);
+        console.log('Navegando a detalle producto:', url, '- usando parámetro:', param);
         window.location.href = url;
     },
 
@@ -16417,6 +16860,13 @@ let editandoIndex = null;
 let productosClienteOpciones = [];
 let tipoActualModal = 'principal'; // principal | secundario
 
+// Audiencia y programación de campañas
+let usuariosPlataforma = [];
+let usuariosSeleccionadosCampana = [];
+let campanaPendienteLanzamiento = null;
+let campanaPendienteIndex = null;
+let loadingCampana = false;
+
 // Almacenar selección temporal por slide
 const seleccionTemporal = {};
 
@@ -16484,10 +16934,20 @@ async function inicializarCampanas() {
   console.log('Inicializando sistema de campañas V2...');
   
   const clientSelect = document.getElementById('client-select');
+  console.log('[DEBUG] clientSelect element:', clientSelect);
+  console.log('[DEBUG] clientSelect.value:', clientSelect?.value);
+  console.log('[DEBUG] adminSelectedClientId:', adminSelectedClientId);
+  
   if (clientSelect && clientSelect.value) {
-    cargarCampanasCliente(clientSelect.value);
+    console.log('[DEBUG] Llamando cargarCampanasCliente con:', clientSelect.value);
+    await cargarCampanasCliente(clientSelect.value);
         await cargarProductosCampanas();
+  } else {
+    console.log('[DEBUG] clientSelect vacío o no encontrado');
   }
+
+    await cargarUsuariosPlataforma();
+        initCierreExteriorModalCampana();
 }
 
 // Event listener global para cerrar dropdowns de campañas
@@ -16503,11 +16963,142 @@ document.addEventListener('click', (e) => {
 });
 
 // ============================================================
+// AUDIENCIA DE CAMPAÑA (USUARIOS DESTINO)
+// ============================================================
+
+function obtenerUsuarioActual() {
+    const clientSelect = document.getElementById('client-select');
+    return adminSelectedClientId || clientSelect?.value || '';
+}
+
+async function cargarUsuariosPlataforma() {
+    try {
+        const resp = await fetch('/api/users');
+        const data = await resp.json();
+        usuariosPlataforma = Array.isArray(data) ? data : [];
+    } catch (e) {
+        console.error('Error cargando usuarios de la plataforma:', e);
+        usuariosPlataforma = [];
+    }
+    return usuariosPlataforma;
+}
+
+function asegurarUsuarioActualPreseleccionado() {
+    const actual = obtenerUsuarioActual();
+    if (actual) {
+        const sinActual = usuariosSeleccionadosCampana.filter(id => id !== actual);
+        usuariosSeleccionadosCampana = [actual, ...sinActual];
+    }
+    actualizarPlaceholderUsuariosCampana();
+}
+
+function actualizarPlaceholderUsuariosCampana() {
+    const placeholder = document.getElementById('campana-usuarios-placeholder');
+    if (!placeholder) return;
+
+    if (!usuariosSeleccionadosCampana.length) {
+        placeholder.textContent = 'Selecciona usuarios...';
+        return;
+    }
+
+    if (usuariosSeleccionadosCampana.length === 1) {
+        const id = usuariosSeleccionadosCampana[0];
+        const usuario = usuariosPlataforma.find(u => u.id === id);
+        const etiqueta = usuario ? `${usuario.empresa || usuario.nombre || id} (${id})` : id;
+        placeholder.textContent = etiqueta;
+        return;
+    }
+
+    placeholder.textContent = `${usuariosSeleccionadosCampana.length} usuarios seleccionados`;
+}
+
+function renderizarOpcionesUsuariosCampana(filtro = '') {
+    const container = document.getElementById('campana-usuarios-options');
+    if (!container) return;
+
+    const term = filtro.trim().toLowerCase();
+    let lista = usuariosPlataforma;
+    if (term) {
+        lista = usuariosPlataforma.filter(u =>
+            (u.nombre || '').toLowerCase().includes(term) ||
+            (u.empresa || '').toLowerCase().includes(term) ||
+            (u.id || '').toLowerCase().includes(term)
+        );
+    }
+
+    if (!lista.length) {
+        container.innerHTML = '<div class="sc-multiselect-empty">No se encontraron usuarios</div>';
+        return;
+    }
+
+    container.innerHTML = lista.map(u => {
+        const checked = usuariosSeleccionadosCampana.includes(u.id);
+        const empresa = u.empresa ? ` - ${u.empresa}` : '';
+        return `
+            <label class="sc-multiselect-option">
+                <input type="checkbox" value="${u.id}" ${checked ? 'checked' : ''} onclick="event.stopPropagation(); toggleUsuarioCampana('${u.id}')">
+                <div class="sc-option-content">
+                    <span class="sc-option-sku">${u.nombre || 'Usuario'}</span>
+                    <span class="sc-option-nombre">${u.id}${empresa}</span>
+                </div>
+            </label>
+        `;
+    }).join('');
+}
+
+async function toggleDropdownUsuariosCampana() {
+    const dropdown = document.getElementById('campana-usuarios-dropdown');
+    const trigger = document.getElementById('campana-usuarios-trigger');
+    if (!dropdown || !trigger) return;
+
+    const visible = dropdown.style.display === 'block';
+    document.querySelectorAll('.sc-multiselect-dropdown').forEach(d => d.style.display = 'none');
+    document.querySelectorAll('.sc-multiselect-trigger').forEach(t => t.classList.remove('active'));
+
+    if (visible) return;
+
+    await cargarUsuariosPlataforma();
+    asegurarUsuarioActualPreseleccionado();
+    renderizarOpcionesUsuariosCampana('');
+
+    dropdown.style.display = 'block';
+    trigger.classList.add('active');
+}
+
+function cerrarDropdownUsuariosCampana() {
+    const dropdown = document.getElementById('campana-usuarios-dropdown');
+    const trigger = document.getElementById('campana-usuarios-trigger');
+    if (dropdown) dropdown.style.display = 'none';
+    if (trigger) trigger.classList.remove('active');
+}
+
+function filtrarUsuariosCampana(filtro) {
+    renderizarOpcionesUsuariosCampana(filtro);
+}
+
+function toggleUsuarioCampana(userId) {
+    if (!userId) return;
+    const idx = usuariosSeleccionadosCampana.indexOf(userId);
+    if (idx > -1) {
+        usuariosSeleccionadosCampana.splice(idx, 1);
+    } else {
+        usuariosSeleccionadosCampana.push(userId);
+    }
+}
+
+function aplicarUsuariosCampana() {
+    asegurarUsuarioActualPreseleccionado();
+    actualizarPlaceholderUsuariosCampana();
+    cerrarDropdownUsuariosCampana();
+}
+
+// ============================================================
 // FUNCIONES PRINCIPALES DEL MODAL
 // ============================================================
 
 async function abrirModalNuevaCampana() {
     await cargarProductosCampanas(); // Recargar productos antes de abrir
+        await cargarUsuariosPlataforma(); // Asegurar lista de usuarios
   
   editandoIndex = null;
   tipoActualModal = 'principal';
@@ -16520,12 +17111,19 @@ async function abrirModalNuevaCampana() {
     secundario: {
       slides: []
     },
-    activa: true
+        activa: true,
+        targetUsers: [],
+        vigencia: null
   };
   
+    usuariosSeleccionadosCampana = [];
+    asegurarUsuarioActualPreseleccionado();
+
   document.getElementById('modal-campana-title').textContent = 'Nueva Campaña';
   document.getElementById('campana-nombre').value = '';
   document.getElementById('campana-activa').checked = true;
+    asegurarListenerToggleActiva();
+    actualizarPlaceholderUsuariosCampana();
   
   cambiarTabModal('principal');
   renderizarSlidesModal();
@@ -16535,6 +17133,7 @@ async function abrirModalNuevaCampana() {
 
 async function abrirModalEditarCampana(index) {
     await cargarProductosCampanas(); // Recargar productos antes de abrir
+        await cargarUsuariosPlataforma();
   
   editandoIndex = index;
   const campana = campanasState[index];
@@ -16550,6 +17149,12 @@ async function abrirModalEditarCampana(index) {
   document.getElementById('modal-campana-title').textContent = 'Editar Campaña';
   document.getElementById('campana-nombre').value = campana.nombre;
   document.getElementById('campana-activa').checked = campana.activa;
+    usuariosSeleccionadosCampana = Array.isArray(campana.targetUsers) && campana.targetUsers.length
+        ? [...campana.targetUsers]
+        : [obtenerUsuarioActual()].filter(Boolean);
+    asegurarUsuarioActualPreseleccionado();
+    actualizarPlaceholderUsuariosCampana();
+    asegurarListenerToggleActiva();
   
   cambiarTabModal('principal');
   renderizarSlidesModal();
@@ -16561,6 +17166,58 @@ function cerrarModalCampana() {
   document.getElementById('modal-campana').style.display = 'none';
   campanaTemporal = null;
   editandoIndex = null;
+}
+
+function asegurarListenerToggleActiva() {
+    const inputActiva = document.getElementById('campana-activa');
+    if (inputActiva && !inputActiva.dataset.toggleInstant) {
+        inputActiva.addEventListener('change', async (e) => {
+            if (editandoIndex === null) return; // Solo aplica en modo editar
+            const campana = campanasState[editandoIndex];
+            if (!campana) return;
+
+            const activa = !!e.target.checked;
+            campana.activa = activa;
+            campana.activaVigente = evaluarActivaPorVigencia(campana);
+            if (campanaTemporal) campanaTemporal.activa = activa;
+
+            renderizarListaCampanas();
+            try {
+                await guardarCampanasParaUsuarios(campana.targetUsers, { silenciarAlertas: true, silenciarCorreo: true });
+                alert(activa ? 'Campaña activada' : 'Campaña desactivada');
+            } catch (err) {
+                console.error('Error actualizando campaña al vuelo:', err);
+                alert('No se pudo actualizar la campaña');
+            }
+        });
+        inputActiva.dataset.toggleInstant = 'true';
+    }
+}
+
+function initCierreExteriorModalCampana() {
+    const overlayCampana = document.getElementById('modal-campana');
+    if (overlayCampana && !overlayCampana.dataset.cierreExterior) {
+        overlayCampana.addEventListener('click', (e) => {
+            if (e.target === overlayCampana) cerrarModalCampana();
+        });
+        overlayCampana.dataset.cierreExterior = 'true';
+    }
+
+    const overlayLanzar = document.getElementById('modal-lanzar-campana');
+    if (overlayLanzar && !overlayLanzar.dataset.cierreExterior) {
+        overlayLanzar.addEventListener('click', (e) => {
+            if (e.target === overlayLanzar) cerrarModalLanzarCampana();
+        });
+        overlayLanzar.dataset.cierreExterior = 'true';
+    }
+
+    const overlayAnalytics = document.getElementById('modal-analytics-campana');
+    if (overlayAnalytics && !overlayAnalytics.dataset.cierreExterior) {
+        overlayAnalytics.addEventListener('click', (e) => {
+            if (e.target === overlayAnalytics) cerrarModalAnalyticsCampana();
+        });
+        overlayAnalytics.dataset.cierreExterior = 'true';
+    }
 }
 
 function cambiarTabModal(tipo) {
@@ -16582,6 +17239,12 @@ async function guardarCampanaModal() {
     document.getElementById('campana-nombre').focus();
     return;
   }
+
+    if (!usuariosSeleccionadosCampana.length) {
+        alert('Selecciona al menos un usuario para aplicar la campaña');
+        toggleDropdownUsuariosCampana();
+        return;
+    }
   
   const tienePrincipal = campanaTemporal.principal.slides.length > 0;
   const tieneSecundario = campanaTemporal.secundario.slides.length > 0;
@@ -16611,27 +17274,148 @@ async function guardarCampanaModal() {
     campanaTemporal.principal.slides = normalizarSlides(campanaTemporal.principal.slides);
     campanaTemporal.secundario.slides = normalizarSlides(campanaTemporal.secundario.slides);
   
-  const campana = {
-    id: editandoIndex !== null ? campanasState[editandoIndex].id : `camp_${Date.now()}`,
-    nombre,
-    principal: campanaTemporal.principal,
-    secundario: campanaTemporal.secundario,
-    activa
-  };
-  
-  if (editandoIndex !== null) {
-    campanasState[editandoIndex] = campana;
-  } else {
-    campanasState.push(campana);
-  }
-  
-  console.log('Campaña guardada en estado local:', campana);
-  
-  // Guardar en el servidor
-  await guardarTodasLasCampanas();
-  
-  renderizarListaCampanas();
-  cerrarModalCampana();
+    const campana = {
+        id: editandoIndex !== null ? campanasState[editandoIndex].id : `camp_${Date.now()}`,
+        nombre,
+        principal: campanaTemporal.principal,
+        secundario: campanaTemporal.secundario,
+        activa,
+        targetUsers: [...usuariosSeleccionadosCampana],
+        vigencia: campanaTemporal.vigencia || null
+    };
+
+    campanaPendienteLanzamiento = campana;
+    campanaPendienteIndex = editandoIndex;
+    abrirModalLanzarCampana(campana);
+}
+
+function abrirModalLanzarCampana(campana) {
+    const overlay = document.getElementById('modal-lanzar-campana');
+    if (!overlay) return;
+
+    const hoy = new Date();
+    const hoyStr = hoy.toISOString().split('T')[0];
+    const hastaDefault = new Date();
+    hastaDefault.setDate(hastaDefault.getDate() + 30);
+    const hastaStr = hastaDefault.toISOString().split('T')[0];
+
+    const inputDesde = document.getElementById('campana-desde');
+    const inputHasta = document.getElementById('campana-hasta');
+
+    inputDesde.value = campana?.vigencia?.desde || hoyStr;
+    inputHasta.value = campana?.vigencia?.hasta || hastaStr;
+
+    actualizarResumenUsuariosLanzamiento();
+    overlay.style.display = 'flex';
+}
+
+function cerrarModalLanzarCampana() {
+    const overlay = document.getElementById('modal-lanzar-campana');
+    if (overlay) overlay.style.display = 'none';
+    campanaPendienteLanzamiento = null;
+    campanaPendienteIndex = null;
+}
+
+function mostrarLoadingCampana(texto = 'Procesando campaña...') {
+    const overlay = document.getElementById('campana-loading-overlay');
+    const label = document.querySelector('#campana-loading-overlay .campana-loading-text');
+    if (label) label.textContent = texto;
+    if (overlay) {
+        overlay.style.display = 'flex';
+        loadingCampana = true;
+    }
+}
+
+function ocultarLoadingCampana() {
+    const overlay = document.getElementById('campana-loading-overlay');
+    if (overlay) overlay.style.display = 'none';
+    loadingCampana = false;
+}
+
+function actualizarResumenUsuariosLanzamiento() {
+    const cont = document.getElementById('campana-resumen-usuarios');
+    if (!cont) return;
+
+    if (!usuariosSeleccionadosCampana.length) {
+        cont.innerHTML = '<p style="margin:0; color:#999;">Selecciona al menos un usuario.</p>';
+        return;
+    }
+
+    const listado = usuariosSeleccionadosCampana
+        .slice(0, 6)
+        .map(id => {
+            const u = usuariosPlataforma.find(us => us.id === id);
+            const nombre = u?.nombre || 'Usuario';
+            const empresa = u?.empresa ? ` - ${u.empresa}` : '';
+            return `<li>${nombre}${empresa} (${id})</li>`;
+        })
+        .join('');
+
+    const restante = usuariosSeleccionadosCampana.length - 6;
+    const extra = restante > 0 ? `<li>+${restante} más</li>` : '';
+
+    cont.innerHTML = `
+        <strong>${usuariosSeleccionadosCampana.length} usuario${usuariosSeleccionadosCampana.length === 1 ? '' : 's'} seleccionados</strong>
+        <ul>${listado}${extra}</ul>
+    `;
+}
+
+async function confirmarLanzamientoCampana() {
+    if (!campanaPendienteLanzamiento) {
+        cerrarModalLanzarCampana();
+        return;
+    }
+
+    const desdeInput = document.getElementById('campana-desde');
+    const hastaInput = document.getElementById('campana-hasta');
+    const desde = desdeInput?.value;
+    const hasta = hastaInput?.value;
+
+    if (!desde || !hasta) {
+        alert('Define la fecha Desde y Hasta para la campaña');
+        return;
+    }
+
+    const desdeDate = new Date(desde);
+    const hastaDate = new Date(hasta);
+    if (desdeDate > hastaDate) {
+        alert('La fecha Desde no puede ser mayor que la fecha Hasta');
+        return;
+    }
+
+    if (!usuariosSeleccionadosCampana.length) {
+        alert('Selecciona al menos un usuario para lanzar la campaña');
+        return;
+    }
+
+    const campanaFinal = {
+        ...campanaPendienteLanzamiento,
+        vigencia: { desde, hasta },
+        targetUsers: [...usuariosSeleccionadosCampana],
+        activa: campanaPendienteLanzamiento.activa
+    };
+
+    if (campanaPendienteIndex !== null) {
+        campanasState[campanaPendienteIndex] = campanaFinal;
+    } else {
+        campanasState.push(campanaFinal);
+    }
+
+    renderizarListaCampanas();
+
+    // DEBUG: Verificar estado ANTES de guardar
+    console.log('[DEBUG PRE-SAVE] campanasState completo:', JSON.stringify(campanasState, null, 2));
+    console.log('[DEBUG PRE-SAVE] campanaFinal que se va a guardar:', JSON.stringify(campanaFinal, null, 2));
+    alert(`[DEBUG] Guardando campaña: ${campanaFinal.nombre}\nUsuarios: ${campanaFinal.targetUsers.join(',')}\nVigencia: ${JSON.stringify(campanaFinal.vigencia)}`);
+
+    mostrarLoadingCampana('Procesando campaña...');
+    try {
+        await guardarCampanasParaUsuarios(campanaFinal.targetUsers);
+        cerrarModalCampana();
+        cerrarModalLanzarCampana();
+    } finally {
+        ocultarLoadingCampana();
+    }
 }
 
 // ============================================================
@@ -16997,6 +17781,15 @@ function actualizarDescuentoSlide(slideIndex, skuIndex, valor) {
     console.log('campanaTemporal completa:', JSON.stringify(campanaTemporal, null, 2));
 }
 
+function evaluarActivaPorVigencia(campana) {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const desde = campana?.vigencia?.desde ? new Date(campana.vigencia.desde) : null;
+    const hasta = campana?.vigencia?.hasta ? new Date(campana.vigencia.hasta) : null;
+    const enRango = (!desde || hoy >= desde) && (!hasta || hoy <= hasta);
+    return !!campana.activa && enRango;
+}
+
 // ============================================================
 // RENDERIZAR LISTA DE CAMPAÑAS
 // ============================================================
@@ -17005,9 +17798,23 @@ function renderizarListaCampanas() {
   const container = document.getElementById('campanas-list');
   const emptyState = document.getElementById('campanas-empty-state');
   
+  console.log('[DEBUG] renderizarListaCampanas - campanasState:', campanasState.length, 'campañas');
+  campanasState.forEach((c, idx) => {
+      const activa = (typeof c.activaVigente !== 'undefined') ? c.activaVigente : evaluarActivaPorVigencia(c);
+      console.log(`  [${idx}] ${c.nombre} | activaVigente: ${c.activaVigente} | evaluada: ${activa} | principal.slides: ${c.principal?.slides?.length || 0} | secundario.slides: ${c.secundario?.slides?.length || 0}`);
+  });
+  
   // Actualizar contadores
-  const countPrincipal = campanasState.filter(c => c.activa && c.principal?.slides?.length > 0).length;
-  const countSecundario = campanasState.filter(c => c.activa && c.secundario?.slides?.length > 0).length;
+    const countPrincipal = campanasState.filter(c => {
+        const activa = (typeof c.activaVigente !== 'undefined') ? c.activaVigente : evaluarActivaPorVigencia(c);
+        return activa && (c.principal?.slides?.length > 0);
+    }).length;
+    const countSecundario = campanasState.filter(c => {
+        const activa = (typeof c.activaVigente !== 'undefined') ? c.activaVigente : evaluarActivaPorVigencia(c);
+        return activa && (c.secundario?.slides?.length > 0);
+    }).length;
+    
+    console.log('[DEBUG] Contadores calculados: principal=', countPrincipal, 'secundario=', countSecundario);
   
   const countPrincipalEl = document.getElementById('count-principal');
   const countSecundarioEl = document.getElementById('count-secundario');
@@ -17017,6 +17824,7 @@ function renderizarListaCampanas() {
   
   // Verificar si hay campañas
   if (campanasState.length === 0) {
+    console.log('[DEBUG] Sin campañas en state, mostrando empty state');
     container.innerHTML = '';
     if (emptyState) emptyState.style.display = 'block';
     return;
@@ -17029,13 +17837,22 @@ function renderizarListaCampanas() {
     const totalSlidesPrincipal = campana.principal?.slides?.length || 0;
     const totalSlidesSecundario = campana.secundario?.slides?.length || 0;
     const totalSlides = totalSlidesPrincipal + totalSlidesSecundario;
+        const activaVigente = evaluarActivaPorVigencia(campana);
+        const vigenciaTexto = campana.vigencia?.desde
+                ? `${campana.vigencia.desde} → ${campana.vigencia.hasta || 'Sin fecha fin'}`
+                : (campana.vigencia?.hasta
+                    ? `Hasta ${campana.vigencia.hasta}`
+                    : 'Sin vigencia definida');
+        const audienciaTexto = Array.isArray(campana.targetUsers) && campana.targetUsers.length
+            ? `${campana.targetUsers.length} usuario${campana.targetUsers.length === 1 ? '' : 's'}`
+            : 'No asignada';
     
     return `
       <div class="campana-card-compact">
         <div class="campana-card-header">
           <div class="campana-card-title">
             <span class="campana-nombre">${campana.nombre}</span>
-            ${campana.activa ? '<span class="badge-activa">Activa</span>' : '<span class="badge-inactiva">Inactiva</span>'}
+                        ${activaVigente ? '<span class="badge-activa">Activa</span>' : '<span class="badge-inactiva">Inactiva</span>'}
           </div>
           <div class="campana-card-actions">
             <button type="button" class="btn-icon-edit" onclick="abrirModalEditarCampana(${index})" title="Editar">
@@ -17064,6 +17881,21 @@ function renderizarListaCampanas() {
               <span class="stat-value">${totalSlidesSecundario} slide${totalSlidesSecundario !== 1 ? 's' : ''}</span>
             </div>
           ` : ''}
+                    <div class="stat-item">
+                        <span class="stat-label">Vigencia:</span>
+                        <span class="stat-value">${vigenciaTexto}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Usuarios:</span>
+                        <span class="stat-value">${audienciaTexto}</span>
+                    </div>
+        </div>
+        
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e5e5;">
+          <button type="button" class="btn-secondary" onclick="abrirModalAnalyticsCampana('${campana.id}')" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <img src="../img/info_471662-01 1.svg" alt="Analytics" style="width: 16px; height: 16px; filter: invert(22%) sepia(97%) saturate(3042%) hue-rotate(345deg) brightness(85%) contrast(95%);">
+            Ver datos de campaña
+          </button>
         </div>
       </div>
     `;
@@ -17077,36 +17909,75 @@ async function eliminarCampana(index) {
   renderizarListaCampanas();
   
   // Guardar cambios en el servidor
-  await guardarTodasLasCampanas();
+    await guardarCampanasParaUsuarios([obtenerUsuarioActual()], { silenciarAlertas: true });
 }
 
 // ============================================================
 // GUARDAR Y CARGAR DESDE EL SERVIDOR
 // ============================================================
 
-async function guardarTodasLasCampanas() {
+async function guardarCampanasParaUsuarios(userIds, { silenciarAlertas = false, silenciarCorreo = false } = {}) {
+    const ids = Array.isArray(userIds) && userIds.length
+        ? [...new Set(userIds)]
+        : [obtenerUsuarioActual()].filter(Boolean);
+
+    if (!ids.length) {
+        alert('Selecciona al menos un usuario para guardar la campaña');
+        return;
+    }
+
+    const errores = [];
+    for (const id of ids) {
+        try {
+            await guardarTodasLasCampanas(id, true, silenciarCorreo);
+        } catch (e) {
+            console.error('Error guardando campañas para', id, e);
+            errores.push(id);
+        }
+    }
+
+    if (!silenciarAlertas) {
+        if (!errores.length) {
+            alert(`Campaña guardada y notificada a ${ids.length} usuario${ids.length === 1 ? '' : 's'}`);
+        } else {
+            alert(`Algunos usuarios no pudieron guardarse: ${errores.join(', ')}`);
+        }
+    }
+}
+
+async function guardarTodasLasCampanas(customUserId, silenciarAlertas = false, silenciarCorreo = false) {
   const clientSelect = document.getElementById('client-select');
-  const userId = adminSelectedClientId || clientSelect?.value;
+    const userId = customUserId || adminSelectedClientId || clientSelect?.value;
   
   if (!userId) {
     alert('Selecciona un cliente primero');
     return;
   }
+
+  alert(`[guardarTodasLasCampanas] llamado con userId=${userId}, ${campanasState.length} campañas`);
   
   try {
     const formData = new FormData();
     formData.append('userId', userId);
+    formData.append('silenciarCorreo', silenciarCorreo ? 'true' : 'false');
     
     const campanasParaEnviar = [];
     
     for (const campana of campanasState) {
+      console.log('[DEBUG GUARDAR] Procesando campaña:', campana.nombre);
+      console.log('[DEBUG GUARDAR] Vigencia en campanasState:', campana.vigencia);
+      
       const campanaData = {
         id: campana.id,
         nombre: campana.nombre,
         activa: campana.activa,
+                targetUsers: Array.isArray(campana.targetUsers) ? campana.targetUsers : [],
+                vigencia: campana.vigencia || null,
         principal: { slides: [] },
         secundario: { slides: [] }
       };
+      
+      console.log('[DEBUG GUARDAR] campanaData vigencia:', campanaData.vigencia);
       
       for (let i = 0; i < campana.principal.slides.length; i++) {
         const slide = campana.principal.slides[i];
@@ -17169,6 +18040,7 @@ async function guardarTodasLasCampanas() {
     
     formData.append('campanas', JSON.stringify(campanasParaEnviar));
     
+    alert(`[ENVIANDO] ${campanasParaEnviar.length} campañas a servidor para userId=${userId}`);
     console.log('📤 Enviando campañas al servidor:', JSON.stringify(campanasParaEnviar, null, 2));
     
     const response = await fetch('/api/campanas-ofertas', {
@@ -17179,40 +18051,305 @@ async function guardarTodasLasCampanas() {
     const result = await response.json();
     
     if (result.ok) {
-      alert('Campañas guardadas correctamente');
-      cargarCampanasCliente(userId);
+            if (!silenciarAlertas) alert('Campañas guardadas correctamente');
+      console.log('[DEBUG POST-SAVE] Respuesta OK del servidor. Antes de cargar campanasCliente:');
+      console.log('[DEBUG POST-SAVE] campanasState actual:', JSON.stringify(campanasState, null, 2));
+      await cargarCampanasCliente(userId);
     } else {
-      alert('Error al guardar: ' + (result.error || 'Error desconocido'));
+            if (!silenciarAlertas) alert('Error al guardar: ' + (result.error || 'Error desconocido'));
     }
   } catch (error) {
     console.error('Error guardando campañas:', error);
-    alert('Error al guardar campañas');
+        if (!silenciarAlertas) alert('Error al guardar campañas');
   }
 }
 
 async function cargarCampanasCliente(userId) {
   try {
+    console.log('[DEBUG] cargarCampanasCliente - userId:', userId);
+    console.log('[DEBUG] Iniciando fetch a /api/campanas-ofertas...');
     const response = await fetch(`/api/campanas-ofertas?userId=${userId}`);
+    console.log('[DEBUG] Fetch completado. Status:', response.status, 'ok:', response.ok);
+    
     const result = await response.json();
     
+    console.log('[DEBUG] Respuesta API campanas:', result);
     if (result.ok && result.campanas) {
+            console.log('[DEBUG] Campañas recibidas:', result.campanas.length, 'campañas');
             const normalizarSlides = (slides = []) => (slides || []).map(slide => ({
                 ...slide,
                 skus: normalizarSkusArray(slide.skus || [])
             }));
-            campanasState = (result.campanas || []).map(c => ({
-                ...c,
-                principal: { ...(c.principal || {}), slides: normalizarSlides(c.principal?.slides || []) },
-                secundario: { ...(c.secundario || {}), slides: normalizarSlides(c.secundario?.slides || []) }
-            }));
+                        campanasState = (result.campanas || []).map(c => {
+                            const campanaNormalizada = {
+                                ...c,
+                                principal: { ...(c.principal || {}), slides: normalizarSlides(c.principal?.slides || []) },
+                                secundario: { ...(c.secundario || {}), slides: normalizarSlides(c.secundario?.slides || []) },
+                            targetUsers: Array.isArray(c.targetUsers) && c.targetUsers.length ? c.targetUsers : [userId],
+                                vigencia: c.vigencia || null
+                            };
+                            campanaNormalizada.activaVigente = evaluarActivaPorVigencia(campanaNormalizada);
+                            console.log('[DEBUG] Campaña normalizada:', c.nombre, '| activa:', campanaNormalizada.activa, '| activaVigente:', campanaNormalizada.activaVigente, '| principal.slides:', campanaNormalizada.principal?.slides?.length || 0, '| secundario.slides:', campanaNormalizada.secundario?.slides?.length || 0);
+                            return campanaNormalizada;
+                        });
+      console.log('[DEBUG] campanasState actualizado con', campanasState.length, 'campañas');
       renderizarListaCampanas();
     } else {
+      console.log('[DEBUG] result.ok es false o result.campanas es undefined. result:', result);
       campanasState = [];
       renderizarListaCampanas();
     }
   } catch (error) {
-    console.error('Error cargando campañas:', error);
+    console.error('[DEBUG ERROR] Error en cargarCampanasCliente:', error);
+    console.error('[DEBUG ERROR] Stack:', error.stack);
     campanasState = [];
     renderizarListaCampanas();
   }
+}
+
+// ============================================================
+// ANALYTICS DE CAMPAÑA
+// ============================================================
+
+async function abrirModalAnalyticsCampana(campanaId) {
+    const campana = campanasState.find(c => c.id === campanaId);
+    if (!campana) {
+        alert('Campaña no encontrada');
+        return;
+    }
+
+    document.getElementById('analytics-campana-title').textContent = `Datos de Campaña: ${campana.nombre}`;
+    document.getElementById('modal-analytics-campana').style.display = 'flex';
+
+    // Cargar analytics desde el servidor
+    try {
+        const uid = typeof adminSelectedClientId === 'string' && adminSelectedClientId ? adminSelectedClientId : '';
+        const response = await fetch(`/api/campanas-analytics?campanaId=${encodeURIComponent(campanaId)}${uid ? `&userId=${encodeURIComponent(uid)}` : ''}`);
+        
+        if (!response.ok) {
+            console.error('Error HTTP:', response.status);
+            // Mostrar datos vacíos si hay error
+            renderizarAnalytics({
+                vistas: 0,
+                clicks: 0,
+                productosVistos: 0,
+                carrito: 0,
+                cotizaciones: 0,
+                ordenes: 0,
+                montoOrdenes: 0,
+                topProductosVistos: [],
+                topProductosCarrito: [],
+                timeline: [],
+                usuarios: []
+            });
+            return;
+        }
+        
+        const data = await response.json();
+
+        if (data.ok) {
+            renderizarAnalytics(data.analytics);
+        } else {
+            // Mostrar datos en cero si no hay analytics
+            renderizarAnalytics({
+                vistas: 0,
+                clicks: 0,
+                productosVistos: 0,
+                carrito: 0,
+                cotizaciones: 0,
+                ordenes: 0,
+                montoOrdenes: 0,
+                topProductosVistos: [],
+                topProductosCarrito: [],
+                timeline: [],
+                usuarios: []
+            });
+        }
+    } catch (error) {
+        console.error('Error cargando analytics:', error);
+        // Mostrar datos vacíos en caso de error
+        renderizarAnalytics({
+            vistas: 0,
+            clicks: 0,
+            productosVistos: 0,
+            carrito: 0,
+            cotizaciones: 0,
+            ordenes: 0,
+            montoOrdenes: 0,
+            topProductosVistos: [],
+            topProductosCarrito: [],
+            timeline: [],
+            usuarios: []
+        });
+    }
+
+    // Auto-refresh cada 5s mientras la modal esté abierta
+    try {
+        if (window.__campanaAnalyticsTimer) clearInterval(window.__campanaAnalyticsTimer);
+        const uid = typeof adminSelectedClientId === 'string' && adminSelectedClientId ? adminSelectedClientId : '';
+        window.__campanaAnalyticsTimer = setInterval(async () => {
+            try {
+                const resp = await fetch(`/api/campanas-analytics?campanaId=${encodeURIComponent(campanaId)}${uid ? `&userId=${encodeURIComponent(uid)}` : ''}`);
+                if (!resp.ok) return; // mantener último estado
+                const j = await resp.json();
+                if (j && j.ok && j.analytics) {
+                    renderizarAnalytics(j.analytics);
+                }
+            } catch (e) {
+                // silencioso
+            }
+        }, 5000);
+    } catch (e) {}
+}
+
+function cerrarModalAnalyticsCampana() {
+    document.getElementById('modal-analytics-campana').style.display = 'none';
+    if (window.__campanaAnalyticsTimer) {
+        clearInterval(window.__campanaAnalyticsTimer);
+        window.__campanaAnalyticsTimer = null;
+    }
+}
+
+function renderizarAnalytics(analytics) {
+    // Métricas principales
+    document.getElementById('analytics-vistas-banner').textContent = analytics.vistas || 0;
+    document.getElementById('analytics-clicks-banner').textContent = analytics.clicks || 0;
+    document.getElementById('analytics-vistas-productos').textContent = analytics.productosVistos || 0;
+    document.getElementById('analytics-carrito').textContent = analytics.carrito || 0;
+    document.getElementById('analytics-cotizaciones').textContent = analytics.cotizaciones || 0;
+    document.getElementById('analytics-ordenes').textContent = analytics.ordenes || 0;
+
+    // CTR y conversiones
+    const ctr = analytics.vistas > 0 ? ((analytics.clicks / analytics.vistas) * 100).toFixed(1) : 0;
+    document.getElementById('analytics-clicks-tasa').textContent = `${ctr}% CTR`;
+
+    const convCarrito = analytics.clicks > 0 ? ((analytics.carrito / analytics.clicks) * 100).toFixed(1) : 0;
+    document.getElementById('analytics-carrito-tasa').textContent = `${convCarrito}% conv.`;
+
+    const montoFormateado = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(analytics.montoOrdenes || 0);
+    document.getElementById('analytics-ordenes-monto').textContent = montoFormateado;
+
+    // Embudo de conversión
+    const maxVistas = analytics.vistas || 1;
+    document.getElementById('funnel-vistas').textContent = analytics.vistas || 0;
+    document.getElementById('funnel-clicks').textContent = analytics.clicks || 0;
+    document.getElementById('funnel-productos').textContent = analytics.productosVistos || 0;
+    document.getElementById('funnel-carrito').textContent = analytics.carrito || 0;
+    document.getElementById('funnel-cotizaciones').textContent = analytics.cotizaciones || 0;
+    document.getElementById('funnel-ordenes').textContent = analytics.ordenes || 0;
+
+    document.getElementById('funnel-pct-1').textContent = (analytics.vistas || 0) > 0 ? '100%' : '0%';
+    document.getElementById('funnel-pct-2').textContent = maxVistas > 0 ? `${((analytics.clicks / maxVistas) * 100).toFixed(1)}%` : '0%';
+    document.getElementById('funnel-pct-3').textContent = maxVistas > 0 ? `${((analytics.productosVistos / maxVistas) * 100).toFixed(1)}%` : '0%';
+    document.getElementById('funnel-pct-4').textContent = maxVistas > 0 ? `${((analytics.carrito / maxVistas) * 100).toFixed(1)}%` : '0%';
+    document.getElementById('funnel-pct-5').textContent = maxVistas > 0 ? `${((analytics.cotizaciones / maxVistas) * 100).toFixed(1)}%` : '0%';
+    document.getElementById('funnel-pct-6').textContent = maxVistas > 0 ? `${((analytics.ordenes / maxVistas) * 100).toFixed(1)}%` : '0%';
+
+    document.getElementById('funnel-bar-1').style.width = (analytics.vistas || 0) > 0 ? '100%' : '0%';
+    document.getElementById('funnel-bar-2').style.width = maxVistas > 0 ? `${(analytics.clicks / maxVistas) * 100}%` : '0%';
+    document.getElementById('funnel-bar-3').style.width = maxVistas > 0 ? `${(analytics.productosVistos / maxVistas) * 100}%` : '0%';
+    document.getElementById('funnel-bar-4').style.width = maxVistas > 0 ? `${(analytics.carrito / maxVistas) * 100}%` : '0%';
+    document.getElementById('funnel-bar-5').style.width = maxVistas > 0 ? `${(analytics.cotizaciones / maxVistas) * 100}%` : '0%';
+    document.getElementById('funnel-bar-6').style.width = maxVistas > 0 ? `${(analytics.ordenes / maxVistas) * 100}%` : '0%';
+
+    // Top productos vistos
+    const topVistosContainer = document.getElementById('analytics-top-vistos');
+    if (analytics.topProductosVistos && analytics.topProductosVistos.length > 0) {
+        topVistosContainer.innerHTML = analytics.topProductosVistos.slice(0, 5).map(p => `
+            <div class="analytics-product-item">
+                <div>
+                    <div class="analytics-product-name">${p.nombre || 'Producto'}</div>
+                    <div class="analytics-product-sku">${p.sku}</div>
+                </div>
+                <div class="analytics-product-count">${p.count}</div>
+            </div>
+        `).join('');
+    } else {
+        topVistosContainer.innerHTML = '<div style="color: #999; font-size: 13px; padding: 20px; text-align: center;">Sin datos</div>';
+    }
+
+    // Top productos en carrito
+    const topCarritoContainer = document.getElementById('analytics-top-carrito');
+    if (analytics.topProductosCarrito && analytics.topProductosCarrito.length > 0) {
+        topCarritoContainer.innerHTML = analytics.topProductosCarrito.slice(0, 5).map(p => `
+            <div class="analytics-product-item">
+                <div>
+                    <div class="analytics-product-name">${p.nombre || 'Producto'}</div>
+                    <div class="analytics-product-sku">${p.sku}</div>
+                </div>
+                <div class="analytics-product-count">${p.count}</div>
+            </div>
+        `).join('');
+    } else {
+        topCarritoContainer.innerHTML = '<div style="color: #999; font-size: 13px; padding: 20px; text-align: center;">Sin datos</div>';
+    }
+
+    // Timeline de actividad
+    const timelineContainer = document.getElementById('analytics-timeline');
+    if (analytics.timeline && analytics.timeline.length > 0) {
+        timelineContainer.innerHTML = analytics.timeline.slice(0, 20).map(event => {
+            const fecha = new Date(event.fecha);
+            const fechaTexto = fecha.toLocaleString('es-CL', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+            const iconMap = {
+                vista_banner: '👁️',
+                click_banner: '👆',
+                vista_producto: '📦',
+                carrito: '🛒',
+                cotizacion: '📄',
+                orden: '✅'
+            };
+            return `
+                <div class="analytics-timeline-item">
+                    <div class="analytics-timeline-icon">${iconMap[event.tipo] || '📊'}</div>
+                    <div class="analytics-timeline-content">
+                        <div class="analytics-timeline-action">${event.accion}</div>
+                        <div class="analytics-timeline-details">${event.detalles || ''}</div>
+                        <div class="analytics-timeline-time">${fechaTexto}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } else {
+        timelineContainer.innerHTML = '<div style="color: #999; font-size: 13px; padding: 20px; text-align: center;">Sin actividad registrada</div>';
+    }
+
+    // Usuarios activos
+    const usuariosContainer = document.getElementById('analytics-usuarios');
+    if (analytics.usuarios && analytics.usuarios.length > 0) {
+        usuariosContainer.innerHTML = analytics.usuarios.map(u => {
+            const iniciales = (u.nombre || 'U').substring(0, 2).toUpperCase();
+            return `
+                <div class="analytics-usuario-card">
+                    <div class="analytics-usuario-avatar">${iniciales}</div>
+                    <div class="analytics-usuario-info">
+                        <div class="analytics-usuario-nombre">${u.nombre || 'Usuario'}</div>
+                        <div class="analytics-usuario-interacciones">${u.interacciones || 0} interacciones</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } else {
+        usuariosContainer.innerHTML = '<div style="color: #999; font-size: 13px; padding: 20px; text-align: center;">Sin usuarios activos</div>';
+    }
+}
+
+// Función para registrar tracking desde el frontend (se llamará desde otras páginas)
+async function registrarEventoCampana(campanaId, tipo, datos = {}) {
+    try {
+        const userSession = JSON.parse(localStorage.getItem('starclutch_user') || 'null');
+        if (!userSession) return;
+
+        await fetch('/api/campanas-tracking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                campanaId,
+                userId: userSession.id,
+                tipo, // vista_banner, click_banner, vista_producto, carrito, cotizacion, orden
+                datos
+            })
+        });
+    } catch (error) {
+        console.error('Error registrando evento de campaña:', error);
+    }
 }

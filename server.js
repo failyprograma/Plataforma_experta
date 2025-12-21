@@ -48,7 +48,7 @@ function obtenerProductosCampanaDetallado(campanas) {
     const mapa = new Map();
 
     (campanas || []).forEach((campana) => {
-        if (!campana || !campana.activa) return;
+        if (!campana || !estaCampanaEnVigencia(campana)) return;
 
         ['principal', 'secundario'].forEach((tipo) => {
             const slides = campana?.[tipo]?.slides || [];
@@ -109,27 +109,33 @@ function obtenerProductosCampanaDetallado(campanas) {
     }));
 }
 
-async function enviarEmailCampanasActualizadas(userId, campanas) {
+async function enviarEmailCampanasActualizadas(userId, campanaNueva) {
     try {
         const users = readJSON(USERS_DB);
         const user = users.find((u) => u.id === userId);
         
         console.log('📧 enviarEmailCampanasActualizadas - userId:', userId);
         console.log('📧 Usuario encontrado:', user ? `${user.nombre} (${user.email})` : 'NO ENCONTRADO');
-        console.log('📧 Campañas recibidas:', campanas ? campanas.length : 0);
+        console.log('📧 Campaña nueva:', campanaNueva?.nombre);
         
         if (!user || !user.email || user.email.trim() === '') {
             console.warn('⚠️ No se puede enviar correo: usuario sin email registrado');
             return;
         }
 
-        console.log('📧 Obteniendo productos detallados de campañas...');
-        const productos = obtenerProductosCampanaDetallado(campanas).slice(0, 10);
+        console.log('📧 Obteniendo productos detallados de la campaña...');
+        const productos = obtenerProductosCampanaDetallado([campanaNueva]).slice(0, 10);
         console.log('📧 Productos extraídos:', productos.length);
         console.log('📧 Productos:', JSON.stringify(productos, null, 2));
         
         const hayDescuentos = productos.some((p) => p.descuentoCampana > 0);
         console.log('📧 ¿Hay descuentos?', hayDescuentos);
+
+        // Vigencia de la campaña actual
+        const vigenciaHasta = campanaNueva?.vigencia?.hasta ? new Date(campanaNueva.vigencia.hasta) : null;
+        const vigenciaTexto = vigenciaHasta
+            ? `Vigencia de oferta hasta el ${vigenciaHasta.toISOString().split('T')[0]}`
+            : 'Sin vigencia definida';
 
         const subject = hayDescuentos
             ? 'Nuevas ofertas exclusivas para ti'
@@ -167,8 +173,9 @@ async function enviarEmailCampanasActualizadas(userId, campanas) {
         <h2 style="margin:0;font-size:20px;font-weight:700;">Ofertas Exclusivas Actualizadas</h2>
         <p style="margin:6px 0 0 0;font-size:13px;opacity:0.9;">StarClutch Plataforma Experta</p>
       </div>
-      <div style="padding:22px 26px;color:#333;">
-        <p style="margin:0 0 14px 0;font-size:14px;">Hola${user.empresa ? `, <strong>${user.empresa}</strong>` : ''}. Actualizamos tus campañas con nuevas ofertas personalizadas.</p>
+            <div style="padding:22px 26px;color:#333;">
+                <p style="margin:0 0 12px 0;font-size:14px;font-weight:700;">Actualizamos tus ofertas exclusivas.</p>
+                <p style="margin:0 0 12px 0;font-size:13px;color:#555;">${vigenciaTexto}.</p>
         ${productos.length > 0 ? `
         <table style="width:100%;border-collapse:collapse;">
           <thead>
@@ -184,7 +191,7 @@ async function enviarEmailCampanasActualizadas(userId, campanas) {
         <div style="margin-top:20px;">
           <a href="https://starclutch.com/mis%20flotas/" style="display:inline-block;background:#BF1823;color:white;text-decoration:none;padding:12px 22px;border-radius:8px;font-weight:700;font-size:14px;">Ver ofertas en la plataforma</a>
         </div>
-        <p style="margin:18px 0 0 0;font-size:12px;color:#777;line-height:1.5;">Los descuentos aplican mientras dure la campaña. Si tienes dudas, responde a este correo.</p>
+                <p style="margin:18px 0 0 0;font-size:12px;color:#777;line-height:1.5;">Los descuentos aplican según las fechas de campaña. Si tienes dudas, responde a este correo.</p>
       </div>
       <div style="padding:14px 20px;background:#f5f5f5;color:#555;font-size:11px;text-align:center;">© ${new Date().getFullYear()} STARCLUTCH S.p.A. - Todos los derechos reservados</div>
     </div>`;
@@ -3038,7 +3045,7 @@ app.get("/api/banners-ofertas", (req, res) => {
                     };
                     
                     rawCampanas.forEach(c => {
-                        if (!c || !c.activa) return;
+                        if (!c || !estaCampanaEnVigencia(c)) return;
                         
                         // Recopilar SKUs de todos los slides de principal
                         if (c.principal && Array.isArray(c.principal.slides)) {
@@ -3174,6 +3181,15 @@ app.post("/api/banners-ofertas", uploadBanners.any(), async (req, res) => {
 // ENDPOINTS NUEVOS - SISTEMA DE CAMPAÑAS
 // ============================================================
 
+function estaCampanaEnVigencia(campana = {}) {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const desde = campana?.vigencia?.desde ? new Date(campana.vigencia.desde) : null;
+    const hasta = campana?.vigencia?.hasta ? new Date(campana.vigencia.hasta) : null;
+    const enRango = (!desde || hoy >= desde) && (!hasta || hoy <= hasta);
+    return !!campana.activa && enRango;
+}
+
 // Obtener campañas de un usuario
 app.get("/api/campanas-ofertas", (req, res) => {
     const { userId } = req.query;
@@ -3185,17 +3201,61 @@ app.get("/api/campanas-ofertas", (req, res) => {
     try {
         const campanasData = readJSONObject(BANNERS_DB);
         const userCampanas = campanasData[userId] || null;
+
+        // Reconstruir audiencia/vigencia si alguna campaña histórica no las guardó
+        const campanasCruzadas = {};
+        Object.entries(campanasData || {}).forEach(([usuarioId, datos]) => {
+            (datos?.campanas || []).forEach(c => {
+                if (!c?.id) return;
+                if (!campanasCruzadas[c.id]) {
+                    campanasCruzadas[c.id] = { usuarios: new Set(), vigencia: c.vigencia || null };
+                }
+                campanasCruzadas[c.id].usuarios.add(usuarioId);
+                if (!campanasCruzadas[c.id].vigencia && c.vigencia) {
+                    campanasCruzadas[c.id].vigencia = c.vigencia;
+                }
+            });
+        });
         const normalizarSlides = (slides = []) => (slides || []).map(slide => ({
             ...slide,
             skus: normalizarSkusCampanas(slide.skus || [])
         }));
+        let needsPersist = false;
         const campanasNormalizadas = userCampanas?.campanas
-            ? userCampanas.campanas.map(c => ({
-                ...c,
-                principal: { ...(c.principal || {}), slides: normalizarSlides(c.principal?.slides || []) },
-                secundario: { ...(c.secundario || {}), slides: normalizarSlides(c.secundario?.slides || []) }
-            }))
+            ? userCampanas.campanas.map(c => {
+                const mergedTargetUsers = Array.isArray(c.targetUsers) && c.targetUsers.length
+                    ? c.targetUsers
+                    : Array.from(campanasCruzadas[c.id]?.usuarios || []);
+                const mergedVigencia = c.vigencia || campanasCruzadas[c.id]?.vigencia || null;
+
+                if ((!c.targetUsers || !c.targetUsers.length) && mergedTargetUsers.length) {
+                    needsPersist = true;
+                }
+                if (!c.vigencia && mergedVigencia) {
+                    needsPersist = true;
+                }
+
+                const normalizada = {
+                    ...c,
+                    targetUsers: mergedTargetUsers,
+                    vigencia: mergedVigencia,
+                    activa: !!c.activa,
+                    principal: { ...(c.principal || {}), slides: normalizarSlides(c.principal?.slides || []) },
+                    secundario: { ...(c.secundario || {}), slides: normalizarSlides(c.secundario?.slides || []) }
+                };
+                normalizada.activaVigente = estaCampanaEnVigencia(normalizada);
+                return normalizada;
+            })
             : [];
+
+        // Persistir saneamiento (audiencia/vigencia recuperada) para que quede guardado en disco
+        if (needsPersist && userCampanas) {
+            campanasData[userId].campanas = campanasNormalizadas.map(c => ({
+                ...c,
+                activaVigente: undefined // no guardamos flag derivado
+            }));
+            writeJSON(BANNERS_DB, campanasData);
+        }
         
         res.json({ 
             ok: true, 
@@ -3210,7 +3270,8 @@ app.get("/api/campanas-ofertas", (req, res) => {
 // Guardar campañas de un usuario (V2 - Soporte múltiples slides)
 app.post("/api/campanas-ofertas", uploadBanners.any(), async (req, res) => {
     try {
-        const { userId, campanas: campanasJSON } = req.body;
+        const { userId, campanas: campanasJSON, silenciarCorreo } = req.body;
+        const noEnviarCorreo = silenciarCorreo === 'true';
         
         if (!userId || !campanasJSON) {
             return res.status(400).json({ ok: false, msg: "Faltan datos" });
@@ -3220,6 +3281,16 @@ app.post("/api/campanas-ofertas", uploadBanners.any(), async (req, res) => {
         const campanas = JSON.parse(campanasJSON);
 
         console.log('📥 Campañas recibidas del frontend:', JSON.stringify(campanas, null, 2));
+        
+        // DEBUG: Mostrar vigencia de cada campaña
+        campanas.forEach((c, idx) => {
+            console.log(`[DEBUG VIGENCIA] Campaña ${idx} (${c.nombre}):`, {
+                activa: c.activa,
+                vigencia: c.vigencia,
+                desde: c.vigencia?.desde,
+                hasta: c.vigencia?.hasta
+            });
+        });
 
         // Crear un mapa de fieldName -> archivo para fácil acceso
         const filesMap = {};
@@ -3233,6 +3304,8 @@ app.post("/api/campanas-ofertas", uploadBanners.any(), async (req, res) => {
                 id: campana.id,
                 nombre: campana.nombre,
                 activa: !!campana.activa,
+                targetUsers: Array.isArray(campana.targetUsers) ? campana.targetUsers : [],
+                vigencia: campana.vigencia || null,
                 principal: { slides: [] },
                 secundario: { slides: [] }
             };
@@ -3312,6 +3385,9 @@ app.post("/api/campanas-ofertas", uploadBanners.any(), async (req, res) => {
                 });
             }
 
+            // Estado vigente calculado sin perder la intención original del admin
+            result.activaVigente = estaCampanaEnVigencia(result);
+
             return result;
         });
         
@@ -3384,6 +3460,12 @@ app.post("/api/campanas-ofertas", uploadBanners.any(), async (req, res) => {
         
         // Guardar en la base de datos
         const bannersData = readJSONObject(BANNERS_DB);
+        
+        console.log('[DEBUG ANTES DE GUARDAR] campanasConUrls:');
+        campanasConUrls.forEach((c, idx) => {
+            console.log(`  [${idx}] ${c.nombre}: vigencia=${JSON.stringify(c.vigencia)}`);
+        });
+        
         bannersData[userId] = {
             campanas: campanasConUrls,
             // Mantener compatibilidad con sistema antiguo generando banners desde campañas
@@ -3391,6 +3473,12 @@ app.post("/api/campanas-ofertas", uploadBanners.any(), async (req, res) => {
         };
         
         writeJSON(BANNERS_DB, bannersData);
+        
+        console.log('[DEBUG DESPUES DE GUARDAR] Verificando guardado:');
+        const bannersDataVerify = readJSONObject(BANNERS_DB);
+        bannersDataVerify[userId]?.campanas?.forEach((c, idx) => {
+            console.log(`  [${idx}] ${c.nombre}: vigencia=${JSON.stringify(c.vigencia)}`);
+        });
         
         console.log(`✓ Campañas V2 guardadas para usuario: ${userId}`);
         
@@ -3416,19 +3504,70 @@ app.post("/api/campanas-ofertas", uploadBanners.any(), async (req, res) => {
         // Guardar notificación en BD sin enviar correo (el correo se envía después con detalles completos)
         try {
             let notificaciones = readJSON(NOTIFICACIONES_DB);
-            const notif = {
-                id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                userId: userId,
-                tipo: 'campanas_actualizadas',
-                titulo: 'Tus ofertas han sido actualizadas',
-                mensaje: mensajeNotif,
-                datos: { usuarioNombre: nombreUsuario, productos: productosDetalle.slice(0, 10) },
-                leida: false,
-                fecha: new Date().toISOString()
-            };
-            notificaciones.push(notif);
+            
+            // Determinar si hay campañas activas y extraer SKUs
+            const campanasActivas = campanasConUrls.filter(c => estaCampanaEnVigencia(c));
+            const campanasInactivas = campanasConUrls.filter(c => !estaCampanaEnVigencia(c));
+            const skusActivos = new Set();
+            const skusInactivos = new Set();
+            
+            campanasActivas.forEach(c => {
+                ['principal', 'secundario'].forEach(tipo => {
+                    (c[tipo]?.slides || []).forEach(slide => {
+                        (slide.skus || []).forEach(skuData => {
+                            const sku = typeof skuData === 'object' ? skuData.sku : skuData;
+                            if (sku) skusActivos.add(sku);
+                        });
+                    });
+                });
+            });
+            
+            campanasInactivas.forEach(c => {
+                ['principal', 'secundario'].forEach(tipo => {
+                    (c[tipo]?.slides || []).forEach(slide => {
+                        (slide.skus || []).forEach(skuData => {
+                            const sku = typeof skuData === 'object' ? skuData.sku : skuData;
+                            if (sku) skusInactivos.add(sku);
+                        });
+                    });
+                });
+            });
+            
+            // Crear notificaciones según estado
+            if (skusActivos.size > 0) {
+                const skusList = Array.from(skusActivos).slice(0, 5).join(', ');
+                const masSkus = skusActivos.size > 5 ? ` y ${skusActivos.size - 5} más` : '';
+                const notif = {
+                    id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                    userId: userId,
+                    tipo: 'campanas_activadas',
+                    titulo: '¡Nuevas ofertas disponibles!',
+                    mensaje: `Los productos ${skusList}${masSkus} están en oferta!`,
+                    datos: { usuarioNombre: nombreUsuario, productos: productosDetalle.slice(0, 10), skus: Array.from(skusActivos) },
+                    leida: false,
+                    fecha: new Date().toISOString()
+                };
+                notificaciones.push(notif);
+            }
+            
+            if (skusInactivos.size > 0 && noEnviarCorreo) {
+                const skusList = Array.from(skusInactivos).slice(0, 5).join(', ');
+                const masSkus = skusInactivos.size > 5 ? ` y ${skusInactivos.size - 5} más` : '';
+                const notif = {
+                    id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                    userId: userId,
+                    tipo: 'campanas_desactivadas',
+                    titulo: 'Ofertas finalizadas',
+                    mensaje: `Los productos ${skusList}${masSkus} ya no están en oferta.`,
+                    datos: { usuarioNombre: nombreUsuario, skus: Array.from(skusInactivos) },
+                    leida: false,
+                    fecha: new Date().toISOString()
+                };
+                notificaciones.push(notif);
+            }
+            
             writeJSON(NOTIFICACIONES_DB, notificaciones);
-            console.log('✓ Notificación guardada en BD');
+            console.log('✓ Notificación(es) guardada(s) en BD');
         } catch (notifError) {
             console.error('Error guardando notificación:', notifError);
         }
@@ -3440,7 +3579,7 @@ app.post("/api/campanas-ofertas", uploadBanners.any(), async (req, res) => {
             const skusConDescuento = [];
             campanasConUrls.forEach(campana => {
                 console.log(`Procesando campaña: ${campana.nombre}, activa: ${campana.activa}`);
-                if (!campana || !campana.activa) return;
+                if (!campana || !estaCampanaEnVigencia(campana)) return;
                 ['principal', 'secundario'].forEach(tipo => {
                     if (campana[tipo] && Array.isArray(campana[tipo].slides)) {
                         console.log(`  Slides en ${tipo}: ${campana[tipo].slides.length}`);
@@ -3508,13 +3647,22 @@ app.post("/api/campanas-ofertas", uploadBanners.any(), async (req, res) => {
         }
         
         // Enviar correo DESPUÉS de aplicar descuentos (solo UNA vez)
-        console.log('📧 Enviando correo de campañas actualizadas...');
-        try {
-            await enviarEmailCampanasActualizadas(userId, campanasConUrls);
-            console.log('✓ Correo enviado exitosamente');
-        } catch (emailError) {
-            console.error('❌ Error enviando correo:', emailError);
-            console.error('Stack:', emailError.stack);
+        if (!noEnviarCorreo) {
+            console.log('📧 Enviando correo de campañas actualizadas...');
+            try {
+                // Enviar correo para cada campaña que está activa y en vigencia
+                for (const campana of campanasConUrls) {
+                    if (estaCampanaEnVigencia(campana)) {
+                        await enviarEmailCampanasActualizadas(userId, campana);
+                    }
+                }
+                console.log('✓ Correo enviado exitosamente');
+            } catch (emailError) {
+                console.error('❌ Error enviando correo:', emailError);
+                console.error('Stack:', emailError.stack);
+            }
+        } else {
+            console.log('ℹ️ Correo de campaña omitido (cambio de estado activa/inactiva)');
         }
         
         res.json({ ok: true, msg: "Campañas guardadas correctamente" });
@@ -3522,6 +3670,321 @@ app.post("/api/campanas-ofertas", uploadBanners.any(), async (req, res) => {
     } catch (e) {
         console.error("Error guardando campañas:", e);
         res.status(500).json({ ok: false, msg: "Error al guardar campañas", error: e.message });
+    }
+});
+
+// ============================================================
+// ANALYTICS Y TRACKING DE CAMPAÑAS
+// ============================================================
+
+const CAMPANAS_TRACKING_DB = path.join(__dirname, 'datosproductos', 'campanas_tracking.json');
+
+// Inicializar archivo de tracking si no existe
+if (!fs.existsSync(CAMPANAS_TRACKING_DB)) {
+    writeJSON(CAMPANAS_TRACKING_DB, { eventos: [] });
+}
+
+// POST: Registrar evento de tracking
+app.post("/api/campanas-tracking", (req, res) => {
+    try {
+        const { campanaId, userId, tipo, datos } = req.body;
+        
+        console.log('[API /campanas-tracking] Evento recibido:', { campanaId, userId, tipo, datos });
+        
+        if (!campanaId || !userId || !tipo) {
+            console.warn('[API /campanas-tracking] Parámetros faltantes:', { campanaId: !!campanaId, userId: !!userId, tipo: !!tipo });
+            return res.status(400).json({ ok: false, msg: "Faltan parámetros obligatorios" });
+        }
+
+        const tracking = readJSON(CAMPANAS_TRACKING_DB) || { eventos: [] };
+        
+        const evento = {
+            id: `evt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            campanaId,
+            userId,
+            tipo, // vista_banner, click_banner, vista_producto, carrito, cotizacion, orden
+            datos: datos || {},
+            fecha: new Date().toISOString()
+        };
+
+        tracking.eventos.push(evento);
+        writeJSON(CAMPANAS_TRACKING_DB, tracking);
+        
+        console.log('[API /campanas-tracking] ✅ Evento guardado:', evento.id, '| Total eventos:', tracking.eventos.length);
+
+        res.json({ ok: true, msg: "Evento registrado" });
+    } catch (e) {
+        console.error("Error registrando evento de campaña:", e);
+        res.status(500).json({ ok: false, msg: "Error al registrar evento", error: e.message });
+    }
+});
+
+// GET: Obtener analytics de una campaña
+app.get("/api/campanas-analytics", (req, res) => {
+    try {
+        const { campanaId, userId } = req.query;
+        
+        console.log('[API /campanas-analytics] Parámetros:', { campanaId, userId });
+        
+        if (!campanaId) {
+            return res.status(400).json({ ok: false, msg: "campanaId es requerido" });
+        }
+
+        let tracking = { eventos: [] };
+        try {
+            tracking = readJSON(CAMPANAS_TRACKING_DB) || { eventos: [] };
+        } catch (e) {
+            console.warn('Archivo de tracking no existe aún, retornando datos vacíos');
+            tracking = { eventos: [] };
+        }
+        
+        console.log('[API /campanas-analytics] Total eventos en BD:', tracking.eventos.length);
+        
+        let users = [];
+        try {
+            users = readJSON(USUARIOS_DB) || [];
+            console.log('[API /campanas-analytics] Usuarios cargados:', users.length);
+            console.log('[API /campanas-analytics] IDs de usuarios:', users.map(u => u.id).slice(0, 5));
+        } catch (e) {
+            console.warn('[API /campanas-analytics] No se pudo cargar usuarios:', e.message);
+            users = [];
+        }
+        
+        // Permitir filtrar tanto por nombre de campaña como por ID interno
+        const normalizarId = (val) => String(val || '').trim();
+        const campanaIdsValidos = new Set([normalizarId(campanaId)]);
+
+        try {
+            const campanasData = readJSON(BANNERS_DB) || {};
+            const campanasUsuario = campanasData[userId]?.campanas || [];
+
+            // Priorizar coincidencias del usuario seleccionado
+            campanasUsuario.forEach(c => {
+                const idNorm = normalizarId(c.id);
+                const nombreNorm = normalizarId(c.nombre);
+                if (idNorm === normalizarId(campanaId) || nombreNorm === normalizarId(campanaId)) {
+                    if (idNorm) campanaIdsValidos.add(idNorm);
+                    if (nombreNorm) campanaIdsValidos.add(nombreNorm);
+                }
+            });
+
+            // Fallback: buscar coincidencias globales (otras audiencias)
+            if (campanaIdsValidos.size === 1) {
+                Object.values(campanasData).forEach(data => {
+                    (data?.campanas || []).forEach(c => {
+                        const idNorm = normalizarId(c.id);
+                        const nombreNorm = normalizarId(c.nombre);
+                        if (idNorm === normalizarId(campanaId) || nombreNorm === normalizarId(campanaId)) {
+                            if (idNorm) campanaIdsValidos.add(idNorm);
+                            if (nombreNorm) campanaIdsValidos.add(nombreNorm);
+                        }
+                    });
+                });
+            }
+        } catch (e) {
+            console.warn('[API /campanas-analytics] No se pudo cargar campañas para mapear IDs/nombres:', e.message);
+        }
+
+        // Filtrar eventos de esta campaña (y opcionalmente por usuario)
+        const eventos = tracking.eventos.filter(e => {
+            if (!campanaIdsValidos.has(normalizarId(e.campanaId))) return false;
+            if (userId && String(e.userId) !== String(userId)) return false;
+            return true;
+        });
+        
+        console.log('[API /campanas-analytics] Eventos filtrados para campaña', campanaId, 'y usuario', userId, ':', eventos.length);
+
+        if (eventos.length === 0) {
+            console.log('[API /campanas-analytics] Sin eventos, retornando datos vacíos');
+            return res.json({
+                ok: true,
+                analytics: {
+                    vistas: 0,
+                    clicks: 0,
+                    productosVistos: 0,
+                    carrito: 0,
+                    cotizaciones: 0,
+                    ordenes: 0,
+                    montoOrdenes: 0,
+                    topProductosVistos: [],
+                    topProductosCarrito: [],
+                    timeline: [],
+                    usuarios: []
+                }
+            });
+        }
+
+        // Calcular métricas
+        const vistas = eventos.filter(e => e.tipo === 'vista_banner').length;
+        const clicks = eventos.filter(e => e.tipo === 'click_banner').length;
+        const clicksNotificacion = eventos.filter(e => e.tipo === 'click_notificacion').length;
+        const productosVistos = eventos.filter(e => e.tipo === 'vista_producto').length;
+        const carrito = eventos.filter(e => e.tipo === 'carrito').length;
+        const cotizaciones = eventos.filter(e => e.tipo === 'cotizacion').length;
+        const ordenes = eventos.filter(e => e.tipo === 'orden').length;
+
+        // Calcular monto total de órdenes
+        const montoOrdenes = eventos
+            .filter(e => e.tipo === 'orden' && e.datos && e.datos.monto)
+            .reduce((sum, e) => sum + (parseFloat(e.datos.monto) || 0), 0);
+
+        // Top productos vistos
+        const productosVistosMap = {};
+        eventos
+            .filter(e => e.tipo === 'vista_producto' && e.datos && e.datos.sku)
+            .forEach(e => {
+                const sku = e.datos.sku;
+                if (!productosVistosMap[sku]) {
+                    productosVistosMap[sku] = {
+                        sku,
+                        nombre: e.datos.nombre || 'Producto',
+                        count: 0
+                    };
+                }
+                productosVistosMap[sku].count++;
+            });
+        const topProductosVistos = Object.values(productosVistosMap)
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 10);
+
+        // Top productos en carrito
+        const productosCarritoMap = {};
+        eventos
+            .filter(e => e.tipo === 'carrito' && e.datos && e.datos.sku)
+            .forEach(e => {
+                const sku = e.datos.sku;
+                if (!productosCarritoMap[sku]) {
+                    productosCarritoMap[sku] = {
+                        sku,
+                        nombre: e.datos.nombre || 'Producto',
+                        count: 0
+                    };
+                }
+                productosCarritoMap[sku].count++;
+            });
+        const topProductosCarrito = Object.values(productosCarritoMap)
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 10);
+
+        // Timeline (últimos 50 eventos)
+        const timeline = eventos
+            .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+            .slice(0, 50)
+            .map(e => {
+                const accionMap = {
+                    vista_banner: 'Vio el banner',
+                    click_banner: 'Hizo clic en el banner',
+                    vista_producto: 'Vio un producto',
+                    carrito: 'Agregó al carrito',
+                    cotizacion: 'Generó cotización',
+                    orden: 'Realizó orden de compra'
+                };
+                const iconoMap = {
+                    vista_banner: '👁️',
+                    click_banner: '👆',
+                    vista_producto: '🔍',
+                    carrito: '🛒',
+                    cotizacion: '📋',
+                    orden: '✅'
+                };
+                let detalles = '';
+                if (e.datos) {
+                    if (e.datos.sku) detalles += `SKU: ${e.datos.sku}`;
+                    if (e.datos.nombre) detalles += ` - ${e.datos.nombre}`;
+                    if (e.datos.monto) detalles += ` - $${e.datos.monto.toLocaleString('es-CL')}`;
+                }
+                const accion = accionMap[e.tipo] || e.tipo;
+                const texto = detalles ? `${accion} ${detalles}` : accion;
+                const fecha = new Date(e.fecha);
+                const tiempo = fecha.toLocaleString('es-CL', { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                return {
+                    icono: iconoMap[e.tipo] || '•',
+                    texto,
+                    tiempo
+                };
+            });
+
+        // Usuarios activos (con conteo de interacciones)
+        const usuariosMap = {};
+        eventos.forEach(e => {
+            const effectiveId = (e.userId && String(e.userId).trim()) || (userId && String(userId).trim()) || 'desconocido';
+            if (!usuariosMap[effectiveId]) {
+                const usuario = users.find(u => String(u.id).toLowerCase() === String(effectiveId).toLowerCase());
+                console.log(`[DEBUG] Buscando userId: "${effectiveId}", encontrado:`, usuario ? usuario.nombre : 'NO ENCONTRADO');
+                const nombreCompleto = usuario ? usuario.nombre : (userId ? (users.find(u => String(u.id).toLowerCase() === String(userId).toLowerCase())?.nombre || 'Usuario Desconocido') : 'Usuario Desconocido');
+                const inicial = nombreCompleto.charAt(0).toUpperCase();
+                usuariosMap[effectiveId] = {
+                    inicial,
+                    nombre: nombreCompleto,
+                    email: usuario ? usuario.email || '' : '',
+                    actividad: '0 interacciones',
+                    interacciones: 0
+                };
+            }
+            usuariosMap[effectiveId].interacciones++;
+        });
+        // Actualizar texto de actividad
+        Object.values(usuariosMap).forEach(u => {
+            u.actividad = `${u.interacciones} interacción${u.interacciones !== 1 ? 'es' : ''}`;
+        });
+        const usuarios = Object.values(usuariosMap)
+            .sort((a, b) => b.interacciones - a.interacciones)
+            .slice(0, 20);
+
+        const analyticsResult = {
+            vistas,
+            clicks,
+            clicksNotificacion,
+            productosVistos,
+            carrito,
+            cotizaciones,
+            ordenes,
+            montoOrdenes,
+            topProductosVistos,
+            topProductosCarrito,
+            timeline,
+            usuarios
+        };
+        
+        console.log('[API /campanas-analytics] ✅ Retornando analytics:', { vistas, clicks, productosVistos, carrito, cotizaciones, ordenes, montoOrdenes });
+
+        res.json({
+            ok: true,
+            analytics: analyticsResult
+        });
+
+    } catch (e) {
+        console.error("Error obteniendo analytics:", e);
+        res.status(500).json({ ok: false, msg: "Error al obtener analytics", error: e.message });
+    }
+});
+
+// DEBUG ENDPOINT: Ver todos los eventos de tracking (para debugging)
+app.get("/api/debug/campanas-tracking-raw", (req, res) => {
+    try {
+        const tracking = readJSON(CAMPANAS_TRACKING_DB) || { eventos: [] };
+        console.log('[DEBUG] Retornando', tracking.eventos.length, 'eventos');
+        res.json({
+            ok: true,
+            totalEventos: tracking.eventos.length,
+            eventos: tracking.eventos.map(e => ({
+                id: e.id,
+                campanaId: e.campanaId,
+                userId: e.userId,
+                tipo: e.tipo,
+                datos: e.datos,
+                fecha: e.fecha
+            })),
+            ultimos5: tracking.eventos.slice(-5)
+        });
+    } catch (e) {
+        console.error("Error leyendo tracking:", e);
+        res.status(500).json({ ok: false, msg: "Error", error: e.message });
     }
 });
 
@@ -3536,7 +3999,7 @@ function generarBannersDesdeCampanasV2(campanas) {
     };
 
     campanas.forEach(c => {
-        if (!c || !c.activa) return;
+        if (!c || !estaCampanaEnVigencia(c)) return;
 
         // Procesar slides de principal
         if (c.principal && Array.isArray(c.principal.slides)) {
@@ -3576,7 +4039,7 @@ function generarSlidesDesdeCampanasV2(campanas) {
     };
 
     campanas.forEach(c => {
-        if (!c || !c.activa) return;
+        if (!c || !estaCampanaEnVigencia(c)) return;
 
         // Procesar slides de principal
         if (c.principal && Array.isArray(c.principal.slides)) {
@@ -4797,16 +5260,61 @@ const PORT = process.env.PORT || 3000;
 
 // Error handlers
 process.on('uncaughtException', (error) => {
-    console.error('UNCAUGHT EXCEPTION:', error);
+    console.error('UNCAUGHT EXCEPTION:', error && error.stack ? error.stack : error);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-    console.error('UNHANDLED REJECTION:', reason);
+    console.error('UNHANDLED REJECTION:', reason && reason.stack ? reason.stack : reason);
 });
+
+// Healthcheck
+app.get('/health', (req, res) => {
+    res.json({ ok: true, status: 'up', time: new Date().toISOString() });
+});
+
+// 404 handler with logging
+app.use((req, res, next) => {
+    console.warn(`404 Not Found: ${req.method} ${req.originalUrl}`);
+    res.status(404).send(`Cannot ${req.method} ${req.originalUrl}`);
+});
+
+function logRegisteredRoutes() {
+    try {
+        const stack = app._router && app._router.stack ? app._router.stack : [];
+        console.log('Rutas registradas:');
+        stack.forEach((layer) => {
+            if (layer.route && layer.route.path) {
+                const methods = Object.keys(layer.route.methods || {}).join(',').toUpperCase();
+                console.log(`- [${methods}] ${layer.route.path}`);
+            }
+        });
+    } catch (e) {
+        console.warn('No se pudieron listar rutas:', e.message);
+    }
+}
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
     console.log('âœ“ Endpoint /api/limpiar-cruces registrado');
     console.log('âœ“ Endpoint /api/banners-ofertas registrado');
     console.log('âœ“ Endpoints /api/carrito registrados');
+    // Listar rutas tras iniciar
+    setTimeout(logRegisteredRoutes, 1000);
+});
+
+// DEBUG: Listar rutas registradas
+app.get('/debug/routes', (req, res) => {
+    try {
+        const routes = [];
+        const stack = app._router && app._router.stack ? app._router.stack : [];
+        stack.forEach((layer) => {
+            if (layer.route && layer.route.path) {
+                const methods = Object.keys(layer.route.methods || {});
+                routes.push({ path: layer.route.path, methods });
+            }
+        });
+        res.json({ ok: true, routes });
+    } catch (e) {
+        res.status(500).json({ ok: false, error: e.message });
+    }
 });
