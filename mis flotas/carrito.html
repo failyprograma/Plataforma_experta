@@ -1,0 +1,4020 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Starclutch - Carrito</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Estilos específicos para la página de carrito */
+    .carrito-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      align-items: start;
+      padding: 20px 0;
+    }
+
+    .carrito-productos {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .carrito-seleccionar-todos {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #e0e0e0;
+      margin-bottom: 8px;
+    }
+
+    .carrito-seleccionar-todos label {
+      font-size: 14px;
+      color: #575657;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .carrito-seleccionar-todos input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #BF1823;
+      cursor: pointer;
+    }
+
+    /* Tarjeta de producto en carrito */
+    .carrito-producto-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: auto 120px 1fr auto;
+      gap: 20px;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .carrito-producto-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+
+    /* Estado deseleccionado - tarjeta en gris */
+    .carrito-producto-card.deseleccionado {
+      background: #f5f5f5;
+      opacity: 0.6;
+      filter: grayscale(100%);
+    }
+
+    .carrito-producto-card.deseleccionado:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .carrito-producto-checkbox {
+      display: flex;
+      align-items: center;
+    }
+
+    .carrito-producto-checkbox input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #BF1823;
+      cursor: pointer;
+    }
+
+    .carrito-producto-img {
+      width: 120px;
+      height: 100px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: #f9f9f9;
+    }
+
+    .carrito-producto-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .carrito-producto-nombre {
+      font-size: 15px;
+      font-weight: 600;
+      color: #252425;
+      margin: 0;
+    }
+
+    .carrito-producto-aplica,
+    .carrito-producto-sku {
+      font-size: 13px;
+      color: #575657;
+      margin: 0;
+    }
+
+    .carrito-producto-aplica span,
+    .carrito-producto-sku span {
+      font-weight: 600;
+      color: #252425;
+    }
+
+    /* Precio del producto */
+    .carrito-producto-precio {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .carrito-precio-actual {
+      font-size: 16px;
+      font-weight: 700;
+      color: #BF1823;
+    }
+
+    .carrito-precio-original {
+      font-size: 13px;
+      color: #999;
+      text-decoration: line-through;
+    }
+
+    .carrito-descuento-badge {
+      display: inline-block;
+      background: #BF1823;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 12px;
+      margin-left: 8px;
+    }
+
+    .carrito-producto-cantidad {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .carrito-producto-cantidad label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #252425;
+    }
+
+    .carrito-cantidad-controles {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .carrito-qty-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: none;
+      background: #BF1823;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .carrito-qty-btn:hover {
+      background: #D4646C;
+    }
+
+    .carrito-qty-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .carrito-qty-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: #252425;
+      min-width: 30px;
+      text-align: center;
+    }
+
+    .carrito-producto-max {
+      font-size: 12px;
+      color: #999;
+    }
+
+    /* Botón de 3 puntos */
+    .carrito-producto-menu {
+      position: relative;
+    }
+
+    .carrito-menu-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+
+    .carrito-menu-btn:hover {
+      background: #f5f5f5;
+    }
+
+    .carrito-menu-btn img {
+      width: 24px;
+      height: 24px;
+      opacity: 0.7;
+    }
+
+    /* Popup del menú */
+    .carrito-menu-popup {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      padding: 8px 0;
+      min-width: 180px;
+      z-index: 100;
+      display: none;
+    }
+
+    .carrito-menu-popup.visible {
+      display: block;
+      animation: fadeInPopup 0.15s ease;
+    }
+
+    @keyframes fadeInPopup {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .carrito-menu-option {
+      display: block;
+      width: 100%;
+      padding: 10px 16px;
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 14px;
+      color: #575657;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      transition: font-weight 0.15s;
+    }
+
+    .carrito-menu-option:hover {
+      font-weight: 600;
+    }
+
+    /* Panel de resumen */
+    .carrito-resumen {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 24px;
+    }
+
+    .carrito-resumen-titulo {
+      font-size: 16px;
+      font-weight: 700;
+      color: #252425;
+      margin: 0 0 20px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .carrito-resumen-productos {
+      font-size: 15px;
+      color: #252425;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .carrito-resumen-productos span {
+      color: #575657;
+    }
+
+    .carrito-resumen-categorias {
+      margin-bottom: 24px;
+    }
+
+    .carrito-resumen-categorias-titulo {
+      font-size: 14px;
+      font-weight: 600;
+      color: #252425;
+      margin: 0 0 12px 0;
+    }
+
+    .carrito-resumen-categoria {
+      font-size: 13px;
+      color: #575657;
+      margin: 6px 0;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .carrito-resumen-total {
+      font-size: 18px;
+      font-weight: 700;
+      color: #252425;
+      margin: 20px 0;
+      padding-top: 16px;
+      border-top: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .carrito-resumen-total span {
+      color: #252425;
+    }
+
+    /* Solo la etiqueta "Total" en rojo */
+    .carrito-resumen-total.total-row span:first-child {
+      color: #BF1823;
+    }
+
+    .carrito-resumen-acciones {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .carrito-resumen-acciones .btn-primary,
+    .carrito-resumen-acciones .btn-secondary,
+    .carrito-resumen-acciones .cart-btn-primary,
+    .carrito-resumen-acciones .cart-btn-secondary {
+      width: 100%;
+      justify-content: center;
+      padding: 12px 16px;
+    }
+
+    /* Estado vacío */
+    .carrito-vacio {
+      text-align: center;
+      padding: 60px 20px;
+      color: #575657;
+    }
+
+    .carrito-vacio img {
+      width: 80px;
+      opacity: 0.4;
+      margin-bottom: 16px;
+    }
+
+    .carrito-vacio p {
+      font-size: 16px;
+      margin: 0 0 20px 0;
+    }
+
+    /* Título de sección */
+    .carrito-section-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin: 0 0 16px 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .carrito-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .carrito-resumen {
+        position: static;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .carrito-producto-card {
+        grid-template-columns: auto 80px 1fr;
+        gap: 12px;
+      }
+
+      .carrito-producto-menu {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+      }
+
+      .carrito-producto-cantidad {
+        grid-column: 2 / -1;
+      }
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       MODAL DE ORDEN DE COMPRA
+       ════════════════════════════════════════════════════════════════ */
+
+    .oc-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .oc-modal-overlay.active {
+      display: flex;
+    }
+
+    .oc-container-wrapper {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1001;
+      display: none;
+      gap: 20px;
+      max-width: 95%;
+      max-height: 90vh;
+      width: auto;
+    }
+
+    .oc-container-wrapper.active {
+      display: flex;
+    }
+
+    .oc-modal {
+      background: #fff;
+      border-radius: 12px;
+      width: 800px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      opacity: 1;
+    }
+
+    .oc-modal.active {
+      display: flex;
+      animation: fadeInModal 0.3s ease forwards;
+    }
+
+    @keyframes fadeInModal {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+
+    .oc-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .oc-modal-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #252425;
+      margin: 0;
+    }
+
+    .oc-modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #575657;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .oc-modal-close:hover {
+      background: #f5f5f5;
+    }
+
+    .oc-modal-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .oc-productos-section {
+      margin-bottom: 0;
+    }
+
+    .oc-recomendaciones-card {
+      background: #fff;
+      border-radius: 12px;
+      width: 420px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .oc-recomendaciones-header {
+      padding: 20px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .oc-recomendaciones-header h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #252425;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .oc-recomendaciones-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .oc-recomendaciones-section {
+      display: none;
+    }
+
+    .oc-productos-section h3,
+    .oc-recomendaciones-section h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #252425;
+      margin: 0 0 16px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #BF1823;
+    }
+
+    /* Tabla de items */
+    .oc-items-tabla {
+      background: #f9f9f9;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e0e0e0;
+    }
+
+    .oc-item-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 80px 100px 100px 40px;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .oc-item-row:last-child {
+      border-bottom: none;
+    }
+
+    .oc-item-row.header {
+      background: #252425;
+      color: #fff;
+      font-weight: 600;
+      font-size: 12px;
+      padding: 12px;
+    }
+
+    .oc-item-sku {
+      font-size: 11px;
+      color: #575657;
+      font-family: 'Courier New', monospace;
+    }
+
+    .oc-item-nombre {
+      font-size: 13px;
+      font-weight: 500;
+      color: #252425;
+    }
+
+    .oc-item-cantidad {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .oc-qty-input {
+      width: 50px;
+      padding: 4px 6px;
+      border: 1px solid #d0d0d0;
+      border-radius: 4px;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .oc-qty-input:focus {
+      outline: none;
+      border-color: #BF1823;
+      box-shadow: 0 0 0 2px rgba(191, 24, 35, 0.1);
+    }
+
+    .oc-item-precio,
+    .oc-item-total {
+      text-align: right;
+      font-size: 12px;
+      font-weight: 500;
+      color: #252425;
+    }
+
+    .oc-item-remove {
+      background: none;
+      border: none;
+      color: #BF1823;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .oc-item-remove:hover {
+      background: rgba(191, 24, 35, 0.1);
+    }
+
+    /* Grid de recomendaciones */
+    .oc-recomendaciones-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .oc-recomendacion-card {
+      background: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .oc-recomendacion-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-color: #BF1823;
+    }
+
+    .oc-rec-nombre {
+      font-size: 12px;
+      font-weight: 500;
+      color: #252425;
+      margin-bottom: 6px;
+    }
+
+    .oc-rec-sku {
+      font-size: 10px;
+      color: #575657;
+      font-family: 'Courier New', monospace;
+      margin-bottom: 8px;
+    }
+
+    .oc-rec-precio {
+      font-size: 13px;
+      font-weight: 600;
+      color: #BF1823;
+      margin-bottom: 10px;
+    }
+
+    .oc-rec-agregar {
+      width: 100%;
+      padding: 6px 12px;
+      background: #BF1823;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .oc-rec-agregar:hover {
+      background: #D4646C;
+    }
+
+    .oc-rec-agregar.agregado {
+      background: #666;
+      cursor: default;
+    }
+
+    .oc-rec-agregar.agregado:hover {
+      background: #666;
+    }
+
+    /* Footer de modal */
+    .oc-modal-footer {
+      padding: 24px;
+      border-top: 1px solid #e0e0e0;
+      background: #f9f9f9;
+      border-radius: 0 0 12px 12px;
+    }
+
+    .oc-totales {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .oc-total-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #575657;
+      padding: 8px 0;
+    }
+
+    .oc-total-line:not(:last-child) {
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .oc-total-final {
+      font-weight: 600;
+      color: #252425;
+      font-size: 14px;
+      padding-top: 12px;
+      padding-bottom: 0;
+    }
+
+    .oc-total-final span:last-child {
+      color: #BF1823;
+      font-size: 16px;
+    }
+
+    .oc-modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .oc-modal-actions button {
+      flex: 1;
+      max-width: 200px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1300px) {
+      .oc-container-wrapper {
+        flex-direction: column;
+        max-width: 90%;
+      }
+
+      .oc-modal {
+        width: 100%;
+      }
+
+      .oc-recomendaciones-card {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .oc-container-wrapper {
+        max-width: 95%;
+      }
+
+      .oc-modal {
+        width: 95%;
+        max-height: 90vh;
+      }
+
+      .oc-item-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .oc-recomendaciones-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+
+      .oc-modal-actions {
+        flex-direction: column;
+      }
+
+      .oc-modal-actions button {
+        max-width: none;
+      }
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       TARJETA DE ORDEN DE COMPRA PENDIENTE EN CARRITO
+       ════════════════════════════════════════════════════════════════ */
+
+    #cart-pending-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cart-pending-card {
+      background: #fff;
+      border: 2px solid #FFF3CD;
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+    }
+
+    .cart-pending-card:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .cart-pending-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .cart-pending-badge {
+      display: inline-block;
+      background: #FFC107;
+      color: #333;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cart-pending-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .cart-pending-close:hover {
+      background: #f5f5f5;
+    }
+
+    .cart-pending-close img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      filter: invert(35%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%);
+      transition: filter 0.2s;
+    }
+
+    .cart-pending-close:hover img {
+      filter: brightness(0) saturate(100%) invert(13%) sepia(89%) saturate(4735%) hue-rotate(351deg) brightness(89%) contrast(96%);
+    }    .cart-pending-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .cart-pending-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: #575657;
+    }
+
+    .cart-pending-item-name {
+      font-weight: 500;
+      color: #252425;
+    }
+
+    .cart-pending-item-qty {
+      background: #f9f9f9;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      color: #BF1823;
+    }
+
+    .cart-pending-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .cart-pending-actions .btn-primary,
+    .cart-pending-actions .btn-secondary {
+      flex: 1;
+      padding: 8px 16px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Poppins', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .cart-pending-actions .btn-primary {
+      background: #BF1823;
+      color: #fff;
+      border: none;
+    }
+
+    .cart-pending-actions .btn-primary:hover {
+      background: #D4646C;
+    }
+
+    .cart-pending-actions .btn-primary:active {
+      background: #9b1220;
+    }
+
+    .cart-pending-actions .btn-secondary {
+      background: #ffffff;
+      color: #BF1823;
+      border: 1.5px solid #BF1823;
+    }
+
+    .cart-pending-actions .btn-secondary:hover {
+      border-color: #D4646C;
+      color: #D4646C;
+    }
+
+    .cart-pending-actions .btn-secondary:active {
+      border-color: #9b1220;
+      color: #9b1220;
+    }
+
+
+    /* ════════════════════════════════════════════════════════════════
+       MODAL DE DETALLES DE ORDEN PENDIENTE
+       ════════════════════════════════════════════════════════════════ */
+
+    #pending-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1100;
+      display: none;
+    }
+
+    #pending-modal-overlay.active {
+      display: block;
+    }
+
+    #pending-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 900px;
+      max-height: 90vh;
+      display: none;
+      flex-direction: column;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      z-index: 1101;
+      overflow-y: auto;
+    }
+
+    #pending-modal.active {
+      display: flex !important;
+    }
+    .pending-info-section {
+      margin-bottom: 24px;
+      padding: 16px;
+      background: #f9f9f9;
+      border-radius: 12px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .pending-info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .pending-info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .pending-info-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #575657;
+    }
+
+    .pending-info-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #252425;
+    }
+
+    .pending-estado {
+      display: inline-block;
+      background: #FFC107;
+      color: #333;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    /* Tabla de items pendientes */
+    .pending-items-tabla {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .pending-item-card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 100px 1fr auto;
+      gap: 16px;
+      align-items: flex-start;
+      transition: all 0.2s;
+    }
+
+    .pending-item-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-color: #BF1823;
+    }
+
+
+    .pending-item-img-container {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .pending-item-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pending-item-gallery-indicator {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .pending-item-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .pending-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .pending-item-nombre {
+      font-size: 15px;
+      font-weight: 600;
+      color: #252425;
+    }
+
+    .pending-item-sku {
+      font-size: 12px;
+      color: #575657;
+      font-family: 'Courier New', monospace;
+    }
+
+    .pending-item-detalles {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .pending-item-detalle-row {
+      font-size: 13px;
+      color: #575657;
+    }
+
+    .pending-item-detalle-row strong {
+      color: #252425;
+    }
+
+    .pending-item-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .pending-item-precio {
+      font-size: 16px;
+      font-weight: 700;
+      color: #BF1823;
+      text-align: center;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       GALERÍA DE IMÁGENES
+       ════════════════════════════════════════════════════════════════ */
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      #pending-modal {
+        width: 95%;
+      }
+
+      .pending-info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pending-item-card {
+        grid-template-columns: 80px 1fr;
+      }
+
+      .pending-item-actions {
+        grid-column: 2;
+        flex-direction: row;
+        justify-content: flex-end;
+      }
+    }
+
+    @media (max-width: 768px) {
+      #pending-modal {
+        width: 100%;
+        max-height: 90vh;
+      }
+
+      .pending-item-card {
+        grid-template-columns: 1fr;
+      }
+
+      .pending-info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pending-item-detalles {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAV LATERAL -->
+  <nav class="sidebar">
+    <div class="logo">
+      <img src="../img/Logo starclutch web.svg" alt="Logo Starclutch">
+    </div>
+
+    <div class="user-info">
+      <a href="../perfildeusuario/index.html">
+        <span class="nav-icon"><img src="../img/Usuario.svg" alt="Usuario"></span>
+        <span class="nav-text">Hola, <strong class="nav-username"></strong></span>
+      </a>
+    </div>
+
+    <div class="search-general">
+      <input type="text" placeholder="Búsqueda general" class="input-general">
+      <button class="btn-search-general">
+        <img src="../img/Buscar.svg" alt="Buscar">
+      </button>
+    </div>
+
+    <ul class="menu main-nav">
+      <li>
+        <a href="index.html">
+          <span class="nav-icon"><img src="../img/Agregar flota.svg" alt="Ver mi flotas"></span>
+          <span class="nav-text">Mis flotas</span>
+        </a>
+      </li>
+      <li>
+        <a href="../lista de repuestos/index.html">
+          <span class="nav-icon"><img src="../img/Productos.svg" alt="Ver mis repuestos"></span>
+          <span class="nav-text">Lista de repuestos</span>
+        </a>
+      </li>
+      <li>
+        <a href="../ofertas exclusivas/index.html">
+          <span class="nav-icon"><img src="../img/Descuento.svg" alt="Ofertas"></span>
+          <span class="nav-text">Ofertas exclusivas</span>
+        </a>
+      </li>
+      <li>
+        <a href="../estado de la cuenta/index.html">
+          <span class="nav-icon"><img src="../img/bill-01 1.svg" alt="Ver mis repuestos"></span>
+          <span class="nav-text">Estado de cuenta</span>
+        </a>
+      </li>
+      <li>
+        <a href="../mis compras/index.html.html">
+          <span class="nav-icon"><img src="../img/miscompras.svg" alt="Ver mis compras"></span>
+          <span class="nav-text">Mis compras</span>
+        </a>
+      </li>
+    </ul>
+
+    <footer class="sidebar-footer">
+      <a href="https://starclutch.cl/repuestos" 
+         target="_blank" 
+         rel="noopener noreferrer"
+         class="btn-text footer-link">
+         <span class="icon-left"><img src="../img/Logo SC.svg" alt="Ver mis repuestos"></span> Nosotros
+      </a>
+      <p>Starclutch S.p.A<br>© Todos los derechos reservados 2025</p>
+    </footer>
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-content">
+    <div class="page-container">
+
+      <!-- HEADER -->
+      <header class="main-header">
+        <div class="header-left">
+          <img src="../img/carritorojo.svg" alt="Icono Carrito" class="icono-header">
+          <h1>Carrito</h1>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn-text">
+            <span class="icon-left"><img src="../img/info_471662-01 1.svg" alt="Ayuda"></span> Ayuda
+          </button>
+          <button class="btn-text" onclick="toggleCarrito()" style="position: relative;">
+            <span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/carrito.svg" alt="Carrito"><span class="cart-badge" id="cart-badge-count">0</span></span> Carrito
+          </button>
+          <button class="btn-text" id="btn-notificaciones" onclick="toggleNotificaciones()" style="position: relative;">
+            <span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/Alerta.svg" alt="Notificaciones"><span class="notif-badge" id="notif-badge-count">0</span></span> Notificaciones
+          </button>
+        </div>
+      </header>
+
+      <!-- CONTENIDO DEL CARRITO -->
+      <h2 class="carrito-section-title">Revisa tus cotizaciones</h2>
+      
+      <!-- Seleccionar todos -->
+      <div class="carrito-seleccionar-todos">
+        <label>
+          <input type="checkbox" id="seleccionar-todos" checked onchange="toggleSeleccionarTodos()">
+          Seleccionar todos
+        </label>
+      </div>
+
+      <div class="carrito-layout">
+        <!-- Lista de productos -->
+        <div class="carrito-productos" id="carrito-productos-lista">
+          <!-- Los productos se cargan dinámicamente -->
+          <div class="carrito-vacio" id="carrito-vacio" style="display: none;">
+            <img src="../img/carrito.svg" alt="Carrito vacío">
+            <p>Tu carrito está vacío</p>
+            <a href="../lista de repuestos/index.html" class="btn-primary">Ver productos</a>
+          </div>
+        </div>
+
+        <!-- Panel de resumen -->
+        <aside class="carrito-resumen">
+          <h3 class="carrito-resumen-titulo">Resumen del carro</h3>
+          
+          <div class="carrito-resumen-productos">
+            <strong>Productos</strong> <span id="resumen-cantidad">(0)</span>
+          </div>
+
+          <div class="carrito-resumen-categorias">
+            <p class="carrito-resumen-categorias-titulo">Categorías</p>
+            <div id="resumen-categorias">
+              <!-- Categorías dinámicas -->
+            </div>
+          </div>
+
+          <div class="carrito-resumen-total">
+            <span>Subtotal</span>
+            <span id="resumen-subtotal">$0</span>
+          </div>
+          <div class="carrito-resumen-total">
+            <span>Impuesto IVA (19%)</span>
+            <span id="resumen-iva">$0</span>
+          </div>
+          <div class="carrito-resumen-total total-row">
+            <span>Total</span>
+            <span id="resumen-total">$0</span>
+          </div>
+
+          <div class="carrito-resumen-acciones">
+            <button class="cart-btn-secondary" onclick="generarCotizacionResumen()" onclick="generarCotizacion()">Cotizar</button>
+          </div>
+        </aside>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Panel de carrito (mini) -->
+  <div class="cart-overlay" id="cart-overlay" onclick="cerrarCarrito()"></div>
+  <div class="cart-panel" id="cart-panel">
+    <div class="cart-header">
+      <h3><img src="../img/carrito.svg" alt="" style="width:20px;height:20px;filter:brightness(0) invert(1);margin-right:8px;">Carrito</h3>
+      <button class="cart-close" onclick="cerrarCarrito()">&times;</button>
+    </div>
+    <div class="cart-body">
+      <!-- Contenedor de órdenes pendientes -->
+      <div id="cart-pending-container"></div>
+      
+      <div class="cart-empty" id="cart-empty">
+        <img src="../img/carrito.svg" alt="Carrito vacío" />
+        <p>Tu carrito está vacío</p>
+      </div>
+      <ul class="cart-list" id="cart-list"></ul>
+    </div>
+      <div class="cart-footer" id="cart-footer" style="display:none;">
+        <p class="cart-total"><strong>Total:</strong> $0</p>
+      <div class="cart-actions">
+        <button class="cart-btn-secondary" onclick="generarCotizacionResumen()">Cotizar</button>
+      </div>
+      <a href="carrito.html" class="cart-link">Ver resumen del carrito</a>
+    </div>
+  </div>
+
+  <!-- Modal de Detalles de Orden Pendiente -->
+  <div id="pending-modal-overlay" class="oc-modal-overlay" onclick="cerrarModalPendiente()"></div>
+  <div id="pending-modal" class="oc-modal" style="display: none;">
+    <div class="oc-modal-header">
+      <h2 id="pending-modal-title">Detalles de Orden Pendiente</h2>
+      <button class="oc-modal-close" onclick="cerrarModalPendiente()">✕</button>
+    </div>
+    
+    <div class="oc-modal-content">
+      <!-- Sección de cotización -->
+      <div class="pending-info-section">
+        <div class="pending-info-grid">
+          <div class="pending-info-item">
+            <span class="pending-info-label">Cotización N°</span>
+            <span class="pending-info-value" id="pending-numero-cot">-</span>
+          </div>
+          <div class="pending-info-item">
+            <span class="pending-info-label">Fecha</span>
+            <span class="pending-info-value" id="pending-fecha">-</span>
+          </div>
+          <div class="pending-info-item">
+            <span class="pending-info-label">Estado</span>
+            <span class="pending-info-value pending-estado" id="pending-estado">Pendiente</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección de productos -->
+      <div class="oc-productos-section">
+        <h3>Productos en la Orden</h3>
+        <div id="pending-items-lista" class="pending-items-tabla">
+          <!-- Se llenará dinámicamente -->
+        </div>
+      </div>
+    </div>
+    
+    <!-- Totales -->
+    <div class="oc-modal-footer">
+      <div class="oc-totales">
+        <div class="oc-total-line">
+          <span>Subtotal:</span>
+          <span id="pending-subtotal">$0</span>
+        </div>
+        <div class="oc-total-line">
+          <span>Impuesto IVA (19%):</span>
+          <span id="pending-iva">$0</span>
+        </div>
+        <div class="oc-total-line oc-total-final">
+          <span>Total:</span>
+          <span id="pending-total">$0</span>
+        </div>
+      </div>
+      
+
+      <div class="oc-modal-actions">
+        <button class="btn-secondary" onclick="cerrarModalPendiente()">Cerrar</button>
+        <button class="btn-primary" onclick="subirOrdenDeCompraDesdeModal()">Subir OC</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Galería de Imágenes -->
+  <div id="gallery-modal-overlay" class="oc-modal-overlay" onclick="cerrarGaleriaImagenes()" style="display: none;"></div>
+  <div id="gallery-modal" class="pending-gallery-modal" style="display: none;">
+    <div class="gallery-header">
+      <h2>Galería</h2>
+      <button class="gallery-close-btn" onclick="cerrarGaleriaImagenes()">✕</button>
+    </div>
+    <div class="gallery-container">
+      <button class="gallery-nav-btn gallery-prev" onclick="galeriaPrev()">‹</button>
+      <div class="gallery-image-wrapper">
+        <img id="gallery-main-image" src="" alt="Producto" class="gallery-main-image">
+      </div>
+      <button class="gallery-nav-btn gallery-next" onclick="galeriaNext()">›</button>
+    </div>
+    <div class="gallery-thumbnails" id="gallery-thumbnails"></div>
+  </div>
+  <!-- Panel de notificaciones -->
+  <div class="notif-overlay" id="notif-overlay" onclick="cerrarNotificaciones()"></div>
+  <div class="notif-panel" id="notif-panel">
+    <div class="notif-header">
+      <h3><img src="../img/Alerta.svg" alt="Notificaciones" style="width: 20px; height: 20px; filter: brightness(0) invert(1);"> Notificaciones</h3>
+      <button class="notif-close" onclick="cerrarNotificaciones()">&times;</button>
+    </div>
+    <div class="notif-body">
+      <div id="notif-list" style="display: none;"></div>
+      <div class="notif-empty" id="notif-empty">
+        <div class="notif-empty-icon"><img src="../img/Alerta.svg" alt="Sin notificaciones"></div>
+        <h4>No hay notificaciones</h4>
+        <p>Cuando tengas novedades sobre productos, ofertas o actualizaciones, aparecerán aquí.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../notificaciones.js"></script>
+
+  <!-- Modal de Previsualizacion de OC -->
+  <div id="oc-modal-overlay" class="oc-modal-overlay" onclick="cerrarModalOC()"></div>
+  
+  <div id="oc-container-wrapper" class="oc-container-wrapper">
+    <!-- Modal de OC -->
+    <div id="oc-modal" class="oc-modal">
+      <div class="oc-modal-header">
+        <h2>Previsualizacion de Orden de Compra</h2>
+        <button class="oc-modal-close" onclick="cerrarModalOC()">✕</button>
+      </div>
+      
+      <div class="oc-modal-content">
+        <!-- Seccion de productos editables -->
+        <div class="oc-productos-section">
+          <h3>Productos en la Orden</h3>
+          <div id="oc-items-lista" class="oc-items-tabla">
+            <!-- Se llenara dinamicamente -->
+          </div>
+        </div>
+      </div>
+      
+      <!-- Totales y acciones -->
+      <div class="oc-modal-footer">
+        <div class="oc-terminos" style="flex: 1; margin-right: 16px;">
+          <label style="display:flex; align-items:flex-start; gap:8px; font-size: 0.9rem; color:#444;">
+            <input type="checkbox" id="oc-acepto-terminos" style="margin-top: 3px;"> 
+            <span>
+              Acepto enviar la Orden de Compra según los términos y condiciones establecidos por StarClutch. 
+              Confirmo que los datos ingresados son correctos y autorizo el uso de esta información para fines comerciales.
+            </span>
+          </label>
+        </div>
+        <div class="oc-totales">
+          <div class="oc-total-line">
+            <span>Subtotal:</span>
+            <span id="oc-subtotal">$0</span>
+          </div>
+          <div class="oc-total-line">
+            <span>Impuestos (referencia):</span>
+            <span id="oc-iva">$0</span>
+          </div>
+          <div class="oc-total-line oc-total-final">
+            <span>Total:</span>
+            <span id="oc-total">$0</span>
+          </div>
+        </div>
+        
+        <div class="oc-modal-actions">
+          <button class="cart-btn-secondary" onclick="cerrarModalOC()">Cancelar</button>
+          <button class="cart-btn-primary" onclick="enviarOrdenCompra()">Enviar Orden</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjeta de Recomendaciones Independiente -->
+    <div id="oc-recomendaciones-card" class="oc-recomendaciones-card">
+      <div class="oc-recomendaciones-header">
+        <h3>Repuestos recomendados según tu carrito (No incluidos en OC)</h3>
+      </div>
+      <div class="oc-recomendaciones-body">
+        <div id="oc-recomendaciones-lista" class="oc-recomendaciones-grid">
+          <!-- Se llenara dinamicamente -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Previsualizacion de Cotización -->
+  <div id="cotizacion-modal-overlay" class="oc-modal-overlay" onclick="cerrarModalCotizacion()"></div>
+  
+  <div id="cotizacion-container-wrapper" class="oc-container-wrapper">
+    <!-- Modal de Cotización -->
+    <div id="cotizacion-modal" class="oc-modal">
+      <div class="oc-modal-header">
+        <h2>Previsualizacion de Cotización</h2>
+        <button class="oc-modal-close" onclick="cerrarModalCotizacion()">✕</button>
+      </div>
+      
+      <div class="oc-modal-content">
+        <!-- Seccion de productos -->
+        <div class="oc-productos-section">
+          <h3>Productos en la Cotización</h3>
+          <div id="cotizacion-items-lista" class="oc-items-tabla">
+            <!-- Se llenara dinamicamente -->
+          </div>
+        </div>
+      </div>
+      
+      <!-- Totales y acciones -->
+      <div class="oc-modal-footer">
+        <div class="oc-terminos" style="flex: 1; margin-right: 16px;">
+          <label style="display:flex; align-items:flex-start; gap:8px; font-size: 0.9rem; color:#444;">
+            <input type="checkbox" id="cotizacion-acepto-terminos" style="margin-top: 3px;"> 
+            <span>
+              Acepto enviar la Cotización según los términos y condiciones establecidos por StarClutch. 
+              Confirmo que los datos ingresados son correctos y autorizo el uso de esta información para fines comerciales.
+            </span>
+          </label>
+        </div>
+        <div class="oc-totales">
+          <div class="oc-total-line">
+            <span>Subtotal:</span>
+            <span id="cotizacion-subtotal">$0</span>
+          </div>
+          <div class="oc-total-line">
+            <span>Impuesto IVA:</span>
+            <span id="cotizacion-iva">$0</span>
+          </div>
+          <div class="oc-total-line oc-total-final">
+            <span>Total:</span>
+            <span id="cotizacion-total">$0</span>
+          </div>
+        </div>
+        
+        <div class="oc-modal-actions">
+          <button class="cart-btn-secondary" onclick="cerrarModalCotizacion()">Cancelar</button>
+          <button class="cart-btn-primary" onclick="enviarCotizacion()">Enviar Cotización</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjeta de Recomendaciones para Cotización -->
+    <div id="cotizacion-recomendaciones-card" class="oc-recomendaciones-card">
+      <div class="oc-recomendaciones-header">
+        <h3>Repuestos recomendados según tu carrito (No incluidos en Cotización)</h3>
+      </div>
+      <div class="oc-recomendaciones-body">
+        <div id="cotizacion-recomendaciones-lista" class="oc-recomendaciones-grid">
+          <!-- Se llenara dinamicamente -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../script.js"></script>
+  <script src="../cotizacion-generator.js"></script>
+  <script src="../oc-generator.js"></script>
+  <script>
+    // Abrir automáticamente modales si vienen indicadas desde otras páginas (sessionStorage)
+    document.addEventListener('DOMContentLoaded', async () => {
+      let abrir = null;
+      try {
+        abrir = sessionStorage.getItem('carrito_abrir');
+        sessionStorage.removeItem('carrito_abrir');
+      } catch (_) {}
+
+      if (!abrir) return;
+
+      try {
+        // Asegurar datos actualizados y UI renderizada
+        await CarritoGlobal.sincronizar();
+        await cargarDatosBase();
+        cargarProductosCarrito();
+
+        // Seleccionar todos los items del carrito
+        const local = CarritoGlobal.obtenerLocal();
+        const ids = (local && local.items) ? local.items.map(i => i.id) : [];
+        productosSeleccionados = new Set(ids);
+        document.querySelectorAll('.carrito-producto-card input[type="checkbox"]').forEach(cb => cb.checked = true);
+        actualizarResumen();
+
+        // Abrir la modal solicitada
+        if (abrir === 'cotizar' && typeof generarCotizacionResumen === 'function') {
+          generarCotizacionResumen();
+        } else if (abrir === 'oc' && typeof generarOrdenCompraResumen === 'function') {
+          generarOrdenCompraResumen();
+        }
+      } catch (e) {
+        console.error('Error al auto-abrir modal de carrito', e);
+      }
+    });
+  </script>
+  <script>
+    // Variables globales
+    let productosSeleccionados = new Set();
+    let menuAbierto = null;
+    let productosDB = []; // Cache de productos
+    let crucesDB = { cruces: [] }; // Cache de cruces
+    let pollingInterval = null;
+
+    // Cargar usuario
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Cargar nombre de usuario
+      const userData = localStorage.getItem('starclutch_user');
+      if (userData) {
+        const user = JSON.parse(userData);
+        const nombreElements = document.querySelectorAll('.nav-username');
+        nombreElements.forEach(el => el.textContent = user.nombre || 'Usuario');
+      }
+      
+      // Cargar productos y cruces primero
+      await cargarDatosBase();
+      await cargarProductosCarrito();
+      
+      // Iniciar polling para actualizaciones en tiempo real
+      iniciarPollingCarrito();
+    });
+
+    // Cargar productos y cruces de la base de datos
+    async function cargarDatosBase() {
+      try {
+        const [productosRes, crucesRes] = await Promise.all([
+          fetch('/datosproductos/productos_db.json'),
+          fetch('/datosproductos/cruces_vehiculos.json')
+        ]);
+        
+        productosDB = await productosRes.json();
+        crucesDB = await crucesRes.json();
+      } catch (e) {
+        console.error('Error cargando datos base:', e);
+      }
+    }
+
+    // Buscar vehículo aplicable por SKU del producto
+    function buscarVehiculoAplicable(sku) {
+      if (!crucesDB.cruces || crucesDB.cruces.length === 0) return null;
+      
+      for (const cruce of crucesDB.cruces) {
+        // Buscar en todas las categorías
+        for (const [categoria, productos] of Object.entries(cruce.categorias || {})) {
+          if (productos.some(p => p.sku === sku)) {
+            return `${capitalizar(cruce.marca)} ${cruce.modelo}`;
+          }
+        }
+      }
+      return null;
+    }
+
+    // Obtener categoría real del producto
+    function obtenerCategoriaProducto(item) {
+      // Primero buscar en productosDB por id o sku
+      const producto = productosDB.find(p => 
+        p.id === item.id || p.codSC === item.sku || p.codSC === item.id
+      );
+      
+      if (producto && producto.linea) {
+        return producto.linea;
+      }
+      
+      // Fallback: buscar en cruces
+      if (crucesDB.cruces) {
+        for (const cruce of crucesDB.cruces) {
+          for (const [categoria, productos] of Object.entries(cruce.categorias || {})) {
+            if (productos.some(p => p.sku === item.sku || p.sku === item.id)) {
+              return capitalizar(categoria);
+            }
+          }
+        }
+      }
+      
+      return item.linea || item.categoria || 'Otros';
+    }
+
+    // Capitalizar primera letra
+    function capitalizar(str) {
+      if (!str) return '';
+      return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    }
+
+    // Cargar productos del carrito
+    async function cargarProductosCarrito() {
+      const carrito = CarritoGlobal.obtenerLocal();
+      const contenedor = document.getElementById('carrito-productos-lista');
+      const carritoVacio = document.getElementById('carrito-vacio');
+      
+      if (!carrito.items || carrito.items.length === 0) {
+        contenedor.innerHTML = '';
+        carritoVacio.style.display = 'flex';
+        actualizarResumen();
+        return;
+      }
+      
+      carritoVacio.style.display = 'none';
+      
+      // Generar HTML de productos
+      let html = '';
+      carrito.items.forEach((item, index) => {
+        productosSeleccionados.add(item.id); // Seleccionar todos por defecto
+        
+        // Obtener producto actualizado de la DB
+        const productoActualizado = productosDB.find(p => 
+          p.id === item.id || p.codSC === item.sku || p.codSC === item.id
+        );
+        
+        // Usar datos actualizados si existen
+        const precioBruto = productoActualizado?.precio || item.precioOriginal || item.precio;
+        const precioOriginal = Math.round(precioBruto / 1.19);
+        const descuento = productoActualizado?.descuento || item.descuento || 0;
+        const precioFinal = descuento > 0 ? Math.round(precioOriginal * (1 - descuento / 100)) : precioOriginal;
+        const stock = productoActualizado?.stock || item.stock || 0;
+        
+        // SKU: código cliente si existe, sino código StarClutch
+        const skuCliente = productoActualizado?.codCliente || item.skuCliente || '';
+        const skuSC = productoActualizado?.codSC || item.sku || item.id;
+        const skuMostrar = skuCliente && skuCliente.trim() !== '' ? skuCliente : skuSC;
+        
+        // Vehículo aplicable
+        const vehiculoAplicable = buscarVehiculoAplicable(skuSC) || item.aplicaVehiculo || 'Varios vehículos';
+        
+        // Categoría real
+        const categoriaReal = obtenerCategoriaProducto(item);
+        
+        // Calcular subtotal del item
+        const subtotal = precioFinal * item.cantidad;
+        
+        html += `
+          <div class="carrito-producto-card" data-id="${item.id}" data-sku="${skuSC}" data-categoria="${categoriaReal}" data-precio="${precioFinal}" data-descuento="${descuento}" data-precio-original="${precioOriginal}">
+            <div class="carrito-producto-checkbox">
+              <input type="checkbox" checked onchange="toggleProductoSeleccionado('${item.id}', this.checked)" id="check-${item.id}">
+            </div>
+            <img src="${item.imagen}" alt="${item.nombre}" class="carrito-producto-img" onerror="this.src='../img/carrito.svg'">
+            <div class="carrito-producto-info">
+              <p class="carrito-producto-nombre">${item.nombre} - ${item.marca}</p>
+              <p class="carrito-producto-aplica"><span>Aplica:</span> ${vehiculoAplicable}</p>
+              <p class="carrito-producto-sku"><span>SKU:</span> ${skuMostrar}</p>
+              
+              <div class="carrito-producto-precio">
+                <div>
+                  <span class="carrito-precio-actual">${CarritoGlobal.formatearPrecio(precioFinal)}</span>
+                  ${descuento > 0 ? `<span class="carrito-descuento-badge">-${descuento}%</span>` : ''}
+                </div>
+                ${descuento > 0 ? `<span class="carrito-precio-original">${CarritoGlobal.formatearPrecio(precioOriginal)}</span>` : ''}
+              </div>
+              
+              <div class="carrito-producto-cantidad">
+                <label>Cantidad</label>
+                <div class="carrito-cantidad-controles">
+                  <button class="carrito-qty-btn" onclick="cambiarCantidadCarrito('${item.id}', -1)" ${item.cantidad <= 1 ? 'disabled' : ''}>−</button>
+                  <span class="carrito-qty-value" id="qty-${item.id}">${item.cantidad}</span>
+                  <button class="carrito-qty-btn" onclick="cambiarCantidadCarrito('${item.id}', 1)" ${item.cantidad >= stock ? 'disabled' : ''}>+</button>
+                </div>
+                <span class="carrito-producto-max">Máximo ${stock} unidades</span>
+              </div>
+            </div>
+            <div class="carrito-producto-menu">
+              <button class="carrito-menu-btn" onclick="toggleMenuProducto(this, event)" data-id="${item.id}" data-sku="${skuSC}">
+                <img src="../img/Tres puntos component.svg" alt="Opciones">
+              </button>
+              <div class="carrito-menu-popup" id="menu-${item.id}">
+                <button class="carrito-menu-option" onclick="eliminarProductoCarrito('${item.id}')">Eliminar producto</button>
+                <button class="carrito-menu-option" onclick="verFichaTecnicaDesdeBoton(this)">Ver ficha técnica</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      contenedor.innerHTML = html;
+      actualizarResumen();
+      
+      // Marcar checkbox de seleccionar todos
+      document.getElementById('seleccionar-todos').checked = true;
+    }
+
+    // Polling para actualizaciones en tiempo real
+    function iniciarPollingCarrito() {
+      if (pollingInterval) clearInterval(pollingInterval);
+      
+      pollingInterval = setInterval(async () => {
+        await cargarDatosBase();
+        actualizarPreciosEnVivo();
+      }, 5000); // Cada 5 segundos
+    }
+
+    // Actualizar precios/descuentos en vivo sin recargar todo
+    function actualizarPreciosEnVivo() {
+      const carrito = CarritoGlobal.obtenerLocal();
+      let huboCambios = false;
+      
+      carrito.items.forEach(item => {
+        const card = document.querySelector(`.carrito-producto-card[data-id="${item.id}"]`);
+        if (!card) return;
+        
+        const productoActualizado = productosDB.find(p => 
+          p.id === item.id || p.codSC === item.sku || p.codSC === item.id
+        );
+        
+        if (!productoActualizado) return;
+        
+        const precioOriginalActual = parseFloat(card.dataset.precioOriginal);
+        const descuentoActual = parseFloat(card.dataset.descuento);
+        
+        const nuevoDescuento = productoActualizado.descuento || 0;
+        const precioBrutoNuevo = productoActualizado.precio || 0;
+        const nuevoPrecioOriginal = Math.round(precioBrutoNuevo / 1.19);
+        
+        // Si cambió el descuento o precio
+        if (nuevoDescuento !== descuentoActual || nuevoPrecioOriginal !== precioOriginalActual) {
+          huboCambios = true;
+          
+          const nuevoPrecioFinal = nuevoDescuento > 0 
+            ? Math.round(nuevoPrecioOriginal * (1 - nuevoDescuento / 100)) 
+            : nuevoPrecioOriginal;
+          
+          // Actualizar data attributes
+          card.dataset.precio = nuevoPrecioFinal;
+          card.dataset.descuento = nuevoDescuento;
+          card.dataset.precioOriginal = nuevoPrecioOriginal;
+          
+          // Actualizar visual
+          const precioContainer = card.querySelector('.carrito-producto-precio');
+          precioContainer.innerHTML = `
+            <div>
+              <span class="carrito-precio-actual">${CarritoGlobal.formatearPrecio(nuevoPrecioFinal)}</span>
+              ${nuevoDescuento > 0 ? `<span class="carrito-descuento-badge">-${nuevoDescuento}%</span>` : ''}
+            </div>
+            ${nuevoDescuento > 0 ? `<span class="carrito-precio-original">${CarritoGlobal.formatearPrecio(nuevoPrecioOriginal)}</span>` : ''}
+          `;
+          
+          // También actualizar en el carrito local
+          item.precio = nuevoPrecioFinal;
+          item.precioOriginal = nuevoPrecioOriginal;
+          item.descuento = nuevoDescuento;
+        }
+      });
+      
+      if (huboCambios) {
+        // Guardar cambios en localStorage
+        localStorage.setItem(CarritoGlobal.STORAGE_KEY, JSON.stringify(carrito));
+        actualizarResumen();
+        CarritoGlobal.mostrarMensaje('💰 Precios actualizados', 'info');
+      }
+    }
+
+    // Toggle seleccionar todos
+    function toggleSeleccionarTodos() {
+      const checkbox = document.getElementById('seleccionar-todos');
+      const carrito = CarritoGlobal.obtenerLocal();
+      
+      if (checkbox.checked) {
+        carrito.items.forEach(item => {
+          productosSeleccionados.add(item.id);
+          const check = document.getElementById(`check-${item.id}`);
+          if (check) check.checked = true;
+          
+          // Quitar clase deseleccionado
+          const card = document.querySelector(`.carrito-producto-card[data-id="${item.id}"]`);
+          if (card) card.classList.remove('deseleccionado');
+        });
+      } else {
+        productosSeleccionados.clear();
+        carrito.items.forEach(item => {
+          const check = document.getElementById(`check-${item.id}`);
+          if (check) check.checked = false;
+          
+          // Agregar clase deseleccionado
+          const card = document.querySelector(`.carrito-producto-card[data-id="${item.id}"]`);
+          if (card) card.classList.add('deseleccionado');
+        });
+      }
+      
+      actualizarResumen();
+    }
+
+    // Toggle producto individual
+    function toggleProductoSeleccionado(id, seleccionado) {
+      const card = document.querySelector(`.carrito-producto-card[data-id="${id}"]`);
+      
+      if (seleccionado) {
+        productosSeleccionados.add(id);
+        if (card) card.classList.remove('deseleccionado');
+      } else {
+        productosSeleccionados.delete(id);
+        if (card) card.classList.add('deseleccionado');
+      }
+      
+      // Actualizar checkbox de "seleccionar todos"
+      const carrito = CarritoGlobal.obtenerLocal();
+      const todosSeleccionados = carrito.items.every(item => productosSeleccionados.has(item.id));
+      document.getElementById('seleccionar-todos').checked = todosSeleccionados;
+      
+      actualizarResumen();
+    }
+
+    // Actualizar resumen
+    function actualizarResumen() {
+      const carrito = CarritoGlobal.obtenerLocal();
+      const cards = document.querySelectorAll('.carrito-producto-card');
+      
+      // Calcular solo los seleccionados
+      let totalProductos = 0;
+      let totalPrecio = 0;
+      const categorias = {};
+      
+      cards.forEach(card => {
+        const id = card.dataset.id;
+        if (!productosSeleccionados.has(id)) return;
+        
+        const item = carrito.items.find(i => i.id === id);
+        if (!item) return;
+        
+        const precio = parseFloat(card.dataset.precio) || 0;
+        const categoria = card.dataset.categoria || 'Otros';
+        
+        totalProductos += item.cantidad;
+        totalPrecio += precio * item.cantidad;
+        
+        if (!categorias[categoria]) categorias[categoria] = 0;
+        categorias[categoria] += item.cantidad;
+      });
+      
+      // Actualizar cantidad
+      document.getElementById('resumen-cantidad').textContent = `(${totalProductos})`;
+      
+      // Actualizar categorías
+      let categoriasHtml = '';
+      for (const [cat, cantidad] of Object.entries(categorias)) {
+        categoriasHtml += `<p class="carrito-resumen-categoria">${cat} <span>(${cantidad})</span></p>`;
+      }
+      document.getElementById('resumen-categorias').innerHTML = categoriasHtml || '<p class="carrito-resumen-categoria">Sin categorías</p>';
+      
+      const subtotal = totalPrecio;
+      const iva = Math.round(subtotal * 0.19);
+      const total = subtotal + iva;
+
+      document.getElementById('resumen-subtotal').textContent = CarritoGlobal.formatearPrecio(subtotal);
+      document.getElementById('resumen-iva').textContent = CarritoGlobal.formatearPrecio(iva);
+      document.getElementById('resumen-total').textContent = CarritoGlobal.formatearPrecio(total);
+    }
+
+    // Cambiar cantidad
+    async function cambiarCantidadCarrito(id, delta) {
+      const carrito = CarritoGlobal.obtenerLocal();
+      const item = carrito.items.find(i => i.id === id);
+      const card = document.querySelector(`.carrito-producto-card[data-id="${id}"]`);
+      
+      if (!item || !card) return;
+      
+      const stock = parseInt(card.querySelector('.carrito-producto-max').textContent.match(/\d+/)[0]) || 0;
+      const nuevaCantidad = item.cantidad + delta;
+      
+      if (nuevaCantidad < 1 || nuevaCantidad > stock) return;
+      
+      await CarritoGlobal.actualizarCantidad(id, nuevaCantidad);
+      
+      // Actualizar UI
+      document.getElementById(`qty-${id}`).textContent = nuevaCantidad;
+      
+      // Actualizar botones
+      const btns = card.querySelectorAll('.carrito-qty-btn');
+      btns[0].disabled = nuevaCantidad <= 1;
+      btns[1].disabled = nuevaCantidad >= stock;
+      
+      actualizarResumen();
+    }
+
+    // Cerrar todos los menús abiertos
+    function cerrarTodosLosMenus() {
+      document.querySelectorAll('.carrito-menu-popup.visible').forEach(menu => {
+        menu.classList.remove('visible');
+      });
+      menuAbierto = null;
+    }
+
+    // Toggle menú de producto - ahora recibe el botón directamente
+    function toggleMenuProducto(btn, event) {
+      event.stopPropagation();
+      event.preventDefault();
+      
+      // Obtener el id del data attribute del botón
+      const id = btn.dataset.id;
+      
+      // Verificar que el menú existe
+      const menu = document.getElementById(`menu-${id}`);
+      if (!menu) {
+        console.warn('Menú no encontrado para id:', id);
+        return;
+      }
+      
+      // Cerrar menú anterior si es diferente
+      if (menuAbierto && menuAbierto !== id) {
+        const menuAnterior = document.getElementById(`menu-${menuAbierto}`);
+        if (menuAnterior) {
+          menuAnterior.classList.remove('visible');
+        }
+      }
+      
+      // Toggle del menú actual
+      const estaVisible = menu.classList.contains('visible');
+      menu.classList.toggle('visible');
+      menuAbierto = estaVisible ? null : id;
+    }
+
+    // Cerrar menús al hacer clic fuera
+    document.addEventListener('click', (e) => {
+      if (menuAbierto && !e.target.closest('.carrito-producto-menu')) {
+        cerrarTodosLosMenus();
+      }
+    });
+
+    // Eliminar producto
+    async function eliminarProductoCarrito(id) {
+      // Cerrar el menú inmediatamente antes de eliminar
+      cerrarTodosLosMenus();
+      
+      await CarritoGlobal.eliminar(id);
+      productosSeleccionados.delete(id);
+      
+      // Remover tarjeta con animación
+      const card = document.querySelector(`.carrito-producto-card[data-id="${id}"]`);
+      if (card) {
+        card.style.opacity = '0';
+        card.style.transform = 'translateX(-20px)';
+        card.style.transition = 'all 0.3s ease';
+        setTimeout(() => {
+          card.remove();
+          
+          // Verificar si el carrito quedó vacío
+          const carrito = CarritoGlobal.obtenerLocal();
+          if (!carrito.items || carrito.items.length === 0) {
+            document.getElementById('carrito-vacio').style.display = 'flex';
+          }
+          
+          actualizarResumen();
+        }, 300);
+      }
+    }
+
+    // Ver ficha técnica - obtiene datos desde la tarjeta padre
+    function verFichaTecnicaDesdeBoton(btn) {
+      // Cerrar menú
+      cerrarTodosLosMenus();
+      
+      // Subir al contenedor de la tarjeta para obtener los datos
+      const card = btn.closest('.carrito-producto-card');
+      if (!card) {
+        console.error('No se encontró la tarjeta del producto');
+        return;
+      }
+      
+      const id = card.dataset.id;
+      const sku = card.dataset.sku;
+      
+      console.log('Ver ficha técnica - id:', id, 'sku:', sku);
+      
+      // El ID del carrito ya es el ID real del producto, usarlo directamente
+      // Solo como respaldo buscar en productosDB si el ID parece no ser válido
+      if (id && id.startsWith('prod_')) {
+        // El ID ya es el ID del producto, usar directamente
+        console.log('Usando ID del carrito directamente:', id);
+        window.location.href = `detalleproducto.html?id=${encodeURIComponent(id)}`;
+        return;
+      }
+      
+      // Fallback: buscar el producto por SKU exacto
+      if (sku) {
+        const producto = productosDB.find(p => p.codSC === sku);
+        if (producto && producto.id) {
+          console.log('Producto encontrado por SKU:', producto.id);
+          window.location.href = `detalleproducto.html?id=${encodeURIComponent(producto.id)}`;
+          return;
+        }
+        // Si no encontramos el producto, ir con el SKU
+        window.location.href = `detalleproducto.html?sku=${encodeURIComponent(sku)}`;
+        return;
+      }
+      
+      // Último recurso
+      window.location.href = `detalleproducto.html?id=${encodeURIComponent(id)}`;
+    }
+
+    // Mantener función legacy por si acaso
+    function verFichaTecnica(id, sku) {
+      cerrarTodosLosMenus();
+      
+      // Usar directamente el ID si es válido
+      if (id && id.startsWith('prod_')) {
+        window.location.href = `detalleproducto.html?id=${encodeURIComponent(id)}`;
+        return;
+      }
+      
+      // Fallback con SKU
+      if (sku) {
+        const producto = productosDB.find(p => p.codSC === sku);
+        if (producto && producto.id) {
+          window.location.href = `detalleproducto.html?id=${encodeURIComponent(producto.id)}`;
+          return;
+        }
+        window.location.href = `detalleproducto.html?sku=${encodeURIComponent(sku)}`;
+        return;
+      }
+      
+      window.location.href = `detalleproducto.html?id=${encodeURIComponent(id)}`;
+    }
+
+    // Generar OC desde resumen
+    // ════════════════════════════════════════════════════════════════
+    // SISTEMA DE ORDEN DE COMPRA
+    // ════════════════════════════════════════════════════════════════
+    
+    let ocModalData = {
+      items: [],
+      recomendaciones: []
+    };
+    
+    // ════════════════════════════════════════════════════════════════
+    // SISTEMA DE COTIZACIÓN
+    // ════════════════════════════════════════════════════════════════
+    
+    let cotizacionModalData = {
+      items: [],
+      recomendaciones: []
+    };
+    
+    async function generarOrdenCompraResumen() {
+      if (productosSeleccionados.size === 0) {
+        CarritoGlobal.mostrarMensaje('Selecciona al menos un producto', 'error');
+        return;
+      }
+      
+      // Validar con servidor
+      const validacion = await CarritoGlobal.validarAntesDeOC();
+      
+      if (!validacion.valido) {
+        await cargarDatosBase();
+        cargarProductosCarrito();
+        return;
+      }
+      
+      // Filtrar solo los seleccionados
+      const cards = document.querySelectorAll('.carrito-producto-card');
+      const itemsParaOC = [];
+      
+      cards.forEach(card => {
+        const id = card.dataset.id;
+        if (!productosSeleccionados.has(id)) return;
+        
+        const item = validacion.carrito.items.find(i => i.id === id);
+        if (item) {
+          const precio = parseFloat(card.dataset.precio) || item.precio;
+          const displaySku = (item.skuCliente && item.skuCliente.trim()) || item.codCliente || item.sku || item.codSC || item.id;
+          const itemParaOC = { 
+            ...item, 
+            precio,
+            sku: displaySku,
+            codSC: item.codSC || item.sku || item.id,
+            codCliente: item.skuCliente || item.codCliente || ''
+          };
+          console.log('Item agregado a OC:', itemParaOC);
+          itemsParaOC.push(itemParaOC);
+        }
+      });
+      
+      console.log('Total items para OC:', itemsParaOC.length, itemsParaOC);
+      
+      // Preparar datos de la OC
+      ocModalData.items = itemsParaOC;
+      ocModalData.recomendaciones = [];
+      
+      // Generar recomendaciones basadas en SKUs similares
+      generarRecomendacionesSKU(itemsParaOC);
+      
+      // Abrir modal con previsualizacion
+      abrirModalOC();
+    }
+    
+    // Generar recomendaciones basadas en SKU similar
+    function generarRecomendacionesSKU(items) {
+      ocModalData.recomendaciones = [];
+      if (!Array.isArray(productosDB) || productosDB.length === 0) return;
+
+      // Preferir mostrar código cliente si existe; evitar recomendar lo ya incluido
+      const skusEnOC = new Set(
+        items.map(item => (item.skuCliente && item.skuCliente.trim()) || item.codCliente || item.sku || item.codSC || item.id)
+      );
+
+      // Helpers de similitud
+      const normalizar = (codigo) => {
+        if (!codigo) return '';
+        let c = String(codigo).toUpperCase().replace(/\s+/g, '');
+        c = c.replace(/(DR|AR|IZ|DE|L|R)$/i, '');
+        return c;
+      };
+      const prefijoAlfa = (codigo) => {
+        const m = String(codigo).toUpperCase().match(/^[A-Z]+/);
+        return m ? m[0] : '';
+      };
+      const primerNumero = (codigo) => {
+        const m = String(codigo).match(/(\d{2,4})/);
+        return m ? m[1] : '';
+      };
+
+      // Construir una lista de patrones desde los items
+      const patrones = items.map(item => {
+        const baseMostrar = (item.skuCliente && item.skuCliente.trim()) || item.codCliente || item.sku || item.codSC || item.id;
+        const base = normalizar(baseMostrar);
+        return {
+          mostrar: baseMostrar,
+          normalizado: base,
+          alfa: prefijoAlfa(base),
+          num: primerNumero(base),
+          marca: (item.marca || '').toUpperCase(),
+          linea: (item.linea || '').toUpperCase()
+        };
+      });
+
+      const recomendacionesMap = new Map();
+
+      productosDB.forEach(prod => {
+        const codPreferido = (prod.codCliente && prod.codCliente.trim()) ? prod.codCliente : (prod.codSC || prod.id);
+        const codAlterno = (prod.codCliente && prod.codCliente.trim()) ? prod.codSC : prod.codCliente; // guardar ambos si existen
+        const codNorm = normalizar(codPreferido);
+        const alfa = prefijoAlfa(codNorm);
+        const num = primerNumero(codNorm);
+        const marca = (prod.marca || '').toUpperCase();
+        const linea = (prod.linea || '').toUpperCase();
+
+        // No recomendar si ya está en OC (por su código visible preferido)
+        if (skusEnOC.has(codPreferido)) return;
+
+        let mejorScore = 0;
+        patrones.forEach(p => {
+          let s = 0;
+          if (alfa && p.alfa && alfa.startsWith(p.alfa.substring(0, Math.min(4, p.alfa.length)))) s += 2;
+          if (p.normalizado && codNorm.startsWith(p.normalizado.substring(0, Math.min(5, p.normalizado.length)))) s += 1.5;
+          if (p.mostrar.includes('TOY') && codPreferido.includes('TOY')) s += 0.5;
+          if (p.num && num && p.num === num) s += 1;
+          if (p.num && num && Math.abs(parseInt(p.num) - parseInt(num)) <= 100) s += 0.5;
+          if (p.marca && marca && p.marca === marca) s += 0.5;
+          if (p.linea && linea && p.linea === linea) s += 0.5;
+          if (/(DR|AR|L|R|IZ|DE)$/i.test(p.mostrar) && /(DR|AR|L|R|IZ|DE)$/i.test(codPreferido)) s += 0.5;
+          if (s > mejorScore) mejorScore = s;
+        });
+
+        // Umbral para considerar una recomendación
+        if (mejorScore >= 2) {
+          const key = codPreferido;
+          if (!recomendacionesMap.has(key)) {
+            recomendacionesMap.set(key, {
+              id: prod.id,
+              sku: codPreferido,              // Mostrar código preferido (cliente si existe)
+              codSC: prod.codSC || '',       // Guardar cod StarClutch
+              codCliente: prod.codCliente || '',
+              nombre: prod.repuesto || prod.nombre || 'Producto',
+              marca: prod.marca || '',
+              precio: prod.precio || 0,
+              descuento: prod.descuento || 0,
+              stock: prod.stock || 0,
+              score: mejorScore
+            });
+          }
+        }
+      });
+
+      // Ordenar por score descendente y limitar
+      ocModalData.recomendaciones = Array.from(recomendacionesMap.values())
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 8);
+    }
+    
+    // Abrir modal de OC
+    function abrirModalOC() {
+      const wrapper = document.getElementById('oc-container-wrapper');
+      const overlay = document.getElementById('oc-modal-overlay');
+      // Cerrar panel de carrito del header si está abierto
+      try {
+        if (typeof cerrarCarrito === 'function') cerrarCarrito();
+      } catch (e) { /* noop */ }
+      
+      console.log('Abriendo modal OC con items:', ocModalData.items);
+      console.log('Recomendaciones:', ocModalData.recomendaciones);
+      
+      // Verificar que hay items
+      if (!ocModalData.items || ocModalData.items.length === 0) {
+        CarritoGlobal.mostrarMensaje('No hay productos para incluir en la OC', 'error');
+        return;
+      }
+      
+      // Renderizar items
+      renderizarItemsOC();
+      
+      // Renderizar recomendaciones
+      renderizarRecomendacionesOC();
+      
+      // Actualizar totales
+      actualizarTotalesOC();
+      
+      wrapper.classList.add('active');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    // Cerrar modal de OC
+    function cerrarModalOC() {
+      const wrapper = document.getElementById('oc-container-wrapper');
+      const overlay = document.getElementById('oc-modal-overlay');
+      
+      wrapper.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Overlay de envío/ generación OC
+    function obtenerOverlayEnvio() {
+      let overlay = document.getElementById('oc-send-overlay');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'oc-send-overlay';
+        overlay.style.position = 'fixed';
+        overlay.style.inset = '0';
+        overlay.style.background = 'rgba(0,0,0,0.5)';
+        overlay.style.display = 'none';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.zIndex = '2000';
+        overlay.innerHTML = `
+          <div style="background:#fff; padding:24px 28px; border-radius:12px; box-shadow:0 12px 40px rgba(0,0,0,0.25); max-width:360px; width:90%; text-align:center; font-family: 'Inter', sans-serif;">
+            <div class="spinner" style="margin:0 auto 12px; width:42px; height:42px; border:4px solid #e5e7eb; border-top-color:#c41e3a; border-radius:50%; animation: spin 1s linear infinite;"></div>
+            <h3 id="oc-send-overlay-title" style="margin:0 0 6px; font-size:18px; color:#252425;">Generando y enviando orden de compra</h3>
+            <p id="oc-send-overlay-text" style="margin:0; font-size:14px; color:#555;">Por favor espera...</p>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+        const style = document.createElement('style');
+        style.textContent = '@keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }';
+        document.head.appendChild(style);
+      }
+      return overlay;
+    }
+
+    function mostrarOverlayEnvio(texto) {
+      const overlay = obtenerOverlayEnvio();
+      const p = document.getElementById('oc-send-overlay-text');
+      if (p && texto) p.textContent = texto;
+      overlay.style.display = 'flex';
+    }
+
+    function ocultarOverlayEnvio() {
+      const overlay = document.getElementById('oc-send-overlay');
+      if (overlay) overlay.style.display = 'none';
+    }
+    
+    // Renderizar items en tabla
+    function renderizarItemsOC() {
+      const contenedor = document.getElementById('oc-items-lista');
+      if (!contenedor) {
+        console.error('Contenedor oc-items-lista no encontrado');
+        return;
+      }
+      
+      console.log('Renderizando items OC:', ocModalData.items);
+      
+      let html = `
+        <div class="oc-item-row header">
+          <div>SKU</div>
+          <div>Descripción</div>
+          <div style="text-align: center;">Cantidad</div>
+          <div style="text-align: right;">Precio Unit.</div>
+          <div style="text-align: right;">Total</div>
+          <div></div>
+        </div>
+      `;
+      
+      if (!ocModalData.items || ocModalData.items.length === 0) {
+        html += '<div class="oc-item-row"><div style="grid-column: 1/-1; text-align:center; padding:20px; color:#999;">No hay productos en la orden</div></div>';
+        contenedor.innerHTML = html;
+        return;
+      }
+      
+      ocModalData.items.forEach((item, idx) => {
+        const sku = item.sku || item.codSC || item.id || 'N/A';
+        const nombre = item.nombre || 'Producto';
+        const cantidad = item.cantidad || 1;
+        const precio = item.precio || 0;
+        const total = precio * cantidad;
+        const stock = item.stock || 0;
+        
+        // Mensaje de stock con color
+        let stockHTML = '';
+        if (stock > 0) {
+          stockHTML = `<div style="font-size: 0.75rem; color: #666; margin-top: 2px;">Stock: ${stock} unid.</div>`;
+        } else {
+          stockHTML = `<div style="font-size: 0.75rem; color: #dc3545; margin-top: 2px;">Sin stock</div>`;
+        }
+        
+        html += `
+          <div class="oc-item-row" data-index="${idx}">
+            <div class="oc-item-sku">${sku}</div>
+            <div class="oc-item-nombre">${nombre}${stockHTML}</div>
+            <div class="oc-item-cantidad">
+              <input type="number" class="oc-qty-input" value="${cantidad}" min="1" max="${stock}" 
+                     data-stock="${stock}" onchange="actualizarCantidadOC(${idx}, this.value)" 
+                     ${stock === 0 ? 'disabled' : ''}>
+            </div>
+            <div class="oc-item-precio">${CarritoGlobal.formatearPrecio(precio)}</div>
+            <div class="oc-item-total" id="oc-item-total-${idx}">${CarritoGlobal.formatearPrecio(total)}</div>
+            <button class="oc-item-remove" onclick="removerItemOC(${idx})">✕</button>
+          </div>
+        `;
+      });
+      
+      contenedor.innerHTML = html;
+    }
+    
+    // Renderizar recomendaciones
+    function renderizarRecomendacionesOC() {
+      const contenedor = document.getElementById('oc-recomendaciones-lista');
+      
+      if (!contenedor) return;
+      
+      if (ocModalData.recomendaciones.length === 0) {
+        contenedor.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">No hay recomendaciones disponibles</p>';
+        return;
+      }
+      
+      let html = '';
+      ocModalData.recomendaciones.forEach((rec, idx) => {
+        const precioBruto = rec.precio || 0;
+        const precioNeto = Math.round(precioBruto / 1.19);
+        const precioConDescuento = rec.descuento > 0 
+          ? Math.round(precioNeto * (1 - rec.descuento / 100)) 
+          : precioNeto;
+        
+        // Verificar si este producto ya está en la OC
+        const yaEnOC = ocModalData.items.some(item => item.sku === rec.sku || item.id === rec.id);
+        
+        html += `
+          <div class="oc-recomendacion-card">
+            <div class="oc-rec-nombre">${rec.nombre}</div>
+            <div class="oc-rec-sku">${rec.sku}</div>
+            <div class="oc-rec-precio">${CarritoGlobal.formatearPrecio(precioConDescuento)}</div>
+            <button class="oc-rec-agregar ${yaEnOC ? 'agregado' : ''}" 
+                    onclick="agregarRecomendacionOC(${idx})" 
+                    id="btn-rec-${idx}"
+                    ${yaEnOC ? 'disabled' : ''}>
+              ${yaEnOC ? '✓ Agregado' : '+ Agregar'}
+            </button>
+          </div>
+        `;
+      });
+      
+      contenedor.innerHTML = html;
+    }
+    
+    // Actualizar cantidad en OC
+    function actualizarCantidadOC(index, nuevaCantidad) {
+      const cant = parseInt(nuevaCantidad) || 1;
+      if (cant < 1) return;
+      
+      const item = ocModalData.items[index];
+      const stock = item.stock || 0;
+      
+      // Validar que no exceda el stock disponible
+      if (cant > stock) {
+        CarritoGlobal.mostrarMensaje(`No puedes solicitar más de ${stock} unidades (stock disponible)`, 'error');
+        // Restaurar al valor del stock máximo
+        const input = document.querySelector(`.oc-item-row[data-index="${index}"] .oc-qty-input`);
+        if (input) {
+          input.value = stock;
+        }
+        ocModalData.items[index].cantidad = stock;
+        
+        // Actualizar visual con el stock máximo
+        const precio = item.precio || 0;
+        const total = precio * stock;
+        const totalEl = document.getElementById(`oc-item-total-${index}`);
+        if (totalEl) {
+          totalEl.textContent = CarritoGlobal.formatearPrecio(total);
+        }
+        actualizarTotalesOC();
+        return;
+      }
+      
+      ocModalData.items[index].cantidad = cant;
+      
+      // Actualizar visual del total del item
+      const precio = item.precio || 0;
+      const total = precio * cant;
+      const totalEl = document.getElementById(`oc-item-total-${index}`);
+      if (totalEl) {
+        totalEl.textContent = CarritoGlobal.formatearPrecio(total);
+      }
+      
+      // Actualizar totales generales
+      actualizarTotalesOC();
+    }
+    
+    // Remover item de OC
+    function removerItemOC(index) {
+      ocModalData.items.splice(index, 1);
+      renderizarItemsOC();
+      renderizarRecomendacionesOC(); // Re-renderizar para restaurar botones
+      actualizarTotalesOC();
+    }
+    
+    // Agregar recomendacion a la OC
+    function agregarRecomendacionOC(index) {
+      const recomendacion = ocModalData.recomendaciones[index];
+      if (!recomendacion) return;
+      
+      // Agregar a items
+      ocModalData.items.push({
+        id: recomendacion.id,
+        sku: recomendacion.sku,           // mostrar (cliente si existe)
+        codSC: recomendacion.codSC || '',
+        codCliente: recomendacion.codCliente || '',
+        nombre: recomendacion.nombre,
+        marca: recomendacion.marca,
+        precio: recomendacion.precio,
+        descuento: recomendacion.descuento,
+        cantidad: 1,
+        stock: recomendacion.stock
+      });
+      
+      // Actualizar visual
+      const btn = document.getElementById(`btn-rec-${index}`);
+      if (btn) {
+        btn.classList.add('agregado');
+        btn.textContent = '✓ Agregado';
+        btn.disabled = true;
+      }
+      
+      // Renderizar items nuevamente y actualizar totales
+      renderizarItemsOC();
+      actualizarTotalesOC();
+    }
+    
+    // Actualizar totales en OC
+    function actualizarTotalesOC() {
+      let subtotal = 0;
+      
+      ocModalData.items.forEach(item => {
+        const precio = item.precio || 0;
+        const cantidad = item.cantidad || 1;
+        subtotal += precio * cantidad;
+      });
+      
+      const iva = subtotal * 0.19;
+      const total = subtotal + iva;
+      
+      document.getElementById('oc-subtotal').textContent = CarritoGlobal.formatearPrecio(subtotal);
+      document.getElementById('oc-iva').textContent = CarritoGlobal.formatearPrecio(iva);
+      document.getElementById('oc-total').textContent = CarritoGlobal.formatearPrecio(total);
+    }
+    
+    // Enviar orden de compra - solicita subir archivo de OC
+    async function enviarOrdenCompra() {
+      console.log('🔵 enviarOrdenCompra() INICIADA');
+      
+      if (ocModalData.items.length === 0) {
+        CarritoGlobal.mostrarMensaje('La OC debe contener al menos un producto', 'error');
+        return;
+      }
+
+      // Validar aceptación de términos
+      const chk = document.getElementById('oc-acepto-terminos');
+      if (!chk || !chk.checked) {
+        CarritoGlobal.mostrarMensaje('Debes aceptar los términos para enviar la OC', 'error');
+        return;
+      }
+      
+      console.log('✅ Validaciones iniciales pasadas');
+      
+      // Obtener datos del usuario
+      const userData = localStorage.getItem('starclutch_user');
+      if (!userData) {
+        CarritoGlobal.mostrarMensaje('Usuario no autenticado', 'error');
+        return;
+      }
+      
+      let usuario = JSON.parse(userData);
+      
+      // Calcular totales
+      let subtotal = 0;
+      ocModalData.items.forEach(item => {
+        const precio = item.precio || 0;
+        const cantidad = item.cantidad || 1;
+        subtotal += precio * cantidad;
+      });
+      
+      const iva = subtotal * 0.19;
+      const total = subtotal + iva;
+
+      // Crear objeto pendiente similar a como se hace en generarCotizacion
+      const pendiente = {
+        id: Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+        fecha: new Date().toISOString(),
+        items: ocModalData.items,
+        subtotal: subtotal,
+        iva: iva,
+        total: total,
+        estado: 'pendiente'
+      };
+
+      // Crear input file oculto
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = '.pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg';
+      fileInput.style.display = 'none';
+
+      fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+          // Enriquecer datos con users.json
+          const resUser = await fetch('/datos_usuarios/users.json', { cache: 'no-store' });
+          if (resUser.ok) {
+            const users = await resUser.json();
+            const full = users.find(u => String(u.id) === String(usuario.id));
+            if (full) {
+              usuario = { ...full, ...usuario, email: full.email || usuario.email, telefono: full.telefono || usuario.telefono };
+            }
+          }
+        } catch (e) {
+          console.warn('Error cargando datos de usuario:', e);
+        }
+
+        // Obtener número de OC
+        let numeroOC = 1;
+        try {
+          const res = await fetch(`/api/obtener-numero-oc/${usuario.id}`);
+          if (res.ok) {
+            const data = await res.json();
+            numeroOC = data.numeroOC || 1;
+          }
+        } catch (e) {
+          console.warn('Error obteniendo número de OC:', e);
+        }
+
+        const now = new Date();
+        const fecha = now.toLocaleDateString('es-CL');
+
+        try {
+          // Mostrar pantalla de carga usando cotizacionGenerator
+          if (window.cotizacionGenerator && window.cotizacionGenerator.showModal) {
+            window.cotizacionGenerator.showModal('Enviando OC');
+            window.cotizacionGenerator.updateProgress(20, 'Preparando orden de compra...');
+          }
+
+          // Leer archivo como base64
+          const reader = new FileReader();
+          reader.onload = async (event) => {
+            const fileBase64 = event.target.result;
+
+            try {
+              if (window.cotizacionGenerator && window.cotizacionGenerator.updateProgress) {
+                window.cotizacionGenerator.updateProgress(50, 'Enviando OC...');
+              }
+
+              // Enviar al servidor
+              const respuesta = await fetch('/api/enviar-oc-archivo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  usuario,
+                  items: pendiente.items,
+                  numeroOC,
+                  fecha,
+                  subtotal: pendiente.subtotal,
+                  iva: pendiente.iva,
+                  total: pendiente.total,
+                  archivoBlob: fileBase64,
+                  nombreArchivo: file.name,
+                  tipoArchivo: file.type
+                })
+              });
+
+              if (respuesta.ok) {
+                if (window.cotizacionGenerator && window.cotizacionGenerator.hideModal) {
+                  window.cotizacionGenerator.hideModal();
+                }
+                
+                CarritoGlobal.mostrarMensaje(`✅ Orden de Compra Nº ${numeroOC} enviada correctamente`, 'success');
+                
+                // Cerrar modal de OC
+                cerrarModalOC();
+                ocModalData = { items: [], recomendaciones: [] };
+
+              } else {
+                let errorMsg = 'Error desconocido';
+                try {
+                  const errorObj = await respuesta.json();
+                  errorMsg = errorObj.msg || JSON.stringify(errorObj);
+                } catch (pe) {
+                  console.warn('Error parseando respuesta de error:', pe);
+                }
+                
+                if (window.cotizacionGenerator && window.cotizacionGenerator.hideModal) {
+                  window.cotizacionGenerator.hideModal();
+                }
+                
+                CarritoGlobal.mostrarMensaje('Error al enviar OC: ' + errorMsg, 'error');
+              }
+            } catch (error) {
+              console.error('Error enviando OC:', error);
+              
+              if (window.cotizacionGenerator && window.cotizacionGenerator.hideModal) {
+                window.cotizacionGenerator.hideModal();
+              }
+              
+              CarritoGlobal.mostrarMensaje('Error al enviar la orden de compra: ' + error.message, 'error');
+            }
+          };
+
+          reader.readAsDataURL(file);
+        } catch (error) {
+          console.error('Error procesando OC:', error);
+          if (window.cotizacionGenerator && window.cotizacionGenerator.hideModal) {
+            window.cotizacionGenerator.hideModal();
+          }
+          CarritoGlobal.mostrarMensaje('Error procesando la orden: ' + error.message, 'error');
+        }
+      });
+
+      // Disparar el selector de archivo
+      document.body.appendChild(fileInput);
+      fileInput.click();
+      document.body.removeChild(fileInput);
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    // SISTEMA DE COTIZACIÓN
+    // ════════════════════════════════════════════════════════════════
+    
+    async function generarCotizacion() {
+      console.log('generarCotizacion() llamada - abriendo modal');
+      
+      if (productosSeleccionados.size === 0) {
+        CarritoGlobal.mostrarMensaje('Selecciona al menos un producto', 'error');
+        return;
+      }
+      
+      // Validar con servidor
+      const validacion = await CarritoGlobal.validarAntesDeOC();
+      
+      if (!validacion.valido) {
+        await cargarDatosBase();
+        cargarProductosCarrito();
+        return;
+      }
+      
+      // Filtrar solo los seleccionados
+      const cards = document.querySelectorAll('.carrito-producto-card');
+      const itemsParaCotizacion = [];
+      
+      cards.forEach(card => {
+        const id = card.dataset.id;
+        if (!productosSeleccionados.has(id)) return;
+        
+        const item = validacion.carrito.items.find(i => i.id === id);
+        if (item) {
+          const precio = parseFloat(card.dataset.precio) || item.precio;
+          const displaySku = (item.skuCliente && item.skuCliente.trim()) || item.codCliente || item.sku || item.codSC || item.id;
+          const itemParaCotizacion = { 
+            ...item, 
+            precio,
+            sku: displaySku,
+            codSC: item.codSC || item.sku || item.id,
+            codCliente: item.skuCliente || item.codCliente || ''
+          };
+          itemsParaCotizacion.push(itemParaCotizacion);
+        }
+      });
+      
+      // Preparar datos de la cotización
+      cotizacionModalData.items = itemsParaCotizacion;
+      cotizacionModalData.recomendaciones = [];
+      
+      // Generar recomendaciones basadas en SKUs
+      generarRecomendacionesSKUCotizacion(itemsParaCotizacion);
+      
+      // Cerrar mini carrito y abrir modal con previsualizacion
+      cerrarCarrito();
+      abrirModalCotizacion();
+    }
+    
+    async function cotizarDesdeCarrito() {
+      console.log('cotizarDesdeCarrito() llamada - cotizando todos los items del carrito');
+      
+      // Validar que haya items en el carrito
+      const validacion = await CarritoGlobal.validarAntesDeOC();
+      
+      if (!validacion.valido || !validacion.carrito.items || validacion.carrito.items.length === 0) {
+        CarritoGlobal.mostrarMensaje('El carrito está vacío', 'error');
+        return;
+      }
+
+      // Usar TODOS los items del carrito (no solo los seleccionados)
+      const itemsParaCotizacion = validacion.carrito.items.map(item => {
+        const displaySku = (item.skuCliente && item.skuCliente.trim()) || item.codCliente || item.sku || item.codSC || item.id;
+        return {
+          ...item,
+          sku: displaySku,
+          codSC: item.codSC || item.sku || item.id,
+          codCliente: item.skuCliente || item.codCliente || ''
+        };
+      });
+
+      // Preparar datos de la cotización
+      cotizacionModalData.items = itemsParaCotizacion;
+      cotizacionModalData.recomendaciones = [];
+
+      // Generar recomendaciones basadas en SKUs
+      generarRecomendacionesSKUCotizacion(itemsParaCotizacion);
+
+      // Cerrar mini carrito
+      cerrarCarrito();
+
+      // Abrir modal con previsualizacion
+      abrirModalCotizacion();
+    }
+    
+    async function generarCotizacionResumen() {
+      console.log('generarCotizacionResumen() llamada - abriendo modal');
+      
+      if (productosSeleccionados.size === 0) {
+        CarritoGlobal.mostrarMensaje('Selecciona al menos un producto', 'error');
+        return;
+      }
+      
+      // Validar con servidor
+      const validacion = await CarritoGlobal.validarAntesDeOC();
+      
+      if (!validacion.valido) {
+        await cargarDatosBase();
+        cargarProductosCarrito();
+        return;
+      }
+      
+      // Filtrar solo los seleccionados
+      const cards = document.querySelectorAll('.carrito-producto-card');
+      const itemsParaCotizacion = [];
+      
+      cards.forEach(card => {
+        const id = card.dataset.id;
+        if (!productosSeleccionados.has(id)) return;
+        
+        const item = validacion.carrito.items.find(i => i.id === id);
+        if (item) {
+          const precio = parseFloat(card.dataset.precio) || item.precio;
+          const displaySku = (item.skuCliente && item.skuCliente.trim()) || item.codCliente || item.sku || item.codSC || item.id;
+          const itemParaCotizacion = { 
+            ...item, 
+            precio,
+            sku: displaySku,
+            codSC: item.codSC || item.sku || item.id,
+            codCliente: item.skuCliente || item.codCliente || ''
+          };
+          itemsParaCotizacion.push(itemParaCotizacion);
+        }
+      });
+      
+      // Preparar datos de la cotización
+      cotizacionModalData.items = itemsParaCotizacion;
+      cotizacionModalData.recomendaciones = [];
+      
+      // Generar recomendaciones basadas en SKUs
+      generarRecomendacionesSKUCotizacion(itemsParaCotizacion);
+      
+      // Cerrar mini carrito y abrir modal con previsualizacion
+      cerrarCarrito();
+      abrirModalCotizacion();
+    }
+    
+    // Generar recomendaciones basadas en SKU para cotización
+    function generarRecomendacionesSKUCotizacion(items) {
+      cotizacionModalData.recomendaciones = [];
+      if (!Array.isArray(productosDB) || productosDB.length === 0) return;
+
+      const skusEnCotizacion = new Set(
+        items.map(item => (item.skuCliente && item.skuCliente.trim()) || item.codCliente || item.sku || item.codSC || item.id)
+      );
+
+      const normalizar = (codigo) => {
+        if (!codigo) return '';
+        let c = String(codigo).toUpperCase().replace(/\s+/g, '');
+        c = c.replace(/(DR|AR|IZ|DE|L|R)$/i, '');
+        return c;
+      };
+      const prefijoAlfa = (codigo) => {
+        const m = String(codigo).toUpperCase().match(/^[A-Z]+/);
+        return m ? m[0] : '';
+      };
+      const primerNumero = (codigo) => {
+        const m = String(codigo).match(/(\d{2,4})/);
+        return m ? m[1] : '';
+      };
+
+      const patrones = items.map(item => {
+        const baseMostrar = (item.skuCliente && item.skuCliente.trim()) || item.codCliente || item.sku || item.codSC || item.id;
+        const base = normalizar(baseMostrar);
+        return {
+          mostrar: baseMostrar,
+          normalizado: base,
+          alfa: prefijoAlfa(base),
+          num: primerNumero(base),
+          marca: (item.marca || '').toUpperCase(),
+          linea: (item.linea || '').toUpperCase()
+        };
+      });
+
+      const recomendacionesMap = new Map();
+
+      productosDB.forEach(prod => {
+        const codPreferido = (prod.codCliente && prod.codCliente.trim()) ? prod.codCliente : (prod.codSC || prod.id);
+        const codNorm = normalizar(codPreferido);
+        const alfa = prefijoAlfa(codNorm);
+        const num = primerNumero(codNorm);
+        const marca = (prod.marca || '').toUpperCase();
+        const linea = (prod.linea || '').toUpperCase();
+
+        if (skusEnCotizacion.has(codPreferido)) return;
+
+        let mejorScore = 0;
+        patrones.forEach(p => {
+          let s = 0;
+          if (alfa && p.alfa && alfa.startsWith(p.alfa.substring(0, Math.min(4, p.alfa.length)))) s += 2;
+          if (p.normalizado && codNorm.startsWith(p.normalizado.substring(0, Math.min(5, p.normalizado.length)))) s += 1.5;
+          if (p.mostrar.includes('TOY') && codPreferido.includes('TOY')) s += 0.5;
+          if (p.num && num && p.num === num) s += 1;
+          if (p.num && num && Math.abs(parseInt(p.num) - parseInt(num)) <= 100) s += 0.5;
+          if (p.marca && marca && p.marca === marca) s += 0.5;
+          if (p.linea && linea && p.linea === linea) s += 0.5;
+          if (/(DR|AR|L|R|IZ|DE)$/i.test(p.mostrar) && /(DR|AR|L|R|IZ|DE)$/i.test(codPreferido)) s += 0.5;
+          if (s > mejorScore) mejorScore = s;
+        });
+
+        if (mejorScore >= 2) {
+          const key = codPreferido;
+          if (!recomendacionesMap.has(key)) {
+            recomendacionesMap.set(key, {
+              id: prod.id,
+              sku: codPreferido,
+              codSC: prod.codSC || '',
+              codCliente: prod.codCliente || '',
+              nombre: prod.repuesto || prod.nombre || 'Producto',
+              marca: prod.marca || '',
+              precio: prod.precio || 0,
+              descuento: prod.descuento || 0,
+              stock: prod.stock || 0,
+              score: mejorScore
+            });
+          }
+        }
+      });
+
+      cotizacionModalData.recomendaciones = Array.from(recomendacionesMap.values())
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 8);
+    }
+    
+    // Abrir modal de cotización
+    function abrirModalCotizacion() {
+      const wrapper = document.getElementById('cotizacion-container-wrapper');
+      const overlay = document.getElementById('cotizacion-modal-overlay');
+      
+      renderizarItemsCotizacion();
+      renderizarRecomendacionesCotizacion();
+      actualizarTotalesCotizacion();
+      
+      wrapper.classList.add('active');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    // Cerrar modal de cotización
+    function cerrarModalCotizacion() {
+      const wrapper = document.getElementById('cotizacion-container-wrapper');
+      const overlay = document.getElementById('cotizacion-modal-overlay');
+      
+      wrapper.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    
+    // Renderizar items en modal de cotización
+    function renderizarItemsCotizacion() {
+      const contenedor = document.getElementById('cotizacion-items-lista');
+      if (!contenedor) return;
+      
+      let html = '';
+      
+      // Encabezado
+      html += `
+        <div class="oc-item-row header">
+          <div>SKU</div>
+          <div>Descripción</div>
+          <div>Cantidad</div>
+          <div>Precio Unit.</div>
+          <div>Total</div>
+          <div></div>
+        </div>
+      `;
+      
+      cotizacionModalData.items.forEach((item, idx) => {
+        const sku = item.sku || item.codSC || 'N/A';
+        const nombre = item.nombre || 'Producto';
+        const cantidad = item.cantidad || 1;
+        const precioUnit = item.precio || 0;
+        const total = precioUnit * cantidad;
+        
+        html += `
+          <div class="oc-item-row" data-index="${idx}">
+            <div class="oc-item-sku">${sku}</div>
+            <div class="oc-item-nombre">${nombre}<br><small style="color:#999;">Stock: ${item.stock || 0} unid.</small></div>
+            <div class="oc-item-cantidad">
+              <input type="number" class="oc-qty-input" value="${cantidad}" min="1" max="${item.stock || 999}" onchange="actualizarCantidadCotizacion(${idx}, this.value)">
+            </div>
+            <div class="oc-item-precio">${CarritoGlobal.formatearPrecio(precioUnit)}</div>
+            <div class="oc-item-total" id="cotizacion-item-total-${idx}">${CarritoGlobal.formatearPrecio(total)}</div>
+            <div><button class="oc-item-remove" onclick="removerItemCotizacion(${idx})">✕</button></div>
+          </div>
+        `;
+      });
+      
+      contenedor.innerHTML = html;
+    }
+    
+    // Renderizar recomendaciones para cotización
+    function renderizarRecomendacionesCotizacion() {
+      const contenedor = document.getElementById('cotizacion-recomendaciones-lista');
+      if (!contenedor) return;
+      
+      if (cotizacionModalData.recomendaciones.length === 0) {
+        contenedor.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">No hay recomendaciones disponibles</p>';
+        return;
+      }
+      
+      let html = '';
+      cotizacionModalData.recomendaciones.forEach((rec, idx) => {
+        const precioBruto = rec.precio || 0;
+        const precioNeto = Math.round(precioBruto / 1.19);
+        const precioConDescuento = rec.descuento > 0 
+          ? Math.round(precioNeto * (1 - rec.descuento / 100)) 
+          : precioNeto;
+        
+        const yaEnCotizacion = cotizacionModalData.items.some(item => item.sku === rec.sku || item.id === rec.id);
+        
+        html += `
+          <div class="oc-recomendacion-card">
+            <div class="oc-rec-nombre">${rec.nombre}</div>
+            <div class="oc-rec-sku">${rec.sku}</div>
+            <div class="oc-rec-precio">${CarritoGlobal.formatearPrecio(precioConDescuento)}</div>
+            <button class="oc-rec-agregar ${yaEnCotizacion ? 'agregado' : ''}" 
+                    onclick="agregarRecomendacionCotizacion(${idx})" 
+                    id="btn-rec-cot-${idx}"
+                    ${yaEnCotizacion ? 'disabled' : ''}>
+              ${yaEnCotizacion ? '✓ Agregado' : '+ Agregar'}
+            </button>
+          </div>
+        `;
+      });
+      
+      contenedor.innerHTML = html;
+    }
+    
+    // Actualizar cantidad en cotización
+    function actualizarCantidadCotizacion(index, nuevaCantidad) {
+      const cant = parseInt(nuevaCantidad) || 1;
+      if (cant < 1) return;
+      
+      const item = cotizacionModalData.items[index];
+      const stock = item.stock || 0;
+      
+      if (cant > stock) {
+        CarritoGlobal.mostrarMensaje(`No puedes solicitar más de ${stock} unidades (stock disponible)`, 'error');
+        const input = document.querySelector(`.oc-item-row[data-index="${index}"] .oc-qty-input`);
+        if (input) {
+          input.value = stock;
+        }
+        cotizacionModalData.items[index].cantidad = stock;
+        const precio = item.precio || 0;
+        const total = precio * stock;
+        const totalEl = document.getElementById(`cotizacion-item-total-${index}`);
+        if (totalEl) {
+          totalEl.textContent = CarritoGlobal.formatearPrecio(total);
+        }
+        actualizarTotalesCotizacion();
+        return;
+      }
+      
+      cotizacionModalData.items[index].cantidad = cant;
+      const precio = item.precio || 0;
+      const total = precio * cant;
+      const totalEl = document.getElementById(`cotizacion-item-total-${index}`);
+      if (totalEl) {
+        totalEl.textContent = CarritoGlobal.formatearPrecio(total);
+      }
+      actualizarTotalesCotizacion();
+    }
+    
+    // Remover item de cotización
+    function removerItemCotizacion(index) {
+      cotizacionModalData.items.splice(index, 1);
+      renderizarItemsCotizacion();
+      renderizarRecomendacionesCotizacion();
+      actualizarTotalesCotizacion();
+    }
+    
+    // Agregar recomendación a cotización
+    function agregarRecomendacionCotizacion(index) {
+      const recomendacion = cotizacionModalData.recomendaciones[index];
+      if (!recomendacion) return;
+      
+      cotizacionModalData.items.push({
+        id: recomendacion.id,
+        sku: recomendacion.sku,
+        codSC: recomendacion.codSC || '',
+        codCliente: recomendacion.codCliente || '',
+        nombre: recomendacion.nombre,
+        marca: recomendacion.marca,
+        precio: recomendacion.precio,
+        descuento: recomendacion.descuento,
+        cantidad: 1,
+        stock: recomendacion.stock
+      });
+      
+      const btn = document.getElementById(`btn-rec-cot-${index}`);
+      if (btn) {
+        btn.classList.add('agregado');
+        btn.textContent = '✓ Agregado';
+        btn.disabled = true;
+      }
+      
+      renderizarItemsCotizacion();
+      actualizarTotalesCotizacion();
+    }
+    
+    // Actualizar totales en cotización
+    function actualizarTotalesCotizacion() {
+      let subtotal = 0;
+      
+      cotizacionModalData.items.forEach(item => {
+        const precio = item.precio || 0;
+        const cantidad = item.cantidad || 1;
+        subtotal += precio * cantidad;
+      });
+      
+      const iva = subtotal * 0.19;
+      const total = subtotal + iva;
+      
+      document.getElementById('cotizacion-subtotal').textContent = CarritoGlobal.formatearPrecio(subtotal);
+      document.getElementById('cotizacion-iva').textContent = CarritoGlobal.formatearPrecio(iva);
+      document.getElementById('cotizacion-total').textContent = CarritoGlobal.formatearPrecio(total);
+    }
+    
+    // Enviar cotización
+    async function enviarCotizacion() {
+      if (cotizacionModalData.items.length === 0) {
+        CarritoGlobal.mostrarMensaje('La cotización debe contener al menos un producto', 'error');
+        return;
+      }
+
+      const chk = document.getElementById('cotizacion-acepto-terminos');
+      if (!chk || !chk.checked) {
+        CarritoGlobal.mostrarMensaje('Debes aceptar los términos para enviar la cotización', 'error');
+        return;
+      }
+      
+      const userData = localStorage.getItem('starclutch_user');
+      if (!userData) {
+        CarritoGlobal.mostrarMensaje('Usuario no autenticado', 'error');
+        return;
+      }
+      
+      let usuario = JSON.parse(userData);
+      
+      try {
+        const resUser = await fetch('/datos_usuarios/users.json', { cache: 'no-store' });
+        if (resUser.ok) {
+          const users = await resUser.json();
+          const full = users.find(u => String(u.id) === String(usuario.id));
+          if (full) {
+            usuario = { ...full, ...usuario, email: full.email || usuario.email, telefono: full.telefono || usuario.telefono };
+          }
+        }
+      } catch (e) {
+        console.warn('Error cargando datos de usuario:', e);
+      }
+      
+      // Obtener número de cotización
+      let numeroCot = 1;
+      try {
+        const res = await fetch(`/api/obtener-numero-cotizacion/${usuario.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          numeroCot = data.numeroCot || 1;
+        }
+      } catch (e) {
+        console.warn('Error obteniendo número de cotización:', e);
+      }
+      
+      const now = new Date();
+      const fecha = now.toLocaleDateString('es-CL');
+      
+      let subtotal = 0;
+      cotizacionModalData.items.forEach(item => {
+        const precio = item.precio || 0;
+        const cantidad = item.cantidad || 1;
+        subtotal += precio * cantidad;
+      });
+      
+      const iva = subtotal * 0.19;
+      const total = subtotal + iva;
+      
+      try {
+        if (!window.cotizacionGenerator) {
+          CarritoGlobal.mostrarMensaje('Error: Generador de cotizaciones no disponible', 'error');
+          return;
+        }
+        
+        window.cotizacionGenerator.showModal();
+        window.cotizacionGenerator.updateProgress(20, 'Generando PDF de cotización...');
+        
+        const doc = await window.cotizacionGenerator.generateCotizacion(usuario, cotizacionModalData.items, numeroCot);
+        const pdfData = doc.output('dataurlstring');
+        
+        window.cotizacionGenerator.updateProgress(80, 'Enviando cotización...');
+        
+        const respuesta = await fetch('/api/enviar-cotizacion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            usuario,
+            items: cotizacionModalData.items,
+            numeroCot,
+            fecha,
+            subtotal,
+            iva,
+            total,
+            pdfBlob: pdfData
+          })
+        });
+        
+        if (respuesta.ok) {
+          window.cotizacionGenerator.hideModal();
+          CarritoGlobal.mostrarMensaje(`✅ Cotización N° ${numeroCot} enviada correctamente`, 'success');
+          
+          // Guardar como orden pendiente
+          guardarCotizacionPendiente(cotizacionModalData.items, numeroCot, fecha, subtotal, iva, total);
+          
+          const link = document.createElement('a');
+          link.href = pdfData;
+          link.download = `Cotizacion-${numeroCot}.pdf`;
+          link.click();
+          
+          cerrarModalCotizacion();
+          cotizacionModalData = { items: [], recomendaciones: [] };
+        } else {
+          let errorMsg = 'Error desconocido';
+          try {
+            const errorObj = await respuesta.json();
+            errorMsg = errorObj.msg || JSON.stringify(errorObj);
+          } catch (pe) {
+            console.warn('Error parseando respuesta de error:', pe);
+          }
+          window.cotizacionGenerator.hideModal();
+          CarritoGlobal.mostrarMensaje('Error al enviar cotización: ' + errorMsg, 'error');
+        }
+      } catch (error) {
+        console.error('Error generando cotización:', error);
+        window.cotizacionGenerator.hideModal();
+        CarritoGlobal.mostrarMensaje('Error al generar la cotización: ' + (error && error.message ? error.message : ''), 'error');
+      }
+    }
+
+    // Limpiar polling al salir
+    window.addEventListener('beforeunload', () => {
+      if (pollingInterval) clearInterval(pollingInterval);
+    });
+
+    // Funciones del panel de carrito mini
+    async function toggleCarrito() {
+      const panel = document.getElementById('cart-panel');
+      const overlay = document.getElementById('cart-overlay');
+      
+      if (panel.classList.contains('open')) {
+        cerrarCarrito();
+      } else {
+        if (typeof CarritoGlobal !== 'undefined') {
+          await CarritoGlobal.sincronizar();
+          CarritoGlobal.iniciarPolling();
+        }
+        cargarPendientesAlAbrirCarrito();
+        panel.classList.add('open');
+        overlay.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function cerrarCarrito() {
+      if (typeof CarritoGlobal !== 'undefined') CarritoGlobal.detenerPolling();
+      const panel = document.getElementById('cart-panel');
+      const overlay = document.getElementById('cart-overlay');
+      panel.classList.remove('open');
+      overlay.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+
+    // Funciones del panel de notificaciones
+    function toggleNotificaciones() {
+      const panel = document.getElementById('notif-panel');
+      const overlay = document.getElementById('notif-overlay');
+      
+      if (panel.classList.contains('open')) {
+        cerrarNotificaciones();
+      } else {
+        panel.classList.add('open');
+        overlay.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function cerrarNotificaciones() {
+      const panel = document.getElementById('notif-panel');
+      const overlay = document.getElementById('notif-overlay');
+      panel.classList.remove('open');
+      overlay.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    // FUNCIONES PARA ÓRDENES DE COMPRA PENDIENTES
+    // ════════════════════════════════════════════════════════════════
+
+    // Eliminar productos del carrito por SKU
+    function eliminarProductosDelCarrito(skus) {
+      if (!skus || skus.length === 0) return;
+
+      // Eliminar del carrito local
+      const carrito = CarritoGlobal.obtenerLocal();
+      const itemsOriginales = carrito.items.length;
+
+      carrito.items = carrito.items.filter(item => {
+        return !skus.includes(item.sku);
+      });
+
+      const itemsEliminados = itemsOriginales - carrito.items.length;
+
+      if (itemsEliminados > 0) {
+        CarritoGlobal.guardarEnServidor(carrito);
+        CarritoGlobal.actualizarUI();
+        console.log(`${itemsEliminados} productos eliminados del carrito`);
+      }
+    }
+
+    // Guardar cotización como orden pendiente
+    function guardarCotizacionPendiente(items, numeroCot, fecha, subtotal, iva, total) {
+      let pendientes = [];
+      try {
+        const stored = localStorage.getItem('starclutch_cotizaciones_pendientes');
+        if (stored) {
+          pendientes = JSON.parse(stored);
+        }
+      } catch (e) {
+        console.warn('Error leyendo pendientes:', e);
+      }
+
+      const nuevaPendiente = {
+        id: `cot-${Date.now()}`,
+        numeroCotizacion: numeroCot,
+        fecha: fecha,
+        items: items.map(item => ({
+          sku: item.sku || '',
+          nombre: item.nombre || '',
+          cantidad: item.cantidad || 1,
+          precio: item.precio || 0
+        })),
+        subtotal: subtotal,
+        iva: iva,
+        total: total,
+        estado: 'pendiente',
+        fechaCreacion: new Date().toISOString()
+      };
+
+      pendientes.push(nuevaPendiente);
+      localStorage.setItem('starclutch_cotizaciones_pendientes', JSON.stringify(pendientes));
+
+      // Eliminar los productos de la cotización del carrito
+      const skus = items.map(item => item.sku);
+      eliminarProductosDelCarrito(skus);
+
+      mostrarPendientesEnCarrito();
+      return nuevaPendiente;
+    }
+
+    // Mostrar pendientes en el carrito
+    function mostrarPendientesEnCarrito() {
+      let pendientes = [];
+      try {
+        const stored = localStorage.getItem('starclutch_cotizaciones_pendientes');
+        if (stored) {
+          pendientes = JSON.parse(stored);
+        }
+      } catch (e) {
+        console.warn('Error leyendo pendientes:', e);
+      }
+
+      const container = document.getElementById('cart-pending-container');
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      if (pendientes.length === 0) {
+        return;
+      }
+
+      pendientes.forEach(pendiente => {
+        const card = document.createElement('div');
+        card.className = 'cart-pending-card';
+        card.id = `pending-card-${pendiente.id}`;
+
+        // Header con badge y botón cerrar
+        const header = document.createElement('div');
+        header.className = 'cart-pending-header';
+        
+        const badge = document.createElement('span');
+        badge.className = 'cart-pending-badge';
+        badge.textContent = 'Orden Pendiente';
+        
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'cart-pending-close';
+        closeBtn.innerHTML = '<img src="../img/Delete.svg" alt="Eliminar" style="width: 20px; height: 20px;">';
+        closeBtn.onclick = (e) => {
+          e.stopPropagation();
+          eliminarPendiente(pendiente.id);
+        };
+        
+        header.appendChild(badge);
+        header.appendChild(closeBtn);
+        card.appendChild(header);
+
+        // Items de la cotización
+        const itemsContainer = document.createElement('div');
+        itemsContainer.className = 'cart-pending-items';
+        
+        pendiente.items.forEach(item => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'cart-pending-item';
+          
+          const nameSpan = document.createElement('span');
+          nameSpan.className = 'cart-pending-item-name';
+          nameSpan.textContent = `${item.nombre} (SKU: ${item.sku})`;
+          
+          const qtySpan = document.createElement('span');
+          qtySpan.className = 'cart-pending-item-qty';
+          qtySpan.textContent = `x${item.cantidad}`;
+          
+          itemDiv.appendChild(nameSpan);
+          itemDiv.appendChild(qtySpan);
+          itemsContainer.appendChild(itemDiv);
+        });
+        
+        card.appendChild(itemsContainer);
+
+        // Botones de acción
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'cart-pending-actions';
+        
+        const uploadBtn = document.createElement('button');
+        uploadBtn.className = 'btn-primary';
+        uploadBtn.textContent = 'Subir OC';
+        uploadBtn.onclick = () => subirOrdenDeCompra(pendiente);
+        
+        const detailsBtn = document.createElement('button');
+        detailsBtn.className = 'btn-secondary';
+        detailsBtn.textContent = 'Ver detalles';
+        detailsBtn.onclick = () => verDetallesPendiente(pendiente);
+        
+        actionsDiv.appendChild(uploadBtn);
+        actionsDiv.appendChild(detailsBtn);
+        card.appendChild(actionsDiv);
+
+        container.appendChild(card);
+      });
+    }
+
+    // Eliminar pendiente
+    function eliminarPendiente(pendienteId, mostrarConfirmacion = true) {
+      if (mostrarConfirmacion && !confirm('¿Estás seguro de que deseas eliminar esta orden pendiente?')) {
+        return;
+      }
+
+      let pendientes = [];
+      try {
+        const stored = localStorage.getItem('starclutch_cotizaciones_pendientes');
+        if (stored) {
+          pendientes = JSON.parse(stored);
+        }
+      } catch (e) {
+        console.warn('Error leyendo pendientes:', e);
+      }
+
+      pendientes = pendientes.filter(p => p.id !== pendienteId);
+      localStorage.setItem('starclutch_cotizaciones_pendientes', JSON.stringify(pendientes));
+
+      const card = document.getElementById(`pending-card-${pendienteId}`);
+      if (card) {
+        card.style.animation = 'fadeOut 0.3s ease forwards';
+        setTimeout(() => {
+          card.remove();
+          mostrarPendientesEnCarrito();
+        }, 300);
+      } else {
+        mostrarPendientesEnCarrito();
+      }
+
+      CarritoGlobal.mostrarMensaje('Orden pendiente eliminada', 'info');
+    }
+
+    // Subir orden de compra
+    async function subirOrdenDeCompra(pendiente) {
+      console.log('subirOrdenDeCompra - pendiente recibido:', pendiente);
+      
+      const userData = localStorage.getItem('starclutch_user');
+      if (!userData) {
+        CarritoGlobal.mostrarMensaje('Usuario no autenticado', 'error');
+        return;
+      }
+
+      // Validar que pendiente exista y tenga items
+      if (!pendiente || !pendiente.items || pendiente.items.length === 0) {
+        console.error('Pendiente inválido:', { pendiente, items: pendiente?.items });
+        CarritoGlobal.mostrarMensaje('Error: No hay items en la orden', 'error');
+        return;
+      }
+
+      // Crear input file oculto
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = '.pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg';
+      fileInput.style.display = 'none';
+
+      fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        let usuario = JSON.parse(userData);
+
+        try {
+          // Cargar datos completos del usuario
+          const resUser = await fetch('/datos_usuarios/users.json', { cache: 'no-store' });
+          if (resUser.ok) {
+            const users = await resUser.json();
+            const full = users.find(u => String(u.id) === String(usuario.id));
+            if (full) {
+              usuario = { ...full, ...usuario, email: full.email || usuario.email, telefono: full.telefono || usuario.telefono };
+            }
+          }
+        } catch (e) {
+          console.warn('Error cargando datos de usuario:', e);
+        }
+
+        // Obtener número de OC
+        let numeroOC = 1;
+        try {
+          const res = await fetch(`/api/obtener-numero-oc/${usuario.id}`);
+          if (res.ok) {
+            const data = await res.json();
+            numeroOC = data.numeroOC || 1;
+          }
+        } catch (e) {
+          console.warn('Error obteniendo número de OC:', e);
+        }
+
+        const now = new Date();
+        const fecha = now.toLocaleDateString('es-CL');
+
+        try {
+          // Mostrar pantalla de carga usando cotizacionGenerator
+          if (window.cotizacionGenerator && window.cotizacionGenerator.showModal) {
+            window.cotizacionGenerator.showModal('Enviando OC');
+            window.cotizacionGenerator.updateProgress(20, 'Preparando orden de compra...');
+          }
+
+          // Leer archivo como base64
+          const reader = new FileReader();
+          reader.onload = async (event) => {
+            const fileBase64 = event.target.result;
+
+            try {
+              if (window.cotizacionGenerator && window.cotizacionGenerator.updateProgress) {
+                window.cotizacionGenerator.updateProgress(50, 'Enviando OC...');
+              }
+
+              // Enviar al servidor
+              const respuesta = await fetch('/api/enviar-oc-archivo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  usuario,
+                  items: pendiente.items,
+                  numeroOC,
+                  fecha,
+                  subtotal: pendiente.subtotal,
+                  iva: pendiente.iva,
+                  total: pendiente.total,
+                  archivoBlob: fileBase64,
+                  nombreArchivo: file.name,
+                  tipoArchivo: file.type
+                })
+              });
+
+              if (respuesta.ok) {
+                if (window.cotizacionGenerator && window.cotizacionGenerator.hideModal) {
+                  window.cotizacionGenerator.hideModal();
+                }
+                CarritoGlobal.mostrarMensaje(`✅ Orden de Compra Nº ${numeroOC} enviada correctamente`, 'success');
+
+                // Cambiar estado a enviado
+                let pendientes = [];
+                try {
+                  const stored = localStorage.getItem('starclutch_cotizaciones_pendientes');
+                  if (stored) {
+                    pendientes = JSON.parse(stored);
+                  }
+                } catch (e) {
+                  console.warn('Error leyendo pendientes:', e);
+                }
+
+                const idx = pendientes.findIndex(p => p.id === pendiente.id);
+                if (idx !== -1) {
+                  pendientes[idx].estado = 'enviado';
+                  pendientes[idx].fechaEnvio = new Date().toISOString();
+                  localStorage.setItem('starclutch_cotizaciones_pendientes', JSON.stringify(pendientes));
+                }
+
+                eliminarPendiente(pendiente.id, false);
+                cerrarModalPendiente();
+              } else {
+                let errorMsg = 'Error desconocido';
+                try {
+                  const errorObj = await respuesta.json();
+                  errorMsg = errorObj.msg || JSON.stringify(errorObj);
+                } catch (pe) {
+                  console.warn('Error parseando respuesta de error:', pe);
+                }
+                if (window.cotizacionGenerator && window.cotizacionGenerator.hideModal) {
+                  window.cotizacionGenerator.hideModal();
+                }
+                CarritoGlobal.mostrarMensaje('Error al enviar OC: ' + errorMsg, 'error');
+              }
+            } catch (error) {
+              console.error('Error enviando OC:', error);
+              if (window.cotizacionGenerator && window.cotizacionGenerator.hideModal) {
+                window.cotizacionGenerator.hideModal();
+              }
+              CarritoGlobal.mostrarMensaje('Error al enviar la orden de compra: ' + error.message, 'error');
+            }
+          };
+
+          reader.readAsDataURL(file);
+        } catch (error) {
+          console.error('Error procesando OC:', error);
+          if (window.cotizacionGenerator && window.cotizacionGenerator.hideModal) {
+            window.cotizacionGenerator.hideModal();
+          }
+          CarritoGlobal.mostrarMensaje('Error procesando la orden: ' + error.message, 'error');
+        }
+      });
+
+      // Disparar click para abrir file dialog
+      fileInput.click();
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    // FUNCIONES PARA MODAL DE DETALLES DE ORDEN PENDIENTE
+    // ════════════════════════════════════════════════════════════════
+
+    // Abrir modal de detalles
+
+    async function verDetallesPendiente(pendiente) {
+      // Cargar productos para obtener imágenes
+      const productosDb = await cargarProductosParaModal();
+
+      // Llenar información general
+      document.getElementById('pending-numero-cot').textContent = `#${pendiente.numeroCotizacion}`;
+      document.getElementById('pending-fecha').textContent = pendiente.fecha;
+      document.getElementById('pending-estado').textContent = pendiente.estado.charAt(0).toUpperCase() + pendiente.estado.slice(1);
+
+      // Llenar tabla de items
+      const itemsContainer = document.getElementById('pending-items-lista');
+      itemsContainer.innerHTML = '';
+
+      pendiente.items.forEach(item => {
+        const producto = productosDb.find(p => p.codSC === item.sku);
+        const imagenes = producto && producto.imagenes && producto.imagenes.length > 0 ? producto.imagenes : ['../img/productos.svg'];
+        const imageUrl = imagenes[0];
+
+        let galeriaHTML = '';
+        if (imagenes.length > 1) {
+          galeriaHTML = `<div class="pending-item-gallery-indicator">${imagenes.length} imágenes</div>`;
+        }
+
+        const card = document.createElement('div');
+        card.className = 'pending-item-card';
+        card.dataset.sku = item.sku;
+        card.style.cursor = 'pointer';
+        card.innerHTML = `
+          <div class="pending-item-img-container">
+            <img class="pending-item-img" src="${imageUrl}" alt="${item.nombre}" data-sku="${item.sku}" data-imagenes='${JSON.stringify(imagenes)}' style="cursor: pointer;" onerror="this.src='../img/productos.svg'">
+            ${galeriaHTML}
+          </div>
+          <div class="pending-item-info">
+            <div class="pending-item-nombre">${item.nombre}</div>
+            <div class="pending-item-sku">SKU: ${item.sku}</div>
+            <div class="pending-item-detalles">
+              <div class="pending-item-detalle-row">
+                <strong>Cantidad:</strong> ${item.cantidad} unidades
+              </div>
+              <div class="pending-item-detalle-row">
+                <strong>Precio Unit.:</strong> ${CarritoGlobal.formatearPrecio(item.precio)}
+              </div>
+              <div class="pending-item-detalle-row">
+                <strong>Subtotal:</strong> ${CarritoGlobal.formatearPrecio(item.precio * item.cantidad)}
+              </div>
+            </div>
+          </div>
+          <div class="pending-item-actions">
+            <button class="btn-secondary pending-item-btn-ficha" onclick="event.stopPropagation(); abrirFichaTecnica('${item.sku}')">
+              <img src="../img/fichatecnica.svg" alt="Ficha Técnica" class="btn-icon">
+              Ficha Técnica
+            </button>
+            <div class="pending-item-precio">${CarritoGlobal.formatearPrecio(item.precio * item.cantidad)}</div>
+          </div>
+        `;
+        card.addEventListener('click', (e) => {
+          // No navegar si se hace clic en el botón o en la imagen de galería
+          if (e.target.classList.contains('pending-item-btn-ficha') || e.target.closest('.pending-item-btn-ficha')) {
+            return;
+          }
+          // Navegar a detalleproducto.html
+          const sku = card.dataset.sku;
+          const producto = productosDb.find(p => p.codSC === sku);
+          if (producto && producto.id) {
+            window.location.href = `detalleproducto.html?id=${encodeURIComponent(producto.id)}`;
+          } else {
+            window.location.href = `detalleproducto.html?sku=${encodeURIComponent(sku)}`;
+          }
+        });
+        itemsContainer.appendChild(card);
+      });
+      // Event listener delegado para abrir galería
+      itemsContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('pending-item-img')) {
+          const sku = e.target.dataset.sku;
+          const imagenes = JSON.parse(e.target.dataset.imagenes);
+          abrirGaleriaImagenes(sku, imagenes);
+        }
+      });
+
+      // Llenar totales
+      document.getElementById('pending-subtotal').textContent = CarritoGlobal.formatearPrecio(pendiente.subtotal);
+      document.getElementById('pending-iva').textContent = CarritoGlobal.formatearPrecio(pendiente.iva);
+      document.getElementById('pending-total').textContent = CarritoGlobal.formatearPrecio(pendiente.total);
+
+      // Guardar pendiente actual para usar en subirOrdenDeCompraDesdeModal
+      window.pendienteActual = pendiente;
+
+      // Cerrar carrito antes de abrir la modal
+      cerrarCarrito();
+
+      // Mostrar modal con pequeño delay
+      setTimeout(() => {
+        abrirModalPendiente();
+      }, 150);
+    }
+
+    // Abrir modal
+    function abrirModalPendiente() {
+      const overlay = document.getElementById('pending-modal-overlay');
+      const modal = document.getElementById('pending-modal');
+      
+      overlay.classList.add('active');
+      modal.classList.add('active');
+    }
+
+    // Cerrar modal
+    function cerrarModalPendiente() {
+      const overlay = document.getElementById('pending-modal-overlay');
+      const modal = document.getElementById('pending-modal');
+      
+      overlay.classList.remove('active');
+      modal.classList.remove('active');
+      window.pendienteActual = null;
+    }
+
+    // Cargar productos para la modal (obtener imágenes)
+    async function cargarProductosParaModal() {
+      try {
+        const response = await fetch('/datosproductos/productos_db.json', { cache: 'no-store' });
+        if (response.ok) {
+          return await response.json();
+        }
+      } catch (e) {
+        console.warn('Error cargando productos:', e);
+      }
+      return [];
+    }
+
+    // Abrir ficha técnica
+    function abrirFichaTecnica(sku) {
+      if (typeof abrirFichaTecnicaGlobal === 'function') {
+        abrirFichaTecnicaGlobal(sku);
+      } else {
+        CarritoGlobal.mostrarMensaje('Función no disponible', 'info');
+      }
+    }
+
+
+    // Subir orden desde modal
+    function subirOrdenDeCompraDesdeModal() {
+      if (window.pendienteActual) {
+        const pendienteCopia = { ...window.pendienteActual };
+        cerrarModalPendiente();
+        subirOrdenDeCompra(pendienteCopia);
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    // FUNCIONES PARA GALERÍA DE IMÁGENES
+    // ════════════════════════════════════════════════════════════════
+
+    let galeriaImagenes = [];
+    let galeriaIndiceActual = 0;
+
+    function abrirGaleriaImagenes(sku, imagenes) {
+      console.log('Abriendo galería con', imagenes.length, 'imágenes:', imagenes);
+      
+      galeriaImagenes = imagenes;
+      galeriaIndiceActual = 0;
+
+      const overlay = document.getElementById('gallery-modal-overlay');
+      const modal = document.getElementById('gallery-modal');
+      const mainImage = document.getElementById('gallery-main-image');
+      const thumbnails = document.getElementById('gallery-thumbnails');
+      const prevBtn = modal.querySelector('.gallery-prev');
+      const nextBtn = modal.querySelector('.gallery-next');
+
+      console.log('Elemento thumbnails:', thumbnails);
+
+      // Mostrar imagen principal
+      mainImage.src = imagenes[0];
+      mainImage.onerror = function() {
+        this.src = '../img/productos.svg';
+      };
+
+      // Si solo hay 1 imagen, ocultar navegación y miniaturas
+      const esSoloUnaImagen = imagenes.length === 1;
+      
+      if (esSoloUnaImagen) {
+        console.log('Solo una imagen, ocultando navegación');
+        prevBtn.classList.add('hidden');
+        nextBtn.classList.add('hidden');
+        thumbnails.classList.add('hidden');
+        thumbnails.innerHTML = '';
+      } else {
+        console.log('Múltiples imágenes, mostrando navegación y miniaturas');
+        prevBtn.classList.remove('hidden');
+        nextBtn.classList.remove('hidden');
+        thumbnails.classList.remove('hidden');
+        
+        // Crear miniaturas
+        thumbnails.innerHTML = '';
+        imagenes.forEach((img, idx) => {
+          const thumb = document.createElement('div');
+          thumb.className = `gallery-thumbnail ${idx === 0 ? 'active' : ''}`;
+          thumb.innerHTML = `<img src="${img}" alt="Imagen ${idx + 1}" onerror="this.src='../img/productos.svg'">`;
+          thumb.onclick = () => mostrarImagenGaleria(idx);
+          thumbnails.appendChild(thumb);
+          console.log('Miniatura añadida:', idx, img);
+        });
+        
+        console.log('Total miniaturas creadas:', thumbnails.children.length);
+        console.log('Clases del thumbnails:', thumbnails.className);
+        console.log('Display computed:', window.getComputedStyle(thumbnails).display);
+      }
+
+      // Mostrar overlay y modal
+      overlay.classList.add('active');
+      overlay.style.display = 'block';
+      modal.style.display = 'flex';
+      modal.classList.add('active');
+    }
+
+    function cerrarGaleriaImagenes() {
+      const overlay = document.getElementById('gallery-modal-overlay');
+      const modal = document.getElementById('gallery-modal');
+
+      overlay.classList.remove('active');
+      overlay.style.display = 'none';
+      modal.style.display = 'none';
+      modal.classList.remove('active');
+    }
+
+    function mostrarImagenGaleria(idx) {
+      if (idx < 0 || idx >= galeriaImagenes.length) return;
+
+      galeriaIndiceActual = idx;
+      const mainImage = document.getElementById('gallery-main-image');
+      const thumbnails = document.querySelectorAll('.gallery-thumbnail');
+
+      mainImage.src = galeriaImagenes[idx];
+      mainImage.onerror = function() {
+        this.src = '../img/productos.svg';
+      };
+
+      thumbnails.forEach((thumb, i) => {
+        thumb.classList.toggle('active', i === idx);
+      });
+    }
+
+    function galeriaPrev() {
+      if (galeriaIndiceActual > 0) {
+        mostrarImagenGaleria(galeriaIndiceActual - 1);
+      }
+    }
+
+    function galeriaNext() {
+      if (galeriaIndiceActual < galeriaImagenes.length - 1) {
+        mostrarImagenGaleria(galeriaIndiceActual + 1);
+      }
+    }
+    // Cargar pendientes al abrir el carrito
+    function cargarPendientesAlAbrirCarrito() {
+      mostrarPendientesEnCarrito();
+    }
+  </script>
+</body>
+</html>

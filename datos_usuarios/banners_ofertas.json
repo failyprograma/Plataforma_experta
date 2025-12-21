@@ -1,0 +1,11 @@
+{
+  "ecousuario": {
+    "campanas": [],
+    "banners": {
+      "principal-desktop": [],
+      "principal-mobile": [],
+      "secundario-desktop": [],
+      "secundario-mobile": []
+    }
+  }
+}
