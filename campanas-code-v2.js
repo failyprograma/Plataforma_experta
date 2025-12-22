@@ -31,6 +31,79 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Event listener para guardar automáticamente el estado activa/inactiva
+  const checkboxActiva = document.getElementById('campana-activa');
+  if (checkboxActiva) {
+    checkboxActiva.addEventListener('change', async function() {
+      // Actualizar inmediatamente el estado en la campaña temporal (aplica a nueva y edición)
+      if (typeof campanaTemporal === 'object' && campanaTemporal) {
+        campanaTemporal.activa = !!this.checked;
+      }
+
+      // Auto-guardar en servidor solo si estamos editando una campaña existente
+      if (editandoIndex !== null) {
+        await guardarEstadoActivaCampana(this.checked);
+      }
+
+      // Poblar selector de clientes para métricas globales y disparar primera carga
+      const globalClientSelect = document.getElementById('global-client-select');
+      const mgDropdown = document.getElementById('mg-usuarios-dropdown');
+      const mgPlaceholder = document.getElementById('mg-usuarios-placeholder');
+      if (mgDropdown) {
+        try {
+          fetch('/api/usuarios').then(r => r.json()).then(result => {
+            const usuarios = (result && result.usuarios) ? result.usuarios : [];
+            if (!usuarios.length) {
+              mgDropdown.innerHTML = '<div style="padding:8px; color:#666;">Sin usuarios cargados</div>';
+            } else {
+              mgDropdown.innerHTML = usuarios.map(u => `
+                <label style="display:flex; align-items:center; gap:8px; padding:6px 10px;">
+                  <input type="checkbox" value="${u.id}" onchange="onMGUsuarioToggle()">
+                  <span>${u.nombre || u.id}</span>
+                </label>
+              `).join('');
+            }
+          }).finally(() => {
+            // Primera carga en tiempo real
+            refrescarMetricasGlobales();
+            if (!window.__globalMetricsTimer) {
+              window.__globalMetricsTimer = setInterval(refrescarMetricasGlobales, 5000);
+            }
+          });
+        } catch (e) {
+          console.warn('No se pudo cargar usuarios para selector global:', e);
+          refrescarMetricasGlobales();
+        }
+        const desde = document.getElementById('mg-desde');
+        const hasta = document.getElementById('mg-hasta');
+        if (desde) desde.addEventListener('change', refrescarMetricasGlobales);
+        if (hasta) hasta.addEventListener('change', refrescarMetricasGlobales);
+      }
+
+      // Poblar campañas para filtro
+      const mgCampDropdown = document.getElementById('mg-campanas-dropdown');
+      if (mgCampDropdown) {
+        try {
+          fetch('/api/plataforma-campanas').then(r => r.json()).then(result => {
+            const campanas = (result && result.campanas) ? result.campanas : [];
+            if (!campanas.length) {
+              mgCampDropdown.innerHTML = '<div style="padding:8px; color:#666;">Sin campañas</div>';
+            } else {
+              mgCampDropdown.innerHTML = campanas.map(c => `
+                <label style="display:flex; align-items:center; gap:8px; padding:6px 10px;">
+                  <input type="checkbox" value="${c.id}" onchange="onMGCampanaToggle()">
+                  <span>${c.nombre}</span>
+                </label>
+              `).join('');
+            }
+          });
+        } catch (e) {
+          console.warn('No se pudo cargar campañas globales:', e);
+        }
+      }
+    });
+  }
+
   // Cerrar modal al hacer click en el overlay
   const overlay = document.getElementById('modal-campana');
   if (overlay) {
@@ -52,6 +125,31 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
+
+  // Inicializar filtros de Métricas Globales al cargar la vista
+  (async () => {
+    try {
+      await cargarMGUsuarios();
+    } catch (e) {
+      console.warn('No se pudo inicializar usuarios globales:', e);
+    }
+    try {
+      await cargarMGCampanas();
+    } catch (e) {
+      console.warn('No se pudo inicializar campañas globales:', e);
+    }
+    // Listeners de fecha
+    const desde = document.getElementById('mg-desde');
+    const hasta = document.getElementById('mg-hasta');
+    if (desde) desde.addEventListener('change', refrescarMetricasGlobales);
+    if (hasta) hasta.addEventListener('change', refrescarMetricasGlobales);
+
+    // Primera carga + refresco en tiempo real
+    refrescarMetricasGlobales();
+    if (!window.__globalMetricsTimer) {
+      window.__globalMetricsTimer = setInterval(refrescarMetricasGlobales, 5000);
+    }
+  })();
 });
 
 // ============================================================
@@ -269,7 +367,7 @@ function renderizarSlidesModal() {
   
   const dimensionInfo = tipo === 'principal' 
     ? { desktop: '1200 x 400 px (3:1)', mobile: '400 x 400 px (1:1)' }
-    : { desktop: '580 x 320 px (16:9)', mobile: '350 x 280 px (5:4)' };
+    : { desktop: '640 x 480 px (4:3)', mobile: '400 x 300 px (4:3)' };
   
   container.innerHTML = slides.map((slide, index) => `
     <div class="slide-editor-card" data-slide-index="${index}">
@@ -711,9 +809,15 @@ function renderizarListaCampanas() {
             <span class="stat-value">${audienciaTexto}</span>
           </div>
           <div class="stat-item" style="border-top: 1px solid #e0e0e0; padding-top: 8px; margin-top: 8px;">
-            <button type="button" class="btn-primary" onclick="verDatosCampana('${campana.nombre}')" title="Ver datos de campaña" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <button type="button" class="btn-primary" onclick="verDatosCampana('${campana.nombre}')" title="Ver datos de campaña del usuario" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
               <img src="../img/info_471662-01 1.svg" alt="Métricas" style="width: 16px; height: 16px; filter: brightness(0) saturate(100%) invert(100%);">
-              Métricas de la campaña
+              Métricas de la campaña del usuario
+            </button>
+            <button type="button" class="btn-secondary" onclick="verDatosCampanaGlobal('${campana.nombre}')" title="Ver métricas globales de todos los usuarios" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="min-width: 16px;">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="#BF1823"/>
+              </svg>
+              Métricas globales de la campaña
             </button>
           </div>
         </div>
@@ -778,6 +882,47 @@ async function verDatosCampana(campanaId) {
   console.log('[verDatosCampana] ✅ COMPLETADO');
 }
 
+async function verDatosCampanaGlobal(campanaId) {
+  console.log('[verDatosCampanaGlobal] INICIADO con campanaId:', campanaId);
+  
+  // Limpiar intervalo anterior PRIMERO
+  if (window.__campanaAnalyticsTimer) {
+    clearInterval(window.__campanaAnalyticsTimer);
+    window.__campanaAnalyticsTimer = null;
+    console.log('[verDatosCampanaGlobal] Intervalo previo cancelado');
+  }
+  
+  // Abrir modal y cargar datos globales (sin filtro de usuario)
+  const modalElement = document.getElementById('modal-analytics-campana');
+  const titleElement = document.getElementById('analytics-campana-title');
+  
+  if (!modalElement || !titleElement) {
+    console.error('[verDatosCampanaGlobal] ❌ NO SE ENCONTRARON ELEMENTOS DEL MODAL');
+    return;
+  }
+  
+  titleElement.textContent = `Datos de Campaña Global: ${campanaId}`;
+  modalElement.style.display = 'flex';
+  
+  console.log('[verDatosCampanaGlobal] ✅ Modal abierto. Cargando analytics globales...');
+  
+  // Cargar analytics global (sin userId para obtener todos los usuarios)
+  await cargarAnalyticsCampana(campanaId, null);
+  
+  // Auto-refresh cada 10s
+  window.__campanaAnalyticsTimer = setInterval(async () => {
+    // Verificar que el modal sigue abierto
+    if (modalElement.style.display === 'flex') {
+      await cargarAnalyticsCampana(campanaId, null);
+    } else {
+      clearInterval(window.__campanaAnalyticsTimer);
+      window.__campanaAnalyticsTimer = null;
+    }
+  }, 10000);
+  
+  console.log('[verDatosCampanaGlobal] ✅ COMPLETADO');
+}
+
 function cerrarModalAnalyticsCampana() {
   document.getElementById('modal-analytics-campana').style.display = 'none';
   if (window.__campanaAnalyticsTimer) {
@@ -788,7 +933,10 @@ function cerrarModalAnalyticsCampana() {
 
 async function cargarAnalyticsCampana(campanaId, userId) {
   try {
-    const url = `/api/campanas-analytics?campanaId=${encodeURIComponent(campanaId)}&userId=${encodeURIComponent(userId)}`;
+    // Si userId es null, no lo incluimos en la URL para obtener métricas globales
+    const url = userId 
+      ? `/api/campanas-analytics?campanaId=${encodeURIComponent(campanaId)}&userId=${encodeURIComponent(userId)}`
+      : `/api/campanas-analytics?campanaId=${encodeURIComponent(campanaId)}`;
     
     const response = await fetch(url);
     const result = await response.json();
@@ -806,6 +954,259 @@ async function cargarAnalyticsCampana(campanaId, userId) {
     }
   } catch (error) {
     console.error('[cargarAnalyticsCampana] ❌ Error:', error.message);
+  }
+}
+
+// ============================================================
+// MÉTRICAS GLOBALES DE LA PLATAFORMA
+// ============================================================
+async function refrescarMetricasGlobales() {
+  try {
+    const checks = Array.from(document.querySelectorAll('#mg-usuarios-dropdown input[type="checkbox"]:checked'));
+    const userIds = checks.map(c => c.value);
+    const campChecks = Array.from(document.querySelectorAll('#mg-campanas-dropdown input[type="checkbox"]:checked'));
+    const campanaIds = campChecks.map(c => c.value);
+    const desde = document.getElementById('mg-desde')?.value || '';
+    const hasta = document.getElementById('mg-hasta')?.value || '';
+    const params = new URLSearchParams();
+    if (userIds.length) params.append('userIds', userIds.join(','));
+    if (campanaIds.length) params.append('campanaIds', campanaIds.join(','));
+    if (desde) params.append('start', desde);
+    if (hasta) params.append('end', hasta);
+    params.append('onlyExistingUsers', 'true');
+    const url = `/api/plataforma-analytics${params.toString() ? '?' + params.toString() : ''}`;
+    const response = await fetch(url);
+    const result = await response.json();
+    if (!result.ok || !result.analytics) {
+      console.warn('Respuesta inválida en plataforma-analytics', result);
+      return;
+    }
+    const a = result.analytics;
+    const gananciasEl = document.getElementById('mg-ganancias');
+    if (gananciasEl) gananciasEl.textContent = formatearMonto(a.ganancias);
+    const ctrEl = document.getElementById('mg-ctr');
+    if (ctrEl) ctrEl.textContent = `${a.ctr.toFixed(2)}%`;
+    const ordEl = document.getElementById('mg-ordenes');
+    if (ordEl) ordEl.textContent = `${a.ordenes}`;
+    const usrEl = document.getElementById('mg-usuarios');
+    if (usrEl) usrEl.textContent = `${a.usuariosActivos}`;
+
+    // Render top vistos
+    const topVistosEl = document.getElementById('mg-top-vistos');
+    topVistosEl.innerHTML = a.topVistos && a.topVistos.length
+      ? a.topVistos.map(t => `<div style="display:flex; justify-content:space-between;"><span>${t.sku}</span><span>${t.count}</span></div>`).join('')
+      : '<div style="color:#666;">Sin datos</div>';
+
+    // Render top ordenes
+    const topOrdEl = document.getElementById('mg-top-ordenes');
+    topOrdEl.innerHTML = a.topOrdenes && a.topOrdenes.length
+      ? a.topOrdenes.map(t => `<div style="display:flex; justify-content:space-between;"><span>${t.sku}</span><span>${t.count}</span></div>`).join('')
+      : '<div style="color:#666;">Sin datos</div>';
+
+    // Usuarios activos (detalle)
+    const uaBody = document.getElementById('mg-usuarios-activos');
+    uaBody.innerHTML = (a.usuariosActivosDetalles || []).length
+      ? a.usuariosActivosDetalles.map(u => `
+          <tr>
+            <td>${u.nombre}</td>
+            <td>${u.vistas}</td>
+            <td>${u.clicks}</td>
+            <td>${u.ctr.toFixed(2)}%</td>
+            <td>${u.ordenes}</td>
+          </tr>
+        `).join('')
+      : '<tr><td colspan="5" style="color:#666;">Sin usuarios activos en el período</td></tr>';
+
+    // Actualizar placeholder del multiselect
+    const mgPlaceholder = document.getElementById('mg-usuarios-placeholder');
+    if (mgPlaceholder) {
+      mgPlaceholder.textContent = userIds.length ? `${userIds.length} cliente(s) seleccionado(s)` : 'Global (todos los clientes)';
+    }
+
+    // Render revenue trend
+    const trendEl = document.getElementById('mg-revenue-trend');
+    if (trendEl) {
+      const datos = a.resumenDiario || [];
+      const maxMonto = Math.max(1, ...datos.map(d => d.monto));
+      trendEl.innerHTML = datos.length ? datos.map(d => {
+        const h = Math.round((d.monto / maxMonto) * 100);
+        const label = (d.fecha || '').slice(5); // MM-DD
+        return `
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height: 100%;">
+            <div title="${d.fecha}: ${formatearMonto(d.monto)}" style="width: 16px; height: ${h}px; background: #BF1823; border-radius: 4px 4px 0 0;"></div>
+            <div style="font-size: 10px; color: #666; margin-top: 4px;">${label}</div>
+          </div>
+        `;
+      }).join('') : '<div style="color:#666;">Sin datos</div>';
+      const campPH = document.getElementById('mg-campanas-placeholder');
+      if (campPH) campPH.textContent = campanaIds.length ? `${campanaIds.length} campaña(s)` : 'Todas las campañas';
+    }
+  } catch (e) {
+    console.error('Error refrescando métricas globales:', e);
+  }
+}
+
+// Cargar opciones de usuarios para Métricas Globales
+async function cargarMGUsuarios() {
+  const mgDropdown = document.getElementById('mg-usuarios-dropdown');
+  if (!mgDropdown) return;
+  try {
+    let usuarios = [];
+    if (typeof cargarUsuariosPlataforma === 'function') {
+      usuarios = await cargarUsuariosPlataforma();
+    } else {
+      const res = await fetch('/api/users');
+      usuarios = await res.json();
+    }
+    if (!Array.isArray(usuarios) || !usuarios.length) {
+      mgDropdown.innerHTML = '<div style="padding:8px; color:#666;">Sin usuarios cargados</div>';
+    } else {
+      mgDropdown.innerHTML = usuarios.map(u => `
+        <label style="display:flex; align-items:center; gap:8px; padding:6px 10px;">
+          <input type="checkbox" value="${u.id}" onchange="onMGUsuarioToggle()">
+          <span>${u.nombre || u.id}${u.empresa ? ' - ' + u.empresa : ''}</span>
+        </label>
+      `).join('');
+    }
+    const ph = document.getElementById('mg-usuarios-placeholder');
+    if (ph) ph.textContent = 'Global (todos los clientes)';
+  } catch (e) {
+    console.warn('Error cargando usuarios globales:', e);
+    mgDropdown.innerHTML = '<div style="padding:8px; color:#666;">No se pudieron cargar usuarios</div>';
+  }
+}
+
+// Cargar opciones de campañas para Métricas Globales
+async function cargarMGCampanas() {
+  const mgCampDropdown = document.getElementById('mg-campanas-dropdown');
+  if (!mgCampDropdown) return;
+  try {
+    const res = await fetch('/api/plataforma-campanas');
+    const result = await res.json();
+    const campanas = (result && result.campanas) ? result.campanas : [];
+    if (!Array.isArray(campanas) || !campanas.length) {
+      mgCampDropdown.innerHTML = '<div style="padding:8px; color:#666;">Sin campañas</div>';
+    } else {
+      mgCampDropdown.innerHTML = campanas.map(c => `
+        <label style="display:flex; align-items:center; gap:8px; padding:6px 10px;">
+          <input type="checkbox" value="${c.id}" onchange="onMGCampanaToggle()">
+          <span>${c.nombre}</span>
+        </label>
+      `).join('');
+    }
+    const ph = document.getElementById('mg-campanas-placeholder');
+    if (ph) ph.textContent = 'Todas las campañas';
+  } catch (e) {
+    console.warn('Error cargando campañas globales:', e);
+    mgCampDropdown.innerHTML = '<div style="padding:8px; color:#666;">No se pudieron cargar campañas</div>';
+  }
+}
+
+function toggleDropdownMGUsuarios() {
+  const dd = document.getElementById('mg-usuarios-dropdown');
+  if (!dd) return;
+  const willShow = dd.style.display === 'none';
+  if (willShow) {
+    // Asegurar que haya opciones cargadas antes de mostrar
+    if (!dd.innerHTML || dd.innerHTML.trim() === '') {
+      cargarMGUsuarios().finally(() => {
+        dd.style.display = 'block';
+      });
+      return;
+    }
+    dd.style.display = 'block';
+  } else {
+    dd.style.display = 'none';
+  }
+}
+
+function onMGUsuarioToggle() {
+  // Cerrar dropdown si se desea, pero aquí solo refrescamos métricas
+  refrescarMetricasGlobales();
+}
+
+function toggleDropdownMGCampanas() {
+  const dd = document.getElementById('mg-campanas-dropdown');
+  if (!dd) return;
+  const willShow = dd.style.display === 'none';
+  if (willShow) {
+    if (!dd.innerHTML || dd.innerHTML.trim() === '') {
+      cargarMGCampanas().finally(() => {
+        dd.style.display = 'block';
+      });
+      return;
+    }
+    dd.style.display = 'block';
+  } else {
+    dd.style.display = 'none';
+  }
+}
+
+function onMGCampanaToggle() {
+  refrescarMetricasGlobales();
+}
+
+function setRangoRapido(dias) {
+  try {
+    const hastaEl = document.getElementById('mg-hasta');
+    const desdeEl = document.getElementById('mg-desde');
+    const hoy = new Date();
+    const hastaStr = hoy.toISOString().slice(0,10);
+    const desde = new Date(hoy.getTime() - (dias*24*60*60*1000));
+    const desdeStr = desde.toISOString().slice(0,10);
+    if (desdeEl) desdeEl.value = desdeStr;
+    if (hastaEl) hastaEl.value = hastaStr;
+    refrescarMetricasGlobales();
+  } catch (e) {
+    console.error('Error setRangoRapido', e);
+  }
+}
+
+function exportarUsuariosActivos() {
+  try {
+    const tbody = document.getElementById('mg-usuarios-activos');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const csvRows = ['Cliente,Vistas,Clicks,CTR,Órdenes'];
+    rows.forEach(r => {
+      const cols = Array.from(r.querySelectorAll('td')).map(td => td.innerText);
+      if (cols.length === 5) csvRows.push(cols.join(','));
+    });
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `usuarios_activos.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    console.error('Error exportando usuarios activos:', e);
+  }
+}
+
+function exportarTop(tipo) {
+  try {
+    const sel = document.getElementById('global-client-select');
+    const userId = sel && sel.value !== '__GLOBAL__' ? sel.value : null;
+    const el = tipo === 'vistos' ? document.getElementById('mg-top-vistos') : document.getElementById('mg-top-ordenes');
+    const rows = Array.from(el.querySelectorAll('div')).map(d => d.innerText.replace(/\s+•\s+/g, ', '));
+    const contenido = ['SKU,Count', ...rows].join('\n');
+    const blob = new Blob([contenido], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `top_${tipo}_${userId || 'global'}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    console.error('Error exportando top', tipo, e);
+  }
+}
+
+function formatearMonto(monto) {
+  try {
+    return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(monto || 0);
+  } catch (e) {
+    return `$${Math.round(monto || 0).toLocaleString('es-CL')}`;
   }
 }
 
@@ -933,7 +1334,49 @@ async function eliminarCampana(index) {
   renderizarListaCampanas();
   
   // Guardar los cambios en el servidor para que se eliminen banners y descuentos
-  await guardarTodasLasCampanas();
+  // Silenciar alertas y correos para no enviar emails de término de oferta
+  await guardarTodasLasCampanas(undefined, true, true);
+}
+
+// ============================================================
+// GUARDAR ESTADO ACTIVA/INACTIVA INMEDIATAMENTE
+// ============================================================
+async function guardarEstadoActivaCampana(nuevoEstado) {
+  if (editandoIndex === null) return; // Solo para edición, no para nueva campaña
+  
+  const campana = campanasState[editandoIndex];
+  if (!campana) return;
+  
+  // Actualizar el estado en memoria
+  campana.activa = nuevoEstado;
+  campanaTemporal.activa = nuevoEstado;
+  
+  // Guardar en el servidor para todos los usuarios asignados
+  try {
+    console.log(`[Auto-guardado] Cambiando estado de campaña "${campana.nombre}" a: ${nuevoEstado ? 'ACTIVA' : 'INACTIVA'}`);
+    
+    // Guardar para todos los usuarios asignados a esta campaña
+    const targetUsers = Array.isArray(campana.targetUsers) && campana.targetUsers.length 
+      ? campana.targetUsers 
+      : [adminSelectedClientId || document.getElementById('client-select')?.value].filter(Boolean);
+    
+    if (targetUsers.length > 0) {
+      for (const userId of targetUsers) {
+        await guardarTodasLasCampanas(userId, true, true); // silenciar alertas y correos
+      }
+      console.log(`[Auto-guardado] ✅ Estado guardado para ${targetUsers.length} usuario(s)`);
+      
+      // Actualizar la visualización
+      renderizarListaCampanas();
+    }
+  } catch (error) {
+    console.error('[Auto-guardado] Error al guardar estado:', error);
+    alert('Error al actualizar el estado de la campaña');
+    // Revertir el cambio en la UI
+    document.getElementById('campana-activa').checked = !nuevoEstado;
+    campana.activa = !nuevoEstado;
+    campanaTemporal.activa = !nuevoEstado;
+  }
 }
 
 // ============================================================

@@ -22,28 +22,8 @@
       }
     }
 
-    /* Desktop: Carrusel secundario 2 por página */
-    @media (min-width: 769px) {
-      .fleet-slide {
-        flex: 0 0 50%;
-        max-width: 50%;
-      }
-    }
-
-    /* Móvil: Carrusel secundario 1 por página */
-    @media (max-width: 768px) {
-      /* Forzar 1 slide por página en móvil */
-      .fleet-slide {
-        flex: 0 0 100% !important;
-        max-width: 100% !important;
-      }
-      
-      .fleet-slide img {
-        aspect-ratio: 5 / 4; /* Móvil: más cuadrado */
-        object-fit: cover;
-        width: 100%;
-      }
-    }
+    /* Desktop y Móvil: estilos en styles.css */
+    /* Los slides ahora son cuadrados 1:1 en ambas vistas */
 
     /* Sin banners mensaje */
     .no-banners-msg {
@@ -280,9 +260,15 @@ async function cargarBannersUsuario() {
     const userId = userData.id;
     console.log('👤 Usuario ID:', userId);
 
+    // Cargar banners
     const response = await fetch(`/api/banners-ofertas?userId=${encodeURIComponent(userId)}`);
     const result = await response.json();
-    console.log('📦 Respuesta del servidor:', result);
+    console.log('📦 Respuesta del servidor (banners):', result);
+
+    // Cargar campañas completas para tracking
+    const campanasResponse = await fetch(`/api/campanas-ofertas?userId=${encodeURIComponent(userId)}`);
+    const campanasResult = await campanasResponse.json();
+    console.log('📦 Respuesta del servidor (campañas):', campanasResult);
 
     if (result.ok && result.banners) {
       const isMobile = getIsMobile();
@@ -301,12 +287,20 @@ async function cargarBannersUsuario() {
         slidesPrincipal = [];
         slidesSecundario = [];
       }
-      campanasData = result.campanas || null; // Guardar datos de campañas
+      
+      // Guardar estructura de compatibilidad para clicks
+      campanasData = result.campanas || null;
+      
+      // Guardar campañas completas para tracking
+      window.campanasCompletas = campanasResult.ok ? campanasResult.campanas : [];
 
       console.log('🖼️ Banners principal:', bannersPrincipal.length, bannersPrincipal);
       console.log('🖼️ Banners secundario:', bannersSecundario.length, bannersSecundario);
       if (campanasData) {
-        console.log('🎯 Campañas cargadas:', campanasData);
+        console.log('🎯 Campañas cargadas (compatibilidad):', campanasData);
+      }
+      if (window.campanasCompletas) {
+        console.log('🎯 Campañas completas cargadas:', window.campanasCompletas.length);
       }
 
       // Fallback a desktop si no hay móvil
@@ -343,10 +337,10 @@ async function cargarBannersUsuario() {
 // Registrar tracking de vistas de banner
 async function registrarVistaBanners() {
   console.log('[registrarVistaBanners] Iniciando...');
-  console.log('[registrarVistaBanners] campanasData:', campanasData);
+  console.log('[registrarVistaBanners] campanasCompletas:', window.campanasCompletas);
   
-  if (!campanasData) {
-    console.warn('[registrarVistaBanners] No hay campanasData');
+  if (!window.campanasCompletas || !Array.isArray(window.campanasCompletas)) {
+    console.warn('[registrarVistaBanners] No hay campañas completas cargadas');
     return;
   }
   
@@ -366,58 +360,41 @@ async function registrarVistaBanners() {
       console.log('[registrarVistaBanners] Inicializando CampanasTracking...');
       CampanasTracking.init(userData.id);
       
-      // Registrar campañas activas en el sistema de tracking
-      const campanasActivas = [];
-      
-      // Buscar en principal
-      console.log('[registrarVistaBanners] Principal:', campanasData.principal);
-      if (campanasData.principal && campanasData.principal.activa) {
-        const campanaId = campanasData.principal.nombre || campanasData.principal.id;
-        console.log('[registrarVistaBanners] Agregando campaña principal:', campanaId);
-        campanasActivas.push({
-          nombre: campanaId,
-          activa: true,
-          principal: campanasData.principal.principal,
-          secundario: campanasData.principal.secundario
-        });
-      }
-      
-      // Buscar en secundario
-      console.log('[registrarVistaBanners] Secundario:', campanasData.secundario);
-      if (campanasData.secundario && campanasData.secundario.activa) {
-        const campanaId = campanasData.secundario.nombre || campanasData.secundario.id;
-        console.log('[registrarVistaBanners] Agregando campaña secundario:', campanaId);
-        campanasActivas.push({
-          nombre: campanaId,
-          activa: true,
-          principal: campanasData.secundario.principal,
-          secundario: campanasData.secundario.secundario
-        });
-      }
-      
-      console.log('[registrarVistaBanners] Campañas activas a registrar:', campanasActivas);
-      CampanasTracking.registrarCampanasActivas(campanasActivas);
+      // Registrar TODAS las campañas activas del usuario
+      console.log('[registrarVistaBanners] Registrando', window.campanasCompletas.length, 'campañas activas');
+      CampanasTracking.registrarCampanasActivas(window.campanasCompletas);
     } else {
       console.log('[registrarVistaBanners] CampanasTracking ya inicializado');
     }
     
-    // Registrar vista del banner principal si hay campaña activa
-    if (campanasData.principal && campanasData.principal.activa) {
-      const campanaId = campanasData.principal.nombre || campanasData.principal.id;
-      console.log('[registrarVistaBanners] Registrando vista banner principal:', campanaId);
-      if (typeof CampanasTracking !== 'undefined') {
+    // Registrar vista del banner para cada campaña activa que tiene banners visibles
+    window.campanasCompletas.forEach(campana => {
+      if (!campana || !campana.activaVigente) return;
+      
+      const campanaId = campana.nombre || campana.id;
+      
+      // Verificar si tiene slides en principal
+      const tienePrincipal = campana.principal && 
+                            Array.isArray(campana.principal.slides) && 
+                            campana.principal.slides.length > 0;
+      
+      // Verificar si tiene slides en secundario
+      const tieneSecundario = campana.secundario && 
+                             Array.isArray(campana.secundario.slides) && 
+                             campana.secundario.slides.length > 0;
+      
+      // Registrar vista de banner principal
+      if (tienePrincipal && typeof CampanasTracking !== 'undefined') {
+        console.log('[registrarVistaBanners] Registrando vista banner principal:', campanaId);
         CampanasTracking.registrarVistaBanner(campanaId, { tipoCarrusel: 'principal' });
       }
-    }
-    
-    // Registrar vista del banner secundario si hay campaña activa
-    if (campanasData.secundario && campanasData.secundario.activa) {
-      const campanaId = campanasData.secundario.nombre || campanasData.secundario.id;
-      console.log('[registrarVistaBanners] Registrando vista banner secundario:', campanaId);
-      if (typeof CampanasTracking !== 'undefined') {
+      
+      // Registrar vista de banner secundario
+      if (tieneSecundario && typeof CampanasTracking !== 'undefined') {
+        console.log('[registrarVistaBanners] Registrando vista banner secundario:', campanaId);
         CampanasTracking.registrarVistaBanner(campanaId, { tipoCarrusel: 'secundario' });
       }
-    }
+    });
   } catch (error) {
     console.error('Error registrando vista de banners:', error);
   }

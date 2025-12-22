@@ -23,6 +23,12 @@ app.use('/logosvehiculos', express.static(path.join(__dirname, 'logosvehiculos')
 app.use('/marcasproductos', express.static(path.join(__dirname, 'marcasproductos')));
 app.use(express.static(path.join(__dirname)));
 
+// Favicon por defecto para todas las páginas
+app.get(['/favicon.ico', '/favicon.svg'], (req, res) => {
+    const filePath = path.join(__dirname, 'img', 'Logo SC.svg');
+    res.sendFile(filePath);
+});
+
 // ============================================================
 function normalizarSkusCampanas(skus) {
     if (!Array.isArray(skus)) return [];
@@ -597,6 +603,48 @@ app.delete("/api/eliminar-usuario", (req, res) => {
         const productos = readJSON(PRODUCTOS_DB);
         const productosFiltrados = productos.filter(p => p.userId !== userId);
         writeJSON(PRODUCTOS_DB, productosFiltrados);
+
+        // 4. Eliminar campañas y banners del usuario y borrar archivos físicos
+        try {
+            const bannersData = readJSON(BANNERS_DB) || {};
+            const campanasUsuario = bannersData[userId]?.campanas || [];
+            // Borrar archivos
+            campanasUsuario.forEach(campana => {
+                ['principal','secundario'].forEach(tipo => {
+                    (campana[tipo]?.slides || []).forEach(slide => {
+                        ['bannerDesktop','bannerMobile'].forEach(btn => {
+                            const url = slide[btn];
+                            if (typeof url === 'string' && url.startsWith('/uploads/banners/')) {
+                                const filePath = path.join(__dirname, url);
+                                try { if (fs.existsSync(filePath)) fs.unlinkSync(filePath); } catch {}
+                            }
+                        });
+                    });
+                });
+            });
+            delete bannersData[userId];
+            writeJSON(BANNERS_DB, bannersData);
+        } catch (e) {
+            console.warn('Error al borrar campañas/banners del usuario:', e.message);
+        }
+
+        // 5. Eliminar eventos de tracking del usuario
+        try {
+            const tracking = readJSON(CAMPANAS_TRACKING_DB) || { eventos: [] };
+            tracking.eventos = (tracking.eventos || []).filter(e => String(e.userId) !== String(userId));
+            writeJSON(CAMPANAS_TRACKING_DB, tracking);
+        } catch (e) {
+            console.warn('Error al borrar tracking del usuario:', e.message);
+        }
+
+        // 6. Eliminar notificaciones del usuario
+        try {
+            const notifs = readJSON(NOTIFICACIONES_DB) || [];
+            const filtradas = notifs.filter(n => String(n.userId) !== String(userId));
+            writeJSON(NOTIFICACIONES_DB, filtradas);
+        } catch (e) {
+            console.warn('Error al borrar notificaciones del usuario:', e.message);
+        }
 
         res.json({ ok: true, msg: "Usuario y todos sus datos eliminados correctamente" });
     } catch (error) {
@@ -3576,69 +3624,61 @@ app.post("/api/campanas-ofertas", uploadBanners.any(), async (req, res) => {
         try {
             let notificaciones = readJSON(NOTIFICACIONES_DB);
             
-            // Determinar si hay campañas activas y extraer SKUs
-            const campanasActivas = campanasConUrls.filter(c => estaCampanaEnVigencia(c));
-            const campanasInactivas = campanasConUrls.filter(c => !estaCampanaEnVigencia(c));
-            const skusActivos = new Set();
-            const skusInactivos = new Set();
+            // IMPORTANTE: Solo crear notificaciones para campañas NUEVAS
+            // Filtrar solo las campañas nuevas que están activas
+            const campanasNuevasActivas = campanasNuevas.filter(c => estaCampanaEnVigencia(c));
             
-            campanasActivas.forEach(c => {
+            console.log(`📧 Creando notificaciones solo para ${campanasNuevasActivas.length} campaña(s) NUEVA(S) activa(s)`);
+            
+            // Crear una notificación SEPARADA por cada campaña NUEVA activa
+            campanasNuevasActivas.forEach((campana, index) => {
+                const skusCampana = new Set();
+                
+                // Extraer SKUs de esta campaña específica
                 ['principal', 'secundario'].forEach(tipo => {
-                    (c[tipo]?.slides || []).forEach(slide => {
+                    (campana[tipo]?.slides || []).forEach(slide => {
                         (slide.skus || []).forEach(skuData => {
                             const sku = typeof skuData === 'object' ? skuData.sku : skuData;
-                            if (sku) skusActivos.add(sku);
+                            if (sku) skusCampana.add(sku);
                         });
                     });
                 });
+                
+                if (skusCampana.size > 0) {
+                    const skusList = Array.from(skusCampana).slice(0, 5).join(', ');
+                    const masSkus = skusCampana.size > 5 ? ` y ${skusCampana.size - 5} más` : '';
+                    const campanaId = campana.id || campana.nombre;
+                    const campanaNombre = campana.nombre || campana.id;
+                    
+                    // Pequeño delay para evitar IDs duplicados si hay múltiples campañas
+                    const timestamp = Date.now() + index;
+                    
+                    const notif = {
+                        id: `notif_${timestamp}_${Math.random().toString(36).substr(2, 9)}`,
+                        userId: userId,
+                        tipo: 'campanas_activadas',
+                        titulo: `¡Nueva oferta: ${campanaNombre}!`,
+                        mensaje: `Los productos ${skusList}${masSkus} están en oferta!`,
+                        datos: { 
+                            usuarioNombre: nombreUsuario, 
+                            productos: productosDetalle.filter(p => skusCampana.has(p.sku)),
+                            skus: Array.from(skusCampana),
+                            campanaId: campanaId,
+                            campanaNombre: campanaNombre,
+                            // Mantener arrays para compatibilidad con código existente
+                            campanasIds: [campanaId],
+                            campanasNombres: [campanaNombre]
+                        },
+                        leida: false,
+                        fecha: new Date().toISOString()
+                    };
+                    notificaciones.push(notif);
+                    console.log(`✓ Notificación creada para campaña NUEVA "${campanaNombre}" con ${skusCampana.size} SKUs`);
+                }
             });
-            
-            campanasInactivas.forEach(c => {
-                ['principal', 'secundario'].forEach(tipo => {
-                    (c[tipo]?.slides || []).forEach(slide => {
-                        (slide.skus || []).forEach(skuData => {
-                            const sku = typeof skuData === 'object' ? skuData.sku : skuData;
-                            if (sku) skusInactivos.add(sku);
-                        });
-                    });
-                });
-            });
-            
-            // Crear notificaciones según estado
-            if (skusActivos.size > 0) {
-                const skusList = Array.from(skusActivos).slice(0, 5).join(', ');
-                const masSkus = skusActivos.size > 5 ? ` y ${skusActivos.size - 5} más` : '';
-                const notif = {
-                    id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                    userId: userId,
-                    tipo: 'campanas_activadas',
-                    titulo: '¡Nuevas ofertas disponibles!',
-                    mensaje: `Los productos ${skusList}${masSkus} están en oferta!`,
-                    datos: { usuarioNombre: nombreUsuario, productos: productosDetalle.slice(0, 10), skus: Array.from(skusActivos) },
-                    leida: false,
-                    fecha: new Date().toISOString()
-                };
-                notificaciones.push(notif);
-            }
-            
-            if (skusInactivos.size > 0 && noEnviarCorreo) {
-                const skusList = Array.from(skusInactivos).slice(0, 5).join(', ');
-                const masSkus = skusInactivos.size > 5 ? ` y ${skusInactivos.size - 5} más` : '';
-                const notif = {
-                    id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                    userId: userId,
-                    tipo: 'campanas_desactivadas',
-                    titulo: 'Ofertas finalizadas',
-                    mensaje: `Los productos ${skusList}${masSkus} ya no están en oferta.`,
-                    datos: { usuarioNombre: nombreUsuario, skus: Array.from(skusInactivos) },
-                    leida: false,
-                    fecha: new Date().toISOString()
-                };
-                notificaciones.push(notif);
-            }
             
             writeJSON(NOTIFICACIONES_DB, notificaciones);
-            console.log('✓ Notificación(es) guardada(s) en BD');
+            console.log(`✓ ${campanasNuevasActivas.length} notificación(es) creada(s) para campañas NUEVAS`);
         } catch (notifError) {
             console.error('Error guardando notificación:', notifError);
         }
@@ -3815,7 +3855,7 @@ app.get("/api/campanas-analytics", (req, res) => {
         
         let users = [];
         try {
-            users = readJSON(USUARIOS_DB) || [];
+            users = readJSON(USERS_DB) || [];
             console.log('[API /campanas-analytics] Usuarios cargados:', users.length);
             console.log('[API /campanas-analytics] IDs de usuarios:', users.map(u => u.id).slice(0, 5));
         } catch (e) {
@@ -3861,11 +3901,12 @@ app.get("/api/campanas-analytics", (req, res) => {
         // Filtrar eventos de esta campaña (y opcionalmente por usuario)
         const eventos = tracking.eventos.filter(e => {
             if (!campanaIdsValidos.has(normalizarId(e.campanaId))) return false;
+            // Solo filtrar por userId si se proporcionó uno (individual), sino retornar todos (global)
             if (userId && String(e.userId) !== String(userId)) return false;
             return true;
         });
         
-        console.log('[API /campanas-analytics] Eventos filtrados para campaña', campanaId, 'y usuario', userId, ':', eventos.length);
+        console.log('[API /campanas-analytics] Eventos filtrados para campaña', campanaId, userId ? `y usuario ${userId}` : '(GLOBAL)', ':', eventos.length);
 
         if (eventos.length === 0) {
             console.log('[API /campanas-analytics] Sin eventos, retornando datos vacíos');
@@ -4034,6 +4075,177 @@ app.get("/api/campanas-analytics", (req, res) => {
     } catch (e) {
         console.error("Error obteniendo analytics:", e);
         res.status(500).json({ ok: false, msg: "Error al obtener analytics", error: e.message });
+    }
+});
+
+// GET: Métricas globales de la plataforma (y opcional por cliente)
+app.get("/api/plataforma-analytics", (req, res) => {
+    try {
+        const { userId, userIds, start, end, onlyExistingUsers, campanaIds } = req.query; // filtros
+
+        let tracking = { eventos: [] };
+        try {
+            tracking = readJSON(CAMPANAS_TRACKING_DB) || { eventos: [] };
+        } catch (e) {
+            tracking = { eventos: [] };
+        }
+
+        let users = [];
+        try {
+            users = readJSON(USERS_DB) || [];
+        } catch (e) {
+            users = [];
+        }
+
+        // Filtros usuarios
+        let filtroUsuariosSet = null;
+        if (userIds) {
+            const list = String(userIds).split(',').map(s => s.trim()).filter(Boolean);
+            filtroUsuariosSet = new Set(list);
+        } else if (userId) {
+            filtroUsuariosSet = new Set([String(userId)]);
+        }
+
+        // Determinar usuarios existentes si se requiere excluir borrados
+        const existentesSet = new Set((users || []).map(u => String(u.id)));
+        const excluirBorrados = String(onlyExistingUsers || 'true') === 'true';
+
+        // Filtro fechas
+        const desde = start ? new Date(start) : null;
+        const hasta = end ? new Date(end) : null;
+
+        const eventos = tracking.eventos.filter(e => {
+            if (filtroUsuariosSet && !filtroUsuariosSet.has(String(e.userId))) return false;
+            if (excluirBorrados && !existentesSet.has(String(e.userId))) return false;
+            if (desde && new Date(e.fecha) < desde) return false;
+            if (hasta && new Date(e.fecha) > hasta) return false;
+            if (campanaIds) {
+                const setCamp = new Set(String(campanaIds).split(',').map(s => s.trim()).filter(Boolean));
+                if (!setCamp.has(String(e.campanaId))) return false;
+            }
+            return true;
+        });
+
+        const vistas = eventos.filter(e => e.tipo === 'vista_banner').length;
+        const clicks = eventos.filter(e => e.tipo === 'click_banner').length;
+        const productosVistos = eventos.filter(e => e.tipo === 'vista_producto').length;
+        const ordenes = eventos.filter(e => e.tipo === 'orden').length;
+        const montoOrdenes = eventos
+            .filter(e => e.tipo === 'orden' && e.datos && e.datos.monto)
+            .reduce((sum, e) => sum + (parseFloat(e.datos.monto) || 0), 0);
+
+        const ctr = vistas > 0 ? (clicks / vistas) * 100 : 0;
+
+        // Top SKUs por vistas
+        const vistosMap = {};
+        eventos.filter(e => e.tipo === 'vista_producto' && e.datos && e.datos.sku)
+            .forEach(e => {
+                const sku = e.datos.sku;
+                vistosMap[sku] = (vistosMap[sku] || 0) + 1;
+            });
+        const topVistos = Object.entries(vistosMap)
+            .sort((a,b) => b[1]-a[1])
+            .slice(0, 10)
+            .map(([sku, count]) => ({ sku, count }));
+
+        // Top SKUs por órdenes
+        const ordenesMap = {};
+        eventos.filter(e => e.tipo === 'orden' && e.datos && e.datos.sku)
+            .forEach(e => {
+                const sku = e.datos.sku;
+                ordenesMap[sku] = (ordenesMap[sku] || 0) + 1;
+            });
+        const topOrdenes = Object.entries(ordenesMap)
+            .sort((a,b) => b[1]-a[1])
+            .slice(0, 10)
+            .map(([sku, count]) => ({ sku, count }));
+
+        // Usuarios activos (detalle)
+        const perUser = {};
+        eventos.forEach(e => {
+            const uid = String(e.userId);
+            perUser[uid] = perUser[uid] || { vistas:0, clicks:0, ordenes:0 };
+            if (e.tipo === 'vista_banner') perUser[uid].vistas++;
+            if (e.tipo === 'click_banner') perUser[uid].clicks++;
+            if (e.tipo === 'orden') perUser[uid].ordenes++;
+        });
+        const usuariosActivosDetalles = Object.entries(perUser).map(([uid, m]) => {
+            const nombre = users.find(u => String(u.id) === uid)?.nombre || uid;
+            const ctrUser = m.vistas > 0 ? (m.clicks / m.vistas) * 100 : 0;
+            return { userId: uid, nombre, vistas: m.vistas, clicks: m.clicks, ctr: ctrUser, ordenes: m.ordenes };
+        }).sort((a,b) => b.ordenes - a.ordenes || b.clicks - a.clicks);
+
+        const clienteFrecuenteNombre = usuariosActivosDetalles[0]?.nombre || null;
+
+        // Usuarios activos (con eventos)
+        const usuariosActivos = usuariosActivosDetalles.length;
+
+        // Resumen diario (para gráficas simples)
+        const resumenDiarioMap = {};
+        eventos.forEach(e => {
+            const fecha = (e.fecha || '').slice(0,10);
+            if (!fecha) return;
+            const rd = resumenDiarioMap[fecha] = resumenDiarioMap[fecha] || { fecha, vistas:0, clicks:0, ordenes:0, monto:0 };
+            if (e.tipo === 'vista_banner') rd.vistas++;
+            if (e.tipo === 'click_banner') rd.clicks++;
+            if (e.tipo === 'orden') {
+                rd.ordenes++;
+                if (e.datos && e.datos.monto) rd.monto += (parseFloat(e.datos.monto) || 0);
+            }
+        });
+        const resumenDiario = Object.values(resumenDiarioMap).sort((a,b) => a.fecha.localeCompare(b.fecha));
+
+        res.json({
+            ok: true,
+            analytics: {
+                ganancias: montoOrdenes,
+                ctr,
+                vistas,
+                clicks,
+                productosVistos,
+                ordenes,
+                topVistos,
+                topOrdenes,
+                clienteFrecuente: clienteFrecuenteNombre,
+                usuariosActivos,
+                usuariosActivosDetalles,
+                resumenDiario
+            }
+        });
+    } catch (e) {
+        res.status(500).json({ ok: false, msg: 'Error obteniendo métricas globales', error: e.message });
+    }
+});
+
+// GET: Listar usuarios (para UI admin)
+app.get('/api/usuarios', (req, res) => {
+    try {
+        const users = readJSON(USERS_DB) || [];
+        res.json({ ok: true, usuarios: users });
+    } catch (e) {
+        res.status(500).json({ ok: false, msg: 'Error al cargar usuarios', error: e.message });
+    }
+});
+
+// GET: Listar campañas globales (id/nombre únicos)
+app.get('/api/plataforma-campanas', (req, res) => {
+    try {
+        const data = readJSON(BANNERS_DB) || {};
+        const mapa = new Map();
+        Object.values(data).forEach(d => {
+            (d?.campanas || []).forEach(c => {
+                const id = String(c.id || c.nombre || '').trim();
+                if (!id) return;
+                const nombre = String(c.nombre || c.id || id).trim();
+                const reg = mapa.get(id) || { id, nombre, usuarios: new Set() };
+                reg.usuarios.add(d.userId || 'unknown');
+                mapa.set(id, reg);
+            });
+        });
+        const campanas = Array.from(mapa.values()).map(r => ({ id: r.id, nombre: r.nombre, usuariosCount: r.usuarios.size }));
+        res.json({ ok: true, campanas });
+    } catch (e) {
+        res.status(500).json({ ok: false, msg: 'Error al cargar campañas', error: e.message });
     }
 });
 

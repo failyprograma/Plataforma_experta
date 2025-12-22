@@ -21,11 +21,12 @@
         <h1>Administrador Star</h1>
       </div>
       <ul class="nav-menu-horizontal">
-        <li><a href="#flotas" class="active">Flotas del cliente</a></li>
-        <li><a href="#repuestos">Lista de repuestos</a></li>
-        <li><a href="#ofertas">Ofertas exclusivas</a></li>
-        <li><a href="#cuenta">Estado de cuenta</a></li>
-        <li><a href="#compras">Mis compras</a></li>
+        <li><a href="#flotas">Flotas del cliente</a></li>
+        <li><a href="#repuestos">Lista de Repuestos del Cliente</a></li>
+        <li><a href="#ofertas">Campañas para el cliente</a></li>
+        <li><a href="#cuenta">Facturas del cliente</a></li>
+        <li><a href="#compras">Historial de compras del cliente</a></li>
+        <li><a href="#metricas-globales">Métrica global</a></li>
       </ul>
      <div class="nav-user">
         <button class="btn-text">
@@ -145,6 +146,8 @@
         </button>
       </div>
     </section>
+
+    
 
   <section id="flotas" class="admin-section">
   <div class="section-header-row">
@@ -306,7 +309,7 @@
     <section id="ofertas" class="admin-section">
       <div class="section-header-row" style="margin-bottom: 24px;">
         <div>
-          <h2 class="section-title">Campañas de Ofertas Exclusivas</h2>
+          <h2 class="section-title">Campañas para el cliente</h2>
           <p style="color: #666; font-size: 14px; margin-top: 8px;">Crea campañas promocionales con banners personalizados y productos específicos. Cada campaña se muestra en el carrusel de ofertas del cliente.</p>
         </div>
         <button class="btn-primary" onclick="abrirModalNuevaCampana()" style="white-space: nowrap;">
@@ -596,6 +599,113 @@
             </tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- Métricas Globales de la Plataforma Experta -->
+    <section id="metricas-globales" class="admin-section">
+      <h2 class="section-title">Métricas globales de la Plataforma Experta</h2>
+      <div class="sc-card no-hover" style="padding: 16px;">
+        <div style="display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; margin-bottom: 12px;">
+          <div>
+            <p style="margin: 0; font-size: 13px; color: #555;">Vista consolidada de actividad comercial, rendimiento de campañas y comportamiento de clientes. Cambia entre vista global y por usuario(s), y filtra por período.</p>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <div class="sc-multiselect-wrapper" id="mg-usuarios-wrapper">
+              <div class="sc-multiselect-trigger" id="mg-usuarios-trigger" onclick="toggleDropdownMGUsuarios()">
+                <span class="sc-multiselect-placeholder" id="mg-usuarios-placeholder">Global (todos los clientes)</span>
+                <span class="sc-multiselect-arrow">▼</span>
+              </div>
+              <div class="sc-multiselect-dropdown" id="mg-usuarios-dropdown" style="display: none; max-height: 280px; overflow-y: auto;"></div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <label style="font-size: 12px; color:#333;">Desde</label>
+              <input type="date" id="mg-desde" class="sc-input" style="min-width: 140px;">
+              <label style="font-size: 12px; color:#333;">Hasta</label>
+              <input type="date" id="mg-hasta" class="sc-input" style="min-width: 140px;">
+              <div style="display:flex; gap:6px; margin-left:8px;">
+                <button class="btn-secondary" style="padding: 6px 10px;" onclick="setRangoRapido(7)">7 días</button>
+                <button class="btn-secondary" style="padding: 6px 10px;" onclick="setRangoRapido(30)">30 días</button>
+                <button class="btn-secondary" style="padding: 6px 10px;" onclick="setRangoRapido(90)">90 días</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="metricas-globales-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+          <div class="stat-item">
+            <span class="stat-label">Ganancias totales</span>
+            <span class="stat-value" id="mg-ganancias">$0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Órdenes</span>
+            <span class="stat-value" id="mg-ordenes">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Usuarios activos</span>
+            <span class="stat-value" id="mg-usuarios">0</span>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px;">
+          <div class="sc-card" style="padding: 12px;">
+            <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 8px;">
+              <span class="stat-label">Top SKUs más vistos</span>
+              <button class="btn-text" onclick="exportarTop('vistos')">Exportar</button>
+            </div>
+            <div id="mg-top-vistos" style="font-size: 13px; color:#333;"></div>
+          </div>
+          <div class="sc-card" style="padding: 12px;">
+            <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 8px;">
+              <span class="stat-label">Top SKUs con más órdenes</span>
+              <button class="btn-text" onclick="exportarTop('ordenes')">Exportar</button>
+            </div>
+            <div id="mg-top-ordenes" style="font-size: 13px; color:#333;"></div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 16px;">
+          <div class="sc-card" style="padding: 12px;">
+            <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 8px;">
+              <span class="stat-label">Tendencia de ingresos (por día)</span>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <div class="sc-multiselect-wrapper" id="mg-campanas-wrapper">
+                  <div class="sc-multiselect-trigger" id="mg-campanas-trigger" onclick="toggleDropdownMGCampanas()">
+                    <span class="sc-multiselect-placeholder" id="mg-campanas-placeholder">Todas las campañas</span>
+                    <span class="sc-multiselect-arrow">▼</span>
+                  </div>
+                  <div class="sc-multiselect-dropdown" id="mg-campanas-dropdown" style="display: none; max-height: 280px; overflow-y: auto;"></div>
+                </div>
+              </div>
+            </div>
+            <div id="mg-revenue-trend" style="display:flex; align-items:flex-end; gap:6px; height: 120px; border-top:1px solid #eee; padding-top:8px;"></div>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px;">
+          <div class="sc-card" style="padding: 12px;">
+            <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 8px;">
+              <span class="stat-label">Usuarios activos (detalle)</span>
+              <button class="btn-text" onclick="exportarUsuariosActivos()">Exportar</button>
+            </div>
+            <div class="table-responsive">
+              <table class="sc-table">
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Vistas</th>
+                    <th>Clicks</th>
+                    <th>CTR</th>
+                    <th>Órdenes</th>
+                  </tr>
+                </thead>
+                <tbody id="mg-usuarios-activos"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sin botones de actualizar: la tarjeta se refresca en tiempo real -->
       </div>
     </section>
 
@@ -1970,6 +2080,39 @@
   <script src="../script.js"></script>
   <script src="../productos_guardados.js"></script>
   <script src="../campanas-code-v2.js"></script>
+  <script>
+    // Scroll spy para menú superior: actualiza .active según sección visible o hash
+    document.addEventListener('DOMContentLoaded', () => {
+      const nav = document.querySelector('.nav-menu-horizontal');
+      if (!nav) return;
+      const links = Array.from(nav.querySelectorAll('a[href^="#"]'));
+      const sections = links
+        .map(a => document.querySelector(a.getAttribute('href')))
+        .filter(Boolean);
+
+      function setActiveByHash() {
+        const hash = window.location.hash || '#flotas';
+        links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === hash));
+      }
+      setActiveByHash();
+
+      const observer = new IntersectionObserver((entries) => {
+        let best = null;
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            if (!best || e.intersectionRatio > best.intersectionRatio) best = e;
+          }
+        });
+        if (best) {
+          const id = '#' + best.target.id;
+          links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === id));
+        }
+      }, { threshold: [0.5], rootMargin: '-80px 0px -60% 0px' });
+
+      sections.forEach(sec => observer.observe(sec));
+      window.addEventListener('hashchange', setActiveByHash);
+    });
+  </script>
   
 </body>
 </html>

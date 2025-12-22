@@ -2,6 +2,29 @@
 // 1. SIMULADOR DE USUARIO (Para pruebas dinámicas)
 // =========================================================
 
+// Favicon global: asegura que todas las páginas muestren el logo en la pestaña
+try {
+    document.addEventListener('DOMContentLoaded', () => {
+        const existingIcon = document.querySelector('link[rel="icon"]');
+        if (!existingIcon) {
+            const link = document.createElement('link');
+            link.rel = 'icon';
+            link.type = 'image/svg+xml';
+            link.href = '/img/Logo SC.svg'; // ruta absoluta para funcionar en todos los subdirectorios
+            document.head.appendChild(link);
+        }
+        const existingApple = document.querySelector('link[rel="apple-touch-icon"]');
+        if (!existingApple) {
+            const apple = document.createElement('link');
+            apple.rel = 'apple-touch-icon';
+            apple.href = '/img/Logo SC.svg';
+            document.head.appendChild(apple);
+        }
+    });
+} catch (e) {
+    console.warn('No se pudo inicializar favicon global:', e);
+}
+
 // Esta variable guardará el ID del usuario con el que estás trabajando actualmente
 // Por defecto arranca con 'luis', pero puedes cambiarlo en el menú que aparecerá en pantalla.
 // =========================================================
@@ -17477,7 +17500,7 @@ function renderizarSlidesModal() {
   
   const dimensionInfo = tipo === 'principal' 
     ? { desktop: '1200 x 400 px (3:1)', mobile: '400 x 400 px (1:1)' }
-    : { desktop: '580 x 320 px (16:9)', mobile: '350 x 280 px (5:4)' };
+    : { desktop: '640 x 480 px (4:3)', mobile: '400 x 300 px (4:3)' };
   
   container.innerHTML = slides.map((slide, index) => `
     <div class="slide-editor-card" data-slide-index="${index}">

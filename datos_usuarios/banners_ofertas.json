@@ -1,5 +1,14 @@
 {
   "ecousuario": {
+    "campanas": [],
+    "banners": {
+      "principal-desktop": [],
+      "principal-mobile": [],
+      "secundario-desktop": [],
+      "secundario-mobile": []
+    }
+  },
+  "luna": {
     "campanas": [
       {
         "id": "camp_1766334088944",
@@ -79,6 +88,38 @@
           ]
         },
         "activaVigente": true
+      },
+      {
+        "id": "camp_1766365020214",
+        "nombre": "sadasdasd",
+        "activa": true,
+        "targetUsers": [
+          "ecousuario",
+          "luna"
+        ],
+        "vigencia": {
+          "desde": "2025-12-21",
+          "hasta": "2026-01-30"
+        },
+        "principal": {
+          "slides": []
+        },
+        "secundario": {
+          "slides": [
+            {
+              "id": "slide_1766365004249",
+              "bannerDesktop": "/uploads/banners/banner-1766365027724-704190809.JPG",
+              "bannerMobile": null,
+              "skus": [
+                {
+                  "sku": "PAS1605",
+                  "descuento": 22
+                }
+              ]
+            }
+          ]
+        },
+        "activaVigente": true
       }
     ],
     "banners": {
@@ -90,140 +131,9 @@
       ],
       "secundario-desktop": [
         "/uploads/banners/banner-1766360155066-766603799.jpg",
-        "/uploads/banners/banner-1766360211817-690607874.jpeg"
+        "/uploads/banners/banner-1766360211817-690607874.jpeg",
+        "/uploads/banners/banner-1766365027724-704190809.JPG"
       ],
-      "secundario-mobile": []
-    }
-  },
-  "luna": {
-    "campanas": [
-      {
-        "id": "camp_1766334088944",
-        "nombre": "prueba 2",
-        "activa": true,
-        "targetUsers": [
-          "ecousuario",
-          "luna"
-        ],
-        "vigencia": {
-          "desde": "2025-12-21",
-          "hasta": "2026-01-23"
-        },
-        "principal": {
-          "slides": [
-            {
-              "id": "slide_1766334066393",
-              "bannerDesktop": "/uploads/banners/banner-1766334094969-712014110.jpg",
-              "bannerMobile": "/uploads/banners/banner-1766334094982-961554119.png",
-              "skus": [
-                {
-                  "sku": "TAM-327F",
-                  "descuento": 2
-                },
-                {
-                  "sku": "PAT327T",
-                  "descuento": 2
-                }
-              ]
-            }
-          ]
-        },
-        "secundario": {
-          "slides": []
-        },
-        "activaVigente": true
-      },
-      {
-        "id": "camp_1766358626950",
-        "nombre": "123123",
-        "activa": true,
-        "targetUsers": [
-          "ecousuario",
-          "luna"
-        ],
-        "vigencia": {
-          "desde": "2025-12-21",
-          "hasta": "2026-01-30"
-        },
-        "principal": {
-          "slides": [
-            {
-              "id": "slide_1766358612916",
-              "bannerDesktop": "/uploads/banners/banner-1766358629733-174864823.JPG",
-              "bannerMobile": null,
-              "skus": [
-                {
-                  "sku": "KITMIT240AR",
-                  "descuento": 33
-                },
-                {
-                  "sku": "KITMIT240LRV",
-                  "descuento": 12
-                },
-                {
-                  "sku": "IVMIT240N",
-                  "descuento": 15
-                }
-              ]
-            }
-          ]
-        },
-        "secundario": {
-          "slides": []
-        },
-        "activaVigente": true
-      },
-      {
-        "id": "camp_1766358846653",
-        "nombre": "gdfsgfsd",
-        "activa": true,
-        "targetUsers": [
-          "ecousuario",
-          "luna"
-        ],
-        "vigencia": {
-          "desde": "2025-12-21",
-          "hasta": "2026-01-30"
-        },
-        "principal": {
-          "slides": [
-            {
-              "id": "slide_1766358817091",
-              "bannerDesktop": "/uploads/banners/banner-1766358849341-950094845.png",
-              "bannerMobile": null,
-              "skus": [
-                {
-                  "sku": "FR3945HT",
-                  "descuento": 2
-                },
-                {
-                  "sku": "PT1583HT",
-                  "descuento": 2
-                },
-                {
-                  "sku": "KITPEU200VR",
-                  "descuento": 2
-                }
-              ]
-            }
-          ]
-        },
-        "secundario": {
-          "slides": []
-        },
-        "activaVigente": true
-      }
-    ],
-    "banners": {
-      "principal-desktop": [
-        "/uploads/banners/banner-1766334094969-712014110.jpg",
-        "/uploads/banners/banner-1766358629733-174864823.JPG",
-        "/uploads/banners/banner-1766358849341-950094845.png"
-      ],
-      "principal-mobile": [
-        "/uploads/banners/banner-1766334094982-961554119.png"
-      ],
-      "secundario-desktop": [],
       "secundario-mobile": []
     }
   }

@@ -324,45 +324,56 @@
 
   // Función para registrar eventos de campaña relacionados con productos
   async function registrarEventoCampanaProducto(sku, tipo) {
+    console.log('[registrarEventoCampanaProducto] Iniciando para SKU:', sku, 'tipo:', tipo);
+    
     const loggedUser = localStorage.getItem('starclutch_user');
-    if (!loggedUser) return;
+    if (!loggedUser) {
+      console.warn('[registrarEventoCampanaProducto] No hay usuario logueado');
+      return;
+    }
     
     try {
       const userData = JSON.parse(loggedUser);
+      console.log('[registrarEventoCampanaProducto] Usuario:', userData.id);
       
-      // Obtener campañas activas del usuario
-      const response = await fetch(`/api/campanas-ofertas?userId=${encodeURIComponent(userData.id)}`);
-      const result = await response.json();
-      
-      if (!result.ok || !result.campanas) return;
-      
-      // Buscar si este producto está en alguna campaña activa
-      for (const campana of result.campanas) {
-        if (!campana.activa || !campana.skus) continue;
-        
-        const skuNormalizado = normalizarTexto(sku);
-        const skuEnCampana = campana.skus.find(s => normalizarTexto(s) === skuNormalizado);
-        
-        if (skuEnCampana) {
-          // Este producto está en una campaña activa, registrar evento
-          await fetch('/api/campanas-tracking', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              campanaId: campana.id,
-              userId: userData.id,
-              tipo: tipo, // vista_producto o carrito
-              datos: { 
-                sku: sku,
-                nombre: campana.nombre
-              }
-            })
-          });
-          break; // Solo registrar en la primera campaña que lo contenga
+      // Verificar si CampanasTracking está disponible y usar su sistema
+      if (typeof window.CampanasTracking !== 'undefined') {
+        // Inicializar si no está inicializado
+        if (!window.CampanasTracking.userId) {
+          console.log('[registrarEventoCampanaProducto] Inicializando CampanasTracking...');
+          window.CampanasTracking.init(userData.id);
         }
+        
+        // Si no hay campañas registradas, cargarlas
+        if (window.CampanasTracking.campanasActivas.size === 0) {
+          console.log('[registrarEventoCampanaProducto] Cargando campañas activas...');
+          const response = await fetch(`/api/campanas-ofertas?userId=${encodeURIComponent(userData.id)}`);
+          const result = await response.json();
+          
+          if (result.ok && Array.isArray(result.campanas)) {
+            console.log('[registrarEventoCampanaProducto] Registrando', result.campanas.length, 'campañas');
+            window.CampanasTracking.registrarCampanasActivas(result.campanas);
+          }
+        }
+        
+        console.log('[registrarEventoCampanaProducto] Campañas activas:', window.CampanasTracking.campanasActivas.size);
+        
+        // Usar el sistema de tracking integrado según el tipo de evento
+        if (tipo === 'vista_producto') {
+          // Obtener nombre del producto si está disponible
+          const nombreProducto = productoActual?.descripcion || productoActual?.nombre || 'Producto';
+          console.log('[registrarEventoCampanaProducto] Registrando vista de producto:', sku, nombreProducto);
+          window.CampanasTracking.registrarVistaProducto(sku, nombreProducto);
+        } else if (tipo === 'carrito') {
+          const nombreProducto = productoActual?.descripcion || productoActual?.nombre || 'Producto';
+          console.log('[registrarEventoCampanaProducto] Registrando agregado al carrito:', sku, nombreProducto);
+          window.CampanasTracking.registrarAgregarCarrito(sku, nombreProducto, 1);
+        }
+      } else {
+        console.warn('[registrarEventoCampanaProducto] CampanasTracking no está disponible');
       }
     } catch (error) {
-      console.error('Error registrando evento de campaña:', error);
+      console.error('[registrarEventoCampanaProducto] Error:', error);
     }
   }
 

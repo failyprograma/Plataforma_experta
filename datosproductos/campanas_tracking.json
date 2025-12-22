@@ -1675,6 +1675,846 @@
         "notificacionId": "notif_1766360211827_6shatkkhl"
       },
       "fecha": "2025-12-21T23:38:11.474Z"
+    },
+    {
+      "id": "evt_1766364132201_o4onq1njq",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-22T00:42:12.201Z"
+    },
+    {
+      "id": "evt_1766364132212_0zu8mwwsi",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T00:42:12.212Z"
+    },
+    {
+      "id": "evt_1766364132216_pv8etyfy9",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T00:42:12.216Z"
+    },
+    {
+      "id": "evt_1766364140139_ydp2mo2kf",
+      "campanaId": "campaña",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766360211827_6shatkkhl"
+      },
+      "fecha": "2025-12-22T00:42:20.139Z"
+    },
+    {
+      "id": "evt_1766364143211_qvi9twift",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-22T00:42:23.211Z"
+    },
+    {
+      "id": "evt_1766364143219_mbma1faej",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T00:42:23.219Z"
+    },
+    {
+      "id": "evt_1766364143231_5z6q5itrv",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T00:42:23.231Z"
+    },
+    {
+      "id": "evt_1766364204268_h1425xdcv",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "carrito",
+      "datos": {
+        "sku": "KITTOY400DR",
+        "nombre": "Kit de embrague",
+        "cantidad": 1
+      },
+      "fecha": "2025-12-22T00:43:24.268Z"
+    },
+    {
+      "id": "evt_1766364223870_x4tmxdvl5",
+      "campanaId": "camp_1766360209475",
+      "userId": "ecousuario",
+      "tipo": "cotizacion",
+      "datos": {
+        "skus": [
+          "KITTOY400DR"
+        ],
+        "cantidad": 1,
+        "monto": 117589.85
+      },
+      "fecha": "2025-12-22T00:43:43.870Z"
+    },
+    {
+      "id": "evt_1766364278113_iv5nrcc0o",
+      "campanaId": "camp_1766360209475",
+      "userId": "ecousuario",
+      "tipo": "orden",
+      "datos": {
+        "skus": [
+          "KITTOY400DR"
+        ],
+        "cantidad": 1,
+        "monto": 117589.85
+      },
+      "fecha": "2025-12-22T00:44:38.113Z"
+    },
+    {
+      "id": "evt_1766364344196_m3vxcwf0o",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_producto",
+      "datos": {
+        "sku": "KITTOY400DR",
+        "nombre": "Producto"
+      },
+      "fecha": "2025-12-22T00:45:44.196Z"
+    },
+    {
+      "id": "evt_1766364564128_342xucvjc",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_producto",
+      "datos": {
+        "sku": "KITTOY400DR",
+        "nombre": "Producto"
+      },
+      "fecha": "2025-12-22T00:49:24.129Z"
+    },
+    {
+      "id": "evt_1766364606796_fbhcy0ukp",
+      "campanaId": "campaña",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766364589434_njiowv159"
+      },
+      "fecha": "2025-12-22T00:50:06.796Z"
+    },
+    {
+      "id": "evt_1766364609183_daatgnjtx",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-22T00:50:09.183Z"
+    },
+    {
+      "id": "evt_1766364609194_quqp81lc9",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T00:50:09.194Z"
+    },
+    {
+      "id": "evt_1766364609199_l9tqx938b",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T00:50:09.199Z"
+    },
+    {
+      "id": "evt_1766364830333_erh8lr32d",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-22T00:53:50.333Z"
+    },
+    {
+      "id": "evt_1766364830344_yf6wsnivm",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T00:53:50.344Z"
+    },
+    {
+      "id": "evt_1766364830351_omt1b6376",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T00:53:50.351Z"
+    },
+    {
+      "id": "evt_1766365041575_6hnv82vke",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-22T00:57:21.575Z"
+    },
+    {
+      "id": "evt_1766365041580_52qpzjrxg",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T00:57:21.580Z"
+    },
+    {
+      "id": "evt_1766365041584_87v9474hn",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T00:57:21.584Z"
+    },
+    {
+      "id": "evt_1766365041588_2ngrjz357",
+      "campanaId": "sadasdasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T00:57:21.588Z"
+    },
+    {
+      "id": "evt_1766365084692_hmw8b7p2s",
+      "campanaId": "camp_1766360209475",
+      "userId": "ecousuario",
+      "tipo": "click_notificacion",
+      "datos": {
+        "origenClick": "notificacion",
+        "notificacionId": "notif_1766365027736_rtnsxdrcb",
+        "campanaNombre": "asdasdaasd"
+      },
+      "fecha": "2025-12-22T00:58:04.692Z"
+    },
+    {
+      "id": "evt_1766365086991_tdzku9xvk",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-22T00:58:06.991Z"
+    },
+    {
+      "id": "evt_1766365086997_zhlxkxrq7",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T00:58:06.997Z"
+    },
+    {
+      "id": "evt_1766365087001_4f5rhm5u9",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T00:58:07.001Z"
+    },
+    {
+      "id": "evt_1766365087005_qo889mcqy",
+      "campanaId": "sadasdasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T00:58:07.005Z"
+    },
+    {
+      "id": "evt_1766365397756_dw1d8ixmp",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-22T01:03:17.757Z"
+    },
+    {
+      "id": "evt_1766365397770_7qvk8tg0e",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:03:17.770Z"
+    },
+    {
+      "id": "evt_1766365397778_ig8ii1lxp",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:03:17.778Z"
+    },
+    {
+      "id": "evt_1766365397784_dsvsobi0c",
+      "campanaId": "sadasdasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:03:17.784Z"
+    },
+    {
+      "id": "evt_1766365418856_vruc6rs0z",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-22T01:03:38.857Z"
+    },
+    {
+      "id": "evt_1766365418865_igg1u8rgy",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:03:38.865Z"
+    },
+    {
+      "id": "evt_1766365418869_fpekh86yg",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:03:38.869Z"
+    },
+    {
+      "id": "evt_1766365418874_24j51nzzr",
+      "campanaId": "sadasdasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:03:38.874Z"
+    },
+    {
+      "id": "evt_1766365537656_my9pj8wdp",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-22T01:05:37.656Z"
+    },
+    {
+      "id": "evt_1766365537660_cguzi4iuo",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:05:37.660Z"
+    },
+    {
+      "id": "evt_1766365537665_0hg0hsbcp",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:05:37.665Z"
+    },
+    {
+      "id": "evt_1766365537669_nqmzft65z",
+      "campanaId": "sadasdasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:05:37.669Z"
+    },
+    {
+      "id": "evt_1766365602729_n7h5g8lke",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-22T01:06:42.729Z"
+    },
+    {
+      "id": "evt_1766365602732_2lpfsqebb",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:06:42.732Z"
+    },
+    {
+      "id": "evt_1766365602735_qg2lvoz6t",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:06:42.735Z"
+    },
+    {
+      "id": "evt_1766365602738_f1pcs1h4v",
+      "campanaId": "sadasdasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:06:42.738Z"
+    },
+    {
+      "id": "evt_1766365614730_0ubvwdfoz",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-22T01:06:54.730Z"
+    },
+    {
+      "id": "evt_1766365614748_xjfv1tm4y",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:06:54.748Z"
+    },
+    {
+      "id": "evt_1766365614779_95vpq9cya",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:06:54.779Z"
+    },
+    {
+      "id": "evt_1766365614799_am9a4vfg1",
+      "campanaId": "sadasdasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:06:54.799Z"
+    },
+    {
+      "id": "evt_1766365623627_5ly1fap64",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-22T01:07:03.627Z"
+    },
+    {
+      "id": "evt_1766365623631_gf14cgy6w",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:07:03.631Z"
+    },
+    {
+      "id": "evt_1766365623636_zv6wwn3n6",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:07:03.636Z"
+    },
+    {
+      "id": "evt_1766365623641_c2lifqtcm",
+      "campanaId": "sadasdasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:07:03.641Z"
+    },
+    {
+      "id": "evt_1766365635623_5iu7rcjvo",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-22T01:07:15.623Z"
+    },
+    {
+      "id": "evt_1766365635627_ab4jxkzoa",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:07:15.627Z"
+    },
+    {
+      "id": "evt_1766365635633_z3ls5yw7q",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:07:15.633Z"
+    },
+    {
+      "id": "evt_1766365635640_bdiwzn7yy",
+      "campanaId": "sadasdasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:07:15.641Z"
+    },
+    {
+      "id": "evt_1766365638963_i90u0rhyo",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-22T01:07:18.963Z"
+    },
+    {
+      "id": "evt_1766365638969_ao8eysdho",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:07:18.969Z"
+    },
+    {
+      "id": "evt_1766365638973_pp0z8hn9d",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:07:18.973Z"
+    },
+    {
+      "id": "evt_1766365638976_05uxd0na8",
+      "campanaId": "sadasdasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:07:18.976Z"
+    },
+    {
+      "id": "evt_1766366164216_7cc7y9gue",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-22T01:16:04.216Z"
+    },
+    {
+      "id": "evt_1766366164221_fon0lvbgv",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:16:04.221Z"
+    },
+    {
+      "id": "evt_1766366164228_7ygs0gwp1",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:16:04.228Z"
+    },
+    {
+      "id": "evt_1766366164233_o2u5h7kv6",
+      "campanaId": "sadasdasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:16:04.233Z"
+    },
+    {
+      "id": "evt_1766366398192_zeglealm9",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:19:58.193Z"
+    },
+    {
+      "id": "evt_1766366398201_gpd4v16bv",
+      "campanaId": "sadasdasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:19:58.201Z"
+    },
+    {
+      "id": "evt_1766366402206_e8wjwov6l",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "principal",
+        "posicion": 0,
+        "tipoCarrusel": "principal"
+      },
+      "fecha": "2025-12-22T01:20:02.206Z"
+    },
+    {
+      "id": "evt_1766366402219_pvya70ynu",
+      "campanaId": "prueba 2",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:20:02.219Z"
+    },
+    {
+      "id": "evt_1766366402224_2en4t2nff",
+      "campanaId": "asdasdaasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:20:02.224Z"
+    },
+    {
+      "id": "evt_1766366402231_bi8cot314",
+      "campanaId": "sadasdasd",
+      "userId": "ecousuario",
+      "tipo": "vista_banner",
+      "datos": {
+        "tipo_carrusel": "secundario",
+        "posicion": 0,
+        "tipoCarrusel": "secundario"
+      },
+      "fecha": "2025-12-22T01:20:02.231Z"
     }
   ]
 }

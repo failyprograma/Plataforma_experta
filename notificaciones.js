@@ -699,13 +699,7 @@ async function clickNotificacionCampana(notifId) {
             return;
         }
 
-        // Obtener ID de campaña desde los datos de la notificación
-        const campanaId = notif.datos.campanaId || notif.datos.campanaNombre || 'campaña';
-        
-        console.log('🖱️ [CLICK NOTIF] Click en notificación de campaña:', campanaId);
-        console.log('🔍 [CLICK NOTIF] CampanasTracking disponible:', typeof window.CampanasTracking !== 'undefined');
-        console.log('🔍 [CLICK NOTIF] CampanasTracking.userId:', window.CampanasTracking?.userId);
-        console.log('🔍 [CLICK NOTIF] CampanasTracking.eventosEnCola:', window.CampanasTracking?.eventosEnCola?.length);
+        console.log('🖱️ [CLICK NOTIF] Datos de notificación:', notif.datos);
 
         // Obtener usuario logueado
         const loggedUser = localStorage.getItem('starclutch_user');
@@ -723,21 +717,78 @@ async function clickNotificacionCampana(notifId) {
             if (!window.CampanasTracking.userId) {
                 console.log('[CLICK NOTIF] Inicializando CampanasTracking...');
                 window.CampanasTracking.init(userData.id);
+                
+                // Cargar campañas activas si no están registradas
+                if (window.CampanasTracking.campanasActivas.size === 0) {
+                    console.log('[CLICK NOTIF] Cargando campañas activas...');
+                    try {
+                        const campanasResponse = await fetch(`/api/campanas-ofertas?userId=${encodeURIComponent(userData.id)}`);
+                        const campanasResult = await campanasResponse.json();
+                        if (campanasResult.ok && Array.isArray(campanasResult.campanas)) {
+                            console.log('[CLICK NOTIF] Registrando', campanasResult.campanas.length, 'campañas activas');
+                            window.CampanasTracking.registrarCampanasActivas(campanasResult.campanas);
+                        }
+                    } catch (e) {
+                        console.warn('[CLICK NOTIF] Error cargando campañas:', e);
+                    }
+                }
             }
 
-            // Registrar click en notificación
-            const evento = {
-                campanaId: campanaId,
-                tipo: 'click_notificacion',
-                datos: {
-                    origenClick: 'notificacion',
-                    notificacionId: notifId
-                }
-            };
+            // Registrar click en notificación para la(s) campaña(s) mencionadas
+            // Priorizar campanaId único si existe (notificaciones nuevas por campaña)
+            const campanaId = notif.datos.campanaId;
+            const campanaNombre = notif.datos.campanaNombre;
+            const campanasIds = notif.datos.campanasIds || [];
+            const campanasNombres = notif.datos.campanasNombres || [];
             
-            console.log('📝 [CLICK NOTIF] Intentando agregar evento:', evento);
-            window.CampanasTracking.agregarEvento(evento);
-            console.log('✅ [CLICK NOTIF] Evento agregado, cola actual:', window.CampanasTracking.eventosEnCola.length);
+            console.log('[CLICK NOTIF] Datos de campaña:', { 
+                campanaId, 
+                campanaNombre, 
+                campanasIds, 
+                campanasNombres 
+            });
+            
+            // Si hay un campanaId específico (notificación individual por campaña)
+            if (campanaId) {
+                console.log('[CLICK NOTIF] Registrando click para campaña individual:', campanaId);
+                
+                const evento = {
+                    campanaId: campanaId,
+                    tipo: 'click_notificacion',
+                    datos: {
+                        origenClick: 'notificacion',
+                        notificacionId: notifId,
+                        campanaNombre: campanaNombre
+                    }
+                };
+                
+                console.log('📝 [CLICK NOTIF] Agregando evento para campaña:', campanaId);
+                window.CampanasTracking.agregarEvento(evento);
+                console.log('✅ [CLICK NOTIF] Evento agregado, cola actual:', window.CampanasTracking.eventosEnCola.length);
+            }
+            // Si hay múltiples campañas (notificación agrupada - compatibilidad)
+            else if (campanasIds.length > 0 || campanasNombres.length > 0) {
+                const campanas = campanasIds.length > 0 ? campanasIds : campanasNombres;
+                console.log('[CLICK NOTIF] Registrando click para', campanas.length, 'campañas agrupadas');
+                
+                campanas.forEach(campanaIdItem => {
+                    const evento = {
+                        campanaId: campanaIdItem,
+                        tipo: 'click_notificacion',
+                        datos: {
+                            origenClick: 'notificacion',
+                            notificacionId: notifId
+                        }
+                    };
+                    
+                    console.log('📝 [CLICK NOTIF] Agregando evento para campaña:', campanaIdItem);
+                    window.CampanasTracking.agregarEvento(evento);
+                });
+                
+                console.log('✅ [CLICK NOTIF] Eventos agregados, cola actual:', window.CampanasTracking.eventosEnCola.length);
+            } else {
+                console.warn('[CLICK NOTIF] No se encontró información de campaña en la notificación');
+            }
         } else {
             console.error('❌ [CLICK NOTIF] CampanasTracking no está disponible');
         }
@@ -749,7 +800,7 @@ async function clickNotificacionCampana(notifId) {
         if (typeof window.CampanasTracking !== 'undefined' && window.CampanasTracking.eventosEnCola.length > 0) {
             console.log('⏰ [CLICK NOTIF] Procesando cola INMEDIATAMENTE antes de redirigir...');
             await window.CampanasTracking.procesarColaEventos();
-            console.log('✅ [CLICK NOTIF] Cola procesada, evento enviado al servidor');
+            console.log('✅ [CLICK NOTIF] Cola procesada, eventos enviados al servidor');
         }
 
         // Esperar un poco más para asegurar que la petición se envió
