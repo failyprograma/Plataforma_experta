@@ -63,7 +63,7 @@ Todas las clases CSS están definidas en `styles.css`:
   - Recibe archivo base64
   - Incrementa contador de OC por usuario
   - Envía email HTML al cliente con detalles
-   - Envía email al admin (scplataformaexperta@gmail.com)
+  - Envía email al admin (scplataformaexperta@gmail.cl)
   - Adjunta archivo PDF/documento
   - Manejo robusto de errores
 

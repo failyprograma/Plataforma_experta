@@ -1797,10 +1797,7 @@
         // Usar datos actualizados si existen
         const precioBruto = productoActualizado?.precio || item.precioOriginal || item.precio;
         const precioOriginal = Math.round(precioBruto / 1.19);
-        // Usar el mayor entre descuento manual y descuento de campaña
-        const descuentoManual = parseFloat(productoActualizado?.descuento || item.descuento || 0) || 0;
-        const descuentoCampana = parseFloat(productoActualizado?.descuentoCampana || item.descuentoCampana || 0) || 0;
-        const descuento = Math.max(descuentoManual, descuentoCampana);
+        const descuento = productoActualizado?.descuento || item.descuento || 0;
         const precioFinal = descuento > 0 ? Math.round(precioOriginal * (1 - descuento / 100)) : precioOriginal;
         const stock = productoActualizado?.stock || item.stock || 0;
         
@@ -1895,10 +1892,7 @@
         const precioOriginalActual = parseFloat(card.dataset.precioOriginal);
         const descuentoActual = parseFloat(card.dataset.descuento);
         
-        // Usar el mayor entre descuento manual y descuento de campaña
-        const descuentoManualNuevo = parseFloat(productoActualizado.descuento || 0) || 0;
-        const descuentoCampanaNuevo = parseFloat(productoActualizado.descuentoCampana || 0) || 0;
-        const nuevoDescuento = Math.max(descuentoManualNuevo, descuentoCampanaNuevo);
+        const nuevoDescuento = productoActualizado.descuento || 0;
         const precioBrutoNuevo = productoActualizado.precio || 0;
         const nuevoPrecioOriginal = Math.round(precioBrutoNuevo / 1.19);
         
@@ -2552,12 +2546,8 @@
       ocModalData.recomendaciones.forEach((rec, idx) => {
         const precioBruto = rec.precio || 0;
         const precioNeto = Math.round(precioBruto / 1.19);
-        // Usar el mayor entre descuento manual y descuento de campaña
-        const descuentoManual = parseFloat(rec.descuento || 0) || 0;
-        const descuentoCampana = parseFloat(rec.descuentoCampana || 0) || 0;
-        const descuentoFinal = Math.max(descuentoManual, descuentoCampana);
-        const precioConDescuento = descuentoFinal > 0 
-          ? Math.round(precioNeto * (1 - descuentoFinal / 100)) 
+        const precioConDescuento = rec.descuento > 0 
+          ? Math.round(precioNeto * (1 - rec.descuento / 100)) 
           : precioNeto;
         
         // Verificar si este producto ya está en la OC
@@ -3173,12 +3163,8 @@
       cotizacionModalData.recomendaciones.forEach((rec, idx) => {
         const precioBruto = rec.precio || 0;
         const precioNeto = Math.round(precioBruto / 1.19);
-        // Usar el mayor entre descuento manual y descuento de campaña
-        const descuentoManual = parseFloat(rec.descuento || 0) || 0;
-        const descuentoCampana = parseFloat(rec.descuentoCampana || 0) || 0;
-        const descuentoFinal = Math.max(descuentoManual, descuentoCampana);
-        const precioConDescuento = descuentoFinal > 0 
-          ? Math.round(precioNeto * (1 - descuentoFinal / 100)) 
+        const precioConDescuento = rec.descuento > 0 
+          ? Math.round(precioNeto * (1 - rec.descuento / 100)) 
           : precioNeto;
         
         const yaEnCotizacion = cotizacionModalData.items.some(item => item.sku === rec.sku || item.id === rec.id);

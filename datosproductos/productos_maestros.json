@@ -1235,5 +1235,21 @@
     ],
     "fechaCreacion": "2025-12-19T13:14:27.635Z",
     "fechaModificacion": "2025-12-19T13:14:27.635Z"
+  },
+  {
+    "codSC": "PRUEBA",
+    "repuesto": "Freno motor",
+    "marca": "FRASLE",
+    "linea": "Frenos",
+    "codCliente": "asdsd",
+    "stock": 3,
+    "fichaTecnica": "SADASDAS",
+    "referenciaCruzada": "DASDAS",
+    "oem": "DASDASD",
+    "imagenes": [
+      "/uploads/productos/prod-1766331199043-745969782.png"
+    ],
+    "fechaCreacion": "2025-12-21T15:33:19.050Z",
+    "fechaModificacion": "2025-12-21T15:33:19.050Z"
   }
 ]

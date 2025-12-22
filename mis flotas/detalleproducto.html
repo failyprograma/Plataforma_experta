@@ -702,14 +702,10 @@
     }
     
     // Actualizar precios (mostrar NETO y descuento aplicado al NETO)
-// Usar el mayor entre descuento manual y descuento de campaña
-  const descuentoManual = parseFloat(producto.descuento || 0) || 0;
-  const descuentoCampana = parseFloat(producto.descuentoCampana || 0) || 0;
-  const descuentoFinal = Math.max(descuentoManual, descuentoCampana);
-  const tieneDescuento = descuentoFinal > 0;
-  const precioBruto = parseFloat(producto.precio || 0);
-  const precioOriginalNeto = precioBruto > 0 ? Math.round(precioBruto / 1.19) : 0;
-  const precioFinalNeto = tieneDescuento ? Math.round(precioOriginalNeto * (1 - (descuentoFinal / 100))) : precioOriginalNeto;
+    const tieneDescuento = producto.descuento && producto.descuento > 0;
+    const precioBruto = parseFloat(producto.precio || 0);
+    const precioOriginalNeto = precioBruto > 0 ? Math.round(precioBruto / 1.19) : 0;
+    const precioFinalNeto = tieneDescuento ? Math.round(precioOriginalNeto * (1 - (producto.descuento / 100))) : precioOriginalNeto;
 
     const priceStack = document.querySelector('.price-stack');
     if (priceStack) {
@@ -1299,14 +1295,10 @@
     const tarjetas = productosCarrusel.slice(inicio, fin);
     
     tarjetas.forEach(producto => {
-      // Usar el mayor entre descuento manual y descuento de campaña
-      const descuentoManual = parseFloat(producto.descuento || 0) || 0;
-      const descuentoCampana = parseFloat(producto.descuentoCampana || 0) || 0;
-      const descuentoFinal = Math.max(descuentoManual, descuentoCampana);
-      const tieneDescuento = descuentoFinal > 0;
+      const tieneDescuento = producto.descuento && producto.descuento > 0;
       const precioBruto = parseFloat(producto.precio || 0);
       const precioOriginalNeto = precioBruto > 0 ? Math.round(precioBruto / 1.19) : 0;
-      const precioFinalNeto = tieneDescuento ? Math.round(precioOriginalNeto * (1 - (descuentoFinal / 100))) : precioOriginalNeto;
+      const precioFinalNeto = tieneDescuento ? Math.round(precioOriginalNeto * (1 - (producto.descuento / 100))) : precioOriginalNeto;
       const esNuevo = (typeof esProductoNuevo === 'function') ? esProductoNuevo(producto.fechaCreacion) : false;
       
       const marca = (producto.marca || '').toUpperCase();

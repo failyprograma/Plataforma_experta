@@ -4293,10 +4293,7 @@ function renderizarPaginaCliente() {
         
         // Calcular precio neto y con descuento (antes venía con IVA)
         const precio = parseFloat(p.precio || 0);
-        // Usar el mayor entre descuento manual y descuento de campaña
-        const descuentoManual = parseFloat(p.descuento || 0) || 0;
-        const descuentoCampana = parseFloat(p.descuentoCampana || 0) || 0;
-        const descuento = Math.max(descuentoManual, descuentoCampana);
+        const descuento = parseFloat(p.descuento || 0);
         const precioNeto = precio > 0 ? Math.round(precio / 1.19) : 0;
         const precioNetoConDescuento = descuento > 0 ? Math.round(precioNeto * (1 - (descuento / 100))) : precioNeto;
         // Exponer precio para filtros
@@ -8243,10 +8240,7 @@ function initModalListaRepuestosProducto() {
             
             // Calcular precio NETO (sin IVA) y aplicar descuento si existe
             const precioBruto = parseFloat(p.precio || 0);
-            // Usar el mayor entre descuento manual y descuento de campaña
-            const descuentoManual = parseFloat(p.descuento || 0) || 0;
-            const descuentoCampana = parseFloat(p.descuentoCampana || 0) || 0;
-            const descuento = Math.max(descuentoManual, descuentoCampana);
+            const descuento = parseFloat(p.descuento || 0);
             const tieneDescuento = descuento > 0;
             const precioOriginalNeto = precioBruto > 0 ? Math.round(precioBruto / 1.19) : 0;
             const precioFinalNeto = tieneDescuento ? Math.round(precioOriginalNeto * (1 - descuento / 100)) : precioOriginalNeto;
@@ -12516,8 +12510,6 @@ async function guardarEdicionProducto() {
     const textoOriginal = btn.textContent;
     btn.textContent = 'Guardando...';
     btn.disabled = true;
-    const overlay = document.getElementById('modal-editar-producto-loading');
-    if (overlay) overlay.style.display = 'flex';
     
     try {
         const res = await fetch('/api/editar-producto', { method: 'POST', body: formData });
@@ -12536,7 +12528,6 @@ async function guardarEdicionProducto() {
     } finally {
         btn.textContent = textoOriginal;
         btn.disabled = false;
-        if (overlay) overlay.style.display = 'none';
     }
 }
 
@@ -16256,10 +16247,7 @@ const CarritoGlobal = {
             // Calcular precio neto (sin IVA) con descuento
             const precioBruto = producto.precio || 0;
             const precioOriginalNeto = Math.round(precioBruto / 1.19);
-            // Usar el mayor entre descuento manual y descuento de campaña
-            const descuentoManual = parseFloat(producto.descuento || 0) || 0;
-            const descuentoCampana = parseFloat(producto.descuentoCampana || 0) || 0;
-            const descuento = Math.max(descuentoManual, descuentoCampana);
+            const descuento = producto.descuento || 0;
             const precioFinal = descuento > 0 ? Math.round(precioOriginalNeto * (1 - descuento / 100)) : precioOriginalNeto;
             
             // Obtener imagen principal

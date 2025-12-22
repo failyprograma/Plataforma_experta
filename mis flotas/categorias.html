@@ -690,13 +690,9 @@
     }
 
     productos.forEach(producto => {
-      // Usar el mayor entre descuento manual y descuento de campaña
-      const descuentoManual = parseFloat(producto.descuento || 0) || 0;
-      const descuentoCampana = parseFloat(producto.descuentoCampana || 0) || 0;
-      const descuentoFinal = Math.max(descuentoManual, descuentoCampana);
-      const tieneDescuento = descuentoFinal > 0;
+      const tieneDescuento = producto.descuento && producto.descuento > 0;
       const precioNeto = Math.round(producto.precio || 0);
-      const precioNetoConDescuento = tieneDescuento ? Math.round(precioNeto * (1 - (descuentoFinal / 100))) : precioNeto;
+      const precioNetoConDescuento = tieneDescuento ? Math.round(precioNeto * (1 - (parseFloat(producto.descuento) / 100))) : precioNeto;
       const esNuevo = (typeof esProductoNuevo === 'function') ? esProductoNuevo(producto.fechaCreacion) : false;
       
       // Logo de marca - PRIORIDAD: marca del cruce > marca del producto

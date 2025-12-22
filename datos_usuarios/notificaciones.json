@@ -1,10 +1,170 @@
 [
   {
-    "id": "notif_1766426567561_bl84nsa9o",
+    "id": "notif_1765912474511_y3ef7wnoj",
     "userId": "ecousuario",
-    "tipo": "descuento_agregado",
-    "titulo": "¡Nueva oferta disponible!",
-    "mensaje": "Kit de embrague ahora tiene un 22% de descuento.",
+    "tipo": "mantenimiento_programado",
+    "titulo": "Mantenimientos Programados",
+    "mensaje": "Se programaron 3 mantenimientos para tus vehículos.\n\nVehículos: Toyota Hilux 2.8 (Sin especificar), Mitsubishi L-200 2.4 (Sin especificar), Citroen Berlingo 1.6 K9 (Sin especificar)\n\n⚠️ 2 mantenimientos programados en los próximos 7 días.",
+    "datos": {
+      "groupId": "mant_1765912474510",
+      "cantidadVehiculos": 3,
+      "vehiculos": [
+        "Toyota Hilux 2.8 (Sin especificar)",
+        "Mitsubishi L-200 2.4 (Sin especificar)",
+        "Citroen Berlingo 1.6 K9 (Sin especificar)"
+      ]
+    },
+    "leida": true,
+    "fecha": "2025-12-16T19:14:34.511Z"
+  },
+  {
+    "id": "notif_1765941411881_sxjml5ttm",
+    "userId": "ecousuario",
+    "tipo": "mantenimiento_hoy",
+    "titulo": "🔔 Mantenimiento Hoy",
+    "mensaje": "Hoy tienes programado un mantenimiento.\n\nVehículo: Mitsubishi L-200 2.4 (Sin especificar)\nSistemas: frenos\n\nProductos:\n• undefined\n• undefined\n• undefined\n• undefined\n• undefined\n• undefined",
+    "datos": {
+      "mantenimientoId": "mant_1765912474510_1",
+      "vehiculo": "Mitsubishi L-200 2.4 (Sin especificar)",
+      "fecha": "2025-12-17",
+      "productos": [
+        {
+          "id": "prod_1765421675357_oqs2zndkl",
+          "userId": "ecousuario",
+          "codCliente": "",
+          "repuesto": "Pastillas de freno",
+          "marca": "FRASLE",
+          "linea": "Frenos",
+          "codSC": "PAS771A",
+          "precio": 12900,
+          "descuento": 0,
+          "stock": 1,
+          "fichaTecnica": "Posición: Delantera\nFormulación: Advanced\nAltura [mm]: 51\nAncho [mm]: 155,4\nEspesor [mm]: 16",
+          "referenciaCruzada": "MITSUBISHI: 4605A284\nMITSUBISHI: 4605A198\nMITSUBISHI: 4605B233\nMITSUBISHI: MZ690356\nMITSUBISHI:4605A930\nMITSUBISHI: MZ690587\nMITSUBISHI:TS200052\nMITSUBISHI: 4605B290\nFIAT: 6000609714\nFIAT: 0006000609714\nFIAT: 6000609715\nFIAT: 0006000609715\nJURID: 24529\nJURID: 24530\nJURID: 572574",
+          "oem": "FRASLE: PD/771",
+          "imagenes": [
+            "/uploads/productos/prod-1765421675301-57416835.png"
+          ],
+          "fechaCreacion": "2025-12-11T02:54:35.357Z",
+          "fechaModificacion": "2025-12-11T18:55:47.560Z"
+        },
+        {
+          "id": "prod_1765421675357_wi2fxpnkq",
+          "userId": "ecousuario",
+          "codCliente": "",
+          "repuesto": "Pastillas de freno",
+          "marca": "HTECH",
+          "linea": "Frenos",
+          "codSC": "PT7710HT",
+          "precio": 10800,
+          "descuento": 0,
+          "stock": 1,
+          "fichaTecnica": "Posición: Delantera\nFormulación: Advanced\nAltura [mm]: 51\nAncho [mm]: 155,4\nEspesor [mm]: 16",
+          "referenciaCruzada": "MITSUBISHI: 4605A284\nMITSUBISHI: 4605A198\nMITSUBISHI: 4605B233\nMITSUBISHI: MZ690356\nMITSUBISHI:4605A930\nMITSUBISHI: MZ690587\nMITSUBISHI:TS200052\nMITSUBISHI: 4605B290\nFIAT: 6000609714\nFIAT: 0006000609714\nFIAT: 6000609715\nFIAT: 0006000609715\nJURID: 24529\nJURID: 24530\nJURID: 572574",
+          "oem": "FRASLE: PD/771",
+          "imagenes": [
+            "/uploads/productos/prod-1765421675309-508549841.png"
+          ],
+          "fechaCreacion": "2025-12-11T02:54:35.357Z",
+          "fechaModificacion": "2025-12-11T18:56:49.292Z"
+        },
+        {
+          "id": "prod_1765421675357_deywl71g4",
+          "userId": "ecousuario",
+          "codCliente": "",
+          "repuesto": "Disco de freno",
+          "marca": "FRASLE",
+          "linea": "Frenos",
+          "codSC": "DFMIT771F",
+          "precio": 42900,
+          "descuento": 0,
+          "stock": 1,
+          "fichaTecnica": "Diámetro exterior: 294 mm.\nPernos: 6 x 12,5 mm.\nDistancia entre pernos: 139,7 mm.\nEspesor: 28 mm.\nAltura: 46,5 mm.\nDiámetro interior: 94 mm.\nDiámetro corona: 184 mm.\n2 Discos de Freno",
+          "referenciaCruzada": "FIAT: K6000609712\nMITSUBISHI ORIGINAL: 4615A200\nMITSUBISHI ORIGINAL: MN102276\nMITSUBISHI ORIGINAL: 4615A201\nMITSUBISHI ORIGINAL: 4615A147\nFRASLE: FLDI00024\nFREMAX: BD7019",
+          "oem": "",
+          "imagenes": [
+            "/uploads/productos/prod-1765421675328-788321647.png"
+          ],
+          "fechaCreacion": "2025-12-11T02:54:35.357Z",
+          "fechaModificacion": "2025-12-11T18:58:13.203Z"
+        },
+        {
+          "id": "prod_1765421675357_4ox91g0ki",
+          "userId": "ecousuario",
+          "codCliente": "",
+          "repuesto": "Disco de freno",
+          "marca": "HTECH",
+          "linea": "Frenos",
+          "codSC": "FR7710HT",
+          "precio": 18500,
+          "descuento": 0,
+          "stock": 1,
+          "fichaTecnica": "",
+          "referenciaCruzada": "",
+          "oem": "",
+          "imagenes": [
+            "/uploads/productos/prod-1765421675330-345237860.png",
+            "/uploads/productos/prod-1765421675334-558058515.png",
+            "/uploads/productos/prod-1765421675346-904931210.png"
+          ],
+          "fechaCreacion": "2025-12-11T02:54:35.357Z",
+          "fechaModificacion": "2025-12-11T19:01:46.571Z"
+        },
+        {
+          "id": "prod_1765422068691_e222fkh02",
+          "userId": "ecousuario",
+          "codCliente": "",
+          "repuesto": "Patines",
+          "marca": "FRASLE",
+          "linea": "Frenos",
+          "codSC": "PAT377T",
+          "precio": 12900,
+          "descuento": 0,
+          "stock": 1,
+          "fichaTecnica": "ADVANCED\nAncho [mm]: 50\nDiámetro interior de tambor de freno [mm]: 295",
+          "referenciaCruzada": "Chevrolet: 94726878\nIsuzu: 8979478020\nMitsubishi: 4600A106\nMitsubishi: 4600A122\nCobreq: 2700-CP\nJurid: HQJ-543\nMazzicar bpsa: 0095280\nNakata nkf: 3040\nRoc: 24721\nSinter Freios: SP043\nISUZU: 5878322570\nISUZU: 5876150620\nISUZU: 8976627560\nISUZU: 89800180360\nMAZDA: 1K0249240\nMAZDA: 1K0649240",
+          "oem": "",
+          "imagenes": [
+            "/uploads/productos/prod-1765422068638-639490469.jpg",
+            "/uploads/productos/prod-1765422068641-916669775.jpg"
+          ],
+          "fechaCreacion": "2025-12-11T03:01:08.691Z",
+          "fechaModificacion": "2025-12-11T19:02:57.052Z"
+        },
+        {
+          "id": "prod_1765422068691_fmjeu2awo",
+          "userId": "ecousuario",
+          "codCliente": "",
+          "repuesto": "Tambor de freno",
+          "marca": "FRASLE",
+          "linea": "Frenos",
+          "codSC": "TAM-377F",
+          "precio": 36400,
+          "descuento": 0,
+          "stock": 1,
+          "fichaTecnica": "ADVANCED\nDiámetro exterior del tambor de freno [mm]: 343\nDiámetro interior de tambor de freno [mm]: 295\nAltura interior de tambor de freno [mm]: 73\nCantidad de taladros: 06\nCorona de agujeros - Ø [mm]: 139,7\nAltura total de tambor de freno [mm]: 91\nDistancia máx. de desenroscado de tambor de freno [mm]: 297",
+          "referenciaCruzada": "MITSUBISHI: 4615A127\nMITSUBISHI: MN102439\nMITSUBISHI: 6000609724\nTEXTAR: 98100035301\nFIAT: 6000609724",
+          "oem": "FRASLE: FLDR00228",
+          "imagenes": [
+            "/uploads/productos/prod-1765422068645-764615123.png"
+          ],
+          "fechaCreacion": "2025-12-11T03:01:08.691Z",
+          "fechaModificacion": "2025-12-11T19:03:57.282Z"
+        }
+      ],
+      "sistemas": [
+        "frenos"
+      ]
+    },
+    "leida": true,
+    "fecha": "2025-12-17T03:16:51.881Z"
+  },
+  {
+    "id": "notif_1765982540569_46aa0vczg",
+    "userId": "ecousuario",
+    "tipo": "descuento_eliminado",
+    "titulo": "ActualizaciÃ³n de precio",
+    "mensaje": "Kit de embrague ha vuelto a su precio regular.",
     "datos": {
       "productoId": "prod_1765419425976_h672r0fna",
       "productoNombre": "Kit de embrague",
@@ -12,44 +172,21 @@
       "repuesto": "Kit de embrague",
       "marca": "EXEDY",
       "codSC": "KITTOY400DR",
-      "precio": 126686,
-      "descuento": 22,
-      "precioFinal": 98815,
-      "precioAnterior": 126686,
-      "precioNuevo": 98815,
+      "precio": 179400,
+      "descuento": 0,
+      "precioFinal": 179400,
+      "precioAnterior": 120198,
+      "precioNuevo": 179400,
       "imagen": "/uploads/productos/prod-1765419425972-599986316.png"
     },
-    "leida": false,
-    "fecha": "2025-12-22T18:02:47.561Z"
+    "leida": true,
+    "fecha": "2025-12-17T14:42:20.569Z"
   },
   {
-    "id": "notif_1766428246453_zllv2r19k",
-    "userId": "ecousuario",
-    "tipo": "descuento_agregado",
-    "titulo": "¡Nueva oferta disponible!",
-    "mensaje": "Kit de embrague ahora tiene un 33% de descuento.",
-    "datos": {
-      "productoId": "prod_1765419610363_qz6tbh6y5",
-      "productoNombre": "Kit de embrague",
-      "productoMarca": "ALLIANCE",
-      "repuesto": "Kit de embrague",
-      "marca": "ALLIANCE",
-      "codSC": "KITTOY400AR",
-      "precio": 105042,
-      "descuento": 33,
-      "precioFinal": 70378,
-      "precioAnterior": 105042,
-      "precioNuevo": 70378,
-      "imagen": "/uploads/productos/prod-1765419610299-523187208.png"
-    },
-    "leida": false,
-    "fecha": "2025-12-22T18:30:46.453Z"
-  },
-  {
-    "id": "notif_1766428434914_hkdqg34tg",
+    "id": "notif_1765982546882_4j3bwifkh",
     "userId": "ecousuario",
     "tipo": "descuento_eliminado",
-    "titulo": "Actualización de precio",
+    "titulo": "ActualizaciÃ³n de precio",
     "mensaje": "Kit de embrague ha vuelto a su precio regular.",
     "datos": {
       "productoId": "prod_1765419610363_qz6tbh6y5",
@@ -58,37 +195,945 @@
       "repuesto": "Kit de embrague",
       "marca": "ALLIANCE",
       "codSC": "KITTOY400AR",
-      "precio": 88271,
+      "precio": 125000,
       "descuento": 0,
-      "precioFinal": 88271,
-      "precioAnterior": 70378,
-      "precioNuevo": 88271,
+      "precioFinal": 125000,
+      "precioAnterior": 118750,
+      "precioNuevo": 125000,
       "imagen": "/uploads/productos/prod-1765419610299-523187208.png"
     },
-    "leida": false,
-    "fecha": "2025-12-22T18:33:54.914Z"
+    "leida": true,
+    "fecha": "2025-12-17T14:42:26.882Z"
   },
   {
-    "id": "notif_1766428440651_6ytus5j3x",
+    "id": "notif_1765999504833_n5ljawig2",
     "userId": "ecousuario",
-    "tipo": "descuento_eliminado",
-    "titulo": "Actualización de precio",
-    "mensaje": "Kit de embrague ha vuelto a su precio regular.",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Kit de embrague (KITTOY400DR) con 22% de descuento.",
     "datos": {
-      "productoId": "prod_1765419425976_h672r0fna",
-      "productoNombre": "Kit de embrague",
-      "productoMarca": "EXEDY",
-      "repuesto": "Kit de embrague",
-      "marca": "EXEDY",
-      "codSC": "KITTOY400DR",
-      "precio": 106459,
-      "descuento": 0,
-      "precioFinal": 106459,
-      "precioAnterior": 98815,
-      "precioNuevo": 106459,
-      "imagen": "/uploads/productos/prod-1765419425972-599986316.png"
+      "usuarioNombre": "Ecorent",
+      "productos": [
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 22,
+          "descuentoProducto": 0,
+          "precioBase": 179400,
+          "precioProducto": 179400,
+          "precioCampana": 139932,
+          "campanas": [
+            "sadasd"
+          ]
+        }
+      ]
+    },
+    "leida": true,
+    "fecha": "2025-12-17T19:25:04.833Z"
+  },
+  {
+    "id": "notif_1766333652915_d3gdjvnph",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Pastillas de freno (PAS528) con 22% de descuento.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 22,
+          "descuentoProducto": 22,
+          "precioBase": 12900,
+          "precioProducto": 10062,
+          "precioCampana": 7848,
+          "campanas": [
+            "prueba"
+          ]
+        },
+        {
+          "sku": "KITMIT240LRV",
+          "nombre": "Kit de embrague + Volante",
+          "descuentoCampana": 3,
+          "descuentoProducto": 3,
+          "precioBase": 429900,
+          "precioProducto": 417003,
+          "precioCampana": 404493,
+          "campanas": [
+            "prueba"
+          ]
+        }
+      ]
     },
     "leida": false,
-    "fecha": "2025-12-22T18:34:00.651Z"
+    "fecha": "2025-12-21T16:14:12.915Z"
+  },
+  {
+    "id": "notif_1766333805194_h3rx94w66",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Pastillas de freno (PAS528) con 22% de descuento.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "PAS528",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 22,
+          "descuentoProducto": 22,
+          "precioBase": 12900,
+          "precioProducto": 10062,
+          "precioCampana": 7848,
+          "campanas": [
+            "prueba"
+          ]
+        },
+        {
+          "sku": "KITMIT240LRV",
+          "nombre": "Kit de embrague + Volante",
+          "descuentoCampana": 3,
+          "descuentoProducto": 3,
+          "precioBase": 429900,
+          "precioProducto": 417003,
+          "precioCampana": 404493,
+          "campanas": [
+            "prueba"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:16:45.194Z"
+  },
+  {
+    "id": "notif_1766334042636_5jnwu2zly",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": []
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:20:42.636Z"
+  },
+  {
+    "id": "notif_1766334044146_tpkrbgqir",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 0 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": []
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:20:44.146Z"
+  },
+  {
+    "id": "notif_1766334096662_j7undxzma",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Tambor de freno (TAM-327F) con 2% de descuento.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:21:36.662Z"
+  },
+  {
+    "id": "notif_1766334527824_ele0rcg65",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Tambor de freno (TAM-327F) con 2% de descuento.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:28:47.824Z"
+  },
+  {
+    "id": "notif_1766335333413_dr862ex92",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Nueva oferta: Tambor de freno (TAM-327F) con 2% de descuento.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:42:13.413Z"
+  },
+  {
+    "id": "notif_1766335746892_ca461mzj2",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": []
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:49:06.892Z"
+  },
+  {
+    "id": "notif_1766335750051_a2arg9g2d",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": []
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:49:10.051Z"
+  },
+  {
+    "id": "notif_1766336032759_e9ktt1wzs",
+    "userId": "luna",
+    "tipo": "campanas_actualizadas",
+    "titulo": "Tus ofertas han sido actualizadas",
+    "mensaje": "Se han actualizado 1 campañas en tu panel de ofertas exclusivas.",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": []
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:53:52.759Z"
+  },
+  {
+    "id": "notif_1766336318121_5btvno8ie",
+    "userId": "luna",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T están en oferta!",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T16:58:38.121Z"
+  },
+  {
+    "id": "notif_1766358271991_fpaiadlx0",
+    "userId": "luna",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T, PT5280HT están en oferta!",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PT5280HT",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 45,
+          "descuentoProducto": 45,
+          "precioBase": 11800,
+          "precioProducto": 6490,
+          "precioCampana": 3570,
+          "campanas": [
+            "sadasdas"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "PT5280HT"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T23:04:31.991Z"
+  },
+  {
+    "id": "notif_1766358416318_qg2p3shyu",
+    "userId": "luna",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T, PT5280HT, PAS1539 están en oferta!",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 2,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PT5280HT",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 45,
+          "descuentoProducto": 45,
+          "precioBase": 11800,
+          "precioProducto": 6490,
+          "precioCampana": 3570,
+          "campanas": [
+            "sadasdas"
+          ]
+        },
+        {
+          "sku": "PAS1539",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 22,
+          "descuentoProducto": 22,
+          "precioBase": 14900,
+          "precioProducto": 11622,
+          "precioCampana": 9065,
+          "campanas": [
+            "fff"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "PT5280HT",
+        "PAS1539"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T23:06:56.318Z"
+  },
+  {
+    "id": "notif_1766358631932_ce4pbb4bk",
+    "userId": "luna",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T, KITMIT240AR, KITMIT240LRV, IVMIT240N están en oferta!",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 4,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 4,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "KITMIT240AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 55,
+          "descuentoProducto": 33,
+          "precioBase": 160900,
+          "precioProducto": 107803,
+          "precioCampana": 72228,
+          "campanas": [
+            "123123"
+          ]
+        },
+        {
+          "sku": "KITMIT240LRV",
+          "nombre": "Kit de embrague + Volante",
+          "descuentoCampana": 23,
+          "descuentoProducto": 12,
+          "precioBase": 429900,
+          "precioProducto": 378312,
+          "precioCampana": 332915,
+          "campanas": [
+            "123123"
+          ]
+        },
+        {
+          "sku": "IVMIT240N",
+          "nombre": "Volantes",
+          "descuentoCampana": 28,
+          "descuentoProducto": 15,
+          "precioBase": 284900,
+          "precioProducto": 242165,
+          "precioCampana": 205840,
+          "campanas": [
+            "123123"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITMIT240AR",
+        "KITMIT240LRV",
+        "IVMIT240N"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T23:10:31.932Z"
+  },
+  {
+    "id": "notif_1766358851180_ykdia8y1b",
+    "userId": "luna",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T, KITMIT240AR, KITMIT240LRV, IVMIT240N y 3 más están en oferta!",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 4,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 4,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "KITMIT240AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 55,
+          "descuentoProducto": 33,
+          "precioBase": 160900,
+          "precioProducto": 107803,
+          "precioCampana": 72228,
+          "campanas": [
+            "123123"
+          ]
+        },
+        {
+          "sku": "KITMIT240LRV",
+          "nombre": "Kit de embrague + Volante",
+          "descuentoCampana": 23,
+          "descuentoProducto": 12,
+          "precioBase": 429900,
+          "precioProducto": 378312,
+          "precioCampana": 332915,
+          "campanas": [
+            "123123"
+          ]
+        },
+        {
+          "sku": "IVMIT240N",
+          "nombre": "Volantes",
+          "descuentoCampana": 28,
+          "descuentoProducto": 15,
+          "precioBase": 284900,
+          "precioProducto": 242165,
+          "precioCampana": 205840,
+          "campanas": [
+            "123123"
+          ]
+        },
+        {
+          "sku": "FR3945HT",
+          "nombre": "Disco de freno",
+          "descuentoCampana": 4,
+          "descuentoProducto": 2,
+          "precioBase": 24300,
+          "precioProducto": 23814,
+          "precioCampana": 23338,
+          "campanas": [
+            "gdfsgfsd"
+          ]
+        },
+        {
+          "sku": "PT1583HT",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 4,
+          "descuentoProducto": 2,
+          "precioBase": 8860,
+          "precioProducto": 8683,
+          "precioCampana": 8509,
+          "campanas": [
+            "gdfsgfsd"
+          ]
+        },
+        {
+          "sku": "KITPEU200VR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 4,
+          "descuentoProducto": 2,
+          "precioBase": 269900,
+          "precioProducto": 264502,
+          "precioCampana": 259212,
+          "campanas": [
+            "gdfsgfsd"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITMIT240AR",
+        "KITMIT240LRV",
+        "IVMIT240N",
+        "FR3945HT",
+        "PT1583HT",
+        "KITPEU200VR"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-21T23:14:11.180Z"
+  },
+  {
+    "id": "notif_1766364794088_pspwi5ztb",
+    "userId": "luna",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nuevas ofertas disponibles!",
+    "mensaje": "Los productos TAM-327F, PAT327T, KITTOY400AR, KITTOY400DR están en oferta!",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 4,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 4,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 55,
+          "descuentoProducto": 33,
+          "precioBase": 125000,
+          "precioProducto": 83750,
+          "precioCampana": 56112,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 39,
+          "descuentoProducto": 22,
+          "precioBase": 150756,
+          "precioProducto": 117590,
+          "precioCampana": 91720,
+          "campanas": [
+            "asdasdaasd"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITTOY400AR",
+        "KITTOY400DR"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-22T00:53:14.088Z"
+  },
+  {
+    "id": "notif_1766365029431_igxxzc9ym",
+    "userId": "luna",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nueva oferta: prueba 2!",
+    "mensaje": "Los productos TAM-327F, PAT327T, KITTOY400AR están en oferta!",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "TAM-327F",
+          "nombre": "Tambor de freno",
+          "descuentoCampana": 4,
+          "descuentoProducto": 2,
+          "precioBase": 31500,
+          "precioProducto": 30870,
+          "precioCampana": 30253,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "PAT327T",
+          "nombre": "Patines",
+          "descuentoCampana": 4,
+          "descuentoProducto": 2,
+          "precioBase": 13400,
+          "precioProducto": 13132,
+          "precioCampana": 12869,
+          "campanas": [
+            "prueba 2"
+          ]
+        },
+        {
+          "sku": "KITTOY400AR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 55,
+          "descuentoProducto": 33,
+          "precioBase": 125000,
+          "precioProducto": 83750,
+          "precioCampana": 56112,
+          "campanas": [
+            "prueba 2"
+          ]
+        }
+      ],
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITTOY400AR"
+      ],
+      "campanaId": "camp_1766334088944",
+      "campanaNombre": "prueba 2",
+      "campanasIds": [
+        "camp_1766334088944"
+      ],
+      "campanasNombres": [
+        "prueba 2"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-22T00:57:09.431Z"
+  },
+  {
+    "id": "notif_1766365029432_6gx8gxn7q",
+    "userId": "luna",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nueva oferta: asdasdaasd!",
+    "mensaje": "Los productos KITTOY400DR están en oferta!",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "KITTOY400DR",
+          "nombre": "Kit de embrague",
+          "descuentoCampana": 39,
+          "descuentoProducto": 22,
+          "precioBase": 150756,
+          "precioProducto": 117590,
+          "precioCampana": 91720,
+          "campanas": [
+            "asdasdaasd"
+          ]
+        }
+      ],
+      "skus": [
+        "KITTOY400DR"
+      ],
+      "campanaId": "camp_1766360209475",
+      "campanaNombre": "asdasdaasd",
+      "campanasIds": [
+        "camp_1766360209475"
+      ],
+      "campanasNombres": [
+        "asdasdaasd"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-22T00:57:09.431Z"
+  },
+  {
+    "id": "notif_1766365029433_d1xrpkskr",
+    "userId": "luna",
+    "tipo": "campanas_activadas",
+    "titulo": "¡Nueva oferta: sadasdasd!",
+    "mensaje": "Los productos PAS1605 están en oferta!",
+    "datos": {
+      "usuarioNombre": "Viex",
+      "productos": [
+        {
+          "sku": "PAS1605",
+          "nombre": "Pastillas de freno",
+          "descuentoCampana": 39,
+          "descuentoProducto": 22,
+          "precioBase": 6900,
+          "precioProducto": 5382,
+          "precioCampana": 4198,
+          "campanas": [
+            "sadasdasd"
+          ]
+        }
+      ],
+      "skus": [
+        "PAS1605"
+      ],
+      "campanaId": "camp_1766365020214",
+      "campanaNombre": "sadasdasd",
+      "campanasIds": [
+        "camp_1766365020214"
+      ],
+      "campanasNombres": [
+        "sadasdasd"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-22T00:57:09.431Z"
+  },
+  {
+    "id": "notif_1766366550539_fr8o6uidv",
+    "userId": "ecousuario",
+    "tipo": "campana_eliminada",
+    "titulo": "🔚 Ofertas finalizadas",
+    "mensaje": "La campaña \"prueba 2\" ha finalizado. Los productos TAM-327F, PAT327T, KITTOY400AR ya no tienen oferta.",
+    "datos": {
+      "campaña": "prueba 2",
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITTOY400AR"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-22T01:22:30.539Z"
+  },
+  {
+    "id": "notif_1766366550539_zi78k0h6s",
+    "userId": "luna",
+    "tipo": "campana_eliminada",
+    "titulo": "🔚 Ofertas finalizadas",
+    "mensaje": "La campaña \"prueba 2\" ha finalizado. Los productos TAM-327F, PAT327T, KITTOY400AR ya no tienen oferta.",
+    "datos": {
+      "campaña": "prueba 2",
+      "skus": [
+        "TAM-327F",
+        "PAT327T",
+        "KITTOY400AR"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-22T01:22:30.539Z"
+  },
+  {
+    "id": "notif_1766366553091_x0cj4ep6x",
+    "userId": "ecousuario",
+    "tipo": "campana_eliminada",
+    "titulo": "🔚 Ofertas finalizadas",
+    "mensaje": "La campaña \"asdasdaasd\" ha finalizado. Los productos KITTOY400DR ya no tienen oferta.",
+    "datos": {
+      "campaña": "asdasdaasd",
+      "skus": [
+        "KITTOY400DR"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-22T01:22:33.091Z"
+  },
+  {
+    "id": "notif_1766366554655_d6hgtsesk",
+    "userId": "ecousuario",
+    "tipo": "campana_eliminada",
+    "titulo": "🔚 Ofertas finalizadas",
+    "mensaje": "La campaña \"sadasdasd\" ha finalizado. Los productos PAS1605 ya no tienen oferta.",
+    "datos": {
+      "campaña": "sadasdasd",
+      "skus": [
+        "PAS1605"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-22T01:22:34.655Z"
+  },
+  {
+    "id": "notif_1766366554655_u6qolhfsj",
+    "userId": "luna",
+    "tipo": "campana_eliminada",
+    "titulo": "🔚 Ofertas finalizadas",
+    "mensaje": "La campaña \"sadasdasd\" ha finalizado. Los productos PAS1605 ya no tienen oferta.",
+    "datos": {
+      "campaña": "sadasdasd",
+      "skus": [
+        "PAS1605"
+      ]
+    },
+    "leida": false,
+    "fecha": "2025-12-22T01:22:34.655Z"
   }
 ]

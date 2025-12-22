@@ -11,22 +11,72 @@
   "luna": {
     "campanas": [
       {
-        "id": "camp_1766413961025",
-        "nombre": "ejemplito",
+        "id": "camp_1766334088944",
+        "nombre": "prueba 2",
         "activa": true,
         "targetUsers": [
           "ecousuario",
           "luna"
         ],
         "vigencia": {
-          "desde": "2025-12-22",
+          "desde": "2025-12-21",
           "hasta": "2026-01-23"
         },
         "principal": {
           "slides": [
             {
-              "id": "slide_1766413947960",
-              "bannerDesktop": "/uploads/banners/banner-1766413963502-725879523.png",
+              "id": "slide_1766334066393",
+              "bannerDesktop": "/uploads/banners/banner-1766334094969-712014110.jpg",
+              "bannerMobile": "/uploads/banners/banner-1766334094982-961554119.png",
+              "skus": [
+                {
+                  "sku": "TAM-327F",
+                  "descuento": 2
+                },
+                {
+                  "sku": "PAT327T",
+                  "descuento": 2
+                }
+              ]
+            }
+          ]
+        },
+        "secundario": {
+          "slides": [
+            {
+              "id": "slide_1766360145012",
+              "bannerDesktop": "/uploads/banners/banner-1766360155066-766603799.jpg",
+              "bannerMobile": null,
+              "skus": [
+                {
+                  "sku": "KITTOY400AR",
+                  "descuento": 33
+                }
+              ]
+            }
+          ]
+        },
+        "activaVigente": true
+      },
+      {
+        "id": "camp_1766360209475",
+        "nombre": "asdasdaasd",
+        "activa": true,
+        "targetUsers": [
+          "ecousuario"
+        ],
+        "vigencia": {
+          "desde": "2025-12-21",
+          "hasta": "2026-01-29"
+        },
+        "principal": {
+          "slides": []
+        },
+        "secundario": {
+          "slides": [
+            {
+              "id": "slide_1766360190703",
+              "bannerDesktop": "/uploads/banners/banner-1766360211817-690607874.jpeg",
               "bannerMobile": null,
               "skus": [
                 {
@@ -37,18 +87,53 @@
             }
           ]
         },
-        "secundario": {
+        "activaVigente": true
+      },
+      {
+        "id": "camp_1766365020214",
+        "nombre": "sadasdasd",
+        "activa": true,
+        "targetUsers": [
+          "ecousuario",
+          "luna"
+        ],
+        "vigencia": {
+          "desde": "2025-12-21",
+          "hasta": "2026-01-30"
+        },
+        "principal": {
           "slides": []
+        },
+        "secundario": {
+          "slides": [
+            {
+              "id": "slide_1766365004249",
+              "bannerDesktop": "/uploads/banners/banner-1766365027724-704190809.JPG",
+              "bannerMobile": null,
+              "skus": [
+                {
+                  "sku": "PAS1605",
+                  "descuento": 22
+                }
+              ]
+            }
+          ]
         },
         "activaVigente": true
       }
     ],
     "banners": {
       "principal-desktop": [
-        "/uploads/banners/banner-1766413963502-725879523.png"
+        "/uploads/banners/banner-1766334094969-712014110.jpg"
       ],
-      "principal-mobile": [],
-      "secundario-desktop": [],
+      "principal-mobile": [
+        "/uploads/banners/banner-1766334094982-961554119.png"
+      ],
+      "secundario-desktop": [
+        "/uploads/banners/banner-1766360155066-766603799.jpg",
+        "/uploads/banners/banner-1766360211817-690607874.jpeg",
+        "/uploads/banners/banner-1766365027724-704190809.JPG"
+      ],
       "secundario-mobile": []
     }
   }

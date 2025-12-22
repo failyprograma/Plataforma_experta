@@ -7,7 +7,7 @@
     "marca": "EXEDY",
     "linea": "Embragues",
     "codSC": "KITTOY400DR",
-    "precio": 106459,
+    "precio": 150756,
     "descuento": 0,
     "stock": 12,
     "fichaTecnica": "Diámetro Disco: 275 mm\nN° Estrías: 21\nDiámetro Núcleo: 145 mm\nAgujero Piloto: 29.5 mm",
@@ -17,7 +17,7 @@
       "/uploads/productos/prod-1765419425972-599986316.png"
     ],
     "fechaCreacion": "2025-12-11T02:17:05.976Z",
-    "fechaModificacion": "2025-12-22T18:34:00.650Z"
+    "fechaModificacion": "2025-12-21T23:16:38.609Z"
   },
   {
     "id": "prod_1765419610363_qz6tbh6y5",
@@ -27,7 +27,7 @@
     "marca": "ALLIANCE",
     "linea": "Embragues",
     "codSC": "KITTOY400AR",
-    "precio": 88271,
+    "precio": 125000,
     "descuento": 0,
     "stock": 12,
     "fichaTecnica": "N° Estrías: 21\nAlto: 120 mm\nDiámetro Disco: 275 mm\nDiámetro Núcleo: 165 mm\nAgujero Piloto: 29.5 mm\nPeso: 10 Kg",
@@ -37,7 +37,7 @@
       "/uploads/productos/prod-1765419610299-523187208.png"
     ],
     "fechaCreacion": "2025-12-11T02:20:10.363Z",
-    "fechaModificacion": "2025-12-22T18:33:54.914Z"
+    "fechaModificacion": "2025-12-17T14:42:27.865Z"
   },
   {
     "id": "prod_1765419610363_dkntx1xex",
@@ -1505,5 +1505,24 @@
     "oem": "",
     "imagenes": [],
     "fechaCreacion": "2025-12-11T03:32:48.154Z"
+  },
+  {
+    "id": "prod_1766331199047_kp1j33mzl",
+    "userId": "ecousuario",
+    "codCliente": "asdsd",
+    "repuesto": "Freno motor",
+    "marca": "FRASLE",
+    "linea": "Frenos",
+    "codSC": "PRUEBA",
+    "precio": 12000,
+    "descuento": 0,
+    "stock": 3,
+    "fichaTecnica": "SADASDAS",
+    "referenciaCruzada": "DASDAS",
+    "oem": "DASDASD",
+    "imagenes": [
+      "/uploads/productos/prod-1766331199043-745969782.png"
+    ],
+    "fechaCreacion": "2025-12-21T15:33:19.047Z"
   }
 ]
