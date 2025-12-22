@@ -1,0 +1,94 @@
+[
+  {
+    "id": "notif_1766426567561_bl84nsa9o",
+    "userId": "ecousuario",
+    "tipo": "descuento_agregado",
+    "titulo": "¡Nueva oferta disponible!",
+    "mensaje": "Kit de embrague ahora tiene un 22% de descuento.",
+    "datos": {
+      "productoId": "prod_1765419425976_h672r0fna",
+      "productoNombre": "Kit de embrague",
+      "productoMarca": "EXEDY",
+      "repuesto": "Kit de embrague",
+      "marca": "EXEDY",
+      "codSC": "KITTOY400DR",
+      "precio": 126686,
+      "descuento": 22,
+      "precioFinal": 98815,
+      "precioAnterior": 126686,
+      "precioNuevo": 98815,
+      "imagen": "/uploads/productos/prod-1765419425972-599986316.png"
+    },
+    "leida": false,
+    "fecha": "2025-12-22T18:02:47.561Z"
+  },
+  {
+    "id": "notif_1766428246453_zllv2r19k",
+    "userId": "ecousuario",
+    "tipo": "descuento_agregado",
+    "titulo": "¡Nueva oferta disponible!",
+    "mensaje": "Kit de embrague ahora tiene un 33% de descuento.",
+    "datos": {
+      "productoId": "prod_1765419610363_qz6tbh6y5",
+      "productoNombre": "Kit de embrague",
+      "productoMarca": "ALLIANCE",
+      "repuesto": "Kit de embrague",
+      "marca": "ALLIANCE",
+      "codSC": "KITTOY400AR",
+      "precio": 105042,
+      "descuento": 33,
+      "precioFinal": 70378,
+      "precioAnterior": 105042,
+      "precioNuevo": 70378,
+      "imagen": "/uploads/productos/prod-1765419610299-523187208.png"
+    },
+    "leida": false,
+    "fecha": "2025-12-22T18:30:46.453Z"
+  },
+  {
+    "id": "notif_1766428434914_hkdqg34tg",
+    "userId": "ecousuario",
+    "tipo": "descuento_eliminado",
+    "titulo": "Actualización de precio",
+    "mensaje": "Kit de embrague ha vuelto a su precio regular.",
+    "datos": {
+      "productoId": "prod_1765419610363_qz6tbh6y5",
+      "productoNombre": "Kit de embrague",
+      "productoMarca": "ALLIANCE",
+      "repuesto": "Kit de embrague",
+      "marca": "ALLIANCE",
+      "codSC": "KITTOY400AR",
+      "precio": 88271,
+      "descuento": 0,
+      "precioFinal": 88271,
+      "precioAnterior": 70378,
+      "precioNuevo": 88271,
+      "imagen": "/uploads/productos/prod-1765419610299-523187208.png"
+    },
+    "leida": false,
+    "fecha": "2025-12-22T18:33:54.914Z"
+  },
+  {
+    "id": "notif_1766428440651_6ytus5j3x",
+    "userId": "ecousuario",
+    "tipo": "descuento_eliminado",
+    "titulo": "Actualización de precio",
+    "mensaje": "Kit de embrague ha vuelto a su precio regular.",
+    "datos": {
+      "productoId": "prod_1765419425976_h672r0fna",
+      "productoNombre": "Kit de embrague",
+      "productoMarca": "EXEDY",
+      "repuesto": "Kit de embrague",
+      "marca": "EXEDY",
+      "codSC": "KITTOY400DR",
+      "precio": 106459,
+      "descuento": 0,
+      "precioFinal": 106459,
+      "precioAnterior": 98815,
+      "precioNuevo": 106459,
+      "imagen": "/uploads/productos/prod-1765419425972-599986316.png"
+    },
+    "leida": false,
+    "fecha": "2025-12-22T18:34:00.651Z"
+  }
+]

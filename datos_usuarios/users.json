@@ -1,0 +1,232 @@
+[
+  {
+    "id": "cuenta",
+    "pass": "cuenta",
+    "nombre": "Empresa prueba",
+    "empresa": "Empresa prueba",
+    "createdAt": "2025-12-09T17:15:34.142Z",
+    "favorites": [
+      {
+        "id": "veh_1765310912322_8781",
+        "vehiculoId": "veh_1765310912322_8781",
+        "marca": "Volvo",
+        "modelo": "B8R",
+        "anio": "asdasd",
+        "patente": "sadasdas",
+        "conductor": "",
+        "tipo": "bus",
+        "motor": "asdasd"
+      },
+      {
+        "id": "veh_1765310912322_4449",
+        "vehiculoId": "veh_1765310912322_4449",
+        "marca": "Isuzu",
+        "modelo": "NPR",
+        "anio": "asdadas",
+        "patente": "sdasdasd",
+        "conductor": "",
+        "tipo": "3/4",
+        "motor": "dasdasda"
+      },
+      {
+        "id": "veh_1765310912322_8785",
+        "vehiculoId": "veh_1765310912322_8785",
+        "marca": "Isuzu",
+        "modelo": "NPR",
+        "anio": "asdasdasd",
+        "patente": "dasdasd",
+        "conductor": "",
+        "tipo": "3/4",
+        "motor": "asdasdas"
+      },
+      {
+        "id": "veh_1765310912322_6736",
+        "vehiculoId": "veh_1765310912322_6736",
+        "marca": "Volvo",
+        "modelo": "B8R",
+        "anio": "sadasd",
+        "patente": "asdasd",
+        "conductor": "",
+        "tipo": "bus",
+        "motor": "asdasd"
+      },
+      {
+        "id": "veh_1765310912322_6042",
+        "vehiculoId": "veh_1765310912322_6042",
+        "marca": "Ford",
+        "modelo": "F-150",
+        "anio": "dasdsa",
+        "patente": "asdsad",
+        "conductor": "",
+        "tipo": "camioneta",
+        "motor": "dasdasd"
+      },
+      {
+        "id": "veh_1765410988379_0",
+        "vehiculoId": "veh_1765410988379_0",
+        "marca": "mercedes",
+        "modelo": "actros",
+        "anio": "1992",
+        "patente": "ASDASDAS",
+        "conductor": "",
+        "tipo": "camioneta",
+        "motor": ""
+      },
+      {
+        "id": "veh_1765413500785_0",
+        "vehiculoId": "veh_1765413500785_0",
+        "marca": "Mercedes",
+        "modelo": "Actros",
+        "anio": "1992",
+        "patente": "ASDASDAS",
+        "conductor": "",
+        "tipo": "camioneta",
+        "motor": ""
+      },
+      {
+        "id": "temp_0",
+        "vehiculoId": "temp_0",
+        "marca": "Toyota",
+        "modelo": "Hilux 2.8",
+        "anio": "asdasd",
+        "patente": "sadasda",
+        "tipo": "camioneta",
+        "motor": "asdas"
+      }
+    ],
+    "vehiculoDetalle": {
+      "tipo": "camioneta",
+      "marca": "Toyota",
+      "modelo": "Hilux 2.4",
+      "motor": "1234",
+      "patente": "1234",
+      "anio": "1234",
+      "id": "main_1765465304696_0_309",
+      "logo": "../logosvehiculos/toyota.png",
+      "imagen": "../vehiculosexpertos/pick up.png",
+      "logoUrl": "../logosvehiculos/toyota.png"
+    },
+    "email": "gonzavidalj@gmail.com"
+  },
+  {
+    "id": "luna",
+    "pass": "snow",
+    "nombre": "Viex",
+    "empresa": "Viex",
+    "email": "gonzavidalj@gmail.com",
+    "createdAt": "2025-12-10T18:46:21.950Z"
+  },
+  {
+    "id": "ecousuario",
+    "pass": "star123",
+    "nombre": "Ecorent",
+    "empresa": "Ecorent",
+    "email": "gonzavidalj@gmail.com",
+    "createdAt": "2025-12-11T01:53:37.245Z",
+    "vehiculoDetalle": {
+      "id": "veh_1765502675870_3_d333phqbv",
+      "vehiculoId": "veh_1765502675870_3_d333phqbv",
+      "marca": "Citroen",
+      "modelo": "Berlingo 1.6 K9",
+      "anio": "",
+      "patente": "",
+      "conductor": "",
+      "tipo": "",
+      "motor": "",
+      "imagen": "../vehiculosexpertos/van de transporte.png",
+      "logoUrl": "../logosvehiculos/citroen.png"
+    },
+    "favorites": [
+      {
+        "id": "veh_1765502675870_3_d333phqbv",
+        "vehiculoId": "veh_1765502675870_3_d333phqbv",
+        "marca": "Citroen",
+        "modelo": "Berlingo 1.6 K9",
+        "anio": "",
+        "patente": "",
+        "conductor": "",
+        "tipo": "",
+        "motor": ""
+      },
+      {
+        "id": "veh_1765502675870_10_uw8ib8r5n",
+        "vehiculoId": "veh_1765502675870_10_uw8ib8r5n",
+        "marca": "Ford",
+        "modelo": "Ranger",
+        "anio": "Sin especificar",
+        "patente": "Sin especificar",
+        "tipo": "camioneta",
+        "motor": ""
+      },
+      {
+        "id": "veh_1765502675870_16_8wk4eqtxu",
+        "vehiculoId": "veh_1765502675870_16_8wk4eqtxu",
+        "marca": "Great Wall",
+        "modelo": "Poer 2.0",
+        "anio": "Sin especificar",
+        "patente": "Sin especificar",
+        "tipo": "camioneta",
+        "motor": ""
+      },
+      {
+        "id": "veh_1765502675870_14_593e5qnio",
+        "vehiculoId": "veh_1765502675870_14_593e5qnio",
+        "marca": "Peugeot",
+        "modelo": "Landtrek",
+        "anio": "Sin especificar",
+        "patente": "Sin especificar",
+        "tipo": "camioneta",
+        "motor": ""
+      },
+      {
+        "id": "veh_1765502675870_12_h2ok6fjwg",
+        "vehiculoId": "veh_1765502675870_12_h2ok6fjwg",
+        "marca": "Peugeot",
+        "modelo": "Expert",
+        "anio": "Sin especificar",
+        "patente": "Sin especificar",
+        "tipo": "bus",
+        "motor": ""
+      },
+      {
+        "id": "veh_1765502675870_11_rmpgmf7cf",
+        "vehiculoId": "veh_1765502675870_11_rmpgmf7cf",
+        "marca": "Hyundai",
+        "modelo": "Porter",
+        "anio": "Sin especificar",
+        "patente": "Sin especificar",
+        "tipo": "3/4",
+        "motor": ""
+      }
+    ],
+    "preferencias": {
+      "pinActivo": false
+    },
+    "recomendados": [
+      "prueba_sku_123"
+    ],
+    "telefono": "953919607",
+    "carrito": {
+      "items": [],
+      "ultimaActualizacion": "2025-12-22T14:39:20.118Z"
+    },
+    "ordenesCompraEnviadas": 26,
+    "cotizacionesEnviadas": 51,
+    "cotizacionSkus": [
+      "PAS2379",
+      "KITTOY400AR",
+      "PT5280HT",
+      "FR5280HT",
+      "PAT327T",
+      "TAM-327F",
+      "TF3270HT",
+      "KITTOY400DR",
+      "PAS1028",
+      "PAS528",
+      "KITMAX280LR",
+      "IVMAX280N",
+      "PT1433MHT",
+      "DFTOY528F"
+    ]
+  }
+]

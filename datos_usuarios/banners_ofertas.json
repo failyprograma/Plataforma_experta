@@ -1,0 +1,55 @@
+{
+  "ecousuario": {
+    "campanas": [],
+    "banners": {
+      "principal-desktop": [],
+      "principal-mobile": [],
+      "secundario-desktop": [],
+      "secundario-mobile": []
+    }
+  },
+  "luna": {
+    "campanas": [
+      {
+        "id": "camp_1766413961025",
+        "nombre": "ejemplito",
+        "activa": true,
+        "targetUsers": [
+          "ecousuario",
+          "luna"
+        ],
+        "vigencia": {
+          "desde": "2025-12-22",
+          "hasta": "2026-01-23"
+        },
+        "principal": {
+          "slides": [
+            {
+              "id": "slide_1766413947960",
+              "bannerDesktop": "/uploads/banners/banner-1766413963502-725879523.png",
+              "bannerMobile": null,
+              "skus": [
+                {
+                  "sku": "KITTOY400DR",
+                  "descuento": 22
+                }
+              ]
+            }
+          ]
+        },
+        "secundario": {
+          "slides": []
+        },
+        "activaVigente": true
+      }
+    ],
+    "banners": {
+      "principal-desktop": [
+        "/uploads/banners/banner-1766413963502-725879523.png"
+      ],
+      "principal-mobile": [],
+      "secundario-desktop": [],
+      "secundario-mobile": []
+    }
+  }
+}

@@ -1,0 +1,378 @@
+/* ============================================
+   MODAL ANALYTICS DE CAMPAÑA
+   ============================================ */
+
+.analytics-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.analytics-metric-card {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s;
+  min-width: 200px;
+}
+
+.analytics-metric-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.analytics-metric-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.analytics-metric-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.analytics-metric-label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.analytics-metric-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111;
+  line-height: 1;
+}
+
+.analytics-metric-change {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.analytics-section {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.analytics-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+  margin: 0 0 16px 0;
+}
+
+/* Embudo de conversión - Diseño mejorado */
+.analytics-funnel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 12px;
+}
+
+.funnel-step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+}
+
+.funnel-bar {
+  height: 56px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 180px;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.funnel-step:first-child .funnel-bar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.funnel-step:nth-child(2) .funnel-bar {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.funnel-step:nth-child(3) .funnel-bar {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.funnel-step:nth-child(4) .funnel-bar {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.funnel-step:nth-child(5) .funnel-bar {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.funnel-bar:hover {
+  transform: translateX(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.funnel-label {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.funnel-label::before {
+  content: '▶';
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.funnel-value {
+  font-size: 18px;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.funnel-percentage {
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  min-width: 70px;
+  text-align: right;
+  padding: 8px 12px;
+  background: #fff;
+  border-radius: 20px;
+  border: 2px solid #e5e5e5;
+}
+
+/* Grid de productos top */
+.analytics-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.analytics-product-box {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.analytics-product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.analytics-product-item {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.analytics-product-name {
+  font-size: 13px;
+  color: #333;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.analytics-product-sku {
+  font-size: 11px;
+  color: #666;
+  font-weight: 600;
+}
+
+.analytics-product-count {
+  font-size: 14px;
+  font-weight: 700;
+  color: #BF1823;
+}
+
+/* Timeline de actividad */
+.analytics-timeline {
+  max-height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.analytics-timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 3px solid #BF1823;
+}
+
+.analytics-timeline-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid #e5e5e5;
+}
+
+.analytics-timeline-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.analytics-timeline-action {
+  font-size: 14px;
+  color: #111;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.analytics-timeline-details {
+  font-size: 12px;
+  color: #666;
+}
+
+.analytics-timeline-time {
+  font-size: 11px;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* Lista de usuarios */
+.analytics-usuarios-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.analytics-usuario-card {
+  background: #f8f9fa;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.analytics-usuario-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #BF1823;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.analytics-usuario-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.analytics-usuario-nombre {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.analytics-usuario-interacciones {
+  font-size: 11px;
+  color: #666;
+  margin-top: 2px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .analytics-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .analytics-products-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .analytics-usuarios-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .analytics-funnel {
+    padding: 12px;
+  }
+  
+  .funnel-step {
+    gap: 8px;
+  }
+  
+  .funnel-bar {
+    font-size: 12px;
+    height: 48px;
+    padding: 0 12px;
+    min-width: 140px;
+  }
+  
+  .funnel-label::before {
+    font-size: 8px;
+  }
+  
+  .funnel-value {
+    font-size: 15px;
+  }
+  
+  .funnel-percentage {
+    font-size: 11px;
+    min-width: 60px;
+    padding: 6px 10px;
+  }
+  
+  .analytics-metric-value {
+    font-size: 20px;
+  }
+  
+  .analytics-metric-icon {
+    width: 40px;
+    height: 40px;
+  }
+}

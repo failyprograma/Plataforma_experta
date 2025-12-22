@@ -1,0 +1,171 @@
+<!-- MODAL ANALYTICS DE CAMPAÑA -->
+<div id="modal-analytics-campana" class="sc-modal-overlay" style="display: none;">
+  <div class="sc-modal-container" style="max-width: 1100px; max-height: 90vh; overflow-y: auto;">
+    <div class="sc-modal-header">
+      <h3 id="analytics-campana-title">Datos de Campaña</h3>
+      <button class="btn-close-modal" onclick="cerrarModalAnalyticsCampana()">&times;</button>
+    </div>
+    
+    <div class="sc-modal-body" style="padding: 24px;">
+      <!-- Resumen de métricas principales -->
+      <div class="analytics-metrics-grid">
+        <div class="analytics-metric-card">
+          <div class="analytics-metric-icon" style="background: #E8F5E9;">
+            <img src="../img/Ocultar contraseña.svg" alt="Vistas" style="width: 24px; height: 24px; filter: invert(45%) sepia(84%) saturate(1095%) hue-rotate(86deg) brightness(96%) contrast(92%);">
+          </div>
+          <div class="analytics-metric-content">
+            <div class="analytics-metric-label">Vistas del banner</div>
+            <div class="analytics-metric-value" id="analytics-vistas-banner">0</div>
+          </div>
+        </div>
+        
+        <div class="analytics-metric-card">
+          <div class="analytics-metric-icon" style="background: #E3F2FD;">
+            <img src="../img/Alerta.svg" alt="Clicks" style="width: 24px; height: 24px; filter: invert(42%) sepia(98%) saturate(2339%) hue-rotate(195deg) brightness(95%) contrast(101%);">
+          </div>
+          <div class="analytics-metric-content">
+            <div class="analytics-metric-label">Clicks en banner</div>
+            <div class="analytics-metric-value" id="analytics-clicks-banner">0</div>
+            <div class="analytics-metric-change" id="analytics-clicks-tasa">0% CTR</div>
+          </div>
+        </div>
+        
+        <div class="analytics-metric-card">
+          <div class="analytics-metric-icon" style="background: #FFF3E0;">
+            <img src="../img/Productos.svg" alt="Productos" style="width: 24px; height: 24px; filter: invert(67%) sepia(74%) saturate(1668%) hue-rotate(356deg) brightness(101%) contrast(98%);">
+          </div>
+          <div class="analytics-metric-content">
+            <div class="analytics-metric-label">Vistas de productos</div>
+            <div class="analytics-metric-value" id="analytics-vistas-productos">0</div>
+          </div>
+        </div>
+        
+        <div class="analytics-metric-card">
+          <div class="analytics-metric-icon" style="background: #FCE4EC;">
+            <img src="../img/carrito.svg" alt="Carrito" style="width: 24px; height: 24px; filter: invert(34%) sepia(71%) saturate(4817%) hue-rotate(330deg) brightness(93%) contrast(97%);">
+          </div>
+          <div class="analytics-metric-content">
+            <div class="analytics-metric-label">Agregados al carrito</div>
+            <div class="analytics-metric-value" id="analytics-carrito">0</div>
+            <div class="analytics-metric-change" id="analytics-carrito-tasa">0% conv.</div>
+          </div>
+        </div>
+        
+        <div class="analytics-metric-card">
+          <div class="analytics-metric-icon" style="background: #F3E5F5;">
+            <img src="../img/bill-01 1.svg" alt="Cotizaciones" style="width: 24px; height: 24px; filter: invert(37%) sepia(85%) saturate(1807%) hue-rotate(267deg) brightness(95%) contrast(96%);">
+          </div>
+          <div class="analytics-metric-content">
+            <div class="analytics-metric-label">Cotizaciones generadas</div>
+            <div class="analytics-metric-value" id="analytics-cotizaciones">0</div>
+          </div>
+        </div>
+        
+        <div class="analytics-metric-card">
+          <div class="analytics-metric-icon" style="background: #E8F5E9;">
+            <img src="../img/check.svg" alt="Órdenes" style="width: 24px; height: 24px; filter: invert(45%) sepia(84%) saturate(1095%) hue-rotate(86deg) brightness(96%) contrast(92%);">
+          </div>
+          <div class="analytics-metric-content">
+            <div class="analytics-metric-label">Órdenes de compra</div>
+            <div class="analytics-metric-value" id="analytics-ordenes">0</div>
+            <div class="analytics-metric-change" id="analytics-ordenes-monto">$0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Embudo de conversión -->
+      <div class="analytics-section">
+        <h4 class="analytics-section-title">Embudo de Conversión</h4>
+        <div class="analytics-funnel">
+          <div class="funnel-step">
+            <div class="funnel-bar" id="funnel-bar-1" style="width: 0%; background: #2196F3;">
+              <span class="funnel-label">Vistas banner</span>
+              <span class="funnel-value" id="funnel-vistas">0</span>
+            </div>
+            <div class="funnel-percentage" id="funnel-pct-1">0%</div>
+          </div>
+          
+          <div class="funnel-step">
+            <div class="funnel-bar" id="funnel-bar-2" style="width: 0%; background: #4CAF50;">
+              <span class="funnel-label">Clicks</span>
+              <span class="funnel-value" id="funnel-clicks">0</span>
+            </div>
+            <div class="funnel-percentage" id="funnel-pct-2">0%</div>
+          </div>
+          
+          <div class="funnel-step">
+            <div class="funnel-bar" id="funnel-bar-5" style="width: 0%; background: #8E24AA;">
+              <span class="funnel-label">Cotizaciones</span>
+              <span class="funnel-value" id="funnel-cotizaciones">0</span>
+            </div>
+            <div class="funnel-percentage" id="funnel-pct-5">0%</div>
+          </div>
+          
+          <div class="funnel-step">
+            <div class="funnel-bar" id="funnel-bar-6" style="width: 0%; background: #F44336;">
+              <span class="funnel-label">Productos vistos</span>
+              <span class="funnel-value" id="funnel-productos">0</span>
+            </div>
+            <div class="funnel-percentage" id="funnel-pct-6">0%</div>
+          </div>
+          
+          <div class="funnel-step">
+            <div class="funnel-bar" id="funnel-bar-4" style="width: 0%; background: #9C27B0;">
+              <span class="funnel-label">Carrito</span>
+              <span class="funnel-value" id="funnel-carrito">0</span>
+            </div>
+            <div class="funnel-percentage" id="funnel-pct-4">0%</div>
+          </div>
+          
+          <div class="funnel-step">
+            <div class="funnel-bar" id="funnel-bar-5" style="width: 0%; background: #F44336;">
+              <span class="funnel-label">Órdenes</span>
+              <span class="funnel-value" id="funnel-ordenes">0</span>
+            </div>
+            <div class="funnel-percentage" id="funnel-pct-5">0%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Productos más vistos / vendidos -->
+      <div class="analytics-section">
+        <h4 class="analytics-section-title">Top Productos de la Campaña</h4>
+        <div class="analytics-products-grid">
+          <div class="analytics-product-box">
+            <h5 style="font-size: 14px; font-weight: 600; margin: 0 0 12px 0; color: #333;">Más Vistos</h5>
+            <div id="analytics-top-vistos" class="analytics-product-list">
+              <div style="color: #999; font-size: 13px; padding: 20px; text-align: center;">Sin datos</div>
+            </div>
+          </div>
+          
+          <div class="analytics-product-box">
+            <h5 style="font-size: 14px; font-weight: 600; margin: 0 0 12px 0; color: #333;">Más Agregados al Carrito</h5>
+            <div id="analytics-top-carrito" class="analytics-product-list">
+              <div style="color: #999; font-size: 13px; padding: 20px; text-align: center;">Sin datos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline de actividad -->
+      <div class="analytics-section">
+        <h4 class="analytics-section-title">Actividad Reciente</h4>
+        <div id="analytics-timeline" class="analytics-timeline">
+          <div style="color: #999; font-size: 13px; padding: 20px; text-align: center;">Sin actividad registrada</div>
+        </div>
+      </div>
+
+      <!-- Usuarios interactuando -->
+      <div class="analytics-section">
+        <h4 class="analytics-section-title">Usuarios Activos</h4>
+        <div id="analytics-usuarios" class="analytics-usuarios-list">
+          <div style="color: #999; font-size: 13px; padding: 20px; text-align: center;">Sin usuarios activos</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="sc-modal-footer" style="padding: 16px 24px; background: #f8f9fa; border-top: 1px solid #e0e0e0; display: flex; justify-content: flex-end;">
+      <button class="btn-secondary" onclick="cerrarModalAnalyticsCampana()">Cerrar</button>
+    </div>
+  </div>
+</div>

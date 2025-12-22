@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Starclutch - Mi Perfil</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    .perfil-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      padding: 20px 0;
+    }
+
+    .perfil-card {
+      background: white;
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .perfil-card h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin: 0 0 24px 0;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #BF1823;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    .input-editable-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-editable {
+      flex: 1;
+      padding: 12px 45px 12px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #333;
+      background: #f8f9fa;
+      transition: all 0.3s;
+    }
+
+    .input-editable.editing {
+      padding-right: 80px; /* Espacio para los dos botones */
+    }
+
+    .input-editable:focus {
+      outline: none;
+      border-color: #BF1823;
+      background: white;
+    }
+
+    .input-editable:disabled {
+      background: #f8f9fa;
+      cursor: not-allowed;
+    }
+
+    .input-editable.editing {
+      background: white;
+      border-color: #BF1823;
+    }
+
+    .input-actions-wrapper {
+      position: absolute;
+      right: 10px;
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .btn-edit-input {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+
+    .btn-edit-input:hover {
+      transform: scale(1.1);
+    }
+
+    .btn-edit-input img {
+      width: 18px;
+      height: 18px;
+    }
+
+    .edit-actions {
+      display: none;
+      gap: 4px;
+    }
+
+    .edit-actions.active {
+      display: flex;
+    }
+
+    .btn-action {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .btn-save {
+      color: #4CAF50;
+    }
+
+    .btn-save:hover {
+      transform: scale(1.2);
+    }
+
+    .btn-cancel {
+      color: #f44336;
+    }
+
+    .btn-cancel:hover {
+      transform: scale(1.2);
+    }
+
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .toggle-container:last-child {
+      border-bottom: none;
+    }
+
+    .toggle-label {
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .toggle-description {
+      font-size: 12px;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 50px;
+      height: 26px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 26px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background-color: #BF1823;
+    }
+
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+
+    /* Modal PIN */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9998;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      max-width: 450px;
+      width: 90%;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #333;
+      margin: 0 0 12px 0;
+    }
+
+    .modal-header p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .pin-input-group {
+      margin: 24px 0;
+    }
+
+    .pin-input-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .pin-input {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 18px;
+      text-align: center;
+      letter-spacing: 8px;
+      font-weight: 600;
+    }
+
+    .pin-input:focus {
+      outline: none;
+      border-color: #BF1823;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-modal-primary {
+      background: #BF1823;
+      color: white;
+    }
+
+    .btn-modal-primary:hover {
+      background: #a01620;
+    }
+
+    .btn-modal-secondary {
+      background: #f5f5f5;
+      color: #666;
+    }
+
+    .btn-modal-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .info-message {
+      background: #e3f2fd;
+      border-left: 4px solid #2196F3;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin: 16px 0;
+      font-size: 13px;
+      color: #1976D2;
+    }
+
+    .success-message {
+      background: #e8f5e9;
+      border-left: 4px solid #4CAF50;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin: 16px 0;
+      font-size: 13px;
+      color: #2e7d32;
+    }
+
+    .error-message {
+      background: #ffebee;
+      border-left: 4px solid #f44336;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin: 16px 0;
+      font-size: 13px;
+      color: #c62828;
+    }
+
+    /* Responsive para perfil */
+    @media (max-width: 768px) {
+      .perfil-container {
+        grid-template-columns: 1fr;
+        padding: 16px 0;
+      }
+
+      .perfil-card {
+        padding: 20px 16px;
+      }
+
+      .modal-content {
+        padding: 24px 20px;
+        max-width: 95%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAV LATERAL -->
+  <nav class="sidebar">
+    <div class="logo">
+      <img src="../img/Logo starclutch web.svg" alt="Logo Starclutch">
+    </div>
+
+    <div class="user-info">
+      <a href="../perfildeusuario/index.html" class="active">
+        <span class="nav-icon"><img src="../img/Usuario.svg" alt="Usuario"></span>
+        <span class="nav-text">Hola, <strong class="nav-username"></strong></span>
+      </a>
+    </div>
+
+    <div class="search-general">
+      <input type="text" placeholder="Búsqueda general" class="input-general">
+      <button class="btn-search-general">
+        <img src="../img/Buscar.svg" alt="Buscar">
+      </button>
+    </div>
+
+    <ul class="menu main-nav">
+      <li>
+        <a href="../mis flotas/index.html">
+          <span class="nav-icon"><img src="../img/Agregar flota.svg" alt="Ver mi flotas"></span>
+          <span class="nav-text">Mis flotas</span>
+        </a>
+      </li>
+      <li>
+        <a href="../lista de repuestos/index.html">
+          <span class="nav-icon"><img src="../img/Productos.svg" alt="Ver mis repuestos"></span>
+          <span class="nav-text">Lista de repuestos</span>
+        </a>
+      </li>
+      <li>
+        <a href="../ofertas exclusivas/index.html">
+          <span class="nav-icon"><img src="../img/Descuento.svg" alt="Ofertas"></span>
+          <span class="nav-text">Ofertas exclusivas</span>
+        </a>
+      </li>
+      <li>
+        <a href="../estado de la cuenta/index.html">
+          <span class="nav-icon"><img src="../img/bill-01 1.svg" alt="Ver mis repuestos"></span>
+          <span class="nav-text">Estado de cuenta</span>
+        </a>
+      </li>
+      <li>
+        <a href="../mis compras/index.html.html">
+          <span class="nav-icon"><img src="../img/miscompras.svg" alt="Ver mis compras"></span>
+          <span class="nav-text">Mis compras</span>
+        </a>
+      </li>
+    </ul>
+
+    <footer class="sidebar-footer">
+      <a href="https://starclutch.cl/repuestos" 
+         target="_blank" 
+         rel="noopener noreferrer"
+         class="btn-text footer-link">
+         <span class="icon-left"><img src="../img/Logo SC.svg" alt="Ver mis repuestos"></span> Nosotros
+      </a>
+      <p>Starclutch S.p.A<br>© Todos los derechos reservados 2025</p>
+    </footer>
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-content">
+    <div class="page-container">
+
+      <!-- HEADER -->
+      <header class="main-header">
+        <div class="header-left">
+          <img src="../img/Usuario.svg" alt="Icono Perfil" class="icono-header">
+          <h1>Mi perfil</h1>
+          <button class="btn-primary" onclick="cerrarSesion()">
+            Cerrar sesión <img src="../img/Cerrar sesión.svg" alt="Cerrar sesión" style="filter: brightness(0) invert(1);">
+          </button>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn-text">
+            <span class="icon-left"><img src="../img/info_471662-01 1.svg" alt="Ayuda"></span> Ayuda
+          </button>
+          <button class="btn-text" onclick="toggleCarrito()" style="position: relative;">
+            <span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/carrito.svg" alt="Carrito"><span class="cart-badge" id="cart-badge-count">0</span></span> Carrito
+          </button>
+          <button class="btn-text" id="btn-notificaciones" onclick="toggleNotificaciones()" style="position: relative;">
+            <span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/Alerta.svg" alt="Notificaciones"><span class="notif-badge" id="notif-badge-count">0</span></span> Notificaciones
+          </button>
+        </div>
+      </header>
+
+      <!-- CONTENEDOR DE PERFIL -->
+      <div class="perfil-container">
+
+        <!-- TARJETA: CONFIGURACIÓN DEL USUARIO -->
+        <div class="perfil-card">
+          <h2>Configuración del usuario</h2>
+
+          <!-- Nombre de usuario -->
+          <div class="form-group">
+            <label>Nombre de usuario</label>
+            <div class="input-editable-container">
+              <input type="text" class="input-editable" id="input-nombre" disabled value="">
+              <div class="input-actions-wrapper">
+                <button class="btn-edit-input" data-campo="nombre">
+                  <img src="../img/Editar flota.svg" alt="Editar">
+                </button>
+                <div class="edit-actions" id="actions-nombre">
+                  <button class="btn-action btn-save" onclick="guardarCambio('nombre')" title="Guardar">✓</button>
+                  <button class="btn-action btn-cancel" onclick="cancelarEdicion('nombre')" title="Cancelar">✕</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Correo electrónico -->
+          <div class="form-group">
+            <label>Correo electrónico</label>
+            <div class="input-editable-container">
+              <input type="email" class="input-editable" id="input-correo" disabled value="" placeholder="Ingresa tu correo electrónico">
+              <div class="input-actions-wrapper">
+                <button class="btn-edit-input" data-campo="correo">
+                  <img src="../img/Editar flota.svg" alt="Editar">
+                </button>
+                <div class="edit-actions" id="actions-correo">
+                  <button class="btn-action btn-save" onclick="guardarCambio('correo')" title="Guardar">✓</button>
+                  <button class="btn-action btn-cancel" onclick="cancelarEdicion('correo')" title="Cancelar">✕</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contraseña -->
+          <div class="form-group">
+            <label>Contraseña</label>
+            <div class="input-editable-container">
+              <input type="password" class="input-editable" id="input-password" disabled value="********">
+              <div class="input-actions-wrapper">
+                <button class="btn-edit-input" data-campo="password" id="btn-toggle-password">
+                  <img src="../img/Editar flota.svg" alt="Editar">
+                </button>
+                <div class="edit-actions" id="actions-password">
+                  <button class="btn-action btn-save" onclick="guardarCambio('password')" title="Guardar">✓</button>
+                  <button class="btn-action btn-cancel" onclick="cancelarEdicion('password')" title="Cancelar">✕</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dirección de envío -->
+          <div class="form-group">
+            <label>Dirección de envío</label>
+            <div class="input-editable-container">
+              <input type="text" class="input-editable" id="input-direccion" disabled value="">
+              <div class="input-actions-wrapper">
+                <button class="btn-edit-input" data-campo="direccion">
+                  <img src="../img/Editar flota.svg" alt="Editar">
+                </button>
+                <div class="edit-actions" id="actions-direccion">
+                  <button class="btn-action btn-save" onclick="guardarCambio('direccion')" title="Guardar">✓</button>
+                  <button class="btn-action btn-cancel" onclick="cancelarEdicion('direccion')" title="Cancelar">✕</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Número telefónico -->
+          <div class="form-group">
+            <label>Número telefónico</label>
+            <div class="input-editable-container">
+              <input type="tel" class="input-editable" id="input-telefono" disabled value="" placeholder="Ej: +56 9 1234 5678">
+              <div class="input-actions-wrapper">
+                <button class="btn-edit-input" data-campo="telefono">
+                  <img src="../img/Editar flota.svg" alt="Editar">
+                </button>
+                <div class="edit-actions" id="actions-telefono">
+                  <button class="btn-action btn-save" onclick="guardarCambio('telefono')" title="Guardar">✓</button>
+                  <button class="btn-action btn-cancel" onclick="cancelarEdicion('telefono')" title="Cancelar">✕</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TARJETA: PREFERENCIAS DE LA PLATAFORMA -->
+        <div class="perfil-card">
+          <h2>Preferencias de la plataforma</h2>
+
+          <!-- Toggle: Recibir notificaciones por correo -->
+          <div class="toggle-container">
+            <div>
+              <div class="toggle-label">Recibir notificaciones por correo electrónico</div>
+              <div class="toggle-description">Recibe actualizaciones y novedades en tu email</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggle-notif-email">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <!-- Toggle: Notificarme carritos abandonados -->
+          <div class="toggle-container">
+            <div>
+              <div class="toggle-label">Notificarme carritos abandonados</div>
+              <div class="toggle-description">Te recordaremos los productos que dejaste en el carrito</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggle-carrito">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <!-- Toggle: Recordatorio de mantenciones -->
+          <div class="toggle-container">
+            <div>
+              <div class="toggle-label">Recordatorio de mantenciones mensuales</div>
+              <div class="toggle-description">Programa recordatorios de mantenimiento de tu flota</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggle-mantenciones">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <!-- Toggle: Silenciar plataforma experta -->
+          <div class="toggle-container">
+            <div>
+              <div class="toggle-label">Silenciar plataforma experta</div>
+              <div class="toggle-description">Desactiva las sugerencias automáticas del sistema</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggle-silenciar">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <!-- Toggle: Activar PIN de doble confirmación -->
+          <div class="toggle-container">
+            <div>
+              <div class="toggle-label" style="color: #BF1823; font-weight: 700;">Activar PIN de doble confirmación</div>
+              <div class="toggle-description">Solicita un PIN antes de acciones críticas (eliminar flotas, órdenes de compra)</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggle-pin">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL: CONFIGURAR PIN -->
+  <div class="modal-overlay" id="modal-pin">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Configurar PIN de seguridad</h3>
+        <p><strong>El PIN de doble confirmación protege tu cuenta solicitando un código de 4 dígitos antes de realizar acciones críticas como:</strong></p>
+        <ul style="margin: 12px 0; padding-left: 20px; font-size: 13px; color: #666;">
+          <li>Eliminar una flota completa</li>
+          <li>Enviar una orden de compra</li>
+          <li>Agregar una nueva flota</li>
+          <li><strong>Modificar cualquier campo en "Configuración del usuario"</strong></li>
+        </ul>
+        <p style="margin-top: 12px; font-size: 13px; color: #BF1823;"><strong>⚠️ Una vez activado, necesitarás ingresar tu PIN para editar tu nombre, correo, contraseña o dirección.</strong></p>
+      </div>
+
+      <div id="mensaje-correo-requerido" class="info-message" style="display: none;">
+        Por favor, configura tu correo electrónico antes de activar el PIN de seguridad.
+      </div>
+
+      <div id="pin-form-container">
+        <div class="pin-input-group">
+          <label>Ingresa tu PIN de 4 dígitos</label>
+          <input type="text" class="pin-input" id="pin-input-1" maxlength="4" placeholder="••••">
+        </div>
+
+        <div class="pin-input-group">
+          <label>Confirma tu PIN</label>
+          <input type="text" class="pin-input" id="pin-input-2" maxlength="4" placeholder="••••">
+        </div>
+
+        <div id="mensaje-error" class="error-message" style="display: none;"></div>
+        <div id="mensaje-exito" class="success-message" style="display: none;"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-modal-secondary" onclick="cerrarModalPin()">Cancelar</button>
+        <button class="btn-modal-primary" onclick="confirmarPin()">Confirmar PIN</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../script.js"></script>
+  <script src="../mobile-nav.js"></script>
+
+  <script>
+    // Función para cerrar sesión
+    function cerrarSesion() {
+      if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+        // Limpiar localStorage
+        localStorage.removeItem('starclutch_user');
+        
+        // Redirigir al login (index.html en la raíz)
+        window.location.href = '../index.html';
+      }
+    }
+
+    // Cargar datos del usuario
+    let usuarioActual = null;
+    let valoresOriginales = {};
+
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarDatosUsuario();
+      initEditableInputs();
+      initTogglePin();
+    });
+
+    async function cargarDatosUsuario() {
+      try {
+        // Obtener el usuario desde localStorage (solo para obtener el ID)
+        const userSession = JSON.parse(localStorage.getItem("starclutch_user") || "null");
+        
+        if (!userSession || !userSession.id) {
+          console.error("No hay sesión activa");
+          return;
+        }
+
+        console.log('📋 Cargando datos del usuario:', userSession.id);
+
+        // Cargar datos completos desde el servidor
+        const response = await fetch(`/api/obtener-usuario?userId=${userSession.id}`);
+        const data = await response.json();
+        
+        console.log('📥 Datos del usuario recibidos:', data);
+        
+        if (data.ok && data.user) {
+          usuarioActual = data.user;
+          
+          // Cargar nombre de usuario en el nav
+          document.querySelectorAll('.nav-username').forEach(el => {
+            el.textContent = usuarioActual.nombre || 'Usuario';
+          });
+
+          // Cargar datos en los inputs
+          document.getElementById('input-nombre').value = usuarioActual.nombre || '';
+          document.getElementById('input-correo').value = usuarioActual.email || '';
+          document.getElementById('input-password').value = '********';
+          document.getElementById('input-direccion').value = usuarioActual.direccion || '';
+          document.getElementById('input-telefono').value = usuarioActual.telefono || '';
+
+          console.log('✅ Datos cargados en inputs. Email:', usuarioActual.email);
+
+          // Guardar valores originales (incluir contraseña real para revelarla al editar)
+          valoresOriginales = {
+            nombre: usuarioActual.nombre || '',
+            correo: usuarioActual.email || '',
+            password: usuarioActual.pass || '',
+            direccion: usuarioActual.direccion || '',
+            telefono: usuarioActual.telefono || ''
+          };
+
+          // Cargar preferencias (si existen)
+          if (usuarioActual.preferencias) {
+            document.getElementById('toggle-notif-email').checked = usuarioActual.preferencias.notifEmail || false;
+            document.getElementById('toggle-carrito').checked = usuarioActual.preferencias.carritoAbandonado || false;
+            document.getElementById('toggle-mantenciones').checked = usuarioActual.preferencias.mantenciones || false;
+            document.getElementById('toggle-silenciar').checked = usuarioActual.preferencias.silenciar || false;
+            document.getElementById('toggle-pin').checked = usuarioActual.preferencias.pinActivo || false;
+          }
+        }
+      } catch (e) {
+        console.error("Error al cargar usuario:", e);
+      }
+    }
+
+    function initEditableInputs() {
+      // Botones de edición
+      document.querySelectorAll('.btn-edit-input').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const campo = this.getAttribute('data-campo');
+          const input = document.getElementById(`input-${campo}`);
+          
+          console.log('Botón de edición clickeado:', campo);
+          
+          // Si es el botón de contraseña y el input está deshabilitado, es para editar
+          if (campo === 'password' && input.disabled) {
+            habilitarEdicion(campo);
+          } else if (campo === 'password' && !input.disabled) {
+            // Si ya está en modo edición, alternar visibilidad
+            togglePasswordVisibility();
+          } else {
+            habilitarEdicion(campo);
+          }
+        });
+      });
+
+      // Validar PIN inputs - solo números
+      document.querySelectorAll('.pin-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+          this.value = this.value.replace(/[^0-9]/g, '');
+        });
+      });
+      
+      console.log('✅ Botones de edición inicializados:', document.querySelectorAll('.btn-edit-input').length);
+    }
+
+    async function habilitarEdicion(campo) {
+      // Verificar si el PIN está activo
+      if (usuarioActual && usuarioActual.preferencias && usuarioActual.preferencias.pinActivo) {
+        const pinIngresado = prompt('🔒 Ingresa tu PIN de seguridad para continuar:');
+        
+        if (!pinIngresado) {
+          return; // Usuario canceló
+        }
+        
+        if (pinIngresado !== usuarioActual.preferencias.pin) {
+          alert('❌ PIN incorrecto. No se puede editar el campo.');
+          return;
+        }
+      }
+      
+      const input = document.getElementById(`input-${campo}`);
+      const actions = document.getElementById(`actions-${campo}`);
+      const wrapper = input.closest('.input-editable-container');
+      const btnEdit = wrapper.querySelector('.btn-edit-input');
+      
+      // Si es contraseña, revelar la contraseña real
+      if (campo === 'password') {
+        input.type = 'text';
+        input.value = valoresOriginales.password; // Mostrar contraseña real
+      }
+      
+      input.disabled = false;
+      input.classList.add('editing');
+      input.focus();
+      actions.classList.add('active');
+      btnEdit.style.display = 'none'; // Ocultar botón de edición
+    }
+
+    function cancelarEdicion(campo) {
+      const input = document.getElementById(`input-${campo}`);
+      const actions = document.getElementById(`actions-${campo}`);
+      const wrapper = input.closest('.input-editable-container');
+      const btnEdit = wrapper.querySelector('.btn-edit-input');
+      
+      // Restaurar valor original
+      input.value = valoresOriginales[campo];
+      input.disabled = true;
+      input.classList.remove('editing');
+      actions.classList.remove('active');
+      btnEdit.style.display = 'flex'; // Mostrar botón de edición
+
+      // Si es password, volver a tipo password
+      if (campo === 'password') {
+        input.type = 'password';
+      }
+    }
+
+    async function guardarCambio(campo) {
+      const input = document.getElementById(`input-${campo}`);
+      const actions = document.getElementById(`actions-${campo}`);
+      const nuevoValor = input.value.trim();
+
+      // Validar que no esté vacío (correo, dirección y teléfono son opcionales)
+      if (!nuevoValor && campo !== 'direccion' && campo !== 'correo' && campo !== 'telefono') {
+        alert('El campo no puede estar vacío');
+        return;
+      }
+
+      // Validar email solo si hay valor
+      if (campo === 'correo' && nuevoValor && !nuevoValor.includes('@')) {
+        alert('Por favor ingresa un correo electrónico válido');
+        return;
+      }
+
+      // Validar contraseña
+      if (campo === 'password' && nuevoValor.length < 6) {
+        alert('La contraseña debe tener al menos 6 caracteres');
+        return;
+      }
+
+      try {
+        // Mapear campo correo a email para el servidor
+        const campoServidor = campo === 'correo' ? 'email' : campo;
+        
+        // Actualizar usuario en users.json a través del servidor
+        const response = await fetch('/api/actualizar-usuario', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: usuarioActual.id,
+            campo: campoServidor,
+            valor: nuevoValor
+          })
+        });
+
+        if (!response.ok) throw new Error('Error al actualizar');
+
+        const data = await response.json();
+        
+        // Actualizar usuario actual
+        if (campo === 'nombre') usuarioActual.nombre = nuevoValor;
+        if (campo === 'correo') usuarioActual.email = nuevoValor;
+        if (campo === 'password') {
+          usuarioActual.pass = nuevoValor;
+          valoresOriginales.password = nuevoValor; // Guardar contraseña real
+        }
+        if (campo === 'direccion') usuarioActual.direccion = nuevoValor;
+        if (campo === 'telefono') usuarioActual.telefono = nuevoValor;
+        
+        // Actualizar valor original (excepto password que ya se actualizó arriba)
+        if (campo !== 'password') {
+          valoresOriginales[campo] = nuevoValor;
+        }
+
+        // Actualizar nombre en el nav si cambió
+        if (campo === 'nombre') {
+          document.querySelectorAll('.nav-username').forEach(el => {
+            el.textContent = nuevoValor;
+          });
+        }
+
+        // Deshabilitar input y ocultar botones de acción
+        input.disabled = true;
+        input.classList.remove('editing');
+        actions.classList.remove('active');
+
+        // Mostrar botón de edición
+        const wrapper = input.closest('.input-editable-container');
+        const btnEdit = wrapper.querySelector('.btn-edit-input');
+        btnEdit.style.display = 'flex';
+
+        // Si es password, volver a tipo password
+        if (campo === 'password') {
+          input.type = 'password';
+          input.value = '********';
+          valoresOriginales.password = '********';
+        }
+
+        alert('Cambios guardados correctamente');
+      } catch (e) {
+        console.error('Error al guardar:', e);
+        alert('Error al guardar los cambios. Asegúrate de que el servidor esté en ejecución.');
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const input = document.getElementById('input-password');
+      if (input.type === 'password') {
+        input.type = 'text';
+      } else {
+        input.type = 'password';
+      }
+    }
+
+    function initTogglePin() {
+      const togglePin = document.getElementById('toggle-pin');
+      
+      togglePin.addEventListener('change', function() {
+        if (this.checked) {
+          // Verificar que tenga correo configurado
+          const correo = document.getElementById('input-correo').value.trim();
+          if (!correo || !correo.includes('@')) {
+            this.checked = false;
+            // Mostrar popup de alerta
+            alert('Por favor, configura tu correo electrónico antes de activar el PIN de seguridad.');
+            return;
+          }
+          
+          // Abrir modal para configurar PIN
+          abrirModalPin();
+        } else {
+          // Desactivar PIN
+          desactivarPin();
+        }
+      });
+
+      // Guardar cambios de otros toggles
+      ['toggle-notif-email', 'toggle-carrito', 'toggle-mantenciones', 'toggle-silenciar'].forEach(id => {
+        document.getElementById(id).addEventListener('change', function() {
+          if (!usuarioActual) return;
+          if (!usuarioActual.preferencias) usuarioActual.preferencias = {};
+
+          const campo = id.replace('toggle-', '');
+          const mapping = {
+            'notif-email': 'notifEmail',
+            'carrito': 'carritoAbandonado',
+            'mantenciones': 'mantenciones',
+            'silenciar': 'silenciar'
+          };
+
+          usuarioActual.preferencias[mapping[campo]] = this.checked;
+          localStorage.setItem("starclutch_user", JSON.stringify(usuarioActual));
+        });
+      });
+    }
+
+    async function desactivarPin() {
+      try {
+        if (!usuarioActual || !usuarioActual.preferencias) return;
+        
+        usuarioActual.preferencias.pinActivo = false;
+        delete usuarioActual.preferencias.pin;
+        
+        // Guardar en el servidor
+        const response = await fetch('/api/actualizar-usuario', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: usuarioActual.id,
+            campo: 'preferencias',
+            valor: usuarioActual.preferencias
+          })
+        });
+        
+        if (!response.ok) throw new Error('Error al desactivar PIN');
+        
+        console.log('✅ PIN desactivado correctamente');
+      } catch (e) {
+        console.error('Error al desactivar PIN:', e);
+        alert('Error al desactivar el PIN');
+      }
+    }
+
+    function abrirModalPin() {
+      document.getElementById('modal-pin').classList.add('active');
+      document.getElementById('pin-input-1').value = '';
+      document.getElementById('pin-input-2').value = '';
+      document.getElementById('mensaje-error').style.display = 'none';
+      document.getElementById('mensaje-exito').style.display = 'none';
+      document.getElementById('mensaje-correo-requerido').style.display = 'none';
+    }
+
+    function cerrarModalPin() {
+      document.getElementById('modal-pin').classList.remove('active');
+      document.getElementById('toggle-pin').checked = false;
+    }
+
+    async function confirmarPin() {
+      const pin1 = document.getElementById('pin-input-1').value;
+      const pin2 = document.getElementById('pin-input-2').value;
+      const mensajeError = document.getElementById('mensaje-error');
+      const mensajeExito = document.getElementById('mensaje-exito');
+
+      mensajeError.style.display = 'none';
+      mensajeExito.style.display = 'none';
+
+      // Validar que los PINs coincidan
+      if (pin1 !== pin2) {
+        mensajeError.textContent = 'Los PINs no coinciden. Por favor, inténtalo de nuevo.';
+        mensajeError.style.display = 'block';
+        return;
+      }
+
+      // Validar que sean 4 dígitos
+      if (pin1.length !== 4) {
+        mensajeError.textContent = 'El PIN debe tener exactamente 4 dígitos.';
+        mensajeError.style.display = 'block';
+        return;
+      }
+
+      try {
+        // Guardar PIN en el servidor
+        if (!usuarioActual.preferencias) usuarioActual.preferencias = {};
+        usuarioActual.preferencias.pin = pin1;
+        usuarioActual.preferencias.pinActivo = true;
+
+        const response = await fetch('/api/actualizar-usuario', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: usuarioActual.id,
+            campo: 'preferencias',
+            valor: usuarioActual.preferencias
+          })
+        });
+
+        if (!response.ok) throw new Error('Error al guardar PIN');
+
+        // Enviar correo real al usuario
+        await enviarCorreoConfirmacionPin(usuarioActual.email, pin1, usuarioActual.nombre || '');
+
+        mensajeExito.innerHTML = `✅ PIN configurado correctamente.<br>Tu PIN es <strong style="letter-spacing:6px;color:#BF1823;">${pin1}</strong>. Hemos enviado una confirmación a <strong>${usuarioActual.email}</strong>.`;
+        mensajeExito.style.display = 'block';
+
+        // Cerrar modal después de 2 segundos
+        setTimeout(() => {
+          cerrarModalPin();
+          document.getElementById('toggle-pin').checked = true;
+        }, 2000);
+      } catch (e) {
+        console.error('Error al configurar PIN:', e);
+        mensajeError.textContent = 'Error al configurar el PIN. Asegúrate de que el servidor esté en ejecución.';
+        mensajeError.style.display = 'block';
+      }
+    }
+
+    async function enviarCorreoConfirmacionPin(email, pin, userName) {
+      const response = await fetch('/api/enviar-correo-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, pin, userName })
+      });
+      if (!response.ok) throw new Error('Fallo al enviar correo');
+      return response.json();
+    }
+  </script>
+
+<!-- Panel de Carrito -->
+<div class="cart-overlay" id="cart-overlay" onclick="cerrarCarrito()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-header">
+    <h3><img src="../img/carrito.svg" alt="" style="width:20px;height:20px;filter:brightness(0) invert(1);margin-right:8px;">Carrito</h3>
+    <button class="cart-close" onclick="cerrarCarrito()">&times;</button>
+  </div>
+  <div class="cart-body">
+    <!-- Contenedor de órdenes pendientes -->
+    <div id="cart-pending-container"></div>
+    
+    <div class="cart-empty" id="cart-empty">
+      <img src="../img/carrito.svg" alt="Carrito vacío" />
+      <p>Tu carrito está vacío</p>
+    </div>
+    <ul class="cart-list" id="cart-list"></ul>
+  </div>
+  <div class="cart-footer" id="cart-footer" style="display:none;">
+    <p class="cart-total"><strong>Total:</strong> $0</p>
+    <div class="cart-actions">
+      <button class="cart-btn-secondary" onclick="cotizarDesdeOtroHTML()">Cotizar</button>
+    </div>
+    <a href="../mis flotas/carrito.html" class="cart-link">Ver resumen del carrito</a>
+  </div>
+</div>
+
+<!-- Panel de Notificaciones -->
+<div class="notif-overlay" id="notif-overlay" onclick="cerrarNotificaciones()"></div>
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">
+    <h3><img src="../img/Alerta.svg" alt="Notificaciones" style="width: 20px; height: 20px; filter: brightness(0) invert(1);"> Notificaciones</h3>
+    <button class="notif-close" onclick="cerrarNotificaciones()">&times;</button>
+  </div>
+  <div class="notif-body">
+    <div id="notif-list" style="display: none;"></div>
+    <div class="notif-empty" id="notif-empty">
+      <div class="notif-empty-icon"><img src="../img/Alerta.svg" alt="Sin notificaciones"></div>
+      <h4>No hay notificaciones</h4>
+      <p>Cuando tengas novedades sobre productos, ofertas o actualizaciones, aparecerán aquí.</p>
+    </div>
+  </div>
+</div>
+<script src="../notificaciones.js"></script>
+<script>
+function toggleNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); if (panel.classList.contains('open')) { cerrarNotificaciones(); } else { panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
+function cerrarNotificaciones() { const panel = document.getElementById('notif-panel'); const overlay = document.getElementById('notif-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { const panel = document.getElementById('notif-panel'); if (panel && panel.classList.contains('open')) cerrarNotificaciones(); const cartPanel = document.getElementById('cart-panel'); if (cartPanel && cartPanel.classList.contains('open')) cerrarCarrito(); } });
+async function toggleCarrito() { const panel = document.getElementById('cart-panel'); const overlay = document.getElementById('cart-overlay'); if (panel.classList.contains('open')) { cerrarCarrito(); } else { if (typeof CarritoGlobal !== 'undefined') { await CarritoGlobal.sincronizar(); CarritoGlobal.iniciarPolling(); } panel.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; } }
+function cerrarCarrito() { if (typeof CarritoGlobal !== 'undefined') CarritoGlobal.detenerPolling(); const panel = document.getElementById('cart-panel'); const overlay = document.getElementById('cart-overlay'); panel.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+</script>
+</body>
+</html>

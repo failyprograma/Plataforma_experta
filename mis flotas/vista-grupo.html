@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Starclutch - Grupo de Vehículos</title>
+  <link rel="stylesheet" href="../styles.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* Estilos tabla de grupo (mismos que mis flotas) */
+    #vista-tabla-grupo {
+      padding: 10px 20px 30px 20px;
+    }
+
+    .tabla-grupo-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    #tabla-grupo-titulo {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    #tabla-grupo-subtitulo {
+      margin: 0;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .tabla-grupo-wrapper {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      overflow: auto;
+      max-height: 600px;
+    }
+
+    table.tabla-grupo {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    table.tabla-grupo thead {
+      background: #f7f7f7;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    table.tabla-grupo th, table.tabla-grupo td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid #eaeaea;
+      color: #333;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 100px;
+    }
+
+    table.tabla-grupo th {
+      font-weight: 700;
+      font-size: 12px;
+      color: #555;
+    }
+
+    table.tabla-grupo tr:hover td {
+      background: #fafafa;
+    }
+
+    .tabla-grupo-empty {
+      text-align: center;
+      padding: 16px;
+      color: #777;
+    }
+
+    /* Columnas invisibles pero disponibles en el DOM para lógica */
+    .col-hidden {
+      display: none !important;
+    }
+
+    .btn-ver-repuestos {
+      display: inline-block;
+      background: none;
+      border: none;
+      color: #BF1823;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 6px;
+      text-decoration: none;
+    }
+    .btn-ver-repuestos:hover {
+      background: #ffe9ec;
+    }
+
+    /* Modal Lista de Repuestos */
+    .lr-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; opacity: 0; visibility: hidden; transition: opacity .2s, visibility .2s; }
+    .lr-overlay.visible { opacity: 1; visibility: visible; }
+    .lr-modal { position: fixed; left: 50%; top: 50%; transform: translate(-50%,-50%) scale(.98); background: #fff; border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,.2); z-index: 1000; width: 98%; max-width: 1200px; max-height: 85vh; overflow: hidden; opacity: 0; visibility: hidden; transition: transform .2s, opacity .2s, visibility .2s; }
+    .lr-modal.visible { opacity: 1; visibility: visible; transform: translate(-50%,-50%) scale(1); }
+    .lr-header { padding: 16px 20px; border-bottom: 1px solid #eee; display: flex; align-items:center; justify-content: space-between; }
+    .lr-header h3 { margin: 0; font-size: 18px; color: #333; }
+    .lr-close { background: none; border: none; font-size: 24px; color: #666; cursor: pointer; }
+    .lr-subheader { padding: 10px 20px; font-size: 13px; color: #666; }
+    .lr-body { padding: 0 20px 20px 20px; }
+    .lr-table-wrapper { overflow: auto; }
+    .lr-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .lr-table thead { background: #f7f7f7; }
+    .lr-table th, .lr-table td { padding: 12px 14px; border-bottom: 1px solid #eaeaea; text-align: left; color: #333; }
+    .lr-table th { font-weight: 700; font-size: 13px; color: #555; }
+    .lr-table tr:hover td { background: #fafafa; }
+    .lr-table td .btn-ver-text { background: none; border: none; color: #BF1823; font-weight: 600; cursor: pointer; padding: 6px 0; display: inline-flex; align-items: center; gap: 6px; }
+    .lr-table td .btn-ver-text:hover { text-decoration: underline; }
+    .lr-table td .btn-ver-text .icon-left img { width: 16px; height: 16px; display: inline-block; 
+      filter: invert(17%) sepia(78%) saturate(5818%) hue-rotate(350deg) brightness(91%) contrast(90%);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAV LATERAL -->
+  <nav class="sidebar">
+    <div class="logo">
+      <img src="../img/Logo starclutch web.svg" alt="Logo Starclutch">
+    </div>
+
+    <div class="user-info">
+      <a href="../perfildeusuario/index.html">
+        <span class="nav-icon"><img src="../img/Usuario.svg" alt="Usuario"></span>
+        <span class="nav-text">Hola, <strong class="nav-username"></strong></span>
+      </a>
+    </div>
+
+    <div class="search-general">
+      <input type="text" placeholder="Búsqueda general" class="input-general">
+      <button class="btn-search-general">
+        <img src="../img/Buscar.svg" alt="Buscar">
+      </button>
+    </div>
+
+    <ul class="menu main-nav">
+      <li>
+        <a href="../mis flotas/index.html">
+          <span class="nav-icon"><img src="../img/Agregar flota.svg" alt="Ver mi flotas"></span>
+          <span class="nav-text">Mis flotas</span>
+        </a>
+      </li>
+      <li>
+        <a href="../lista de repuestos/index.html">
+          <span class="nav-icon"><img src="../img/Productos.svg" alt="Lista de repuestos"></span>
+          <span class="nav-text">Lista de repuestos</span>
+        </a>
+      </li>
+      <li>
+        <a href="../ofertas exclusivas/index.html">
+          <span class="nav-icon"><img src="../img/Descuento.svg" alt="Ofertas"></span>
+          <span class="nav-text">Ofertas exclusivas</span>
+        </a>
+      </li>
+      <li>
+        <a href="../estado de la cuenta/index.html">
+          <span class="nav-icon"><img src="../img/bill-01 1.svg" alt="Ver mis repuestos"></span>
+          <span class="nav-text">Estado de cuenta</span>
+        </a>
+      </li>
+      <li>
+        <a href="../mis compras/index.html.html">
+          <span class="nav-icon"><img src="../img/miscompras.svg" alt="Ver mis compras"></span>
+          <span class="nav-text">Mis compras</span>
+        </a>
+      </li>
+    </ul>
+
+    <footer class="sidebar-footer">
+      <a href="https://starclutch.cl/repuestos" 
+         target="_blank" 
+         rel="noopener noreferrer"
+         class="btn-text footer-link">
+         <span class="icon-left"><img src="../img/Logo SC.svg" alt="Ver mis repuestos"></span> Nosotros
+      </a>
+      <p>Starclutch S.p.A<br>© Todos los derechos reservados 2025</p>
+    </footer>
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-content">
+    <div class="page-container">
+
+      <!-- HEADER -->
+      <header class="main-header">
+        <!-- Bloque IZQUIERDO -->
+        <div class="header-left">
+          <h1>Grupo de vehículos</h1>
+        </div>
+
+        <!-- Bloque DERECHO (mismo set de acciones que otras vistas) -->
+         <div class="header-actions">
+          <button class="btn-text">
+            <span class="icon-left"><img src="../img/info_471662-01 1.svg" alt="Ayuda"></span> Ayuda
+          </button>
+
+          <button class="btn-text" onclick="toggleCarrito()" style="position: relative;">
+            <span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/carrito.svg" alt="Carrito"><span class="cart-badge" id="cart-badge-count">0</span></span> Carrito
+          </button>
+
+          <button class="btn-text" id="btn-notificaciones" onclick="toggleNotificaciones()" style="position: relative;">
+            <span class="icon-left" style="position: relative; display: inline-flex; align-items: center;"><img src="../img/Alerta.svg" alt="Notificaciones"><span class="notif-badge" id="notif-badge-count">0</span></span> Notificaciones
+          </button>
+        </div>
+      </header>
+
+      <!-- VISTA TABLA POR GRUPO -->
+      <section id="vista-tabla-grupo">
+        <div class="tabla-grupo-header">
+          <div style="display: flex; align-items: center; gap: 24px;">
+            <div>
+              <h2 id="tabla-grupo-titulo">Grupo</h2>
+              <p id="tabla-grupo-subtitulo">0 vehículos</p>
+            </div>
+            <button id="btn-lista-repuestos" class="btn-text">
+              <span class="icon-left"><img src="../img/listadorepuestos.svg" alt=""></span> Lista de repuestos
+            </button>
+          </div>
+          <div class="search-general">
+            <input type="text" id="input-buscar-tabla-grupo" placeholder="Buscar en tabla..." class="input-general">
+            <button class="btn-search-general">
+              <img src="../img/Buscar.svg" alt="Buscar">
+            </button>
+          </div>
+        </div>
+        <div class="tabla-grupo-wrapper">
+          <table class="tabla-grupo">
+            <thead>
+              <tr>
+                <th>Patente</th>
+                <th>Año</th>
+                <th>Conductor</th>
+                <th>Embragues</th>
+                <th>Frenos</th>
+                <th>Suspensión</th>
+                <th>Filtros y diferenciales</th>
+                <th>Sistema de aire</th>
+                <th>Sistema de dirección</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-grupo-tbody">
+              <tr><td colspan="9" class="tabla-grupo-empty">Cargando vehículos...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación estilo ofertas exclusivas -->
+        <div class="pagination" id="paginacion-grupo" style="margin-top: 12px; display: none;"></div>
+      </section>
+
+      <!-- RECOMENDADOS (reemplaza favoritos) -->
+      <section class="seccion-recomendados-detalle">
+        <h3>Repuestos recomendados</h3>
+        <div class="carrusel-contenedor-detalle" data-rows="1" data-cols="4">
+          <button class="btn-nav-detalle prev" aria-label="Anterior">‹</button>
+          <div class="viewport-detalle">
+            <div class="track-detalle">
+              <!-- Se carga dinámicamente -->
+            </div>
+          </div>
+          <button class="btn-nav-detalle next" aria-label="Siguiente">›</button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- MODAL DE EDITAR VEHÍCULO -->
+  <div class="modal-editar-vehiculo-overlay" id="modal-editar-overlay" onclick="cerrarEditarVehiculo()"></div>
+  <div class="modal-editar-vehiculo" id="modal-editar-vehiculo">
+    <div class="modal-header">
+      <h3>Editar vehículo</h3>
+      <button class="modal-close" onclick="cerrarEditarVehiculo()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="form-editar-vehiculo">
+        <div class="form-group">
+          <label>Patente</label>
+          <input type="text" id="edit-patente" readonly>
+        </div>
+        <div class="form-group">
+          <label>Marca</label>
+          <input type="text" id="edit-marca" readonly>
+        </div>
+        <div class="form-group">
+          <label>Modelo/Tipo</label>
+          <input type="text" id="edit-modelo" readonly>
+        </div>
+        <div class="form-group">
+          <label>Año</label>
+          <input type="text" id="edit-anio">
+        </div>
+        <div class="form-group">
+          <label>Conductor</label>
+          <input type="text" id="edit-conductor">
+        </div>
+        <div class="form-group">
+          <label>Embragues</label>
+          <input type="text" id="edit-embragues">
+        </div>
+        <div class="form-group">
+          <label>Frenos</label>
+          <input type="text" id="edit-frenos">
+        </div>
+        <div class="form-group">
+          <label>Suspensión</label>
+          <input type="text" id="edit-suspension">
+        </div>
+        <div class="form-group">
+          <label>Filtros y diferenciales</label>
+          <input type="text" id="edit-filtros-diferenciales">
+        </div>
+        <div class="form-group">
+          <label>Sistema de aire</label>
+          <input type="text" id="edit-sistema-aire">
+        </div>
+        <div class="form-group">
+          <label>Sistema de dirección</label>
+          <input type="text" id="edit-sistema-dir">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="cerrarEditarVehiculo()">Cancelar</button>
+          <button type="submit" class="btn-save">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Panel de Carrito -->
+  <div class="cart-overlay" id="cart-overlay" onclick="cerrarCarrito()"></div>
+  <div class="cart-panel" id="cart-panel">
+    <div class="cart-header">
+      <h3><img src="../img/carrito.svg" alt="" style="width:20px;height:20px;filter:brightness(0) invert(1);margin-right:8px;">Carrito</h3>
+      <button class="cart-close" onclick="cerrarCarrito()">&times;</button>
+    </div>
+    <div class="cart-body">
+      <!-- Contenedor de órdenes pendientes -->
+      <div id="cart-pending-container"></div>
+      
+      <div class="cart-empty" id="cart-empty">
+        <img src="../img/carrito.svg" alt="Carrito vacío" />
+        <p>Tu carrito está vacío</p>
+      </div>
+      <ul class="cart-list" id="cart-list"></ul>
+    </div>
+    <div class="cart-footer" id="cart-footer" style="display:none;">
+      <p class="cart-total"><strong>Total:</strong> $0 <span>IVA incluido</span></p>
+      <div class="cart-actions">
+        <button class="cart-btn-secondary" onclick="cotizarDesdeOtroHTML()">Cotizar</button>
+      </div>
+      <a href="carrito.html" class="cart-link">Ver resumen del carrito</a>
+    </div>
+  </div>
+
+  <!-- MODAL LISTA DE REPUESTOS -->
+  <div class="lr-overlay" id="lr-overlay" onclick="cerrarListaRepuestos()"></div>
+  <div class="lr-modal" id="lr-modal">
+    <div class="lr-header">
+      <h3>Lista de repuestos</h3>
+      <button class="lr-close" onclick="cerrarListaRepuestos()">&times;</button>
+    </div>
+    <div class="lr-subheader" id="lr-subheader">0 repuestos del cruce para este vehículo</div>
+    <div class="lr-body">
+      <div class="lr-table-wrapper">
+        <table class="lr-table">
+          <thead>
+            <tr>
+              <th>Línea</th>
+              <th>Cód. StarClutch</th>
+              <th>Descripción</th>
+              <th>Marca</th>
+              <th>Cód. Cliente</th>
+              <th>Precio autorizado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="lr-tbody">
+            <tr><td colspan="7" class="tabla-grupo-empty">Cargando repuestos...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="lr-paginacion" id="lr-paginacion" style="display: none; padding: 16px 20px; border-top: 1px solid #eee; display: flex; justify-content: center; align-items: center; gap: 8px;">
+        <button class="page-btn prev" id="lr-prevPage" aria-label="Página anterior">‹</button>
+        <span id="lr-pageIndicator">Página 1</span>
+        <button class="page-btn next" id="lr-nextPage" aria-label="Página siguiente">›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel de Notificaciones -->
+  <div class="notif-overlay" id="notif-overlay" onclick="cerrarNotificaciones()"></div>
+  <div class="notif-panel" id="notif-panel">
+    <div class="notif-header">
+      <h3>
+        Todas las notificaciones
+        <button class="notif-close" onclick="cerrarNotificaciones()">&times;</button>
+      </h3>
+    </div>
+    
+    <div class="notif-tabs">
+      <div class="notif-tabs-left">
+        <button class="notif-tab active" data-filter="todas">Todas</button>
+        <button class="notif-tab" data-filter="sin-leer">Sin leer <span class="notif-tab-count"></span></button>
+      </div>
+      <button id="marcar-todas-vistas">Marcar como vistas</button>
+    </div>
+    
+    <div class="notif-body">
+      <!-- Lista de notificaciones (se llenará dinámicamente) -->
+      <div id="notif-list" style="display: none;"></div>
+      
+      <!-- Estado vacío -->
+      <div class="notif-empty" id="notif-empty">
+        <div class="notif-empty-icon">
+          <img src="../img/Alerta.svg" alt="Sin notificaciones">
+        </div>
+        <h4>No hay notificaciones</h4>
+        <p>Cuando tengas novedades sobre productos, ofertas o actualizaciones, aparecerán aquí.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../script.js"></script>
+  <script src="../cotizacion-generator.js"></script>
+  <script src="../notificaciones.js"></script>
+  <script>
+    // Helper de normalización usado por carrusel recomendados
+    function normalizarTexto(texto) {
+      if (!texto) return '';
+      return texto
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[-_\s]/g, '')
+        .trim();
+    }
+
+    // Cargar datos del grupo desde localStorage
+    document.addEventListener('DOMContentLoaded', async () => {
+      const grupoData = localStorage.getItem('grupoSeleccionado');
+      if (!grupoData) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const grupo = JSON.parse(grupoData);
+      // Cargar favoritos del usuario para marcar estrella en la tabla
+      try { if (typeof loadFavoritesForCurrentUser === 'function') { await loadFavoritesForCurrentUser(); } } catch (e) {}
+      
+      // Actualizar título y subtítulo
+      const titulo = document.getElementById('tabla-grupo-titulo');
+      const subtitulo = document.getElementById('tabla-grupo-subtitulo');
+      const tbody = document.getElementById('tabla-grupo-tbody');
+      const paginacion = document.getElementById('paginacion-grupo');
+
+      if (titulo && subtitulo && tbody) {
+        const conteo = grupo.vehiculos.length;
+        titulo.textContent = `${grupo.marca} ${grupo.modelo}`;
+        subtitulo.textContent = `${conteo} vehículo${conteo !== 1 ? 's' : ''}`;
+
+        // ==== Determinar categorías visibles según cruce y productos (igual que producto.html) ====
+        const categoriasOrden = [
+          'Embragues',
+          'Frenos',
+          'Suspensión',
+          'Filtros y diferenciales',
+          'Sistema de aire',
+          'Sistema de dirección'
+        ];
+        const categoriasMap = {
+          'Embragues': 'embragues',
+          'Frenos': 'frenos',
+          'Suspensión': 'suspension',
+          'Filtros y diferenciales': 'filtros y diferenciales',
+          'Sistema de aire': 'sistema de aire',
+          'Sistema de dirección': 'sistema de direccion'
+        };
+
+        // Cargar cruces y productos
+        let productosData = [];
+        let cruce = null;
+        try {
+          let userId = null;
+          try {
+            const currentUser = JSON.parse(localStorage.getItem('starclutch_user') || 'null');
+            if (currentUser && currentUser.id) userId = currentUser.id;
+          } catch {}
+          const crucesResponse = await fetch('../datosproductos/cruces_vehiculos.json');
+          const crucesData = await crucesResponse.json();
+          if (userId) {
+            try {
+              const resp = await fetch(`/api/obtener-productos?userId=${userId}`);
+              productosData = await resp.json();
+            } catch {
+              const resp = await fetch('../datosproductos/productos_db.json');
+              productosData = await resp.json();
+            }
+          } else {
+            const resp = await fetch('../datosproductos/productos_db.json');
+            productosData = await resp.json();
+          }
+          const marcaNorm = normalizarTexto(grupo.marca || '');
+          const modeloNorm = normalizarTexto(grupo.modelo || grupo.tipo || '');
+          cruce = crucesData.cruces.find(c => normalizarTexto(c.marca) === marcaNorm && normalizarTexto(c.modelo) === modeloNorm);
+        } catch (e) {
+          console.warn('No se pudo cargar cruces/productos para categorías:', e);
+        }
+
+        const categoriasDisponibles = new Set();
+        if (cruce && cruce.categorias && Array.isArray(productosData)) {
+          const skusValidos = new Set(
+            productosData.map(p => normalizarTexto(p.codSC || p.sku || '')).filter(Boolean)
+          );
+          for (const [cat, catData] of Object.entries(cruce.categorias)) {
+            const catNorm = normalizarTexto(cat);
+            let tieneProductosValidos = false;
+            if (Array.isArray(catData)) {
+              tieneProductosValidos = catData.some(prod => skusValidos.has(normalizarTexto(prod.sku)));
+            } else if (catData && catData.sku) {
+              tieneProductosValidos = skusValidos.has(normalizarTexto(catData.sku));
+            }
+            if (tieneProductosValidos) categoriasDisponibles.add(catNorm);
+          }
+        }
+
+        const categoriasVisibles = categoriasOrden.filter(nombre => categoriasDisponibles.has(categoriasMap[nombre]));
+
+        // Renderizar encabezado dinámico
+        const thead = document.querySelector('.tabla-grupo thead');
+        if (thead) {
+          let headerHtml = '<tr>' +
+            '<th>Patente</th>' +
+            '<th>Año</th>' +
+            '<th>Conductor</th>';
+          categoriasVisibles.forEach(cat => { headerHtml += `<th>${cat}</th>`; });
+          headerHtml += '</tr>';
+          thead.innerHTML = headerHtml;
+        }
+
+        // Paginación de 10 filas
+        // helper para saber si el vehículo es favorito (por bandera local, patente o id)
+        function esFavorito(v) {
+          // 1) Si el objeto del vehículo ya trae la bandera `favorito`, úsala
+          if (v && (v.favorito === true || v.favorito === 'true' || v.favorito === 1)) {
+            return true;
+          }
+
+          // 2) Revisar caché global de favoritos por id o patente
+          try {
+            if (Array.isArray(window.FAVORITES_CACHE)) {
+              const vid = String(v.id || v.vehiculoId || '').trim();
+              const pat = String(v.patente || '').toLowerCase().trim();
+              return window.FAVORITES_CACHE.some(f => {
+                const fid = String(f.id || f.vehiculoId || '').trim();
+                const fpat = String(f.patente || '').toLowerCase().trim();
+                return (vid && fid && fid === vid) || (pat && fpat && fpat === pat);
+              });
+            }
+          } catch (e) {}
+          return false;
+        }
+
+        const filas = grupo.vehiculos.map((v, idx) => {
+          let row = `<tr data-vehicle-idx="${idx}" data-patente="${v.patente || ''}" data-marca="${v.marca || ''}" data-modelo="${v.modelo || v.tipo || ''}">` +
+            `<td>${esFavorito(v) ? `<span class="star-favorite-card active" style="display:inline-block; vertical-align:middle; margin-right:6px; pointer-events:none; cursor:default;">
+                <svg width="16" height="16" viewBox="0 0 24 24">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#BF1823" stroke="#BF1823"></polygon>
+                </svg>
+              </span>` : ''}${v.patente || 'Sin especificar'}</td>` +
+            `<td>${v.anio || ''}</td>` +
+            `<td>${v.conductor || ''}</td>`;
+          categoriasVisibles.forEach(cat => {
+            row += `<td><a class="btn-ver-repuestos" href="categorias.html?categoria=${encodeURIComponent(cat)}">Ver repuestos</a></td>`;
+          });
+          row += `</tr>`;
+          return row;
+        });
+
+        const filasPorPagina = 10;
+        let paginaActual = 1;
+        const totalPaginas = Math.max(1, Math.ceil(filas.length / filasPorPagina));
+
+        function renderPagina(page) {
+          paginaActual = page;
+          const start = (page - 1) * filasPorPagina;
+          const slice = filas.slice(start, start + filasPorPagina);
+
+          if (slice.length === 0) {
+            const colSpan = 3 + categoriasVisibles.length; // base 3 + visibles
+            tbody.innerHTML = `<tr><td colspan="${colSpan}" class="tabla-grupo-empty">No hay vehículos en este grupo</td></tr>`;
+          } else {
+            tbody.innerHTML = slice.join('');
+          }
+
+          // Render paginación estilo ofertas exclusivas (siempre visible, pero flechas se deshabilitan)
+          if (paginacion) {
+            paginacion.style.display = 'flex';
+            let html = '';
+            const prevDisabled = paginaActual === 1 ? 'disabled' : '';
+            const nextDisabled = paginaActual === totalPaginas ? 'disabled' : '';
+
+            html += `<button class="page-btn arrow" data-page="prev" ${prevDisabled}>&lt;</button>`;
+            for (let i = 1; i <= totalPaginas; i++) {
+              html += `<button class="page-btn ${i === paginaActual ? 'active' : ''}" data-page="${i}">${i}</button>`;
+            }
+            html += `<button class="page-btn arrow" data-page="next" ${nextDisabled}>&gt;</button>`;
+            paginacion.innerHTML = html;
+
+            paginacion.querySelectorAll('.page-btn').forEach(btn => {
+              btn.addEventListener('click', () => {
+                const val = btn.getAttribute('data-page');
+                if (val === 'prev') {
+                  if (paginaActual > 1) renderPagina(paginaActual - 1);
+                } else if (val === 'next') {
+                  if (paginaActual < totalPaginas) renderPagina(paginaActual + 1);
+                } else {
+                  renderPagina(Number(val));
+                }
+              });
+            });
+          }
+        }
+
+        renderPagina(1);
+
+        // Configurar botón Lista de repuestos
+        const btnLista = document.getElementById('btn-lista-repuestos');
+        if (btnLista) {
+          btnLista.addEventListener('click', async () => {
+            await abrirListaRepuestosModal({ grupo, cruce, productosData });
+          });
+        }
+      }
+
+      // Guardar vehículo seleccionado para flujos de detalle y cargar recomendados
+      try {
+        const vehiculoBase = {
+          marca: grupo.marca || '',
+          modelo: grupo.modelo || grupo.tipo || '',
+          tipo: grupo.tipo || '',
+          patente: grupo.vehiculos?.[0]?.patente || ''
+        };
+        sessionStorage.setItem('vehiculo-seleccionado', JSON.stringify(vehiculoBase));
+        cargarCarruselRecomendados(vehiculoBase);
+      } catch (e) {
+        console.error('Error preparando vehículo para recomendados', e);
+      }
+
+      // Renderizar favoritos (reutilizar la función global si está disponible)
+      // (Reemplazado por recomendados)
+
+      // Setup del formulario de edición
+      const form = document.getElementById('form-editar-vehiculo');
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          
+          if (!vehiculoEnEdicion || !grupoActual) return;
+          
+          // Actualizar datos del vehículo
+          vehiculoEnEdicion.anio = document.getElementById('edit-anio').value;
+          vehiculoEnEdicion.conductor = document.getElementById('edit-conductor').value;
+          vehiculoEnEdicion.embragues = document.getElementById('edit-embragues').value;
+          vehiculoEnEdicion.frenos = document.getElementById('edit-frenos').value;
+          vehiculoEnEdicion.suspension = document.getElementById('edit-suspension').value;
+          vehiculoEnEdicion.filtrosDiferenciales = document.getElementById('edit-filtros-diferenciales').value;
+          vehiculoEnEdicion.sistemaAire = document.getElementById('edit-sistema-aire').value;
+          vehiculoEnEdicion.sistemaDir = document.getElementById('edit-sistema-dir').value;
+          
+          // Guardar en el grupo
+          grupoActual.vehiculos[vehiculoEnEdicion._idx] = vehiculoEnEdicion;
+          
+          // Persistir en localStorage
+          localStorage.setItem('grupoSeleccionado', JSON.stringify(grupoActual));
+          
+          // Actualizar usuario si está logueado (para que se refleje en toda la plataforma)
+          try {
+            const currentUser = JSON.parse(localStorage.getItem('starclutch_user') || 'null');
+            if (currentUser && currentUser.flotas) {
+              // Buscar y actualizar el vehículo en los datos del usuario
+              currentUser.flotas.forEach(flota => {
+                const vehIdx = flota.vehiculos.findIndex(v => v.patente === vehiculoEnEdicion.patente);
+                if (vehIdx >= 0) {
+                  flota.vehiculos[vehIdx] = vehiculoEnEdicion;
+                }
+              });
+              localStorage.setItem('starclutch_user', JSON.stringify(currentUser));
+            }
+          } catch (e) {
+            console.warn('No se pudo actualizar usuario:', e);
+          }
+          
+          // Recargar la tabla
+          location.reload();
+        });
+      }
+    });
+
+    // Funciones del panel de notificaciones
+    function toggleNotificaciones() {
+      const panel = document.getElementById('notif-panel');
+      const overlay = document.getElementById('notif-overlay');
+      
+      if (panel.classList.contains('open')) {
+        cerrarNotificaciones();
+      } else {
+        panel.classList.add('open');
+        overlay.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function cerrarNotificaciones() {
+      const panel = document.getElementById('notif-panel');
+      const overlay = document.getElementById('notif-overlay');
+      
+      panel.classList.remove('open');
+      overlay.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+
+    // Funciones del panel de carrito
+    async function toggleCarrito() {
+      const panel = document.getElementById('cart-panel');
+      const overlay = document.getElementById('cart-overlay');
+      
+      if (panel.classList.contains('open')) {
+        cerrarCarrito();
+      } else {
+        // Sincronizar con servidor y actualizar UI del carrito antes de mostrar
+        if (typeof CarritoGlobal !== 'undefined') {
+          await CarritoGlobal.sincronizar();
+          CarritoGlobal.iniciarPolling(); // Iniciar actualización en tiempo real
+        }
+        panel.classList.add('open');
+        overlay.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function cerrarCarrito() {
+      const panel = document.getElementById('cart-panel');
+      const overlay = document.getElementById('cart-overlay');
+      
+      // Detener polling al cerrar
+      if (typeof CarritoGlobal !== 'undefined') {
+        CarritoGlobal.detenerPolling();
+      }
+      
+      panel.classList.remove('open');
+      overlay.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+
+    // Cerrar con tecla Escape para ambos paneles
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const panel = document.getElementById('notif-panel');
+        if (panel && panel.classList.contains('open')) cerrarNotificaciones();
+        const cartPanel = document.getElementById('cart-panel');
+        if (cartPanel && cartPanel.classList.contains('open')) cerrarCarrito();
+        const lrModal = document.getElementById('lr-modal');
+        if (lrModal && lrModal.classList.contains('visible')) cerrarListaRepuestos();
+      }
+    });
+
+    // ==== LISTA DE REPUESTOS (Modal) ====
+    let listaRepuestosPaginada = [];
+    let paginaActualLR = 1;
+    const productosPorPaginaLR = 10;
+
+    let userCotSkus = [];
+
+    async function abrirListaRepuestosModal({ grupo, cruce, productosData }) {
+      try {
+        const overlay = document.getElementById('lr-overlay');
+        const modal = document.getElementById('lr-modal');
+        const tbody = document.getElementById('lr-tbody');
+        const subheader = document.getElementById('lr-subheader');
+        if (!overlay || !modal || !tbody) return;
+
+        // Obtener historial de cotizaciones del usuario (para etiquetar "Agregar de nuevo")
+        try {
+          const currentUser = JSON.parse(localStorage.getItem('starclutch_user') || 'null');
+          if (currentUser && currentUser.id) {
+            const respUser = await fetch(`/api/obtener-usuario?userId=${encodeURIComponent(currentUser.id)}`);
+            const jUser = await respUser.json();
+            if (jUser && jUser.ok && jUser.user && Array.isArray(jUser.user.cotizacionSkus)) {
+              userCotSkus = jUser.user.cotizacionSkus.map(s => normalizarTexto(s));
+            } else {
+              userCotSkus = [];
+            }
+          }
+        } catch (e) { userCotSkus = []; }
+
+        // Construir lista de productos del cruce
+        let lista = [];
+        if (cruce && cruce.categorias && Array.isArray(productosData)) {
+          const productosPorSKU = new Map(
+            productosData.map(p => [normalizarTexto(p.codSC || p.sku || ''), p])
+          );
+
+          for (const [catNombre, catData] of Object.entries(cruce.categorias)) {
+            const linea = catNombre; // mostrar línea como nombre de categoría
+            if (Array.isArray(catData)) {
+              catData.forEach(item => {
+                const p = productosPorSKU.get(normalizarTexto(item.sku));
+                if (p) lista.push({ producto: p, linea });
+              });
+            } else if (catData && catData.sku) {
+              const p = productosPorSKU.get(normalizarTexto(catData.sku));
+              if (p) lista.push({ producto: p, linea });
+            }
+          }
+        }
+
+        // Guardar lista completa para paginación
+        listaRepuestosPaginada = lista;
+        paginaActualLR = 1;
+
+        // Render
+        if (lista.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="tabla-grupo-empty">No hay repuestos disponibles para este vehículo</td></tr>`;
+          if (subheader) subheader.textContent = `0 repuestos del cruce para este vehículo`;
+          document.getElementById('lr-paginacion').style.display = 'none';
+        } else {
+          if (subheader) subheader.textContent = `${lista.length} repuesto${lista.length!==1?'s':''} del cruce para este vehículo`;
+          renderizarPaginaLR();
+          
+          // Mostrar paginación solo si hay más de 10 productos
+          if (lista.length > productosPorPaginaLR) {
+            document.getElementById('lr-paginacion').style.display = 'flex';
+            initPaginacionLR();
+          } else {
+            document.getElementById('lr-paginacion').style.display = 'none';
+          }
+        }
+
+        // Abrir modal
+        overlay.classList.add('visible');
+        modal.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+      } catch (e) {
+        console.error('Error abriendo lista de repuestos:', e);
+      }
+    }
+
+    function renderizarPaginaLR() {
+      const tbody = document.getElementById('lr-tbody');
+      if (!tbody) return;
+
+      const inicio = (paginaActualLR - 1) * productosPorPaginaLR;
+      const fin = inicio + productosPorPaginaLR;
+      const productosPagina = listaRepuestosPaginada.slice(inicio, fin);
+
+      tbody.innerHTML = productosPagina.map(({ producto, linea }) => {
+        const codSC = producto.codSC || '';
+        const repuesto = producto.repuesto || '';
+        const marca = (producto.marca || '').toUpperCase();
+        const codCliente = producto.codCliente || '—';
+        const precioBruto = parseFloat(producto.precio || 0);
+        const precioNeto = precioBruto > 0 ? Math.round(precioBruto / 1.19) : 0;
+        // Usar el mayor entre descuento manual y descuento de campaña
+        const descuentoManual = parseFloat(producto.descuento || 0) || 0;
+        const descuentoCampana = parseFloat(producto.descuentoCampana || 0) || 0;
+        const descuentoPct = Math.max(descuentoManual, descuentoCampana);
+        const tieneDescuento = descuentoPct > 0;
+        const precioAutorizado = tieneDescuento ? Math.round(precioNeto * (1 - (descuentoPct / 100))) : precioNeto;
+        const yaCotizado = userCotSkus.includes(normalizarTexto(codSC));
+        const labelAgregar = yaCotizado ? 'Agregar de nuevo al carrito' : 'Agregar al carrito';
+        return `
+          <tr>
+            <td>${linea}</td>
+            <td>${codSC}</td>
+            <td>${repuesto}</td>
+            <td>${marca}</td>
+            <td>${codCliente}</td>
+            <td>
+              ${tieneDescuento ? `<div style="text-decoration: line-through; color:#999; font-size:12px;">$${(Math.round(precioNeto)).toLocaleString('es-CL')}</div>` : ''}
+              <div style="font-weight:bold; color:#333;">$${(Math.round(precioAutorizado)).toLocaleString('es-CL')}</div>
+            </td>
+            <td>
+              <button class="btn-ver-text" style="margin-right:12px;" onclick="agregarAlCarrito('${codSC}')">
+                <span class="icon-left"><img src="../img/carritorojo.svg" alt="Carrito"></span> ${labelAgregar}
+              </button>
+              <button class="btn-ver-text" onclick="window.location.href='detalleproducto.html?sku=${encodeURIComponent(codSC)}'">
+                <span class="icon-left"><img src="../img/Ocultar contraseña.svg" alt="Ver"></span> Ver
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      actualizarIndicadoresPaginacionLR();
+    }
+
+    function actualizarIndicadoresPaginacionLR() {
+      const totalPaginas = Math.ceil(listaRepuestosPaginada.length / productosPorPaginaLR);
+      const indicador = document.getElementById('lr-pageIndicator');
+      const btnPrev = document.getElementById('lr-prevPage');
+      const btnNext = document.getElementById('lr-nextPage');
+
+      if (indicador) indicador.textContent = `Página ${paginaActualLR} de ${totalPaginas}`;
+      if (btnPrev) btnPrev.disabled = paginaActualLR === 1;
+      if (btnNext) btnNext.disabled = paginaActualLR >= totalPaginas;
+    }
+
+    function initPaginacionLR() {
+      const btnPrev = document.getElementById('lr-prevPage');
+      const btnNext = document.getElementById('lr-nextPage');
+
+      if (btnPrev) {
+        btnPrev.onclick = () => {
+          if (paginaActualLR > 1) {
+            paginaActualLR--;
+            renderizarPaginaLR();
+          }
+        };
+      }
+
+      if (btnNext) {
+        btnNext.onclick = () => {
+          const totalPaginas = Math.ceil(listaRepuestosPaginada.length / productosPorPaginaLR);
+          if (paginaActualLR < totalPaginas) {
+            paginaActualLR++;
+            renderizarPaginaLR();
+          }
+        };
+      }
+    }
+
+    function cerrarListaRepuestos() {
+      const overlay = document.getElementById('lr-overlay');
+      const modal = document.getElementById('lr-modal');
+      if (overlay) overlay.classList.remove('visible');
+      if (modal) modal.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+
+    // ==== CARRUSEL DE PRODUCTOS RECOMENDADOS (copiado de producto.html) ====
+    async function cargarCarruselRecomendados(vehiculo) {
+      try {
+        let userId = null;
+        try {
+          const currentUser = JSON.parse(localStorage.getItem('starclutch_user') || 'null');
+          if (currentUser && currentUser.id) userId = currentUser.id;
+        } catch (e) { console.warn('No hay usuario logueado'); }
+        
+        let productosData = [];
+        const crucesResponse = await fetch('../datosproductos/cruces_vehiculos.json');
+        const crucesData = await crucesResponse.json();
+        
+        if (userId) {
+          try {
+            const resp = await fetch(`/api/obtener-productos?userId=${userId}`);
+            productosData = await resp.json();
+          } catch (e) {
+            console.warn('Error obteniendo productos del servidor, usando fallback', e);
+            const resp = await fetch('../datosproductos/productos_db.json');
+            productosData = await resp.json();
+          }
+        } else {
+          const resp = await fetch('../datosproductos/productos_db.json');
+          productosData = await resp.json();
+        }
+        
+        const marcaNorm = normalizarTexto(vehiculo.marca);
+        const modeloNorm = normalizarTexto(vehiculo.modelo);
+        const cruce = crucesData.cruces.find(c => normalizarTexto(c.marca) === marcaNorm && normalizarTexto(c.modelo) === modeloNorm);
+        if (!cruce || !cruce.categorias) {
+          console.warn('No se encontró cruce para el vehículo');
+          renderizarCarruselRecomendados([]);
+          return;
+        }
+        
+        let todosLosSKUs = [];
+        let marcasPorSKU = {};
+        for (const [, catData] of Object.entries(cruce.categorias)) {
+          if (Array.isArray(catData)) {
+            catData.forEach(p => { todosLosSKUs.push(p.sku); if (p.marca) marcasPorSKU[normalizarTexto(p.sku)] = p.marca; });
+          } else if (catData.sku) {
+            todosLosSKUs.push(catData.sku);
+            if (catData.marca) marcasPorSKU[normalizarTexto(catData.sku)] = catData.marca;
+          }
+        }
+
+        const skusNormalizados = todosLosSKUs.map(sku => normalizarTexto(sku));
+        let productos = productosData.filter(p => skusNormalizados.includes(normalizarTexto(p.codSC)));
+        productos = productos.map(p => ({ ...p, marca: marcasPorSKU[normalizarTexto(p.codSC)] || p.marca }));
+
+        function getTrackingKey(veh) {
+          try {
+            const user = JSON.parse(localStorage.getItem('starclutch_user') || 'null');
+            if (user && (user.id || user.email)) return `tracking_user_${user.id || user.email}`;
+            if (veh) {
+              const parts = [veh.marca || '', veh.modelo || '', veh.motor || '', veh.tipo || '']
+                .map(s => normalizarTexto(String(s || '')))
+                .filter(Boolean);
+              const vehKey = parts.join('_') || 'unknown';
+              return `tracking_veh_${vehKey}`;
+            }
+            return 'tracking_global';
+          } catch (e) { return 'tracking_global'; }
+        }
+
+        const trackingKey = getTrackingKey(vehiculo);
+        const tracking = JSON.parse(localStorage.getItem(trackingKey) || '{"visitas": {}, "carritos": {}}');
+
+        const currentUser = JSON.parse(localStorage.getItem('starclutch_user') || 'null');
+        let adminRecs = [];
+        if (currentUser && currentUser.id) {
+          try {
+            const resp = await fetch(`/api/recomendados?userId=${encodeURIComponent(currentUser.id)}`);
+            if (resp.ok) {
+              const j = await resp.json();
+              if (j && j.ok && Array.isArray(j.recomendados)) {
+                adminRecs = j.recomendados.map(s => normalizarTexto(s || ''));
+              }
+            }
+          } catch (e) {
+            try { adminRecs = JSON.parse(localStorage.getItem(`recomendados_user_${currentUser.id}`) || '[]'); } catch (e2) { adminRecs = []; }
+          }
+        }
+
+        productos = productos.map(p => {
+          const keySku = normalizarTexto(p.codSC || '');
+          const visitas = tracking.visitas[keySku] || 0;
+          const carritos = tracking.carritos[keySku] || 0;
+          const score = (carritos * 10) + visitas;
+          const isAdminRecommended = adminRecs.includes(keySku);
+          return { ...p, interactionScore: score, isAdminRecommended };
+        });
+
+        productos.sort((a, b) => {
+          if (a.isAdminRecommended && !b.isAdminRecommended) return -1;
+          if (!a.isAdminRecommended && b.isAdminRecommended) return 1;
+          if (a.interactionScore > 0 && b.interactionScore === 0) return -1;
+          if (a.interactionScore === 0 && b.interactionScore > 0) return 1;
+          if (a.interactionScore > 0 && b.interactionScore > 0) return b.interactionScore - a.interactionScore;
+          const aDescuento = a.descuento && parseFloat(a.descuento) > 0;
+          const bDescuento = b.descuento && parseFloat(b.descuento) > 0;
+          if (aDescuento && !bDescuento) return -1;
+          if (!aDescuento && bDescuento) return 1;
+          const esKitEmbrague = (n) => {
+            const t = normalizarTexto(n || '');
+            return t.includes('kit') && t.includes('embrague');
+          };
+          const esKitEmbragueVolante = (n) => {
+            const t = normalizarTexto(n || '');
+            return t.includes('kit') && t.includes('embrague') && t.includes('volante');
+          };
+          const esPastillasFreno = (n) => {
+            const t = normalizarTexto(n || '');
+            return t.includes('pastilla') && t.includes('freno');
+          };
+          const aVol = esKitEmbragueVolante(a.repuesto);
+          const bVol = esKitEmbragueVolante(b.repuesto);
+          if (aVol && !bVol) return -1; if (!aVol && bVol) return 1;
+          const aKit = esKitEmbrague(a.repuesto);
+          const bKit = esKitEmbrague(b.repuesto);
+          if (aKit && !bKit) return -1; if (!aKit && bKit) return 1;
+          const aPas = esPastillasFreno(a.repuesto);
+          const bPas = esPastillasFreno(b.repuesto);
+          if (aPas && !bPas) return -1; if (!aPas && bPas) return 1;
+          const precioA = a.precio || 0;
+          const precioB = b.precio || 0;
+          const rangoA = Math.floor(precioA / 50000);
+          const rangoB = Math.floor(precioB / 50000);
+          if (rangoA !== rangoB) return rangoB - rangoA;
+          const hashA = (a.codSC || '').split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+          const hashB = (b.codSC || '').split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+          return hashA - hashB;
+        });
+
+        renderizarCarruselRecomendados(productos);
+      } catch (error) {
+        console.error('Error cargando carrusel recomendados:', error);
+      }
+    }
+
+    function renderizarCarruselRecomendados(productos) {
+      const track = document.querySelector('.seccion-recomendados-detalle .track-detalle');
+      if (!track) return;
+      track.innerHTML = '';
+
+      productos.forEach(producto => {
+        // Usar el mayor entre descuento manual y descuento de campaña
+        const descuentoManual = parseFloat(producto.descuento || 0) || 0;
+        const descuentoCampana = parseFloat(producto.descuentoCampana || 0) || 0;
+        const descuentoFinal = Math.max(descuentoManual, descuentoCampana);
+        const tieneDescuento = descuentoFinal > 0;
+        const precioBruto = parseFloat(producto.precio || 0);
+        const precioOriginalNeto = precioBruto > 0 ? Math.round(precioBruto / 1.19) : 0;
+        const precioFinalNeto = tieneDescuento ? Math.round(precioOriginalNeto * (1 - (descuentoFinal / 100))) : precioOriginalNeto;
+        const esNuevo = (typeof esProductoNuevo === 'function') ? esProductoNuevo(producto.fechaCreacion) : false;
+        const marca = (producto.marca || '').toUpperCase();
+        const marcaLogo = `../marcasproductos/${marca}.png`;
+        const tieneImagen = producto.imagenes && producto.imagenes.length > 0;
+        const primeraImagen = tieneImagen ? producto.imagenes[0] : null;
+        const codCliente = producto.codCliente || '';
+        const codSC = producto.codSC || '';
+        const skuVisible = codCliente ? codCliente : codSC;
+        const skuInvisible = codCliente ? codSC : '';
+
+        const card = document.createElement('div');
+        card.className = 'card-producto-detalle';
+        card.style.cursor = 'pointer';
+        card.innerHTML = `
+          ${esNuevo ? '<span class="badge-nuevo-ribbon">Nuevo</span>' : ''}
+          <div class="header-producto-detalle">
+              <h4>${producto.repuesto || 'Producto sin nombre'}</h4>
+              <span class="sku-visible">SKU: ${skuVisible}</span>
+              ${skuInvisible ? `<span class="sku-invisible">${skuInvisible}</span>` : ''}
+              ${tieneDescuento ? '<span class="badge-oferta">Oferta</span>' : ''}
+          </div>
+          <div class="body-producto-detalle" data-sku="${codSC}">
+              ${tieneImagen ? `<img src="${primeraImagen}" alt="${producto.repuesto}" class="carousel-image">` : `<div class="placeholder-sin-imagen"><img src="../img/Logo SC.svg" alt="StarClutch"><p>No hay imagen</p></div>`}
+          </div>
+          <div class="footer-producto-detalle">
+              <div class="logo-marca-detalle">
+                  <img src="${marcaLogo}" alt="${marca}" onerror="this.src='../img/placeholder-logo-marca.svg'">
+              </div>
+                <div class="precio-container-detalle">
+                  ${tieneDescuento ? `<span class="precio-anterior-detalle">$${precioOriginalNeto.toLocaleString('es-CL')}</span>` : ''}
+                  <span class="precio-actual-detalle">$${precioFinalNeto.toLocaleString('es-CL')}</span>
+                </div>
+          </div>`;
+
+        card.addEventListener('click', async () => {
+          sessionStorage.setItem('productoDetalle', JSON.stringify({
+            ...producto,
+            fichaTecnica: producto.fichaTecnica || '',
+            referenciaCruzada: producto.referenciaCruzada || '',
+            oem: producto.oem || '',
+            stock: producto.stock || 0
+          }));
+
+          const vehiculoStr = sessionStorage.getItem('vehiculo-seleccionado');
+          if (vehiculoStr) {
+            try {
+              const [crucesResponse, productosResponse] = await Promise.all([
+                  fetch('../datosproductos/cruces_vehiculos.json'),
+                  fetch('../datosproductos/productos_db.json')
+              ]);
+              const crucesData = await crucesResponse.json();
+              const productosData = await productosResponse.json();
+              const vehiculo = JSON.parse(vehiculoStr);
+              const marcaNorm = normalizarTexto(vehiculo.marca);
+              const modeloNorm = normalizarTexto(vehiculo.modelo);
+              const cruce = crucesData.cruces.find(c => normalizarTexto(c.marca) === marcaNorm && normalizarTexto(c.modelo) === modeloNorm);
+              if (cruce && cruce.categorias) {
+                let todosLosSKUs = [];
+                let todasMarcasPorSKU = {};
+                for (const [, catData] of Object.entries(cruce.categorias)) {
+                  if (Array.isArray(catData)) {
+                    catData.forEach(p => { todosLosSKUs.push(p.sku); if (p.marca) todasMarcasPorSKU[normalizarTexto(p.sku)] = p.marca; });
+                  } else if (catData.sku) {
+                    todosLosSKUs.push(catData.sku);
+                    if (catData.marca) todasMarcasPorSKU[normalizarTexto(catData.sku)] = catData.marca;
+                  }
+                }
+                const skusNormalizados = todosLosSKUs.map(sku => normalizarTexto(sku));
+                let todosLosProductos = productosData.filter(p => skusNormalizados.includes(normalizarTexto(p.codSC)));
+                todosLosProductos = todosLosProductos.map(p => ({ ...p, marca: todasMarcasPorSKU[normalizarTexto(p.codSC)] || p.marca }));
+                const productoActual = producto.codSC;
+                todosLosProductos.sort((a, b) => {
+                  const aDes = a.descuento && a.descuento > 0;
+                  const bDes = b.descuento && b.descuento > 0;
+                  const tieneCoincidencia = (sku1, sku2) => {
+                    const base1 = sku1.replace(/^[A-Z]+/, '');
+                    const base2 = sku2.replace(/^[A-Z]+/, '');
+                    return base1 === base2 && base1.length > 0;
+                  };
+                  const aCoin = tieneCoincidencia(a.codSC, productoActual);
+                  const bCoin = tieneCoincidencia(b.codSC, productoActual);
+                  if (aDes && !bDes) return -1;
+                  if (!aDes && bDes) return 1;
+                  if (aCoin && !bCoin) return -1;
+                  if (!aCoin && bCoin) return 1;
+                  return 0;
+                });
+                sessionStorage.setItem('productosCarrusel', JSON.stringify(todosLosProductos));
+              }
+            } catch (error) {
+              console.error('Error cargando productos del cruce:', error);
+            }
+          }
+
+          sessionStorage.setItem('origenCarrusel', 'cruce');
+          window.location.href = `detalleproducto.html?sku=${encodeURIComponent(producto.codSC)}`;
+        });
+
+        track.appendChild(card);
+      });
+
+      inicializarNavegacionCarrusel();
+    }
+
+    let paginaCarruselActual = 0;
+    const PRODUCTOS_POR_PAGINA_CARRUSEL = 4;
+    function inicializarNavegacionCarrusel() {
+      const track = document.querySelector('.seccion-recomendados-detalle .track-detalle');
+      const prevBtn = document.querySelector('.seccion-recomendados-detalle .btn-nav-detalle.prev');
+      const nextBtn = document.querySelector('.seccion-recomendados-detalle .btn-nav-detalle.next');
+      const viewport = document.querySelector('.seccion-recomendados-detalle .viewport-detalle');
+      if (!track || !prevBtn || !nextBtn || !viewport) return;
+      
+      const totalProductos = track.children.length;
+      const totalPaginas = Math.ceil(totalProductos / PRODUCTOS_POR_PAGINA_CARRUSEL);
+      
+      function actualizarCarrusel() {
+        if (totalProductos === 0) return;
+        
+        // Obtener el ancho de una tarjeta (primera hijo)
+        const primeraCard = track.children[0];
+        if (!primeraCard) return;
+        
+        const anchodeTarjeta = primeraCard.offsetWidth;
+        const gap = 24; // gap definido en CSS
+        // Desplazamiento por PÁGINA (4 tarjetas), no por tarjeta individual
+        const desplazamientoPorPagina = (anchodeTarjeta + gap) * PRODUCTOS_POR_PAGINA_CARRUSEL;
+        
+        // Calcular desplazamiento en píxeles
+        const desplazamientoPx = paginaCarruselActual * desplazamientoPorPagina;
+        track.style.transform = `translateX(-${desplazamientoPx}px)`;
+        
+        prevBtn.disabled = paginaCarruselActual === 0;
+        nextBtn.disabled = paginaCarruselActual >= totalPaginas - 1;
+      }
+      
+      prevBtn.onclick = () => { 
+        if (paginaCarruselActual > 0) { 
+          paginaCarruselActual--; 
+          actualizarCarrusel(); 
+        } 
+      };
+      nextBtn.onclick = () => { 
+        if (paginaCarruselActual < totalPaginas - 1) { 
+          paginaCarruselActual++; 
+          actualizarCarrusel(); 
+        } 
+      };
+      
+      // Esperar a que las imágenes carguen para obtener dimensiones correctas
+      setTimeout(actualizarCarrusel, 100);
+    }
+
+    // ===== FUNCIONES DE EDICIÓN DE VEHÍCULO =====
+    let vehiculoEnEdicion = null;
+    let grupoActual = null;
+
+    function abrirEditarVehiculo(idx) {
+      grupoActual = JSON.parse(localStorage.getItem('grupoSeleccionado'));
+      if (!grupoActual || !grupoActual.vehiculos[idx]) return;
+      
+      vehiculoEnEdicion = { ...grupoActual.vehiculos[idx], _idx: idx };
+      
+      // Llenar el formulario
+      document.getElementById('edit-patente').value = vehiculoEnEdicion.patente || '';
+      document.getElementById('edit-marca').value = vehiculoEnEdicion.marca || '';
+      document.getElementById('edit-modelo').value = vehiculoEnEdicion.modelo || vehiculoEnEdicion.tipo || '';
+      document.getElementById('edit-anio').value = vehiculoEnEdicion.anio || '';
+      document.getElementById('edit-conductor').value = vehiculoEnEdicion.conductor || '';
+      document.getElementById('edit-embragues').value = vehiculoEnEdicion.embragues || '';
+      document.getElementById('edit-frenos').value = vehiculoEnEdicion.frenos || '';
+      document.getElementById('edit-suspension').value = vehiculoEnEdicion.suspension || '';
+      document.getElementById('edit-filtros-diferenciales').value = vehiculoEnEdicion.filtrosDiferenciales || '';
+      document.getElementById('edit-sistema-aire').value = vehiculoEnEdicion.sistemaAire || '';
+      document.getElementById('edit-sistema-dir').value = vehiculoEnEdicion.sistemaDir || '';
+      
+      // Mostrar modal
+      document.getElementById('modal-editar-vehiculo-overlay').classList.add('visible');
+      document.getElementById('modal-editar-vehiculo').classList.add('visible');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function cerrarEditarVehiculo() {
+      document.getElementById('modal-editar-vehiculo-overlay').classList.remove('visible');
+      document.getElementById('modal-editar-vehiculo').classList.remove('visible');
+      document.body.style.overflow = '';
+      vehiculoEnEdicion = null;
+    }
+
+    // ===== FUNCIONALIDAD DE BÚSQUEDA EN TABLA =====
+    let todasLasFilasTablaGrupo = [];
+
+    function initBusquedaTablaGrupo() {
+      const inputBuscar = document.getElementById('input-buscar-tabla-grupo');
+      if (!inputBuscar) return;
+
+      // Guardar todas las filas al cargar la tabla
+      const tbody = document.querySelector('.tabla-grupo tbody');
+      if (tbody) {
+        // Observar cambios en la tabla para actualizar el array de filas
+        const observer = new MutationObserver(() => {
+          if (inputBuscar.value.trim() === '') {
+            todasLasFilasTablaGrupo = Array.from(tbody.querySelectorAll('tr'));
+          }
+        });
+        observer.observe(tbody, { childList: true });
+        
+        // Guardar filas iniciales
+        todasLasFilasTablaGrupo = Array.from(tbody.querySelectorAll('tr'));
+      }
+
+      // Evento de búsqueda en tiempo real
+      inputBuscar.addEventListener('input', (e) => {
+        const termino = e.target.value.trim().toLowerCase();
+        const tbody = document.querySelector('.tabla-grupo tbody');
+        if (!tbody) return;
+
+        // Si el input está vacío, restaurar todas las filas
+        if (termino === '') {
+          tbody.innerHTML = '';
+          todasLasFilasTablaGrupo.forEach(fila => tbody.appendChild(fila.cloneNode(true)));
+          actualizarContadorVehiculos(todasLasFilasTablaGrupo.length);
+          return;
+        }
+
+        // Filtrar todas las filas según el término de búsqueda
+        const filasCoincidentes = todasLasFilasTablaGrupo.filter(fila => {
+          const textoFila = Array.from(fila.cells)
+            .map(cell => cell.textContent.toLowerCase())
+            .join(' ');
+          return textoFila.includes(termino);
+        });
+
+        // Renderizar solo las filas coincidentes
+        tbody.innerHTML = '';
+        if (filasCoincidentes.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="12" class="tabla-grupo-empty">No se encontraron resultados</td></tr>';
+          actualizarContadorVehiculos(0);
+        } else {
+          filasCoincidentes.forEach(fila => tbody.appendChild(fila.cloneNode(true)));
+          actualizarContadorVehiculos(filasCoincidentes.length);
+        }
+      });
+    }
+
+    function actualizarContadorVehiculos(cantidad) {
+      const subtitulo = document.getElementById('tabla-grupo-subtitulo');
+      if (subtitulo) {
+        subtitulo.textContent = `${cantidad} vehículo${cantidad !== 1 ? 's' : ''}`;
+      }
+    }
+
+    // Inicializar búsqueda cuando la tabla esté cargada
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        initBusquedaTablaGrupo();
+      }, 1000);
+    });
+
+  </script>
+</body>
+</html>
