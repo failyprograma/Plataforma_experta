@@ -149,16 +149,6 @@
         "motor": ""
       },
       {
-        "id": "veh_1765502675870_10_uw8ib8r5n",
-        "vehiculoId": "veh_1765502675870_10_uw8ib8r5n",
-        "marca": "Ford",
-        "modelo": "Ranger",
-        "anio": "Sin especificar",
-        "patente": "Sin especificar",
-        "tipo": "camioneta",
-        "motor": ""
-      },
-      {
         "id": "veh_1765502675870_16_8wk4eqtxu",
         "vehiculoId": "veh_1765502675870_16_8wk4eqtxu",
         "marca": "Great Wall",
@@ -207,8 +197,22 @@
     ],
     "telefono": "953919607",
     "carrito": {
-      "items": [],
-      "ultimaActualizacion": "2025-12-22T00:45:36.697Z"
+      "items": [
+        {
+          "id": "prod_1765419425976_h672r0fna",
+          "sku": "KITTOY400DR",
+          "skuCliente": "",
+          "nombre": "Kit de embrague",
+          "marca": "EXEDY",
+          "imagen": "/uploads/productos/prod-1765419425972-599986316.png",
+          "precio": 126686,
+          "precioOriginal": 126686,
+          "descuento": 0,
+          "cantidad": 1,
+          "stock": 12
+        }
+      ],
+      "ultimaActualizacion": "2025-12-22T20:10:14.940Z"
     },
     "ordenesCompraEnviadas": 25,
     "cotizacionesEnviadas": 50,
